@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<item
+      android:orderInCategory="0"
+      android:id="@+id/menu_home"
+      android:enabled="true"
+      android:title="Home"
+      android:icon="@drawable/tab_home"
+      app:showAsAction="always" />
+
+	<item
+      android:orderInCategory="1"
+      android:id="@+id/menu_subs"
+      android:enabled="true"
+      android:title="Subs"
+	    android:icon="@drawable/tab_subs"
+      app:showAsAction="always" />
+ 
+    <item
+      android:orderInCategory="2"
+      android:id="@+id/menu_stream"
+      android:enabled="true"
+      android:title="Playlists"
+      android:icon="@drawable/tab_playlists"
+      app:showAsAction="always" />
+ 
+    <item
+      android:orderInCategory="3"
+      android:id="@+id/menu_mychannel"
+      android:enabled="true"
+      android:title="MyChannel"
+      android:icon="@drawable/tab_mychannel"
+      app:showAsAction="always" />
+
+    <item
+      android:orderInCategory="4"
+      android:id="@+id/menu_settings"
+      android:enabled="true"
+      android:title="Settings"
+      android:icon="@drawable/tab_settings"
+      app:showAsAction="always" />
+</menu>
