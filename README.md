@@ -11,8 +11,8 @@ A new version of the BitChute android app which uses bottomnavigation tabs and a
 |___|  /\___  >__/\_ \(____  /\___  / \____/\____ | 
      \/     \/      \/     \//_____/             \/ 
 
-bitchute.com/channel/hexagod
-soundcloud.com/vybemasterz
+https://bitchute.com/channel/hexagod
+https://soundcloud.com/vybemasterz
 
 twitter @vybeypantelonez
 minds @hexagod
