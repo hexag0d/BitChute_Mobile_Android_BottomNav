@@ -107,7 +107,7 @@ namespace BottomNavigationViewPager
             _fragments = new Fragment[] {
                 TheFragment1.NewInstance("Home", "tab_home"),
                 TheFragment2.NewInstance("Subs", "tab_subs"),
-                TheFragment3.NewInstance("Playlist", "tab_playlist"),
+                TheFragment3.NewInstance("Playlists", "tab_playlists"),
                 TheFragment4.NewInstance("MyChannel", "tab_mychannel"),
                 TheFragment5.NewInstance("Settings", "tab_home")
             };
