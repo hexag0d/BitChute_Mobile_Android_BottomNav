@@ -39,7 +39,7 @@ using Android.Support.V4.Content;
 
 namespace BottomNavigationViewPager
 {
-    [Android.App.Activity(Label = "Bottom Tabs", Theme = "@style/AppTheme", MainLauncher = true,
+    [Android.App.Activity(Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
         
