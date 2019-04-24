@@ -93,13 +93,13 @@ namespace BottomNavigationViewPager.Fragments
                 base.OnPageFinished(view, url);
 
 
-                //string _jsHideBanner = "javascript:(function() { " +
-                 //               "document.getElementById('content_homepage').style.display='none'; " + "})()";
+                string _jsHideBanner = "javascript:(function() { " +
+                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
                 //string _jsHideBannerC = "javascript:(function() { " +
                  //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
 
-                //_wv.LoadUrl(_jsHideBanner);
+                _wv.LoadUrl(_jsHideBanner);
             }
 
             protected virtual void OnWindowVisibilityChanged([Android.Runtime.GeneratedEnum] ViewStates visibility)
