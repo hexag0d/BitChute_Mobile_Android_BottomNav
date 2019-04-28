@@ -34,6 +34,7 @@ using Android.Views;
 using Android.Content;
 using Android.Webkit;
 using Android.Support.V4.Content;
+using static Android.Support.Design.Widget.BottomNavigationView;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -45,13 +46,17 @@ namespace BottomNavigationViewPager
         
     public class MainActivity : FragmentActivity
     {
+        int _tabSelected;
+
         ViewPager _viewPager;
         BottomNavigationView _navigationView;
+        IMenuItem _menu;
         Fragment[] _fragments;
-
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            
+
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
@@ -107,25 +112,58 @@ namespace BottomNavigationViewPager
             _fragments = new Fragment[] {
                 TheFragment1.NewInstance("Home", "tab_home"),
                 TheFragment2.NewInstance("Subs", "tab_subs"),
-                TheFragment3.NewInstance("Playlists", "tab_playlists"),
+                TheFragment3.NewInstance("Playlist", "tab_playlist"),
                 TheFragment4.NewInstance("MyChannel", "tab_mychannel"),
                 TheFragment5.NewInstance("Settings", "tab_home")
             };
         }
-       
-        private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
-        {
-            var item = _navigationView.Menu.GetItem(e.Position);
-            _navigationView.SelectedItemId = item.ItemId;
-        }
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
-            _viewPager.SetCurrentItem(e.Item.Order, true);
+            if (_tabSelected == e.Item.Order)
+            {
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.Pop2Root();
+                        break;
+                    case 1:
+                        _fm2.Pop2Root();
+                        break;
+                    case 2:
+                        _fm3.Pop2Root();
+                        break;
+                    case 3:
+                        _fm4.Pop2Root();
+                        break;
+                    case 4:
+                        _fm5.Pop2Root();
+                        break;
+                }
+
+            }
+            else
+            {
+                //_navigationView.SelectedItemId = e.Item.Order;
+                //_menu = _navigationView.Menu.GetItem(e2.Position);
+                //_navigationView.SelectedItemId = _menu.ItemId;
+                _viewPager.SetCurrentItem(e.Item.Order, true);
+            } 
         }
 
-        void RemoveShiftMode(BottomNavigationView view) {
+        private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
+        {
 
+            _menu = _navigationView.Menu.GetItem(e.Position);
+            _navigationView.SelectedItemId = _menu.ItemId;
+
+            _tabSelected = _viewPager.CurrentItem;
+        }
+
+        //BottomNavigationView.NavigationItemReselectedEventArgs
+
+        void RemoveShiftMode(BottomNavigationView view)
+        {
             var menuView = (BottomNavigationMenuView) view.GetChildAt(0);
 
             try
@@ -154,9 +192,9 @@ namespace BottomNavigationViewPager
 			_viewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             base.OnDestroy();
+
+
         }
-
-
-    }
+     }
 }
 
