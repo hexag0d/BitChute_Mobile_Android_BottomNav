@@ -58,7 +58,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new WebViewClient());
+                _wv.SetWebViewClient(new ExtWebViewClient());
 
                 _wv.LoadUrl(@"https://www.bitchute.com/profile/");
 
@@ -76,7 +76,6 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
-            //Globals _global = new Globals();
 
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
@@ -99,8 +98,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
-
-                //_global.tabSelected = 1;
+                
             }
         }
     }

@@ -59,7 +59,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new WebViewClient());
+                _wv.SetWebViewClient(new ExtWebViewClient());
 
                 _wv.LoadUrl(@"https://www.bitchute.com/settings/");
 
@@ -75,27 +75,8 @@ namespace BottomNavigationViewPager.Fragments
             return view;
         }
 
-        private class MyWebViewClient : WebViewClient
+        private class ExtWebViewClient : WebViewClient
         {
-            public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
-            {
-
-                base.OnPageStarted(view, url, favicon);
-            }
-
-            public override void OnPageFinished(WebView view, string url)
-            {
-                base.OnPageFinished(view, url);
-
-                /*
-                   string _jsHideBanner = "javascript:(function() { " +
-                                   "document.getElementById('content_homepage').style.display='none'; " + "})()";
-
-                   string _jsHideBannerC = "javascript:(function() { " +
-                       "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-                       
-                _wv.LoadUrl(_jsHideBanner);*/
-            }
 
             protected virtual void OnWindowVisibilityChanged([Android.Runtime.GeneratedEnum] ViewStates visibility)
             {

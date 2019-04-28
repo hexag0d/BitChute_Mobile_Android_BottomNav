@@ -67,10 +67,6 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            else
-            {
-                //_global.tabSelected = 0;
-            }
 
             return view;
         }

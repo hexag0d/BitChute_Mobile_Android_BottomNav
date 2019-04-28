@@ -53,7 +53,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new WebViewClient());
+                _wv.SetWebViewClient(new ExtWebViewClient());
 
                 _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
 
@@ -82,32 +82,36 @@ namespace BottomNavigationViewPager.Fragments
         }
 
 
-        private class MyWebViewClient : WebViewClient
+        private class ExtWebViewClient : WebViewClient
         {
+            //Globals _global = new Globals();
+
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(view, url, favicon);
-
             }
 
             public override void OnPageFinished(WebView view, string url)
-            {
+            {/*
                 base.OnPageFinished(view, url);
 
-                /*
                 string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('content_homepage').style.display='none'; " + "})()";
+                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
-                string _jsHideBannerC = "javascript:(function() { " +
-                    "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+                string _jsHideBuff = "javascript:(function() { " +
+               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
 
-                _wv.LoadUrl(_jsHideBanner);*/
+                //string _jsHideBannerC = "javascript:(function() { " +
+                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+
+                _wv.LoadUrl(_jsHideBanner);
+
+                _wv.LoadUrl(_jsHideBuff);
+
+                
+                */
             }
-
-
         }
-
-
     }
 
 
