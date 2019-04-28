@@ -5,12 +5,14 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 
+
 namespace BottomNavigationViewPager.Fragments
 {
     public class TheFragment2 : Fragment
     {
         string _title;
         string _icon;
+
 
         protected static WebView _wv;
 
@@ -46,7 +48,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new WebViewClient());
+                _wv.SetWebViewClient(new ExtWebViewClient());
 
                 _wv.LoadUrl(@"https://www.bitchute.com/subscriptions/");
 
@@ -58,6 +60,10 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
+            else
+            {
+                //_global.tabSelected = 1;
+            }
 
             return view;
         }
@@ -68,8 +74,15 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
-        private class MyWebViewClient : WebViewClient
+        public void Pop2Root()
         {
+            _wv.LoadUrl(@"https://bitchute.com/subscriptions/");
+        }
+
+        private class ExtWebViewClient : WebViewClient
+        {
+            //Globals _global = new Globals();
+
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(view, url, favicon);
@@ -79,14 +92,20 @@ namespace BottomNavigationViewPager.Fragments
             {
                 base.OnPageFinished(view, url);
 
+                string _jsHideBanner = "javascript:(function() { " +
+                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
-                //string _jsHideBanner = "javascript:(function() { " +
-                //                "document.getElementById('content_homepage').style.display='none'; " + "})()";
+                string _jsHideBuff = "javascript:(function() { " +
+               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
 
-               /* string _jsHideBannerC = "javascript:(function() { " +
-                    "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-                    */
-                //_wv.LoadUrl(_jsHideBanner);
+                //string _jsHideBannerC = "javascript:(function() { " +
+                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+
+                _wv.LoadUrl(_jsHideBanner);
+
+                _wv.LoadUrl(_jsHideBuff);
+
+                //_global.tabSelected = 1;
             }
 
 

@@ -45,6 +45,11 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        public void Pop2Root()
+        {
+            _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 

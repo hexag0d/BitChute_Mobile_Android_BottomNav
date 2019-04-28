@@ -44,6 +44,11 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        public void Pop2Root()
+        {
+            _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+        }
+
         //createview frag4
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -69,6 +74,34 @@ namespace BottomNavigationViewPager.Fragments
             return view;
         }
 
+        private class ExtWebViewClient : WebViewClient
+        {
+            //Globals _global = new Globals();
 
+            public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
+            {
+                base.OnPageStarted(view, url, favicon);
+            }
+
+            public override void OnPageFinished(WebView view, string url)
+            {
+                base.OnPageFinished(view, url);
+
+                string _jsHideBanner = "javascript:(function() { " +
+                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+
+                string _jsHideBuff = "javascript:(function() { " +
+               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+
+                //string _jsHideBannerC = "javascript:(function() { " +
+                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+
+                _wv.LoadUrl(_jsHideBanner);
+
+                _wv.LoadUrl(_jsHideBuff);
+
+                //_global.tabSelected = 1;
+            }
+        }
     }
 }

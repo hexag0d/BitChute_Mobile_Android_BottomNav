@@ -1,4 +1,5 @@
-﻿using Android.Graphics.Drawables;
+﻿using System;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
@@ -54,7 +55,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new WebViewClient());
 
-                _wv.LoadUrl("https://www.bitchute.com/playlists/");
+                _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -75,6 +76,10 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        public void Pop2Root()
+        {
+            _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
+        }
 
 
         private class MyWebViewClient : WebViewClient
@@ -101,6 +106,7 @@ namespace BottomNavigationViewPager.Fragments
 
 
         }
+
 
     }
 
