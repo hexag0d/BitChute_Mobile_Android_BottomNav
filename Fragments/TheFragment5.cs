@@ -45,14 +45,25 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        int _tbc;
+
         public void Pop2Root()
         {
-            _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+            if (_tbc == 0)
+            {
+                _wv.Reload();
+                _tbc = 1;
+            }
+            else
+            {
+                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+                _tbc = 0;
+            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
+            //hex
             var view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             WebView _wv = view.FindViewById<WebView>(Resource.Id.webView5);

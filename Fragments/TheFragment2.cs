@@ -70,15 +70,24 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        int _tbc;
+
         public void Pop2Root()
         {
-            _wv.LoadUrl(@"https://bitchute.com/subscriptions/");
+            if (_tbc == 0)
+            {
+                _wv.Reload();
+                _tbc = 1;
+            }
+            else
+            {
+                _wv.LoadUrl(@"https://bitchute.com/subscriptions/");
+                _tbc = 0;
+            }
         }
 
         private class ExtWebViewClient : WebViewClient
         {
-            //Globals _global = new Globals();
-
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(view, url, favicon);
@@ -92,7 +101,7 @@ namespace BottomNavigationViewPager.Fragments
                                 "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
                 string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
 
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
@@ -100,11 +109,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
-
-                //_global.tabSelected = 1;
             }
-
-
         }
     }
 }

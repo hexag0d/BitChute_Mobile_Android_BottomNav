@@ -44,9 +44,20 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        int _tbc;
+
         public void Pop2Root()
         {
-            _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+            if (_tbc == 0)
+            {
+                _wv.Reload();
+                _tbc = 1;
+            }
+            else
+            {
+                _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+                _tbc = 0;
+            }
         }
 
         //createview frag4
@@ -98,7 +109,6 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
-                
             }
         }
     }

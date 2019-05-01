@@ -76,11 +76,21 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
+        int _tbc;
+
         public void Pop2Root()
         {
-            _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
+            if (_tbc == 0)
+            {
+                _wv.Reload();
+                _tbc = 1;
+            }
+            else
+            {
+                _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
+                _tbc = 0;
+            }
         }
-
 
         private class ExtWebViewClient : WebViewClient
         {
