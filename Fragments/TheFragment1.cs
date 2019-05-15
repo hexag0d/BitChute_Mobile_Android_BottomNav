@@ -16,7 +16,7 @@ namespace BottomNavigationViewPager.Fragments
 
 
         protected static WebView _wv;
-        protected static View view;
+        protected static View _view;
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -41,15 +41,25 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+
+                
             }
+
+            
         }
 
+        public override void OnPause()
+        {
+            base.OnPause();
+
+            
+        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
+            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
 
-            _wv = view.FindViewById<WebView>(Resource.Id.webView1);
+            _wv = _view.FindViewById<WebView>(Resource.Id.webView1);
 
             if (!tabLoaded)
             {
@@ -68,7 +78,7 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
 
-            return view;
+            return _view;
         }
 
         public void WebViewGoBack()
@@ -77,33 +87,33 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
-        int _tbc;
+        static bool _wvRl = true;
 
         public void Pop2Root()
         {
-            if (_tbc == 0)
+            if (_wvRl)
             {
                 _wv.Reload();
-                _tbc = 1;
+                _wvRl = false;
             }
             else
             {
                 _wv.LoadUrl(@"https://bitchute.com/");
-                _tbc = 0;
             }
         }
+
 
         private class ExtWebViewClient : WebViewClient
         {
 
-            public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
+            public override void OnPageStarted(WebView _view, string url, Android.Graphics.Bitmap favicon)
             {
-                base.OnPageStarted(view, url, favicon);
+                base.OnPageStarted(_view, url, favicon);
             }
 
-            public override void OnPageFinished(WebView view, string url)
+            public override void OnPageFinished(WebView _view, string url)
             {
-                base.OnPageFinished(view, url);
+                base.OnPageFinished(_view, url);
 
                 string _jsHideBanner = "javascript:(function() { " +
                                 "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
@@ -118,7 +128,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(_jsHideBuff);
 
-                //_global.tabSelected = 0;
+                _wvRl = true;
+
             }
 
             protected virtual void OnWindowVisibilityChanged([Android.Runtime.GeneratedEnum] ViewStates visibility)
@@ -134,7 +145,7 @@ namespace BottomNavigationViewPager.Fragments
             protected virtual void OnVisibilityChanged(View changedView, [Android.Runtime.GeneratedEnum] ViewStates visibility)
             {
                // _global.tabSelected = 1;
-              /*  changedView = view;
+              /*  changedView = _view;
                 if (changedView.Visibility == ViewStates.Gone)
                 {
                     if (_wv.Visibility == ViewStates.Gone)

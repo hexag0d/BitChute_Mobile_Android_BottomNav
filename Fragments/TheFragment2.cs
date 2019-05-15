@@ -70,19 +70,18 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
-        int _tbc;
+        static bool _wvRl = true;
 
         public void Pop2Root()
         {
-            if (_tbc == 0)
+            if (_wvRl)
             {
                 _wv.Reload();
-                _tbc = 1;
+                _wvRl = false;
             }
             else
             {
                 _wv.LoadUrl(@"https://bitchute.com/subscriptions/");
-                _tbc = 0;
             }
         }
 
@@ -109,6 +108,8 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
+
+                _wvRl = true;
             }
         }
     }

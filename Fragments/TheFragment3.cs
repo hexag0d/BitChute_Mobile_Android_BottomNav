@@ -76,19 +76,18 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
-        int _tbc;
+        static bool _wvRl = true;
 
         public void Pop2Root()
         {
-            if (_tbc == 0)
+            if (_wvRl)
             {
                 _wv.Reload();
-                _tbc = 1;
+                _wvRl = false;
             }
             else
             {
                 _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
-                _tbc = 0;
             }
         }
 
@@ -120,6 +119,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 
                 */
+
+                _wvRl = true;
             }
         }
     }

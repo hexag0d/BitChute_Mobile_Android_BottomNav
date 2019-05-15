@@ -45,19 +45,18 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.GoBack();
         }
 
-        int _tbc;
+        static bool _wvRl = true;
 
         public void Pop2Root()
         {
-            if (_tbc == 0)
+            if (_wvRl)
             {
                 _wv.Reload();
-                _tbc = 1;
+                _wvRl = false;
             }
             else
             {
                 _wv.LoadUrl(@"https://www.bitchute.com/settings/");
-                _tbc = 0;
             }
         }
 
@@ -88,20 +87,10 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
-
-            protected virtual void OnWindowVisibilityChanged([Android.Runtime.GeneratedEnum] ViewStates visibility)
+            public override void OnPageFinished(WebView view, string url)
             {
-                if (visibility != ViewStates.Gone)
-                {
-                    this.OnWindowVisibilityChanged(ViewStates.Visible);
-                }
+                _wvRl = true;
             }
-
-            protected virtual void OnVisibilityChanged(View changedView, [Android.Runtime.GeneratedEnum] ViewStates visibility)
-            {
-
-            }
-
         }
     }
 }
