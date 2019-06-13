@@ -59,7 +59,6 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        //createview frag4
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.TheFragmentLayout4, container, false);
@@ -70,13 +69,15 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
 
+                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+
                 _wv.LoadUrl(@"https://www.bitchute.com/profile/");
 
                 _wv.Settings.JavaScriptEnabled = true;
 
-                _wv.Settings.AllowFileAccess = true;
+                //_wv.Settings.AllowFileAccess = true;
 
-                _wv.Settings.AllowContentAccess = true;
+                //_wv.Settings.AllowContentAccess = true;
 
                 tabLoaded = true;
             }
@@ -86,7 +87,6 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
-
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(view, url, favicon);

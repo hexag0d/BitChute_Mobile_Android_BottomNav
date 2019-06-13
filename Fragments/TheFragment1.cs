@@ -14,7 +14,6 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-
         protected static WebView _wv;
         protected static View _view;
 
@@ -41,18 +40,12 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
-
-                
             }
-
-            
         }
 
         public override void OnPause()
         {
             base.OnPause();
-
-            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -65,22 +58,26 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(_wvc);
 
-                //string _wtf = "header";
-
                 _wv.Settings.JavaScriptEnabled = true;
 
-                _wv.Settings.AllowFileAccess = true;
+                //_wv.Settings.AllowFileAccess = true;
 
-                _wv.Settings.AllowContentAccess = true;
+                //_wv.Settings.AllowContentAccess = true;
+
+                //this didn't work when I put it here.  strange.. it would disable the setting on 
+                //every other tab
+               // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
                 _wv.LoadUrl(@"https://www.bitchute.com/");
 
                 tabLoaded = true;
             }
-
             return _view;
         }
 
+        /// <summary>
+        /// tells the webview to GoBack, if it can
+        /// </summary>
         public void WebViewGoBack()
         {
             if (_wv.CanGoBack())
@@ -89,6 +86,9 @@ namespace BottomNavigationViewPager.Fragments
 
         static bool _wvRl = true;
 
+        /// <summary>
+        /// one press refreshes the page; two presses pops back to the root
+        /// </summary>
         public void Pop2Root()
         {
             if (_wvRl)
@@ -102,10 +102,10 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        static int _autoInt = 0;
 
         private class ExtWebViewClient : WebViewClient
         {
-
             public override void OnPageStarted(WebView _view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(_view, url, favicon);
@@ -130,32 +130,17 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wvRl = true;
 
-            }
+                //add one to the autoint... for some reason if Tab1 has 
+                //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
+                //this is a workaround for that glitch
+                _autoInt++;
 
-            protected virtual void OnWindowVisibilityChanged([Android.Runtime.GeneratedEnum] ViewStates visibility)
-            {
-               // _global.tabSelected = 1;
-                /*
-                if (visibility != ViewStates.Gone)
+                // if autoInt is 2 then we will set the MediaPlaybackRequiresUserGesture
+                if (_autoInt == 2)
                 {
-                    this.OnWindowVisibilityChanged(ViewStates.Visible);
-                }*/
+                    _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                }
             }
-
-            protected virtual void OnVisibilityChanged(View changedView, [Android.Runtime.GeneratedEnum] ViewStates visibility)
-            {
-               // _global.tabSelected = 1;
-              /*  changedView = _view;
-                if (changedView.Visibility == ViewStates.Gone)
-                {
-                    if (_wv.Visibility == ViewStates.Gone)
-                    {
-                        _wv.Visibility = ViewStates.Visible;
-                    }
-                }*/
-            
-            }
-              
         }
     }
 }

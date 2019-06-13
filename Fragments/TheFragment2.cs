@@ -13,7 +13,6 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-
         protected static WebView _wv;
 
         bool tabLoaded = false;
@@ -50,17 +49,18 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
 
+                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+
                 _wv.LoadUrl(@"https://www.bitchute.com/subscriptions/");
 
                 _wv.Settings.JavaScriptEnabled = true;
 
-                _wv.Settings.AllowContentAccess = true;
+                //_wv.Settings.AllowContentAccess = true;
 
-                _wv.Settings.AllowFileAccess = true;
+                //_wv.Settings.AllowFileAccess = true;
 
                 tabLoaded = true;
             }
-
             return view;
         }
 
