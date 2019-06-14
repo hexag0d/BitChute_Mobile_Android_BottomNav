@@ -62,7 +62,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            //hex
             var view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             WebView _wv = view.FindViewById<WebView>(Resource.Id.webView5);
@@ -75,21 +74,34 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.JavaScriptEnabled = true;
 
-                _wv.Settings.AllowFileAccess = true;
+                //_wv.Settings.AllowFileAccess = true;
 
-                _wv.Settings.AllowContentAccess = true;
+                //_wv.Settings.AllowContentAccess = true;
 
                 tabLoaded = true;
             }
-
             return view;
         }
 
         private class ExtWebViewClient : WebViewClient
         {
+
             public override void OnPageFinished(WebView view, string url)
             {
                 _wvRl = true;
+                /*
+                if (!_global.FirstTime)
+                {
+                    if (_global.CurrentTab == 4)
+                    {
+                        _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                    }
+                    else
+                    {
+                        _wv.Settings.MediaPlaybackRequiresUserGesture = true;
+                    }
+                }
+                */
             }
         }
     }

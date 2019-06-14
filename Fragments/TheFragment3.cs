@@ -55,13 +55,15 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
 
+                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+
                 _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
 
                 _wv.Settings.JavaScriptEnabled = true;
 
-                _wv.Settings.AllowFileAccess = true;
+                //_wv.Settings.AllowFileAccess = true;
 
-                _wv.Settings.AllowContentAccess = true;
+                //_wv.Settings.AllowContentAccess = true;
 
                 tabLoaded = true;
             }
@@ -93,17 +95,15 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
-            //Globals _global = new Globals();
-
             public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
             {
                 base.OnPageStarted(view, url, favicon);
             }
 
             public override void OnPageFinished(WebView view, string url)
-            {/*
+            {
                 base.OnPageFinished(view, url);
-
+                /*
                 string _jsHideBanner = "javascript:(function() { " +
                                 "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
@@ -116,14 +116,9 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
-
-                
                 */
-
                 _wvRl = true;
             }
         }
     }
-
-
 }
