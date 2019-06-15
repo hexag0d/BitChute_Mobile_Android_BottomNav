@@ -35,6 +35,7 @@ using Android.Content;
 using Android.Webkit;
 using Android.Support.V4.Content;
 using static Android.Support.Design.Widget.BottomNavigationView;
+using Android.Graphics;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -55,7 +56,6 @@ namespace BottomNavigationViewPager
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            
 
             base.OnCreate(savedInstanceState);
 
@@ -73,6 +73,7 @@ namespace BottomNavigationViewPager
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
             _viewPager.OffscreenPageLimit = 4;
+
         }
 
         TheFragment1 _fm1 = new TheFragment1();

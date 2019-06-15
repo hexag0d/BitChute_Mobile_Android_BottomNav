@@ -4,6 +4,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using System;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -14,6 +15,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        protected static View _view;
 
         bool tabLoaded = false;
 
@@ -40,6 +42,33 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
+
+            WebView _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
+
+            if (!tabLoaded)
+            {
+                _wv.SetWebViewClient(new ExtWebViewClient());
+
+                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+
+                _wv.Settings.JavaScriptEnabled = true;
+
+                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+
+                //_wv.Settings.AllowFileAccess = true;
+
+                //_wv.Settings.AllowContentAccess = true;
+
+                tabLoaded = true;
+            }
+            return _view;
+        }
+
         public void WebViewGoBack()
         {
             if (_wv.CanGoBack())
@@ -52,36 +81,24 @@ namespace BottomNavigationViewPager.Fragments
         {
             if (_wvRl)
             {
-                _wv.Reload();
-                _wvRl = false;
+                try
+                {
+                    if (_wv != null)
+                    {
+                        _wv.Reload();
+                        _wvRl = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
+                }
             }
+
             else
             {
                 _wv.LoadUrl(@"https://www.bitchute.com/settings/");
             }
-        }
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-        {
-            var view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
-
-            WebView _wv = view.FindViewById<WebView>(Resource.Id.webView5);
-
-            if (!tabLoaded)
-            {
-                _wv.SetWebViewClient(new ExtWebViewClient());
-
-                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
-
-                _wv.Settings.JavaScriptEnabled = true;
-
-                //_wv.Settings.AllowFileAccess = true;
-
-                //_wv.Settings.AllowContentAccess = true;
-
-                tabLoaded = true;
-            }
-            return view;
         }
 
         public static bool _wvRling = false;

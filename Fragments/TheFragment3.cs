@@ -18,6 +18,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        protected static View _view;
 
         bool tabLoaded = false;
 
@@ -46,9 +47,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
+            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
 
-            _wv = view.FindViewById<WebView>(Resource.Id.webView3);
+            _wv = _view.FindViewById<WebView>(Resource.Id.webView3);
 
             if (!tabLoaded)
             {
@@ -67,9 +68,8 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
 
-            return view;
+            return _view;
         }
-
 
         public void WebViewGoBack()
         {
