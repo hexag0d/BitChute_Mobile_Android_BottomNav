@@ -4,7 +4,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-
+using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -85,13 +85,29 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public static bool _wvRling = false;
+
+        /// <summary>
+        /// this is to allow faster phones and connections the ability to Pop2Root
+        /// used to be set without delay inside OnPageFinished but I don't think 
+        /// that would work on faster phones
+        /// </summary>
+        public static async void SetReload()
+        {
+            if (!_wvRling)
+            {
+                _wvRling = true;
+
+                await Task.Delay(500);
+
+                _wvRl = true;
+
+                _wvRling = false;
+            }
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
-            public override void OnPageStarted(WebView view, string url, Android.Graphics.Bitmap favicon)
-            {
-                base.OnPageStarted(view, url, favicon);
-            }
-
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
@@ -109,7 +125,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(_jsHideBuff);
 
-                _wvRl = true;
+                SetReload();
             }
         }
     }
