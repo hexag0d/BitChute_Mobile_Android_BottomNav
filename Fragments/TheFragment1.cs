@@ -4,6 +4,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using System.Threading.Tasks;
 using static Android.Views.View;
 
 namespace BottomNavigationViewPager.Fragments
@@ -41,11 +42,6 @@ namespace BottomNavigationViewPager.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
-        }
-
-        public override void OnPause()
-        {
-            base.OnPause();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -102,15 +98,32 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public static bool _wvRling = false;
+
+        /// <summary>
+        /// this is to allow faster phones and connections the ability to Pop2Root
+        /// used to be set without delay inside OnPageFinished but I don't think 
+        /// that would work on faster phones
+        /// </summary>
+        public static async void SetReload()
+        {
+            if (!_wvRling)
+            {
+                _wvRling = true;
+
+                await Task.Delay(500);
+
+                _wvRl = true;
+
+                _wvRling = false;
+            }
+        }
+
+        //I'll explain this later
         static int _autoInt = 0;
 
         private class ExtWebViewClient : WebViewClient
         {
-            public override void OnPageStarted(WebView _view, string url, Android.Graphics.Bitmap favicon)
-            {
-                base.OnPageStarted(_view, url, favicon);
-            }
-
             public override void OnPageFinished(WebView _view, string url)
             {
                 base.OnPageFinished(_view, url);
@@ -128,18 +141,18 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(_jsHideBuff);
 
-                _wvRl = true;
-
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
                 //this is a workaround for that glitch
                 _autoInt++;
 
                 // if autoInt is 2 then we will set the MediaPlaybackRequiresUserGesture
-                if (_autoInt == 2)
+                if (_autoInt == 1)
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
+
+                SetReload();
             }
         }
     }
