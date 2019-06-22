@@ -36,6 +36,7 @@ using Android.Webkit;
 using Android.Support.V4.Content;
 using static Android.Support.Design.Widget.BottomNavigationView;
 using Android.Graphics;
+using System.Threading.Tasks;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -50,9 +51,10 @@ namespace BottomNavigationViewPager
         int _tabSelected;
 
         ViewPager _viewPager;
-        BottomNavigationView _navigationView;
+        public static BottomNavigationView _navigationView;
         IMenuItem _menu;
         Fragment[] _fragments;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -76,11 +78,61 @@ namespace BottomNavigationViewPager
 
         }
 
-        TheFragment1 _fm1 = new TheFragment1();
-        TheFragment2 _fm2 = new TheFragment2();
-        TheFragment3 _fm3 = new TheFragment3();
-        TheFragment4 _fm4 = new TheFragment4();
-        TheFragment5 _fm5 = new TheFragment5();
+        TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
+        TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
+        TheFragment3 _fm3 = TheFragment3.NewInstance("Playlist", "tab_playlist");
+        TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
+        TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
+
+        void InitializeTabs()
+        {
+            _fragments = new Fragment[] {
+                _fm1,
+                _fm2,
+                _fm3,
+                _fm4,
+                _fm5
+            };
+        }
+
+        public static bool _navHidden = false;
+
+        public static bool _navTimeout = false;
+
+        public static int _navTimer = 0;
+
+        /// <summary>
+        /// listens for scroll events and hides the navbar after x seconds
+        /// .. timer resets every time it's called
+        /// . works with a custom scroll listener
+        /// </summary>
+        public void CustomOnScroll()
+        {
+            _navTimer = 0;
+
+            if (!_navTimeout)
+            {
+                _navigationView.Visibility = ViewStates.Visible;
+                _navHidden = false;
+                NavBarRemove();
+                _navTimeout = true;
+            }
+        }
+
+        public async void NavBarRemove()
+        {
+            while (!_navHidden)
+            {
+                await Task.Factory.StartNew(() => System.Threading.Thread.Sleep(1000));
+                _navTimer++;
+                if (_navTimer == 3)
+                {
+                    _navigationView.Visibility = ViewStates.Gone;
+                    _navTimeout = false;
+                    _navHidden = true;
+                }
+            }
+        }
 
         public override bool OnKeyDown(Android.Views.Keycode keyCode, KeyEvent e)
         {
@@ -109,15 +161,6 @@ namespace BottomNavigationViewPager
             return false;
         }
         
-        void InitializeTabs() {
-            _fragments = new Fragment[] {
-                TheFragment1.NewInstance("Home", "tab_home"),
-                TheFragment2.NewInstance("Subs", "tab_subs"),
-                TheFragment3.NewInstance("Playlist", "tab_playlist"),
-                TheFragment4.NewInstance("MyChannel", "tab_mychannel"),
-                TheFragment5.NewInstance("Settings", "tab_home")
-            };
-        }
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
@@ -141,7 +184,6 @@ namespace BottomNavigationViewPager
                         _fm5.Pop2Root();
                         break;
                 }
-
             }
             else
             {
@@ -193,8 +235,6 @@ namespace BottomNavigationViewPager
 			_viewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             base.OnDestroy();
-
-
         }
      }
 }

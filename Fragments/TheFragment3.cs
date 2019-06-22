@@ -46,9 +46,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
+            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
 
-            _wv = view.FindViewById<WebView>(Resource.Id.webView3);
+            _wv = _view.FindViewById<WebView>(Resource.Id.webView3);
 
             if (!tabLoaded)
             {
@@ -67,9 +67,20 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
 
-            return view;
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+
+            return _view;
         }
 
+        public static MainActivity _main = new MainActivity();
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _main.CustomOnScroll();
+            }
+        }
 
         public void WebViewGoBack()
         {
