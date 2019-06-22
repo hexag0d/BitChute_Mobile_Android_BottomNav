@@ -4,6 +4,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using System;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -13,7 +14,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        public static WebView _wv;
 
         bool tabLoaded = false;
 
@@ -40,32 +41,11 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public void WebViewGoBack()
-        {
-            if (_wv.CanGoBack())
-                _wv.GoBack();
-        }
-
-        static bool _wvRl = true;
-
-        public void Pop2Root()
-        {
-            if (_wvRl)
-            {
-                _wv.Reload();
-                _wvRl = false;
-            }
-            else
-            {
-                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
-            }
-        }
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
+            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
-            WebView _wv = view.FindViewById<WebView>(Resource.Id.webView5);
+            _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
 
             if (!tabLoaded)
             {
@@ -81,7 +61,58 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            return view;
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+
+            return _view;
+        }
+
+        public static MainActivity _main = new MainActivity();
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _main.CustomOnScroll();
+            }
+        }
+
+        public void WebViewGoBack()
+        {
+            if (_wv.CanGoBack())
+                _wv.GoBack();
+        }
+
+        public static int mysteryInt = 0;
+
+        static bool _wvRl = true;
+
+        public void Pop2Root()
+        {
+            mysteryInt++;
+            
+            if (mysteryInt == 6)
+            {
+                _wv.LoadUrl(@"https://www.soundcloud.com/vybemasterz/");
+            }
+            else
+            {
+                if (_wvRl)
+                {
+                    try
+                    {
+                        _wv.Reload();
+                        _wvRl = false;
+                    }
+                    catch (Exception ex)
+                    {
+                         
+                    }
+                }   
+                else
+                {
+                    _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+                }
+            }
         }
 
         public static bool _wvRling = false;
@@ -97,7 +128,9 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(3666);
+
+                mysteryInt = 0;
 
                 _wvRl = true;
 

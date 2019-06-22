@@ -22,6 +22,8 @@ namespace BottomNavigationViewPager.Fragments
 
         bool tabLoaded = false;
 
+        //static MainActivity _main = new MainActivity();
+
         public static TheFragment1 NewInstance(string title, string icon) {
             var fragment = new TheFragment1();
             fragment.Arguments = new Bundle();
@@ -68,7 +70,20 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
+
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+
             return _view;
+        }
+
+        public static MainActivity _main = new MainActivity();
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _main.CustomOnScroll();
+            }
         }
 
         /// <summary>
