@@ -161,7 +161,8 @@ namespace BottomNavigationViewPager.Fragments
                 //this is a workaround for that glitch
                 _autoInt++;
 
-                // if autoInt is 2 then we will set the MediaPlaybackRequiresUserGesture
+                // if autoInt is 1 then we will set the MediaPlaybackRequiresUserGesture
+                //strange.. i know.. but it works
                 if (_autoInt == 1)
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;

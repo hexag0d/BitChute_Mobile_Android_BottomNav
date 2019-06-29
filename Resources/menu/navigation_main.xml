@@ -22,7 +22,7 @@
       android:orderInCategory="2"
       android:id="@+id/menu_stream"
       android:enabled="true"
-      android:title="Playlists"
+      android:title="Feed"
       android:icon="@drawable/tab_playlists"
       app:showAsAction="always" />
  

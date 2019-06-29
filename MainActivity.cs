@@ -75,12 +75,11 @@ namespace BottomNavigationViewPager
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
             _viewPager.OffscreenPageLimit = 4;
-
         }
 
         TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
         TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
-        TheFragment3 _fm3 = TheFragment3.NewInstance("Playlist", "tab_playlist");
+        TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");
         TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
         TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
 
@@ -108,6 +107,7 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnScroll()
         {
+            if (_navTimer != 0)
             _navTimer = 0;
 
             if (!_navTimeout)
@@ -123,9 +123,14 @@ namespace BottomNavigationViewPager
         {
             while (!_navHidden)
             {
-                await Task.Factory.StartNew(() => System.Threading.Thread.Sleep(1000));
+                //canceling this for now
+                //await Task.Run(() => System.Threading.Thread.Sleep(1000));
+
+                //lets see if this is faster
+                await Task.Delay(1000);
+
                 _navTimer++;
-                if (_navTimer == 3)
+                if (_navTimer == 8)
                 {
                     _navigationView.Visibility = ViewStates.Gone;
                     _navTimeout = false;
@@ -157,13 +162,14 @@ namespace BottomNavigationViewPager
                         break;
                 }
             }
-            
             return false;
         }
         
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
+            _navTimer = 0;
+
             if (_tabSelected == e.Item.Order)
             {
                 switch (_viewPager.CurrentItem)
@@ -196,6 +202,7 @@ namespace BottomNavigationViewPager
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
+            _navTimer = 0;
 
             _menu = _navigationView.Menu.GetItem(e.Position);
             _navigationView.SelectedItemId = _menu.ItemId;

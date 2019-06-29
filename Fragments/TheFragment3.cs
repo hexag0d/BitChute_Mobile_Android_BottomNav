@@ -56,7 +56,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
+                _wv.LoadUrl(@"https://www.bitchute.com/");
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -99,7 +99,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _wv.LoadUrl(@"https://www.bitchute.com/playlists/");
+                _wv.LoadUrl(@"https://www.bitchute.com/");
             }
         }
 
@@ -129,20 +129,42 @@ namespace BottomNavigationViewPager.Fragments
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
-                /*
+
                 string _jsHideBanner = "javascript:(function() { " +
                                 "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
 
                 string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
 
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+                string _jsHideCarousel = "javascript:(function() { " +
+                                "document.getElementById('carousel').style.display='none'; " + "})()";
+
+                string _jsSelectTab = "javascript:(function() { " +
+                                "document.getElementById('listing-all').style.display='none'; " + "})()";
+
+                string _jsSelectTab2 = "javascript:(function() { " +
+                                "document.getElementById('listing-popular').style.display='none'; " + "})()";
+
+                string _jsSelectTab3 = "javascript:(function() { " +
+                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+
+                string _jsHideLabel = "javascript:(function() { " +
+                   "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
 
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
-                */
+
+                _wv.LoadUrl(_jsHideCarousel);
+
+                _wv.LoadUrl(_jsSelectTab);
+
+                _wv.LoadUrl(_jsSelectTab2);
+
+                _wv.LoadUrl(_jsSelectTab3);
+
+                _wv.LoadUrl(_jsHideLabel);
+
                 SetReload();
             }
         }
