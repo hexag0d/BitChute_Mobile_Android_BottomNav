@@ -51,9 +51,11 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
 
-                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
-
                 _wv.Settings.JavaScriptEnabled = true;
+
+                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+
+                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
 
                 //_wv.Settings.AllowFileAccess = true;
 
@@ -128,11 +130,13 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(3666);
-
-                mysteryInt = 0;
+                await Task.Delay(500);
 
                 _wvRl = true;
+
+                await Task.Delay(2666);
+
+                mysteryInt = 0;
 
                 _wvRling = false;
             }
@@ -142,6 +146,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                
+
                 SetReload();
             }
         }
