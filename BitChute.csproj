@@ -22,6 +22,14 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidSigningKeyStore>C:\Users\hegsagawd\Downloads\bitchute.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>
+    </AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>
+    </AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>
+    </AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -63,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
+    <Compile Include="Classes\Globals.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
     <Compile Include="Fragments\TheFragment3.cs" />
@@ -150,9 +159,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\bottom_navigation_selector.xml" />
   </ItemGroup>

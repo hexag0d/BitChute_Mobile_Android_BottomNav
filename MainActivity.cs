@@ -37,6 +37,7 @@ using Android.Support.V4.Content;
 using static Android.Support.Design.Widget.BottomNavigationView;
 using Android.Graphics;
 using System.Threading.Tasks;
+using BottomNavigationViewPager.Classes;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -55,6 +56,7 @@ namespace BottomNavigationViewPager
         IMenuItem _menu;
         Fragment[] _fragments;
 
+        public static Globals _globals = new Globals();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -234,6 +236,18 @@ namespace BottomNavigationViewPager
             catch (System.Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine((ex.InnerException??ex).Message);
+            }
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            Globals._bkgrd = true;
+            
+            while (Globals._bkgrd)
+            {
+                Task.Delay(1200);
+
+                _globals.IsInBkGrd();
             }
         }
 
