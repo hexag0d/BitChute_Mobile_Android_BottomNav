@@ -8,21 +8,26 @@ namespace BottomNavigationViewPager.Classes
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
 
+
+        public static bool _setWebView { get; set; }
+
+        
+
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
 
 
         /// <summary>
         /// global bool setting: 
-        /// returns/should be set to true if this app is in the foreground
-        /// returns/should be set to false when the app goes background
+        /// returns/should be set to false if this app is in the foreground
+        /// returns/should be set to true when the app goes background
         /// 
         /// it doesn't override the OS setting; it keeps the status for you
         /// </summary>
         public static bool _bkgrd = true;
 
         /// <summary>
-        /// returns true when the ActivityManager contains
+        /// returns false when the ActivityManager contains
         /// an entry for this app running in foreground: 
         /// importance is present in package.name with OS focus
         /// 
