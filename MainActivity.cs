@@ -210,6 +210,8 @@ namespace BottomNavigationViewPager
             _navigationView.SelectedItemId = _menu.ItemId;
 
             _tabSelected = _viewPager.CurrentItem;
+
+            CustomOnScroll();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
