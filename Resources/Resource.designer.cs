@@ -2233,110 +2233,116 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
-			// aapt resource value: 0x7f020071
-			public const int avd_hide_password_1 = 2130837617;
-			
-			// aapt resource value: 0x7f020072
-			public const int avd_hide_password_2 = 2130837618;
-			
 			// aapt resource value: 0x7f020073
-			public const int avd_hide_password_3 = 2130837619;
+			public const int avd_hide_password_1 = 2130837619;
+			
+			// aapt resource value: 0x7f020074
+			public const int avd_hide_password_2 = 2130837620;
+			
+			// aapt resource value: 0x7f020075
+			public const int avd_hide_password_3 = 2130837621;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
-			// aapt resource value: 0x7f020074
-			public const int avd_show_password_1 = 2130837620;
-			
-			// aapt resource value: 0x7f020075
-			public const int avd_show_password_2 = 2130837621;
-			
 			// aapt resource value: 0x7f020076
-			public const int avd_show_password_3 = 2130837622;
+			public const int avd_show_password_1 = 2130837622;
+			
+			// aapt resource value: 0x7f020077
+			public const int avd_show_password_2 = 2130837623;
+			
+			// aapt resource value: 0x7f020078
+			public const int avd_show_password_3 = 2130837624;
 			
 			// aapt resource value: 0x7f020055
-			public const int bottom_navigation_selector = 2130837589;
+			public const int bitchute_notification = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int design_bottom_navigation_item_background = 2130837590;
+			public const int bitchute_notification2 = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int design_fab_background = 2130837591;
+			public const int bottom_navigation_selector = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int design_ic_visibility = 2130837592;
+			public const int design_bottom_navigation_item_background = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int design_ic_visibility_off = 2130837593;
+			public const int design_fab_background = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int design_password_eye = 2130837594;
+			public const int design_ic_visibility = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int design_snackbar_background = 2130837595;
+			public const int design_ic_visibility_off = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int navigation_empty_icon = 2130837596;
+			public const int design_password_eye = 2130837596;
 			
 			// aapt resource value: 0x7f02005d
-			public const int notification_action_background = 2130837597;
+			public const int design_snackbar_background = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int notification_bg = 2130837598;
+			public const int navigation_empty_icon = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int notification_bg_low = 2130837599;
+			public const int notification_action_background = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int notification_bg_low_normal = 2130837600;
+			public const int notification_bg = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int notification_bg_low_pressed = 2130837601;
+			public const int notification_bg_low = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int notification_bg_normal = 2130837602;
+			public const int notification_bg_low_normal = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int notification_bg_normal_pressed = 2130837603;
+			public const int notification_bg_low_pressed = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int notification_icon_background = 2130837604;
-			
-			// aapt resource value: 0x7f02006f
-			public const int notification_template_icon_bg = 2130837615;
-			
-			// aapt resource value: 0x7f020070
-			public const int notification_template_icon_low_bg = 2130837616;
+			public const int notification_bg_normal = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int notification_tile_bg = 2130837605;
+			public const int notification_bg_normal_pressed = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int notify_panel_notification_icon_bg = 2130837606;
+			public const int notification_icon_background = 2130837606;
+			
+			// aapt resource value: 0x7f020071
+			public const int notification_template_icon_bg = 2130837617;
+			
+			// aapt resource value: 0x7f020072
+			public const int notification_template_icon_low_bg = 2130837618;
 			
 			// aapt resource value: 0x7f020067
-			public const int tab_home = 2130837607;
+			public const int notification_tile_bg = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int tab_mychannel = 2130837608;
+			public const int notify_panel_notification_icon_bg = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int tab_playlists = 2130837609;
+			public const int tab_home = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int tab_settings = 2130837610;
+			public const int tab_mychannel = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int tab_subs = 2130837611;
+			public const int tab_playlists = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int tooltip_frame_dark = 2130837612;
+			public const int tab_settings = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int tooltip_frame_light = 2130837613;
+			public const int tab_subs = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int xamarin = 2130837614;
+			public const int tooltip_frame_dark = 2130837614;
+			
+			// aapt resource value: 0x7f02006f
+			public const int tooltip_frame_light = 2130837615;
+			
+			// aapt resource value: 0x7f020070
+			public const int xamarin = 2130837616;
 			
 			static Drawable()
 			{
@@ -2368,6 +2374,45 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080037
 			public const int SYM = 2131230775;
+			
+			// aapt resource value: 0x7f0800c6
+			public const int _fanModeOffBtn = 2131230918;
+			
+			// aapt resource value: 0x7f0800c7
+			public const int _fanModeOnBtn = 2131230919;
+			
+			// aapt resource value: 0x7f0800d2
+			public const int _notificationTestButton = 2131230930;
+			
+			// aapt resource value: 0x7f0800d4
+			public const int _notificationsOffRb = 2131230932;
+			
+			// aapt resource value: 0x7f0800d5
+			public const int _notificationsOnRb = 2131230933;
+			
+			// aapt resource value: 0x7f0800cc
+			public const int _stOverrideOffRb = 2131230924;
+			
+			// aapt resource value: 0x7f0800cd
+			public const int _stOverrideOnRb = 2131230925;
+			
+			// aapt resource value: 0x7f0800c3
+			public const int _tab1FeaturedCreatorsOff = 2131230915;
+			
+			// aapt resource value: 0x7f0800c2
+			public const int _tab1FeaturedCreatorsOn = 2131230914;
+			
+			// aapt resource value: 0x7f0800bf
+			public const int _tab3HideOverrideOff = 2131230911;
+			
+			// aapt resource value: 0x7f0800be
+			public const int _tab3HideOverrideOn = 2131230910;
+			
+			// aapt resource value: 0x7f0800bb
+			public const int _zoomControlOffBtn = 2131230907;
+			
+			// aapt resource value: 0x7f0800ba
+			public const int _zoomControlOnBtn = 2131230906;
 			
 			// aapt resource value: 0x7f0800a0
 			public const int action0 = 2131230880;
@@ -2443,6 +2488,9 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080038
 			public const int always = 2131230776;
+			
+			// aapt resource value: 0x7f0800b7
+			public const int appSettingsMainLayout = 2131230903;
 			
 			// aapt resource value: 0x7f080056
 			public const int async = 2131230806;
@@ -2555,6 +2603,12 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f080072
 			public const int expanded_menu = 2131230834;
 			
+			// aapt resource value: 0x7f0800c5
+			public const int fanModeGroup = 2131230917;
+			
+			// aapt resource value: 0x7f0800bd
+			public const int feedTabHideOverride = 2131230909;
+			
 			// aapt resource value: 0x7f080050
 			public const int fill = 2131230800;
 			
@@ -2573,8 +2627,14 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f08009a
 			public const int fragment_content = 2131230874;
 			
+			// aapt resource value: 0x7f0800c4
+			public const int frameLayout1 = 2131230916;
+			
 			// aapt resource value: 0x7f08000a
 			public const int ghost_view = 2131230730;
+			
+			// aapt resource value: 0x7f0800d7
+			public const int gridLayout1 = 2131230935;
 			
 			// aapt resource value: 0x7f080005
 			public const int home = 2131230725;
@@ -2615,35 +2675,65 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f080018
 			public const int line3 = 2131230744;
 			
+			// aapt resource value: 0x7f0800d3
+			public const int linearLayout10 = 2131230931;
+			
+			// aapt resource value: 0x7f0800b8
+			public const int linearLayout2 = 2131230904;
+			
+			// aapt resource value: 0x7f0800bc
+			public const int linearLayout3 = 2131230908;
+			
+			// aapt resource value: 0x7f0800c0
+			public const int linearLayout4 = 2131230912;
+			
+			// aapt resource value: 0x7f0800c8
+			public const int linearLayout5 = 2131230920;
+			
+			// aapt resource value: 0x7f0800ca
+			public const int linearLayout6 = 2131230922;
+			
+			// aapt resource value: 0x7f0800ce
+			public const int linearLayout7 = 2131230926;
+			
+			// aapt resource value: 0x7f0800cf
+			public const int linearLayout8 = 2131230927;
+			
+			// aapt resource value: 0x7f0800d1
+			public const int linearLayout9 = 2131230929;
+			
+			// aapt resource value: 0x7f0800d6
+			public const int linearLayoutCompat1 = 2131230934;
+			
 			// aapt resource value: 0x7f08001d
 			public const int listMode = 2131230749;
 			
 			// aapt resource value: 0x7f080061
 			public const int list_item = 2131230817;
 			
-			// aapt resource value: 0x7f0800b7
-			public const int masked = 2131230903;
+			// aapt resource value: 0x7f0800db
+			public const int masked = 2131230939;
 			
 			// aapt resource value: 0x7f0800a3
 			public const int media_actions = 2131230883;
 			
-			// aapt resource value: 0x7f0800b8
-			public const int menu_home = 2131230904;
+			// aapt resource value: 0x7f0800dc
+			public const int menu_home = 2131230940;
 			
-			// aapt resource value: 0x7f0800bb
-			public const int menu_mychannel = 2131230907;
+			// aapt resource value: 0x7f0800df
+			public const int menu_mychannel = 2131230943;
 			
-			// aapt resource value: 0x7f0800bc
-			public const int menu_settings = 2131230908;
+			// aapt resource value: 0x7f0800e0
+			public const int menu_settings = 2131230944;
 			
-			// aapt resource value: 0x7f0800ba
-			public const int menu_stream = 2131230906;
+			// aapt resource value: 0x7f0800de
+			public const int menu_stream = 2131230942;
 			
-			// aapt resource value: 0x7f0800b9
-			public const int menu_subs = 2131230905;
+			// aapt resource value: 0x7f0800dd
+			public const int menu_subs = 2131230941;
 			
-			// aapt resource value: 0x7f0800b5
-			public const int message = 2131230901;
+			// aapt resource value: 0x7f0800d9
+			public const int message = 2131230937;
 			
 			// aapt resource value: 0x7f080031
 			public const int middle = 2131230769;
@@ -2765,6 +2855,12 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f08008a
 			public const int select_dialog_listview = 2131230858;
 			
+			// aapt resource value: 0x7f0800b4
+			public const int settingsFragLayout = 2131230900;
+			
+			// aapt resource value: 0x7f0800cb
+			public const int settingsTabOverrideGroup = 2131230923;
+			
 			// aapt resource value: 0x7f080074
 			public const int shortcut = 2131230836;
 			
@@ -2815,6 +2911,15 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080087
 			public const int submit_area = 2131230855;
+			
+			// aapt resource value: 0x7f0800c1
+			public const int tab1FeaturedCreators = 2131230913;
+			
+			// aapt resource value: 0x7f0800c9
+			public const int tab4OverrideSpinner = 2131230921;
+			
+			// aapt resource value: 0x7f0800d0
+			public const int tab5OverrideSpinner = 2131230928;
 			
 			// aapt resource value: 0x7f08001f
 			public const int tabMode = 2131230751;
@@ -2888,14 +2993,17 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f080026
 			public const int useLogo = 2131230758;
 			
+			// aapt resource value: 0x7f0800d8
+			public const int versionTextView = 2131230936;
+			
 			// aapt resource value: 0x7f080016
 			public const int view_offset_helper = 2131230742;
 			
 			// aapt resource value: 0x7f08009c
 			public const int viewpager = 2131230876;
 			
-			// aapt resource value: 0x7f0800b6
-			public const int visible = 2131230902;
+			// aapt resource value: 0x7f0800da
+			public const int visible = 2131230938;
 			
 			// aapt resource value: 0x7f0800b0
 			public const int webView1 = 2131230896;
@@ -2909,14 +3017,20 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f0800b3
 			public const int webView4 = 2131230899;
 			
-			// aapt resource value: 0x7f0800b4
-			public const int webView5 = 2131230900;
+			// aapt resource value: 0x7f0800b6
+			public const int webView5 = 2131230902;
+			
+			// aapt resource value: 0x7f0800b5
+			public const int webViewLayout = 2131230901;
 			
 			// aapt resource value: 0x7f08003c
 			public const int withText = 2131230780;
 			
 			// aapt resource value: 0x7f08002e
 			public const int wrap_content = 2131230766;
+			
+			// aapt resource value: 0x7f0800b9
+			public const int zoomControlGroup = 2131230905;
 			
 			static Id()
 			{

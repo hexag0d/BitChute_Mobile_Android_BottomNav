@@ -4,6 +4,9 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
 
@@ -17,6 +20,8 @@ namespace BottomNavigationViewPager.Fragments
 
         protected static WebView _wv;
         protected static View _view;
+
+        public string _url = "https://bitchute.com/";
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -58,6 +63,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.JavaScriptEnabled = true;
 
+                _wv.Settings.DisplayZoomControls = false;
+
                 //_wv.Settings.AllowFileAccess = true;
 
                 //_wv.Settings.AllowContentAccess = true;
@@ -66,17 +73,77 @@ namespace BottomNavigationViewPager.Fragments
                 //every other tab
                // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/");
+                _wv.LoadUrl(_url);
 
                 tabLoaded = true;
             }
 
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            //_wv.Touch += ViewOnTouch;
 
             return _view;
         }
 
+        public void OnSettingsChanged(List<object> settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+            }
+            else
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
+            }
+
+            if (TheFragment5._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+        }
+
+        /// <summary>
+        /// gotta instantiate that MainActivity _maing
+        ///compiler is all about that
+        /// </summary>
         public static MainActivity _main = new MainActivity();
+
+        //public bool OnTouch(object sender, MotionEvent e)
+        //{
+        //    return false;
+        //}
+
+        //private void ViewOnTouch(object sender, View.TouchEventArgs touchEventArgs)
+        //{
+        //    var test = "yo";
+
+        //   // _wv.ComputeScroll();
+        //    //Globals._wvHeight = _wv.ContentHeight;
+
+        //    //string message;
+        //    switch (touchEventArgs.Event.Action & MotionEventActions.Mask)
+        //    {
+
+        //        case MotionEventActions.Down:
+        //        case MotionEventActions.Move:
+        //            _main.CustomOnScroll();
+        //            break;
+
+        //        case MotionEventActions.Up:
+        //            //_main.HideNavBarAfterDelay();
+        //            break;
+
+        //        default:
+        //            break;
+        //    }
+
+            
+        //}
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
         {
@@ -126,7 +193,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -137,24 +204,42 @@ namespace BottomNavigationViewPager.Fragments
         //I'll explain this later
         static int _autoInt = 0;
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+        }
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView _view, string url)
             {
+                HideLinkOverflow();
+
+                if (!TheFragment5._tab1FeaturedOn)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                }
+                
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+
                 base.OnPageFinished(_view, url);
-
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
-
-                string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
-
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
 
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
 
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
@@ -167,6 +252,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
             }

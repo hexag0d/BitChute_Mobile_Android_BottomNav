@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.Graphics.Drawables;
 using Android.OS;
@@ -7,11 +8,12 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    [Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
+    //[Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
     public class TheFragment3 : Fragment
     {
         string _title;
@@ -20,6 +22,8 @@ namespace BottomNavigationViewPager.Fragments
         protected static WebView _wv;
 
         bool tabLoaded = false;
+
+        public static string _url = "https://bitchute.com";
 
         public static TheFragment3 NewInstance(string title, string icon)
         {
@@ -56,7 +60,9 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/");
+                _wv.Settings.DisplayZoomControls = false;
+
+                _wv.LoadUrl(_url);
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -70,6 +76,46 @@ namespace BottomNavigationViewPager.Fragments
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
 
             return _view;
+        }
+
+        public void OnSettingsChanged(List<object> settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+            }
+            else
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
+            }
+
+            if (TheFragment5._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+
+            if (TheFragment5._tab3Hide)
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+            }
         }
 
         public static MainActivity _main = new MainActivity();
@@ -116,7 +162,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -124,48 +170,67 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        private class ExtWebViewClient : WebViewClient
+        //public static bool _showMoreTimeout = false;
+
+        //public void ShowMore()
+        //{
+        //    if (!_showMoreTimeout)
+        //    {
+        //        _showMoreTimeout = true;
+        //        System.Threading.Thread.Sleep(5000);
+        //        _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
+
+        //        _showMoreTimeout = false;
+
+        //    }
+        //}
+
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
+        public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
+
                 base.OnPageFinished(view, url);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
-                string _jsHideBuff = "javascript:(function() { " +
-                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
-                string _jsHideCarousel = "javascript:(function() { " +
-                                "document.getElementById('carousel').style.display='none'; " + "})()";
+                if (TheFragment5._tab3Hide)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                string _jsSelectTab = "javascript:(function() { " +
-                                "document.getElementById('listing-all').style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
 
-                string _jsSelectTab2 = "javascript:(function() { " +
-                                "document.getElementById('listing-popular').style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
 
-                string _jsSelectTab3 = "javascript:(function() { " +
-                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
-                string _jsHideLabel = "javascript:(function() { " +
-                   "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
 
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
-
-                _wv.LoadUrl(_jsHideCarousel);
-
-                _wv.LoadUrl(_jsSelectTab);
-
-                _wv.LoadUrl(_jsSelectTab2);
-
-                _wv.LoadUrl(_jsSelectTab3);
-
-                _wv.LoadUrl(_jsHideLabel);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+                
+                HideLinkOverflow();
             }
         }
     }

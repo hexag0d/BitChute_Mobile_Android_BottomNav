@@ -4,6 +4,9 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -14,6 +17,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        public static string _url = "https://www.bitchute.com/profile";
 
         bool tabLoaded = false;
 
@@ -56,7 +60,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+                _wv.LoadUrl(_url);
             }
         }
 
@@ -72,7 +76,9 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+                _wv.Settings.DisplayZoomControls = false;
+
+                _wv.LoadUrl(_url);
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -110,7 +116,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -118,24 +124,96 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void OnSettingsChanged(List<object> settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+            }
+            if (TheFragment5._fanMode)
+            {
+
+            }
+
+            if (TheFragment5._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+
+            if (TheFragment5._tab4OverridePreference == "feed" && TheFragment5._tab3Hide)
+            {
+                if (TheFragment5._tab3Hide)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
+            }
+        }
+
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                HideLinkOverflow();
+
                 base.OnPageFinished(view, url);
+                
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
-                string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                if (Globals._t4Is == "Feed")
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
 
-                _wv.LoadUrl(_jsHideBanner);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
 
-                _wv.LoadUrl(_jsHideBuff);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
+
+                if (!TheFragment5._tab1FeaturedOn)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                }
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
             }
