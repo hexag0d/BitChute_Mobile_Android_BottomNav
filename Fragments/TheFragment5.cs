@@ -764,7 +764,7 @@ namespace BottomNavigationViewPager.Fragments
                                       .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                                       .SetContentTitle(note._noteType) // Set the title
                                       .SetNumber(_count) // Display the count in the Content Info
-                                      .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
+                                      .SetSmallIcon(2130837590) // This is the icon to display
                                       .SetContentText(note._noteText);
                         
 
