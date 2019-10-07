@@ -32,8 +32,8 @@ namespace BottomNavigationViewPager.Classes
         /// </summary>
         public static string _cookieString { get; set; }
 
-        //public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
-        //     .Context.GetSystemService(Context.ActivityService);
+        public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
+             .Context.GetSystemService(Context.ActivityService);
 
 
         /// <summary>
@@ -53,40 +53,40 @@ namespace BottomNavigationViewPager.Classes
         /// requires a modified an  droid manifest for get_task ALLOWED
         /// </summary>
         /// <returns>bool</returns>
-        //public bool IsInBkGrd()
-        //{
-        //    var _ctx = Android.App.Application.Context;
+        public bool IsInBkGrd()
+        {
+            var _ctx = Android.App.Application.Context;
 
-        //    var runningAppProcesses = _am.RunningAppProcesses;
+            var runningAppProcesses = _am.RunningAppProcesses;
 
-        //    List<Android.App.ActivityManager.RunningAppProcessInfo> list
-        //        = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
+            List<Android.App.ActivityManager.RunningAppProcessInfo> list
+                = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
 
-        //    list.AddRange(_am.RunningAppProcesses);
+            list.AddRange(_am.RunningAppProcesses);
 
-        //    if (list != null)
-        //    {
-        //        foreach (var _process in list)
-        //        {
-        //            if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
-        //            {
-        //                foreach (var _pkg in _process.PkgList)
-        //                {
-        //                    if (_pkg == _ctx.PackageName)
-        //                    {
-        //                        _bkgrd = false;
-        //                    }
+            if (list != null)
+            {
+                foreach (var _process in list)
+                {
+                    if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+                    {
+                        foreach (var _pkg in _process.PkgList)
+                        {
+                            if (_pkg == _ctx.PackageName)
+                            {
+                                _bkgrd = false;
+                            }
 
-        //                    else
-        //                    {
-        //                        _bkgrd = true;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return _bkgrd;
-        //}
+                            else
+                            {
+                                _bkgrd = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return _bkgrd;
+        }
         public class AppState
         {
             public class Display
