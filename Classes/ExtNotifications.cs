@@ -24,7 +24,7 @@ namespace BottomNavigationViewPager.Classes
 
         public static List<string> _notificationLinks = new List<string>();
 
-        public static List<string> _previousNotificationList = new List<string>();
+        public static List<string> _previousNotificationTextList = new List<string>();
 
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
         private int currentListIndex;
@@ -37,6 +37,7 @@ namespace BottomNavigationViewPager.Classes
             public int _noteIndex { get; set; }
         }
 
+        public static bool _notificationChanged = false;
 
         public async void DecodeHtmlNotifications(string html)
         {
@@ -56,6 +57,11 @@ namespace BottomNavigationViewPager.Classes
                         var _tagContents = node.InnerText;
 
                         _notificationTextList.Add(_tagContents);
+                    }
+
+                    if (_notificationTextList == _previousNotificationTextList)
+                    {
+                        return;
                     }
 
                     //if (_notificationTextList == _previousNotificationList)
@@ -102,7 +108,8 @@ namespace BottomNavigationViewPager.Classes
                     Console.WriteLine(ex.Message);
                 }
                 TheFragment5._notificationHttpRequestInProgress = false;
-                //_previousNotificationList = _notificationTextList;
+
+                _previousNotificationTextList = _notificationTextList;
             });
             //_fm5.SendNotifications();
         }

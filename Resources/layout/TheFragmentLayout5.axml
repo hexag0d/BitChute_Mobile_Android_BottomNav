@@ -161,6 +161,7 @@
 			<Spinner
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+					android:background="@color/material_grey_600"
 				android:id="@+id/tab4OverrideSpinner" />
 		</LinearLayout>
 		<LinearLayout
@@ -210,6 +211,7 @@
 				<Spinner
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:background="@color/material_grey_600"
 					android:id="@+id/tab5OverrideSpinner" />
 			</LinearLayout>
 	</LinearLayout>
@@ -245,6 +247,7 @@
 						android:textColor="#3498db"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
+					android:visibility="gone"
 					android:id="@+id/_notificationsOffRb" />
 				<RadioButton
 					android:text="on"
@@ -252,6 +255,7 @@
 						android:textColor="#3498db"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
+				    android:visibility="gone"
 					android:id="@+id/_notificationsOnRb" />
 			</RadioGroup>
 			</LinearLayout>

@@ -17,6 +17,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://bitchute.com/subscriptions/";
 
@@ -52,7 +53,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new ExtWebViewClient());
+                _wv.SetWebViewClient(_wvc);
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
@@ -66,9 +67,20 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
-
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
+            
             return _view;
+        }
+
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
+        {
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                _main.CustomOnTouch();
+
+                return false;
+            }
         }
 
         public void OnSettingsChanged(List<object> settings)
@@ -88,13 +100,13 @@ namespace BottomNavigationViewPager.Fragments
 
         public static MainActivity _main = new MainActivity();
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                _main.CustomOnScroll();
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        _main.CustomOnScroll();
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -148,27 +160,52 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
 
-
         public void LoadCustomUrl(string url)
         {
             _wv.LoadUrl(url);
         }
 
+        public static async void HidePageTitle()
+        {
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+        }
+
+        private static async void HideWatchLabel()
+        {
+            await Task.Delay(2000);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
+        } 
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                HideWatchLabel();
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                
+                if (Globals.AppState.Display._horizontal)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                }
+                
+                SetReload();
                 HideLinkOverflow();
 
-                base.OnPageFinished(view, url);
-
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
-
+                if (Globals.AppState.Display._horizontal)
+                {
+                    HidePageTitle();
+                }
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
-                SetReload();
+                base.OnPageFinished(view, url);
             }
         }
     }

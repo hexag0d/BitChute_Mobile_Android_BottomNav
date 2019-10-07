@@ -83,17 +83,17 @@ namespace BottomNavigationViewPager
 
         ViewPager _viewPager;
         public static BottomNavigationView _navigationView;
-        public static List<BottomNavigationItemView> _navViewItemList 
+        public static List<BottomNavigationItemView> _navViewItemList
             = new List<BottomNavigationItemView>();
 
         IMenuItem _menu;
         public static Drawable _tab4Icon;
         public static Drawable _tab5Icon;
         Fragment[] _fragments;
-        
+
         public static MainActivity _main;
         public static Bundle _bundle;
-        
+
         public static Globals _globals = new Globals();
         private static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
@@ -105,16 +105,12 @@ namespace BottomNavigationViewPager
 
         public static Window _window;
 
-        private string notificationString;
-
-
-
         public static List<string> _NotificationURLList = new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
-            _window = this.Window; 
+            _window = this.Window;
 
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
@@ -123,12 +119,9 @@ namespace BottomNavigationViewPager
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            
 
             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-
-            _main = this;
 
             base.OnCreate(savedInstanceState);
 
@@ -148,10 +141,8 @@ namespace BottomNavigationViewPager
             _navigationView.LongClick += NavigationViewLongClickListener;
 
             _viewPager.OffscreenPageLimit = 4;
-            
-            CreateNotificationChannel();
 
-            _bundle = savedInstanceState;
+            CreateNotificationChannel();
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -170,7 +161,6 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
-        
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
@@ -180,12 +170,7 @@ namespace BottomNavigationViewPager
 
         public static int _navTimer = 0;
 
-        /// <summary>
-        /// listens for scroll events and hides the navbar after x seconds
-        /// .. timer resets every time it's called
-        /// . works with a custom scroll listener
-        /// </summary>
-        public void CustomOnScroll()
+        public void CustomOnSwipe()
         {
             if (_navTimer != 0)
                 _navTimer = 0;
@@ -196,7 +181,30 @@ namespace BottomNavigationViewPager
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
-               // _fm3.ShowMore();
+                // _fm3.ShowMore();
+            }
+        }
+
+        /// <summary>
+        /// listens for scroll events and hides the navbar after x seconds
+        /// .. timer resets every time it's called
+        /// . works with a custom scroll listener
+        /// </summary>
+        public void CustomOnTouch()
+        { 
+            if (!Globals.AppState.Display._horizontal)
+            {
+                if (_navTimer != 0)
+                    _navTimer = 0;
+
+                if (!_navTimeout)
+                {
+                    _navigationView.Visibility = ViewStates.Visible;
+                    _navHidden = false;
+                    NavBarRemove();
+                    _navTimeout = true;
+                    // _fm3.ShowMore();
+                }
             }
         }
 
@@ -207,9 +215,13 @@ namespace BottomNavigationViewPager
                 await Task.Delay(1000);
 
                 _navTimer++;
-                if (_navTimer == 8)
+
+                if (_navTimer >= 8)
                 {
-                    _navigationView.Visibility = ViewStates.Gone;
+                    if (Globals.AppState.Display._horizontal)
+                    {
+                        _navigationView.Visibility = ViewStates.Gone;
+                    }
                     _navTimeout = false;
                     _navHidden = true;
                 }
@@ -300,7 +312,7 @@ namespace BottomNavigationViewPager
                 _navViewItemList[4].SetIcon(_tab5Icon);
             }
 
-            CustomOnScroll();
+            CustomOnSwipe();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
@@ -377,10 +389,10 @@ namespace BottomNavigationViewPager
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            _navViewItemList[tab].SetTitle("Subs");
-                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Globals.URLs._subspage;
+                            _navViewItemList[tab].SetTitle("MyChannel");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            TheFragment4._url = Globals.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
@@ -418,10 +430,10 @@ namespace BottomNavigationViewPager
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            _navViewItemList[tab].SetTitle("Subs");
-                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Globals.URLs._subspage;
+                            _navViewItemList[tab].SetTitle("Settings");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                            TheFragment5._url = Globals.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
@@ -518,7 +530,6 @@ namespace BottomNavigationViewPager
             {
                 switch (_viewPager.CurrentItem)
                 {
-
                     case 0:
                         _fm1.LoadCustomUrl(url);
                         break;
@@ -549,10 +560,10 @@ namespace BottomNavigationViewPager
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            base.OnConfigurationChanged(newConfig);
-
             if (newConfig.Orientation == Orientation.Landscape)
             {
+                _navigationView.Visibility = ViewStates.Gone;
+
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
@@ -576,7 +587,7 @@ namespace BottomNavigationViewPager
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                         break;
                 }
-
+                Globals.AppState.Display._horizontal = true;
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
@@ -605,9 +616,13 @@ namespace BottomNavigationViewPager
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         break;
                 }
+                Globals.AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
             }
+
+            base.OnConfigurationChanged(newConfig);
+
         }
 
         protected override void OnDestroy()

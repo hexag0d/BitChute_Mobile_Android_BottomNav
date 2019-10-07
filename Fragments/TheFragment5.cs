@@ -190,7 +190,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
             _appSettingsLayout.Visibility = ViewStates.Gone;
 
             SetCheckedState();
@@ -204,6 +204,16 @@ namespace BottomNavigationViewPager.Fragments
             //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
 
             return _view;
+        }
+
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
+        {
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                _main.CustomOnTouch();
+
+                return false;
+            }
         }
 
         public void OnNotificationRbChecked(object sender, EventArgs e)
@@ -379,13 +389,13 @@ namespace BottomNavigationViewPager.Fragments
 
         public static MainActivity _main = new MainActivity();
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                _main.CustomOnScroll();
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        _main.CustomOnTouch();
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -637,13 +647,17 @@ namespace BottomNavigationViewPager.Fragments
 
         public static string _cookieHeader;
 
+        private static async void HideWatchLabel()
+        {
+            await Task.Delay(1000);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
+        }
+        
         private class ExtWebViewClient : WebViewClient
         {
-            TheFragment5 _fm5 = new TheFragment5();
-
             public override void OnPageFinished(WebView view, string url)
             {
-                HideLinkOverflow();
+                HideWatchLabel();
 
                 if (_settingsTabOverride)
                 {
@@ -664,6 +678,14 @@ namespace BottomNavigationViewPager.Fragments
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
                     }
                 }
+
+                if (Globals.AppState.Display._horizontal)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                }
+                
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
@@ -699,6 +721,7 @@ namespace BottomNavigationViewPager.Fragments
                         Globals._cookieString += c.ToString();
                     }
                 }
+                HideLinkOverflow();
             }
         }
 
@@ -711,9 +734,7 @@ namespace BottomNavigationViewPager.Fragments
                 await Task.Run(() =>
                 {
                     var _ctx = Android.App.Application.Context;
-
-                // Pass the current button press count value to the next activity:
-
+                    
                 // When the user clicks the notification, MainActivity will start up.
 
                 var resultIntent = new Intent(_ctx, typeof(MainActivity));

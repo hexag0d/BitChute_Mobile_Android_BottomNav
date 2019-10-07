@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "10.6.4.2.NotificationAdder.GPS";
+        public static string _appVersion = "18.6.4.4.NotificationAdder.GPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -87,7 +87,18 @@ namespace BottomNavigationViewPager.Classes
         //    }
         //    return _bkgrd;
         //}
-
+        public class AppState
+        {
+            public class Display
+            {
+                /// <summary>
+                /// returns true when the app detects that device
+                /// has been rotated horizontally
+                /// </summary>
+                public static bool _horizontal = false;
+            }
+        }
+        
         /// <summary>
         /// contains global var settings for the app
         /// </summary>
@@ -142,7 +153,7 @@ namespace BottomNavigationViewPager.Classes
             /// shows the carousel aka featured creators
             /// </summary>
             public static string _jsShowCarousel = "javascript:(function() { " +
-                "document.getElementById('carousel').style.display='inherit'; " + "})()";
+                "document.getElementById('carousel').style.display='block'; " + "})()";
             
             /// <summary>
             /// hides the listing all element
@@ -154,7 +165,7 @@ namespace BottomNavigationViewPager.Classes
             /// shows the listing all element
             /// </summary>
             public static string _jsShowTab1 = "javascript:(function() { " +
-                            "document.getElementById('listing-all').style.display='inherit'; " + "})()";
+                            "document.getElementById('listing-all').style.display='block'; " + "})()";
             
             /// <summary>
             /// hides the popular listings
@@ -166,7 +177,7 @@ namespace BottomNavigationViewPager.Classes
             /// shows the popular listings
             /// </summary>
             public static string _jsShowTab2 = "javascript:(function() { " +
-                            "document.getElementById('listing-popular').style.display='inherit'; " + "})()";
+                            "document.getElementById('listing-popular').style.display='block'; " + "})()";
             
             /// <summary>
             /// shows the subscribed feed
@@ -184,7 +195,7 @@ namespace BottomNavigationViewPager.Classes
             /// shows the tab scroll inner element
             /// </summary>
             public static string _jsShowLabel = "javascript:(function() { " +
-                            "document.getElementsByClassName('tab-scroll-inner')[0].style.display='inherit'; " + "})()";
+                            "document.getElementsByClassName('tab-scroll-inner')[0].style.display='block'; " + "})()";
 
             /// <summary>
             /// hides the trending tab
@@ -234,6 +245,20 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static string _jsShowWatchTab = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
+            
+            public static string _jsHidePageBar = "javascript:(function() { " +
+                            "document.getElementsByClassName('page-bar')[0].style.display='none'; " + "})()";
+            
+            public static string _jsShowPageBar = "javascript:(function() { " +
+                            "document.getElementsByClassName('page-bar')[0].style.display='block'; " + "})()";
+            
+            public static string  _jsHideNavTabsList = "javascript:(function() { " +
+                            "document.getElementsByClassName('nav nav-tabs nav-tabs-list')[0].style.display='none'; " + "})()";
+
+            //tab-scroll-inner            
+            public static string  _jsHideTabInner = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+
         }
 
         /// <summary>
@@ -248,6 +273,8 @@ namespace BottomNavigationViewPager.Classes
             public static string _explore =  "https://www.bitchute.com/channels/";
 
             public static string _settings = "https://www.bitchute.com/settings/";
+
+            public static string _myChannel = "https://www.bitchute.com/channel/";
         }
     }
 }
