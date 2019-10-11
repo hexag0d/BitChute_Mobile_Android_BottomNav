@@ -63,6 +63,8 @@ using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
 using Android.Content.Res;
+using StartServices.Servicesclass;
+using System;
 
 namespace BottomNavigationViewPager
 {
@@ -106,12 +108,26 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         public static List<string> _NotificationURLList = new List<string>();
+        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
             _window = this.Window;
 
+            var mServiceIntent = new Intent(this, typeof(CustomStickyService));
+            StartService(mServiceIntent);
+            try
+            {
+                StartService(mServiceIntent);
+                PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
+                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                wl.Acquire();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -433,7 +449,7 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment5._url = Globals.URLs._myChannel;
+                            TheFragment5._url = Globals.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
@@ -479,15 +495,60 @@ namespace BottomNavigationViewPager
             _fm5.ShowAppSettingsMenu();
         }
 
+        public void SetWebViewVisibility()
+        {
+            switch (_viewPager.CurrentItem)
+            {
+                case 0:
+                    _fm1.SetWebViewVis();
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
+        }
+        
+        public Android.App.ActivityManager CustomGetActivityManager()
+        {
+            
+            Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
+                    .Context.GetSystemService(Context.ActivityService);
+
+            return _am;
+        }
+
+        public static int _serviceTimer = 0;
+
         public override void OnWindowFocusChanged(bool hasFocus)
         {
+            
+            CustomStickyService _service = new CustomStickyService();
+
             Globals._bkgrd = true;
+            
+            if (!hasFocus)
+            {
+
+            }
+            else
+            {
+            }
 
             while (_globals.IsInBkGrd())
             {
-                Task.Delay(1200);
-
+                Task.Delay(3600);
                 _globals.IsInBkGrd();
+                _service.ServiceViewOverride();
+
+                if (!CustomStickyService._serviceIsLooping)
+                {
+                    _service.StickyLoop();
+                }
             }
         }
 

@@ -247,7 +247,7 @@
 						android:textColor="#3498db"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:visibility="gone"
+					android:visibility="visible"
 					android:id="@+id/_notificationsOffRb" />
 				<RadioButton
 					android:text="on"
@@ -255,7 +255,7 @@
 						android:textColor="#3498db"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-				    android:visibility="gone"
+				    android:visibility="visible"
 					android:id="@+id/_notificationsOnRb" />
 			</RadioGroup>
 			</LinearLayout>

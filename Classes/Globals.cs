@@ -35,7 +35,7 @@ namespace BottomNavigationViewPager.Classes
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
 
-
+        public static MainActivity _main;
         /// <summary>
         /// global bool setting: 
         /// returns/should be set to false if this app is in the foreground
@@ -62,7 +62,32 @@ namespace BottomNavigationViewPager.Classes
             List<Android.App.ActivityManager.RunningAppProcessInfo> list
                 = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
 
-            list.AddRange(_am.RunningAppProcesses);
+            if (_am != null && list != null)
+            {
+                try
+                {
+                    list.AddRange(_am.RunningAppProcesses);
+                }
+                catch
+                {
+
+                }
+            }
+            else
+            {
+                try
+                {
+                    _main = MainActivity._main;
+                    _am = _main.CustomGetActivityManager();
+                    list.AddRange(_am.RunningAppProcesses);
+                }
+                catch
+                {
+
+                }
+                _bkgrd = true;
+                return _bkgrd;
+            }
 
             if (list != null)
             {
