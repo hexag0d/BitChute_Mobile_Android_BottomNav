@@ -573,18 +573,18 @@ namespace BottomNavigationViewPager
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        public async void NotificationTimer()
-        {
-            while (Globals.AppSettings._notifying)
-            {
-                await Task.Delay(240000);
-            }
-        }
+        
+
         protected override void OnNewIntent(Intent intent)
         {
+            string url = "";
+
             base.OnNewIntent(intent);
 
-            string url = intent.Extras.GetString("URL");
+            if (intent != null)
+            {
+                url = intent.Extras.GetString("URL");
+            }
 
             var index = MainActivity._NotificationURLList.Count;
             try

@@ -14,21 +14,17 @@ using HtmlAgilityPack;
 
 namespace BottomNavigationViewPager.Classes
 {
-    class ExtNotifications
+    public class ExtNotifications
     {
         public static TheFragment5 _fm5 = MainActivity._fm5;
 
         public static List<string> _notificationTextList = new List<string>();
-
         public static List<string> _notificationTypes = new List<string>();
-
         public static List<string> _notificationLinks = new List<string>();
-
         public static List<string> _previousNotificationTextList = new List<string>();
-
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
         private int currentListIndex;
-
+        
         public class CustomNotification
         {
             public string _noteType { get; set; }
@@ -39,19 +35,25 @@ namespace BottomNavigationViewPager.Classes
 
         public static bool _notificationChanged = false;
 
-        public async void DecodeHtmlNotifications(string html)
+        public void DecodeHtmlNotifications(string html)
         {
-            await System.Threading.Tasks.Task.Run(() =>
+            try
             {
-                try
+                if (_fm5 == null)
                 {
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                    doc.LoadHtml(html);
+                    _fm5 = MainActivity._fm5;
+                }
 
-                    _notificationTextList.Clear();
-                    _notificationTypes.Clear();
-                    _notificationLinks.Clear();
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                var check = doc;
 
+                _notificationTextList.Clear();
+                _notificationTypes.Clear();
+                _notificationLinks.Clear();
+
+                if (doc != null)
+                {
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                     {
                         var _tagContents = node.InnerText;
@@ -84,10 +86,7 @@ namespace BottomNavigationViewPager.Classes
                         _notificationLinks.Add(_tagContents);
                     }
                     currentListIndex = 0;
-
                     _customNoteList.Clear();
-
-                    
 
                     foreach (var nt in _notificationTextList)
                     {
@@ -100,17 +99,17 @@ namespace BottomNavigationViewPager.Classes
                         _customNoteList.Add(note);
                         currentListIndex++;
                     }
-                    _fm5.SendNotifications();
-                    
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                TheFragment5._notificationHttpRequestInProgress = false;
+                _fm5.SendNotifications(_customNoteList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            TheFragment5._notificationHttpRequestInProgress = false;
 
-                _previousNotificationTextList = _notificationTextList;
-            });
+            _previousNotificationTextList = _notificationTextList;
+
             //_fm5.SendNotifications();
         }
     }

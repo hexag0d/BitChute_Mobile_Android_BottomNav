@@ -20,6 +20,9 @@ using static BottomNavigationViewPager.Classes.ExtNotifications;
 
 namespace BottomNavigationViewPager.Fragments
 {
+    [Android.Runtime.Register("onShowFileChooser", 
+        "Landroid/webkit/WebView;Landroid/webkit/ValueCallback;Landroid/webkit/WebChromeClient$FileChooserParams;)Z",
+        "GetOnShowFileChooser_Landroid_webkit_WebView_Landroid_webkit_ValueCallback_Landroid_webkit_WebChromeClient_FileChooserParams_Handler")]
     public class TheFragment5 : Android.Support.V4.App.Fragment
     {
         string _title;
@@ -130,6 +133,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
+                //_wv.SetWebChromeClient(new ExtWebChromeClient());
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -160,7 +164,6 @@ namespace BottomNavigationViewPager.Fragments
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
                 _notificationonrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
                 _notificationoffrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
-
                 
                 _versionTextView = _view.FindViewById<TextView>(Resource.Id.versionTextView);
                 //_notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
@@ -653,136 +656,61 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
         
-        private class ExtWebViewClient : WebViewClient
-        {
-            public override void OnPageFinished(WebView view, string url)
-            {
-                HideWatchLabel();
-
-                if (_settingsTabOverride)
-                {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
-
-                    if (_tab5OverridePreference == "Feed")
-                    {
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
-                    }
-                }
-
-                if (Globals.AppState.Display._horizontal)
-                {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                }
-                
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
-                SetReload();
-
-                TheFragment5._cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
-                Globals._cookieString = TheFragment5._cookieHeader.ToString();
-                var cookiePairs = TheFragment5._cookieHeader.Split('&');
-
-                Globals._cookieString = "";
-
-                foreach (var cookiePair in cookiePairs)
-                {
-                    var cookiePieces = cookiePair.Split('=');
-                    if (cookiePieces[0].Contains(":"))
-                        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
-                    cookies.Add(new Cookie
-                    {
-                        Name = cookiePieces[0],
-                        Value = cookiePieces[1]
-                    });
-                }
-
-                foreach (Cookie c in cookies)
-                {
-                    c.Domain = "https://bitchute.com/notifications/";
-
-                    if (Globals._cookieString == "")
-                    {
-                        Globals._cookieString = c.ToString();
-                    }
-                    else
-                    {
-                        Globals._cookieString += c.ToString();
-                    }
-                }
-                HideLinkOverflow();
-            }
-        }
-
         private static ExtNotifications extNotifications = new ExtNotifications();
         
-        public async void SendNotifications()
+        public void SendNotifications(List<CustomNotification> notificationList)
         {
             try
             {
-                await Task.Run(() =>
-                {
-                    var _ctx = Android.App.Application.Context;
-                    
+                var _ctx = Android.App.Application.Context;
+
                 // When the user clicks the notification, MainActivity will start up.
 
-                var resultIntent = new Intent(_ctx, typeof(MainActivity));
+                int _noteCount = 0;
 
-                    int _noteCount = 0;
+                MainActivity._NotificationURLList.Clear();
 
-                    MainActivity._NotificationURLList.Clear();
+                foreach (var note in notificationList)
+                {
+                    var resultIntent = new Intent(_ctx, typeof(MainActivity));
+                    var valuesForActivity = new Bundle();
+                    valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                    MainActivity._NotificationURLList.Add(note._noteLink);
+                    valuesForActivity.PutInt("Count", _noteCount);
+                    valuesForActivity.PutString("URL", note._noteLink);
+                    resultIntent.PutExtras(valuesForActivity);
 
-                    foreach (var note in ExtNotifications._customNoteList)
-                    {
-                        var valuesForActivity = new Bundle();
-                        
-                        valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                    //var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.UpdateCurrent);
+                    var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
 
-                        MainActivity._NotificationURLList.Add(note._noteLink);
-                        valuesForActivity.PutInt("Count", _noteCount);
-                        valuesForActivity.PutString("URL", note._noteLink);
-                        resultIntent.PutExtras(valuesForActivity);
+                    resultIntent.AddFlags(ActivityFlags.SingleTop);
 
-                        var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.UpdateCurrent);
+                    // Build the notification:
+                    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                                  .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                  .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                  .SetContentTitle(note._noteType) // Set the title
+                                  .SetNumber(_count) // Display the count in the Content Info
+                                  .SetSmallIcon(2130837590) // This is the icon to display
+                                  .SetContentText(note._noteText);
 
-                        resultIntent.AddFlags(ActivityFlags.SingleTop);
 
-                        // Build the notification:
-                        var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                                      .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                      .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                      .SetContentTitle(note._noteType) // Set the title
-                                      .SetNumber(_count) // Display the count in the Content Info
-                                      .SetSmallIcon(2130837590) // This is the icon to display
-                                      .SetContentText(note._noteText);
-                        
-
-                        MainActivity.NOTIFICATION_ID++;
+                    MainActivity.NOTIFICATION_ID++;
 
                     // Finally, publish the notification:
                     var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                        notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                    notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
 
-                        _count++;
-                        _noteCount++;
-                        if (_count >= 300)
-                        {
-                            _count = 0;
-                            return;
-                        }
+                    _count++;
+                    _noteCount++;
+                    //I think if the notification count gets too high android kills the app?  I set this very high just in case
+                    if (_count >= 300)
+                    {
+                        _count = 0;
+                        return;
                     }
-                });
+                }
+
             }
             catch
             {
@@ -838,5 +766,87 @@ namespace BottomNavigationViewPager.Fragments
                 });
             }
         }
+
+        private class ExtWebViewClient : WebViewClient
+        {
+            public override void OnPageFinished(WebView view, string url)
+            {
+                HideWatchLabel();
+
+                if (_settingsTabOverride)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+
+                    if (_tab5OverridePreference == "Feed")
+                    {
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+                    }
+                }
+
+                if (Globals.AppState.Display._horizontal)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                }
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
+                SetReload();
+
+                TheFragment5._cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
+                Globals._cookieString = TheFragment5._cookieHeader.ToString();
+                var cookiePairs = TheFragment5._cookieHeader.Split('&');
+
+                Globals._cookieString = "";
+
+                foreach (var cookiePair in cookiePairs)
+                {
+                    var cookiePieces = cookiePair.Split('=');
+                    if (cookiePieces[0].Contains(":"))
+                        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
+                    cookies.Add(new Cookie
+                    {
+                        Name = cookiePieces[0],
+                        Value = cookiePieces[1]
+                    });
+                }
+
+                foreach (Cookie c in cookies)
+                {
+                    c.Domain = "https://bitchute.com/notifications/";
+
+                    if (Globals._cookieString == "")
+                    {
+                        Globals._cookieString = c.ToString();
+                    }
+                    else
+                    {
+                        Globals._cookieString += c.ToString();
+                    }
+                }
+                HideLinkOverflow();
+            }
+        }
+
+        //private class ExtWebChromeClient : WebChromeClient
+        //{
+        //    public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback, FileChooserParams fileChooserParams)
+        //    {
+                
+
+        //        return base.OnShowFileChooser(webView, filePathCallback, fileChooserParams);
+        //    }
+        //}
     }
 }
