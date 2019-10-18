@@ -19,10 +19,15 @@ namespace BottomNavigationViewPager.Classes
         public static TheFragment5 _fm5 = MainActivity._fm5;
 
         public static List<string> _notificationTextList = new List<string>();
-        public static List<string> _notificationTypes = new List<string>();
-        public static List<string> _notificationLinks = new List<string>();
         public static List<string> _previousNotificationTextList = new List<string>();
+        public static List<string> _notificationTypes = new List<string>();
+        public static List<string> _previousNotificationTypeList = new List<string>();
+        public static List<string> _notificationLinks = new List<string>();
+        public static List<string> _previousNotificationLinkList = new List<string>();
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
+
+        public static List<string> _notificationURLSent = new List<string>();
+
         private int currentListIndex;
         
         public class CustomNotification
@@ -30,6 +35,7 @@ namespace BottomNavigationViewPager.Classes
             public string _noteType { get; set; }
             public string _noteText { get; set; }
             public string _noteLink { get; set; }
+            public bool _noteSent { get; set; }
             public int _noteIndex { get; set; }
         }
 
@@ -58,32 +64,35 @@ namespace BottomNavigationViewPager.Classes
                     {
                         var _tagContents = node.InnerText;
 
-                        _notificationTextList.Add(_tagContents);
+                        if (!_previousNotificationTextList.Contains(_tagContents))
+                        {
+                            _notificationTextList.Add(_tagContents);
+                        }
                     }
 
-                    if (_notificationTextList == _previousNotificationTextList)
-                    {
-                        return;
-                    }
-
-                    //if (_notificationTextList == _previousNotificationList)
+                    //if (_notificationTextList == _previousNotificationTextList)
                     //{
-                    //    
-                    //    return _customNoteList;
+                    //    return;
                     //}
-
+                    
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
                     {
                         var _tagContents = node.InnerText;
 
-                        _notificationTypes.Add(_tagContents);
+                        if (!_previousNotificationTypeList.Contains(_tagContents))
+                        {
+                            _notificationTypes.Add(_tagContents);
+                        }
                     }
 
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
                     {
                         var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
 
-                        _notificationLinks.Add(_tagContents);
+                        if (!_previousNotificationLinkList.Contains(_tagContents))
+                        {
+                            _notificationLinks.Add(_tagContents);
+                        }
                     }
                     currentListIndex = 0;
                     _customNoteList.Clear();
@@ -109,7 +118,6 @@ namespace BottomNavigationViewPager.Classes
             TheFragment5._notificationHttpRequestInProgress = false;
 
             _previousNotificationTextList = _notificationTextList;
-
             //_fm5.SendNotifications();
         }
     }

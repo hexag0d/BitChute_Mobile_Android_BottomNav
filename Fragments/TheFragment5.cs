@@ -83,7 +83,6 @@ namespace BottomNavigationViewPager.Fragments
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
         private static CookieCollection cookies = new CookieCollection();
-        public static PendingIntent _intent;
 
         public static TheFragment5 _fm5;
 
@@ -223,8 +222,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             if (_notificationonrb.Checked)
             {
-                //start the notification timer as setting _notifying false breaks the loop
                 Globals.AppSettings._notifying = true;
+                //start the notification timer as setting _notifying false breaks the loop
                 NotificationTimer();
                 _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
             }
@@ -260,11 +259,11 @@ namespace BottomNavigationViewPager.Fragments
             _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
             _tab5OverridePreference = _prefs.GetString("settingstaboverridestring", "Settings");
 
-            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
-            TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
-            TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
-            TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
-            TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
+            _fanMode = _prefs.GetBoolean("fanmode", false);
+            _tab3Hide = _prefs.GetBoolean("tab3hide", true);
+            _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
+            _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
             Globals.AppSettings._notifying = _prefs.GetBoolean("notifcationson", false);
 
             _isNowCheckingBoxes = true;
@@ -276,46 +275,37 @@ namespace BottomNavigationViewPager.Fragments
             else
             {
                 _zconrb.Checked = false;
-                _zcoffrb.Checked = true;
             }
             if (_fanMode)
             {
-                _fmoffrb.Checked = false;
                 _fmoffrb.Checked = true;
             }
             else
             {
-                _fmoffrb.Checked = true;
                 _fmonrb.Checked = false;
             }
             if (_tab1FeaturedOn)
             {
-                _t1foffrb.Checked = false;
                 _t1fonrb.Checked = true;
             }
             else
             {
-                _t1foffrb.Checked = false;
                 _t1fonrb.Checked = true;
             }
             if (_tab3Hide)
             {
-                _t3hoffrb.Checked = false;
                 _t3honrb.Checked = true;
             }
             else
             {
-                _t3hoffrb.Checked = true;
                 _t3honrb.Checked = false;
             }
             if (_settingsTabOverride)
             {
-                _stoverrideoffrb.Checked = false;
                 _stoverrideonrb.Checked = true;
             }
             else
             {
-                _stoverrideoffrb.Checked = true;
                 _stoverrideonrb.Checked = false;
             }
             if (Globals.AppSettings._notifying)
@@ -519,8 +509,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public static Android.Content.ISharedPreferences _prefs;
         public static Android.Content.ISharedPreferencesEditor _prefEditor;
-
-
+        
         /// <summary>
         /// called when the .Checked state of radio buttons in the app settings fragment is changed
         /// sets the settings when this event occurs and calls a method to notify all fragments via mainactivity.
@@ -622,7 +611,7 @@ namespace BottomNavigationViewPager.Fragments
         public static string _rawNoteText = "";
 
         public static string _cookieString { get; set; }
-        internal static ExtNotifications ExtNotifications { get => extNotifications; set => extNotifications = value; }
+        internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
@@ -648,15 +637,14 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static string _cookieHeader;
-
         private static async void HideWatchLabel()
         {
             await Task.Delay(1000);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
-        
-        private static ExtNotifications extNotifications = new ExtNotifications();
+      
+        public static string _cookieHeader;
+        private static ExtNotifications _extNotifications = new ExtNotifications();
         
         public void SendNotifications(List<CustomNotification> notificationList)
         {
@@ -685,8 +673,10 @@ namespace BottomNavigationViewPager.Fragments
 
                     resultIntent.AddFlags(ActivityFlags.SingleTop);
 
-                    // Build the notification:
-                    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                    if (!ExtNotifications._notificationURLSent.Contains(note._noteLink))
+                    {
+                        // Build the notification:
+                        var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                                   .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                                   .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                                   .SetContentTitle(note._noteType) // Set the title
@@ -694,15 +684,18 @@ namespace BottomNavigationViewPager.Fragments
                                   .SetSmallIcon(2130837590) // This is the icon to display
                                   .SetContentText(note._noteText);
 
+                        ExtNotifications._notificationURLSent.Add(note._noteLink);
 
-                    MainActivity.NOTIFICATION_ID++;
+                        MainActivity.NOTIFICATION_ID++;
 
-                    // Finally, publish the notification:
-                    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                    notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-
-                    _count++;
-                    _noteCount++;
+                        // Finally, publish the notification:
+                        var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                        notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                        
+                        _count++;
+                        _noteCount++;
+                    }
+                    
                     //I think if the notification count gets too high android kills the app?  I set this very high just in case
                     if (_count >= 300)
                     {

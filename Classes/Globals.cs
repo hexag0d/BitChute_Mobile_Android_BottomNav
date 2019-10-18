@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "18.6.4.6.NotificationAdder.nonGPS";
+        public static string _appVersion = "18.6.4.7.NotificationFixer.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -139,7 +139,7 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static int _linkOverflowFixDelay = 6000;
 
-            public static int _notificationDelay = 120000;
+            public static int _notificationDelay = 60000;
 
             public static bool _notifying = false;
         }

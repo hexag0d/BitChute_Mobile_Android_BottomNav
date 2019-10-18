@@ -608,7 +608,7 @@ namespace BottomNavigationViewPager
                         break;
                 }
             }
-            catch
+            catch 
             {
 
             }
