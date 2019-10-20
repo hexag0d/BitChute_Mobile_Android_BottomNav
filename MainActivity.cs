@@ -497,22 +497,13 @@ namespace BottomNavigationViewPager
 
         public void SetWebViewVisibility()
         {
-            switch (_viewPager.CurrentItem)
-            {
-                case 0:
-                    _fm1.SetWebViewVis();
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
+            _fm1.SetWebViewVis();
+            _fm2.SetWebViewVis();
+            _fm3.SetWebViewVis();
+            _fm4.SetWebViewVis();
+            _fm5.SetWebViewVis();
         }
-        
+
         public Android.App.ActivityManager CustomGetActivityManager()
         {
             

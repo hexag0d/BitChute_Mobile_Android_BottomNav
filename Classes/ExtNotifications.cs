@@ -16,7 +16,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class ExtNotifications
     {
-        public static TheFragment5 _fm5 = MainActivity._fm5;
+        public static TheFragment5 _fm5 = TheFragment5._fm5;
 
         public static List<string> _notificationTextList = new List<string>();
         public static List<string> _previousNotificationTextList = new List<string>();
@@ -47,7 +47,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 if (_fm5 == null)
                 {
-                    _fm5 = MainActivity._fm5;
+                    _fm5 = TheFragment5._fm5;
                 }
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -70,11 +70,11 @@ namespace BottomNavigationViewPager.Classes
                         }
                     }
 
-                    //if (_notificationTextList == _previousNotificationTextList)
-                    //{
-                    //    return;
-                    //}
-                    
+                    if (_notificationTextList == _previousNotificationTextList)
+                    {
+                        return;
+                    }
+
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
                     {
                         var _tagContents = node.InnerText;
@@ -109,6 +109,7 @@ namespace BottomNavigationViewPager.Classes
                         currentListIndex++;
                     }
                 }
+                _fm5 = TheFragment5._fm5;
                 _fm5.SendNotifications(_customNoteList);
             }
             catch (Exception ex)

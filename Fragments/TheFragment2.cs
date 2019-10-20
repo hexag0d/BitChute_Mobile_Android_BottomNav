@@ -129,6 +129,11 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void SetWebViewVis()
+        {
+            _wv.Visibility = ViewStates.Visible;
+        }
+
         public static bool _wvRling = false;
 
         /// <summary>

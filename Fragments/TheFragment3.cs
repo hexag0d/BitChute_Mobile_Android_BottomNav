@@ -218,7 +218,12 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(2000);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
-        
+
+        public void SetWebViewVis()
+        {
+            _wv.Visibility = ViewStates.Visible;
+        }
+
         public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)

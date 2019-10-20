@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "18.6.4.7.NotificationFixer.nonGPS";
+        public static string _appVersion = "18.6.4.8.NotificationFixer.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -139,9 +139,14 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static int _linkOverflowFixDelay = 6000;
 
-            public static int _notificationDelay = 60000;
+            /// <summary>
+            /// this int controls the delay in ms of notifications being 
+            /// parsed and then sent out.  It should be set to a high int
+            /// so as to not overload bitchute.com with httprequests
+            /// </summary>
+            public static int _notificationDelay = 666666;
 
-            public static bool _notifying = false;
+            public static bool _notifying = true;
         }
 
         /// <summary>

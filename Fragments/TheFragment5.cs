@@ -119,6 +119,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            _fm5 = this;
+
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
@@ -197,8 +199,7 @@ namespace BottomNavigationViewPager.Fragments
 
             SetCheckedState();
 
-            NotificationTimer();
-
+            StartNotificationsWithDelay();
             //_notificationWebView.SetWebViewClient(new NotificationWebClient());
             //_notificationWebView.Settings.DomStorageEnabled = true;
             //_notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
@@ -206,6 +207,16 @@ namespace BottomNavigationViewPager.Fragments
             //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
 
             return _view;
+        }
+
+        /// <summary>
+        /// starts the notifications after a 30 second timer
+        /// Fragment5 seems to be null when the app loads
+        /// </summary>
+        public async void StartNotificationsWithDelay()
+        {
+            await Task.Delay(30000);
+            NotificationTimer();
         }
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
@@ -218,6 +229,11 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void SetWebViewVis()
+        {
+            _wv.Visibility = ViewStates.Visible;
+        }
+
         public void OnNotificationRbChecked(object sender, EventArgs e)
         {
             if (_notificationonrb.Checked)
@@ -226,11 +242,13 @@ namespace BottomNavigationViewPager.Fragments
                 //start the notification timer as setting _notifying false breaks the loop
                 NotificationTimer();
                 _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                _appIsNotifying = true;
             }
             else
             {
                 Globals.AppSettings._notifying = false;
                 _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                _appIsNotifying = false;
             }
         }
         
@@ -625,9 +643,11 @@ namespace BottomNavigationViewPager.Fragments
 
         public static bool _appNotifications = true;
 
+        public static bool _appIsNotifying = true;
+
         public async void NotificationTimer()
         {
-            while (Globals.AppSettings._notifying)
+            while (_appIsNotifying)
             {
                 if (!_notificationHttpRequestInProgress)
                 {
@@ -645,7 +665,9 @@ namespace BottomNavigationViewPager.Fragments
       
         public static string _cookieHeader;
         private static ExtNotifications _extNotifications = new ExtNotifications();
-        
+
+        private static int _noteCount = 0;
+
         public void SendNotifications(List<CustomNotification> notificationList)
         {
             try
@@ -653,9 +675,7 @@ namespace BottomNavigationViewPager.Fragments
                 var _ctx = Android.App.Application.Context;
 
                 // When the user clicks the notification, MainActivity will start up.
-
-                int _noteCount = 0;
-
+                
                 MainActivity._NotificationURLList.Clear();
 
                 foreach (var note in notificationList)
@@ -680,7 +700,7 @@ namespace BottomNavigationViewPager.Fragments
                                   .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                                   .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                                   .SetContentTitle(note._noteType) // Set the title
-                                  .SetNumber(_count) // Display the count in the Content Info
+                                  .SetNumber(1) // Display the count in the Content Info
                                   .SetSmallIcon(2130837590) // This is the icon to display
                                   .SetContentText(note._noteText);
 
@@ -691,17 +711,10 @@ namespace BottomNavigationViewPager.Fragments
                         // Finally, publish the notification:
                         var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
                         notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-                        
+
                         _count++;
                         _noteCount++;
-                    }
-                    
-                    //I think if the notification count gets too high android kills the app?  I set this very high just in case
-                    if (_count >= 300)
-                    {
-                        _count = 0;
-                        return;
-                    }
+                    }                  
                 }
 
             }
