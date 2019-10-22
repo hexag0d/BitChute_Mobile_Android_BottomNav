@@ -10,6 +10,7 @@ using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using Java.Interop;
 using Java.Net;
+using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +21,9 @@ using static BottomNavigationViewPager.Classes.ExtNotifications;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    [Android.Runtime.Register("onShowFileChooser", 
-        "Landroid/webkit/WebView;Landroid/webkit/ValueCallback;Landroid/webkit/WebChromeClient$FileChooserParams;)Z",
-        "GetOnShowFileChooser_Landroid_webkit_WebView_Landroid_webkit_ValueCallback_Landroid_webkit_WebChromeClient_FileChooserParams_Handler")]
+        //[Android.Runtime.Register("onShowFileChooser", 
+        //"Landroid/webkit/WebView;Landroid/webkit/ValueCallback;Landroid/webkit/WebChromeClient$FileChooserParams;)Z",
+        //"GetOnShowFileChooser_Landroid_webkit_WebView_Landroid_webkit_ValueCallback_Landroid_webkit_WebChromeClient_FileChooserParams_Handler")]
     public class TheFragment5 : Android.Support.V4.App.Fragment
     {
         string _title;
@@ -70,6 +71,9 @@ namespace BottomNavigationViewPager.Fragments
         public static RadioButton _notificationonrb;
         public static RadioButton _notificationoffrb;
 
+        private static RadioButton _hidehorizontalnavbaronrb;
+        private static RadioButton _hidehorizontalnavbaroffrb;
+
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
         //public ExtNotifications _extNotifications = new ExtNotifications();
@@ -81,6 +85,8 @@ namespace BottomNavigationViewPager.Fragments
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
+
+        public static CustomStickyService _stickyService = new CustomStickyService();
 
         private static CookieCollection cookies = new CookieCollection();
 
@@ -135,11 +141,8 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
                 //_wv.SetWebChromeClient(new ExtWebChromeClient());
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
                 _wv.LoadUrl(_url);
@@ -165,7 +168,9 @@ namespace BottomNavigationViewPager.Fragments
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
                 _notificationonrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
                 _notificationoffrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
-                
+                _hidehorizontalnavbaronrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
+                _hidehorizontalnavbaroffrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
+
                 _versionTextView = _view.FindViewById<TextView>(Resource.Id.versionTextView);
                 //_notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
 
@@ -175,6 +180,7 @@ namespace BottomNavigationViewPager.Fragments
                 _t1foffrb.CheckedChange += ExtSettingChanged;
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _notificationonrb.CheckedChange += OnNotificationRbChecked;
+                _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavBarRbChecked;
 
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
@@ -197,6 +203,8 @@ namespace BottomNavigationViewPager.Fragments
             _wv.SetOnTouchListener(new ExtTouchListener());
             _appSettingsLayout.Visibility = ViewStates.Gone;
 
+            
+
             SetCheckedState();
 
             StartNotificationsWithDelay();
@@ -209,14 +217,41 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        private void GetNavBarPrefs()
+        {
+            Globals.AppSettings._hideHorizontalNavBar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+        }
+
+        private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
+        {
+            if (_hidehorizontalnavbaronrb.Checked)
+            {
+                Globals.AppSettings._hideHorizontalNavBar = true;
+                _prefEditor.PutBoolean("hidehorizontalnavbar", true);
+            }
+            else
+            {
+                Globals.AppSettings._hideHorizontalNavBar = false;
+                _prefEditor.PutBoolean("hidehorizontalnavbar", false);
+            }
+        }
+
         /// <summary>
         /// starts the notifications after a 30 second timer
         /// Fragment5 seems to be null when the app loads
         /// </summary>
         public async void StartNotificationsWithDelay()
         {
+
             await Task.Delay(30000);
-            NotificationTimer();
+            try
+            {   
+                _stickyService.BackgroundNotificationLoop();
+            }
+            catch
+            {
+
+            }
         }
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
@@ -699,10 +734,10 @@ namespace BottomNavigationViewPager.Fragments
                         var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                                   .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                                   .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                  .SetContentTitle(note._noteType) // Set the title
+                                  .SetContentTitle(note._noteText) // Set the title
                                   .SetNumber(1) // Display the count in the Content Info
                                   .SetSmallIcon(2130837590) // This is the icon to display
-                                  .SetContentText(note._noteText);
+                                  .SetContentText(note._noteType);
 
                         ExtNotifications._notificationURLSent.Add(note._noteLink);
 
@@ -768,7 +803,6 @@ namespace BottomNavigationViewPager.Fragments
                     
                     ExtNotifications _notifications = new ExtNotifications();
                     _notifications.DecodeHtmlNotifications(_htmlCode);
-                    
                 });
             }
         }
@@ -788,13 +822,9 @@ namespace BottomNavigationViewPager.Fragments
                     if (_tab5OverridePreference == "Feed")
                     {
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-
                         _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
                     }
                 }

@@ -2381,6 +2381,12 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f0800c6
 			public const int _fanModeOnBtn = 2131230918;
 			
+			// aapt resource value: 0x7f0800dc
+			public const int _hideNavBarHorizontalOff = 2131230940;
+			
+			// aapt resource value: 0x7f0800db
+			public const int _hideNavBarHorizontalOn = 2131230939;
+			
 			// aapt resource value: 0x7f0800d1
 			public const int _notificationTestButton = 2131230929;
 			
@@ -2678,6 +2684,12 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f0800d2
 			public const int linearLayout10 = 2131230930;
 			
+			// aapt resource value: 0x7f0800d8
+			public const int linearLayout11 = 2131230936;
+			
+			// aapt resource value: 0x7f0800d9
+			public const int linearLayout12 = 2131230937;
+			
 			// aapt resource value: 0x7f0800b7
 			public const int linearLayout2 = 2131230903;
 			
@@ -2711,29 +2723,29 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f080060
 			public const int list_item = 2131230816;
 			
-			// aapt resource value: 0x7f0800da
-			public const int masked = 2131230938;
+			// aapt resource value: 0x7f0800df
+			public const int masked = 2131230943;
 			
 			// aapt resource value: 0x7f0800a2
 			public const int media_actions = 2131230882;
 			
-			// aapt resource value: 0x7f0800db
-			public const int menu_home = 2131230939;
+			// aapt resource value: 0x7f0800e0
+			public const int menu_home = 2131230944;
 			
-			// aapt resource value: 0x7f0800de
-			public const int menu_mychannel = 2131230942;
+			// aapt resource value: 0x7f0800e3
+			public const int menu_mychannel = 2131230947;
 			
-			// aapt resource value: 0x7f0800df
-			public const int menu_settings = 2131230943;
+			// aapt resource value: 0x7f0800e4
+			public const int menu_settings = 2131230948;
+			
+			// aapt resource value: 0x7f0800e2
+			public const int menu_stream = 2131230946;
+			
+			// aapt resource value: 0x7f0800e1
+			public const int menu_subs = 2131230945;
 			
 			// aapt resource value: 0x7f0800dd
-			public const int menu_stream = 2131230941;
-			
-			// aapt resource value: 0x7f0800dc
-			public const int menu_subs = 2131230940;
-			
-			// aapt resource value: 0x7f0800d8
-			public const int message = 2131230936;
+			public const int message = 2131230941;
 			
 			// aapt resource value: 0x7f080030
 			public const int middle = 2131230768;
@@ -2785,6 +2797,9 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080074
 			public const int radio = 2131230836;
+			
+			// aapt resource value: 0x7f0800da
+			public const int radioGroup1 = 2131230938;
 			
 			// aapt resource value: 0x7f080049
 			public const int right = 2131230793;
@@ -2999,8 +3014,8 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f08009b
 			public const int viewpager = 2131230875;
 			
-			// aapt resource value: 0x7f0800d9
-			public const int visible = 2131230937;
+			// aapt resource value: 0x7f0800de
+			public const int visible = 2131230942;
 			
 			// aapt resource value: 0x7f0800af
 			public const int webView1 = 2131230895;

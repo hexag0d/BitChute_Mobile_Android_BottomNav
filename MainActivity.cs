@@ -97,7 +97,7 @@ namespace BottomNavigationViewPager
         public static Bundle _bundle;
 
         public static Globals _globals = new Globals();
-        private static ExtNotifications notifications = new ExtNotifications();
+        public static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -108,7 +108,10 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         public static List<string> _NotificationURLList = new List<string>();
-        
+
+        public static ISharedPreferences _prefs;
+        //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
+        public static CustomStickyService _service = new CustomStickyService();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -121,14 +124,15 @@ namespace BottomNavigationViewPager
             {
                 StartService(mServiceIntent);
                 PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My WakeLock");
                 wl.Acquire();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+
+            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
@@ -159,6 +163,8 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
+
+            //_customAudioMan.GetAudioManager();
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -208,11 +214,29 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnTouch()
         { 
-            if (!Globals.AppState.Display._horizontal)
-            {
                 if (_navTimer != 0)
                     _navTimer = 0;
 
+            if (Globals.AppState.Display._horizontal)
+            {
+                if (!Globals.AppSettings._hideHorizontalNavBar)
+                {
+                    if (!_navTimeout)
+                    {
+                        _navigationView.Visibility = ViewStates.Visible;
+                        _navHidden = false;
+                        NavBarRemove();
+                        _navTimeout = true;
+                        // _fm3.ShowMore();
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            else
+            {
                 if (!_navTimeout)
                 {
                     _navigationView.Visibility = ViewStates.Visible;
@@ -517,8 +541,7 @@ namespace BottomNavigationViewPager
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            
-            CustomStickyService _service = new CustomStickyService();
+            int _focusDelay = 0;
 
             Globals._bkgrd = true;
             
@@ -535,6 +558,14 @@ namespace BottomNavigationViewPager
                 Task.Delay(3600);
                 _globals.IsInBkGrd();
                 _service.ServiceViewOverride();
+                
+                if (_focusDelay >= 6)
+                {
+                    _service.BackgroundNotificationLoop();
+                    _focusDelay = 0;
+                }
+
+                _focusDelay++;
 
                 if (!CustomStickyService._serviceIsLooping)
                 {
@@ -569,7 +600,6 @@ namespace BottomNavigationViewPager
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
-
             base.OnNewIntent(intent);
 
             if (intent != null)

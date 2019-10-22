@@ -70,12 +70,12 @@ namespace BottomNavigationViewPager.Classes
                         }
                     }
 
-                    if (_notificationTextList == _previousNotificationTextList)
-                    {
-                        return;
-                    }
+                    //if (_notificationTextList == _previousNotificationTextList)
+                    //{
+                    //    return;
+                    //}
 
-                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
                     {
                         var _tagContents = node.InnerText;
 
@@ -84,6 +84,16 @@ namespace BottomNavigationViewPager.Classes
                             _notificationTypes.Add(_tagContents);
                         }
                     }
+
+                    //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
+                    //{
+                    //    var _tagContents = node.InnerText;
+
+                    //    if (!_previousNotificationTypeList.Contains(_tagContents))
+                    //    {
+                    //        _notificationTypes.Add(_tagContents);
+                    //    }
+                    //}
 
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
                     {
@@ -94,10 +104,11 @@ namespace BottomNavigationViewPager.Classes
                             _notificationLinks.Add(_tagContents);
                         }
                     }
+
                     currentListIndex = 0;
                     _customNoteList.Clear();
 
-                    foreach (var nt in _notificationTextList)
+                    foreach (var nt in _notificationTypes)
                     {
                         var note = new CustomNotification();
 

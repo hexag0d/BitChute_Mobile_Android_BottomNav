@@ -278,6 +278,48 @@
 				android:textColor="#3498db"
 				android:id="@+id/versionTextView"/>
 		</GridLayout>
+		<LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout11">
+		</LinearLayout>
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout12" >
+			<RadioGroup
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/radioGroup1">
+				<RadioButton
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+									android:textColor="#3498db"
+					
+									android:buttonTint="#3498db"
+
+					android:text="Hide Navbar when Horizontal On"
+					android:id="@+id/_hideNavBarHorizontalOn" />
+				<RadioButton
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+									android:textColor="#3498db"
+					
+									android:buttonTint="#3498db"
+
+					android:text="Off"
+					android:id="@+id/_hideNavBarHorizontalOff" />
+			</RadioGroup>
+		</LinearLayout>
 
 </LinearLayout>
 
