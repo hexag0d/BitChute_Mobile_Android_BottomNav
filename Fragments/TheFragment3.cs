@@ -251,6 +251,7 @@ namespace BottomNavigationViewPager.Fragments
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                    HidePageTitle();
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
