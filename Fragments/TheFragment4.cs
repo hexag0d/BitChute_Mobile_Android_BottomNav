@@ -195,7 +195,10 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(1000);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+            if (Globals.AppState.Display._horizontal)
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+            }
             _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
         }
 
@@ -204,7 +207,12 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(1000);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
-        
+
+        public void SetWebViewVis()
+        {
+            _wv.Visibility = ViewStates.Visible;
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)

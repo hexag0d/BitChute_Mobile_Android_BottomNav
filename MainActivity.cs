@@ -65,6 +65,7 @@ using Java.Net;
 using Android.Content.Res;
 using StartServices.Servicesclass;
 using System;
+using static BottomNavigationViewPager.Fragments.TheFragment5;
 
 namespace BottomNavigationViewPager
 {
@@ -97,7 +98,7 @@ namespace BottomNavigationViewPager
         public static Bundle _bundle;
 
         public static Globals _globals = new Globals();
-        private static ExtNotifications notifications = new ExtNotifications();
+        public static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -108,7 +109,10 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         public static List<string> _NotificationURLList = new List<string>();
-        
+
+        public static ISharedPreferences _prefs;
+        //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
+        public static CustomStickyService _service = new CustomStickyService();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -121,14 +125,15 @@ namespace BottomNavigationViewPager
             {
                 StartService(mServiceIntent);
                 PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My WakeLock");
                 wl.Acquire();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+
+            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
@@ -159,6 +164,8 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
+
+            //_customAudioMan.GetAudioManager();
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -208,11 +215,29 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnTouch()
         { 
-            if (!Globals.AppState.Display._horizontal)
-            {
                 if (_navTimer != 0)
                     _navTimer = 0;
 
+            if (Globals.AppState.Display._horizontal)
+            {
+                if (!Globals.AppSettings._hideHorizontalNavBar)
+                {
+                    if (!_navTimeout)
+                    {
+                        _navigationView.Visibility = ViewStates.Visible;
+                        _navHidden = false;
+                        NavBarRemove();
+                        _navTimeout = true;
+                        // _fm3.ShowMore();
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            else
+            {
                 if (!_navTimeout)
                 {
                     _navigationView.Visibility = ViewStates.Visible;
@@ -497,59 +522,80 @@ namespace BottomNavigationViewPager
 
         public void SetWebViewVisibility()
         {
-            switch (_viewPager.CurrentItem)
-            {
-                case 0:
-                    _fm1.SetWebViewVis();
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
+            _fm1.SetWebViewVis();
+            _fm2.SetWebViewVis();
+            _fm3.SetWebViewVis();
+            _fm4.SetWebViewVis();
+            _fm5.SetWebViewVis();
         }
-        
+
         public Android.App.ActivityManager CustomGetActivityManager()
         {
             
             Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
                     .Context.GetSystemService(Context.ActivityService);
-
+            
             return _am;
         }
 
         public static int _serviceTimer = 0;
+        public static int _backgroundTimeoutInt = 0;
+        public static int _backgroundLoopMsDelayInt = 3600;
+        public static ExtWebInterface _extWebInterface = new ExtWebInterface();
+        public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        public override void OnWindowFocusChanged(bool hasFocus)
+        public async override void OnWindowFocusChanged(bool hasFocus)
         {
-            
-            CustomStickyService _service = new CustomStickyService();
-
             Globals._bkgrd = true;
             
-            if (!hasFocus)
+            if (hasFocus)
             {
-
+                CustomStickyService._backgroundNotify = false;
+                CustomStickyService._foregroundNotify = true;
+                StartNotificationsWithDelay(30000);
+                //_service.ForegroundNotificationLoop();
             }
             else
             {
+                CustomStickyService._foregroundNotify = false;
+                CustomStickyService._backgroundNotify = true;
+                //_service.SendBackgroundNotification();
             }
+
 
             while (_globals.IsInBkGrd())
             {
-                Task.Delay(3600);
-                _globals.IsInBkGrd();
-                _service.ServiceViewOverride();
+
+                Task.Delay(_backgroundLoopMsDelayInt);
+                _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
+
+                if (!CustomStickyService._backgroundTimeout && Globals.AppSettings._notifying)
+                {
+                    CustomStickyService._foregroundNotify = false;
+                    CustomStickyService._backgroundNotify = true;
+                    await _fm5.SendNotifications(
+                        _extNotifications.DecodeHtmlNotifications(
+                            _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
+                    CustomStickyService._backgroundTimeout = true;
+                }
+
+                if (_backgroundTimeoutInt >= 900000)
+                {
+                    CustomStickyService._backgroundTimeout = false;
+                    _backgroundTimeoutInt = 0;
+                }
 
                 if (!CustomStickyService._serviceIsLooping)
                 {
                     _service.StickyLoop();
                 }
             }
+        }
+
+        async void StartNotificationsWithDelay(int delay)
+        {
+            await Task.Delay(delay);
+            _service.ForegroundNotificationLoop();
         }
 
         void CreateNotificationChannel()
@@ -573,18 +619,24 @@ namespace BottomNavigationViewPager
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        public async void NotificationTimer()
-        {
-            while (Globals.AppSettings._notifying)
-            {
-                await Task.Delay(240000);
-            }
-        }
+        
+
         protected override void OnNewIntent(Intent intent)
         {
+            string url = "";
             base.OnNewIntent(intent);
 
-            string url = intent.Extras.GetString("URL");
+            if (intent != null)
+            {
+                try
+                {
+                    url = intent.Extras.GetString("URL");
+                }
+                catch
+                {
+
+                }
+            }
 
             var index = MainActivity._NotificationURLList.Count;
             try
@@ -608,7 +660,7 @@ namespace BottomNavigationViewPager
                         break;
                 }
             }
-            catch
+            catch 
             {
 
             }
