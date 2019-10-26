@@ -3,3 +3,5 @@
 ################################################################################
 
 /bin/Release/com.xamarin.example.BitChuteNotifications.apk.mSYM
+/.vs
+/obj
