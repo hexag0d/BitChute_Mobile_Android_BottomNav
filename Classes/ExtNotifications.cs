@@ -62,10 +62,10 @@ namespace BottomNavigationViewPager.Classes
 
                     }
 
-                    if (_customNoteList == _previousNoteList)
-                    {
-                        return null;
-                    }
+                    //if (_customNoteList == _previousNoteList)
+                    //{
+                    //    return null;
+                    //}
 
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
                     {
@@ -109,8 +109,10 @@ namespace BottomNavigationViewPager.Classes
                     }
                     _fm5 = TheFragment5._fm5;
                 
-                    //_fm5.SendNotifications(_customNoteList);
-                    
+                    if (_customNoteList == _previousNoteList)
+                    {
+                        return null;
+                    }
                 }
                 catch (Exception ex)
                 {
