@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "18.6.5.NotificationStickyLoop.nonGPS";
+        public static string _appVersion = "18.6.4.4.NotificationAdder.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -112,10 +112,6 @@ namespace BottomNavigationViewPager.Classes
             }
             return _bkgrd;
         }
-
-        /// <summary>
-        /// should be set to and return variables based upon the current appstate
-        /// </summary>
         public class AppState
         {
             public class Display
@@ -143,20 +139,9 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static int _linkOverflowFixDelay = 6000;
 
-            /// <summary>
-            /// this int controls the delay in ms of notifications being 
-            /// parsed and then sent out.  It should be set to a high int
-            /// so as to not overload bitchute.com with httprequests
-            /// </summary>
-            public static int _notificationDelay = 666666;
+            public static int _notificationDelay = 120000;
 
-            /// <summary>
-            /// this bool should be set to/returns whether or not the navbar
-            /// will be hidden by default when the device is held horizontally
-            /// </summary>
-            public static bool _hideHorizontalNavBar = true;
-
-            public static bool _notifying = true;
+            public static bool _notifying = false;
         }
 
         /// <summary>

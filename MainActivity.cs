@@ -97,7 +97,7 @@ namespace BottomNavigationViewPager
         public static Bundle _bundle;
 
         public static Globals _globals = new Globals();
-        public static ExtNotifications notifications = new ExtNotifications();
+        private static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -108,10 +108,7 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         public static List<string> _NotificationURLList = new List<string>();
-
-        public static ISharedPreferences _prefs;
-        //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
-        public static CustomStickyService _service = new CustomStickyService();
+        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -124,15 +121,14 @@ namespace BottomNavigationViewPager
             {
                 StartService(mServiceIntent);
                 PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My WakeLock");
+                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                 wl.Acquire();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
-            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+            var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
@@ -163,8 +159,6 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
-
-            //_customAudioMan.GetAudioManager();
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -214,29 +208,11 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnTouch()
         { 
+            if (!Globals.AppState.Display._horizontal)
+            {
                 if (_navTimer != 0)
                     _navTimer = 0;
 
-            if (Globals.AppState.Display._horizontal)
-            {
-                if (!Globals.AppSettings._hideHorizontalNavBar)
-                {
-                    if (!_navTimeout)
-                    {
-                        _navigationView.Visibility = ViewStates.Visible;
-                        _navHidden = false;
-                        NavBarRemove();
-                        _navTimeout = true;
-                        // _fm3.ShowMore();
-                    }
-                }
-                else
-                {
-
-                }
-            }
-            else
-            {
                 if (!_navTimeout)
                 {
                     _navigationView.Visibility = ViewStates.Visible;
@@ -521,13 +497,22 @@ namespace BottomNavigationViewPager
 
         public void SetWebViewVisibility()
         {
-            _fm1.SetWebViewVis();
-            _fm2.SetWebViewVis();
-            _fm3.SetWebViewVis();
-            _fm4.SetWebViewVis();
-            _fm5.SetWebViewVis();
+            switch (_viewPager.CurrentItem)
+            {
+                case 0:
+                    _fm1.SetWebViewVis();
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
         }
-
+        
         public Android.App.ActivityManager CustomGetActivityManager()
         {
             
@@ -541,7 +526,8 @@ namespace BottomNavigationViewPager
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            int _focusDelay = 0;
+            
+            CustomStickyService _service = new CustomStickyService();
 
             Globals._bkgrd = true;
             
@@ -558,14 +544,6 @@ namespace BottomNavigationViewPager
                 Task.Delay(3600);
                 _globals.IsInBkGrd();
                 _service.ServiceViewOverride();
-                
-                if (_focusDelay >= 6)
-                {
-                    _service.BackgroundNotificationLoop();
-                    _focusDelay = 0;
-                }
-
-                _focusDelay++;
 
                 if (!CustomStickyService._serviceIsLooping)
                 {
@@ -595,17 +573,18 @@ namespace BottomNavigationViewPager
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        
-
+        public async void NotificationTimer()
+        {
+            while (Globals.AppSettings._notifying)
+            {
+                await Task.Delay(240000);
+            }
+        }
         protected override void OnNewIntent(Intent intent)
         {
-            string url = "";
             base.OnNewIntent(intent);
 
-            if (intent != null)
-            {
-                url = intent.Extras.GetString("URL");
-            }
+            string url = intent.Extras.GetString("URL");
 
             var index = MainActivity._NotificationURLList.Count;
             try
@@ -629,7 +608,7 @@ namespace BottomNavigationViewPager
                         break;
                 }
             }
-            catch 
+            catch
             {
 
             }

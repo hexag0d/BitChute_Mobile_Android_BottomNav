@@ -15,7 +15,6 @@ using Android.Telephony;
 using BottomNavigationViewPager.Classes;
 using BottomNavigationViewPager;
 using System.Threading.Tasks;
-using BottomNavigationViewPager.Fragments;
 
 namespace StartServices.Servicesclass
 {
@@ -24,10 +23,6 @@ namespace StartServices.Servicesclass
     {
         public static bool _serviceIsLooping = false;
         public static MainActivity _main;
-        public static ExtNotifications _extNotes = MainActivity.notifications;
-
-        public static BottomNavigationViewPager.Fragments.TheFragment5.ExtWebInterface _extWebInterface =
-            BottomNavigationViewPager.Fragments.TheFragment5._extWebInterface;
 
         public int counter = 0;
         public CustomStickyService(Context applicationContext)
@@ -81,23 +76,6 @@ namespace StartServices.Servicesclass
             }
         }
 
-        //I have a bunch of versions of the app on my phone
-        //I'm using this as a temporary override for the notification setting 
-        //so that I can use one version of the app while I debug another
-        public static bool _tempNotify = true;
-
-        public async void BackgroundNotificationLoop()
-        {
-            while (_tempNotify)
-            {
-                if (!TheFragment5._notificationHttpRequestInProgress)
-                {
-                    _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                }
-                await Task.Delay(420000);
-            }
-        }
-        
         public void ServiceViewOverride()
         {
             _main.SetVisible(true);

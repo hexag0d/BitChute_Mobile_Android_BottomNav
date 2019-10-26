@@ -14,101 +14,82 @@ using HtmlAgilityPack;
 
 namespace BottomNavigationViewPager.Classes
 {
-    public class ExtNotifications
+    class ExtNotifications
     {
-        public static TheFragment5 _fm5 = TheFragment5._fm5;
+        public static TheFragment5 _fm5 = MainActivity._fm5;
 
         public static List<string> _notificationTextList = new List<string>();
-        public static List<string> _previousNotificationTextList = new List<string>();
+
         public static List<string> _notificationTypes = new List<string>();
-        public static List<string> _previousNotificationTypeList = new List<string>();
+
         public static List<string> _notificationLinks = new List<string>();
-        public static List<string> _previousNotificationLinkList = new List<string>();
+
+        public static List<string> _previousNotificationTextList = new List<string>();
+
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
-
-        public static List<string> _notificationURLSent = new List<string>();
-
         private int currentListIndex;
-        
+
         public class CustomNotification
         {
             public string _noteType { get; set; }
             public string _noteText { get; set; }
             public string _noteLink { get; set; }
-            public bool _noteSent { get; set; }
             public int _noteIndex { get; set; }
         }
 
         public static bool _notificationChanged = false;
 
-        public void DecodeHtmlNotifications(string html)
+        public async void DecodeHtmlNotifications(string html)
         {
-            try
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                if (_fm5 == null)
+                try
                 {
-                    _fm5 = TheFragment5._fm5;
-                }
+                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                    doc.LoadHtml(html);
 
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                var check = doc;
+                    _notificationTextList.Clear();
+                    _notificationTypes.Clear();
+                    _notificationLinks.Clear();
 
-                _notificationTextList.Clear();
-                _notificationTypes.Clear();
-                _notificationLinks.Clear();
-
-                if (doc != null)
-                {
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                     {
                         var _tagContents = node.InnerText;
 
-                        if (!_previousNotificationTextList.Contains(_tagContents))
-                        {
-                            _notificationTextList.Add(_tagContents);
-                        }
+                        _notificationTextList.Add(_tagContents);
                     }
 
-                    //if (_notificationTextList == _previousNotificationTextList)
+                    if (_notificationTextList == _previousNotificationTextList)
+                    {
+                        return;
+                    }
+
+                    //if (_notificationTextList == _previousNotificationList)
                     //{
-                    //    return;
+                    //    
+                    //    return _customNoteList;
                     //}
 
-                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
                     {
                         var _tagContents = node.InnerText;
 
-                        if (!_previousNotificationTypeList.Contains(_tagContents))
-                        {
-                            _notificationTypes.Add(_tagContents);
-                        }
+                        _notificationTypes.Add(_tagContents);
                     }
-
-                    //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
-                    //{
-                    //    var _tagContents = node.InnerText;
-
-                    //    if (!_previousNotificationTypeList.Contains(_tagContents))
-                    //    {
-                    //        _notificationTypes.Add(_tagContents);
-                    //    }
-                    //}
 
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
                     {
                         var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
 
-                        if (!_previousNotificationLinkList.Contains(_tagContents))
-                        {
-                            _notificationLinks.Add(_tagContents);
-                        }
+                        _notificationLinks.Add(_tagContents);
                     }
-
                     currentListIndex = 0;
+
                     _customNoteList.Clear();
 
-                    foreach (var nt in _notificationTypes)
+                    
+
+                    foreach (var nt in _notificationTextList)
                     {
                         var note = new CustomNotification();
 
@@ -119,17 +100,17 @@ namespace BottomNavigationViewPager.Classes
                         _customNoteList.Add(note);
                         currentListIndex++;
                     }
+                    _fm5.SendNotifications();
+                    
                 }
-                _fm5 = TheFragment5._fm5;
-                _fm5.SendNotifications(_customNoteList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            TheFragment5._notificationHttpRequestInProgress = false;
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                TheFragment5._notificationHttpRequestInProgress = false;
 
-            _previousNotificationTextList = _notificationTextList;
+                _previousNotificationTextList = _notificationTextList;
+            });
             //_fm5.SendNotifications();
         }
     }
