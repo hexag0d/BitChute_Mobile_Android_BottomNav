@@ -93,7 +93,10 @@ namespace BottomNavigationViewPager.Classes
             {
                 foreach (var _process in list)
                 {
+                    //this needs to be replaced with a newer enum
+#pragma warning disable CS0618 // Type or member is obsolete
                     if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+#pragma warning restore CS0618 // Type or member is obsolete
                     {
                         foreach (var _pkg in _process.PkgList)
                         {

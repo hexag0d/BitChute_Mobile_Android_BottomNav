@@ -463,7 +463,7 @@ namespace BottomNavigationViewPager.Fragments
                     }
                     catch (Exception ex)
                     {
-
+                        Console.WriteLine(ex.Message);
                     }
                 }
                 else
@@ -681,14 +681,11 @@ namespace BottomNavigationViewPager.Fragments
       
         public static string _cookieHeader;
         private static ExtNotifications _extNotifications = new ExtNotifications();
-
-        private static int _noteCount = 0;
-
+        
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
 
         public Task<bool> SendNotifications(List<CustomNotification> notificationList)
         {
-            TheFragment5._notificationHttpRequestInProgress = true;
                 try
                 {
                    var _ctx = Android.App.Application.Context;
@@ -712,6 +709,7 @@ namespace BottomNavigationViewPager.Fragments
 
                        if (!_sentNotificationList.Contains(note))
                        {
+                            
                             // Build the notification:
                             var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                                      .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
@@ -760,7 +758,7 @@ namespace BottomNavigationViewPager.Fragments
 
                     HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
                     
-                    _notificationHttpRequestInProgress = true;
+
 
                     try
                     {
@@ -771,7 +769,9 @@ namespace BottomNavigationViewPager.Fragments
                         using (HttpClient _client = new HttpClient(handler))
                         {
                             _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
+                            _notificationHttpRequestInProgress = true;
                             var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                            _notificationHttpRequestInProgress = false;
                             var resultContent = getRequest.Content.ReadAsStringAsync().Result;
 
                             _htmlCode = resultContent;
@@ -781,7 +781,6 @@ namespace BottomNavigationViewPager.Fragments
                     {
                         Console.WriteLine(ex.Message);
                     }
-                _notificationHttpRequestInProgress = false;
 
                 return _htmlCode;
             }

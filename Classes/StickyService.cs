@@ -89,31 +89,35 @@ namespace StartServices.Servicesclass
         public static ExtNotifications _extNotifications = new ExtNotifications();
         public static TheFragment5 _fm5;
 
+
         /// <summary>
-        /// starts the notifications after a 30 second timer
-        /// Fragment5 seems to be null when the app loads
+        /// starts/restarts the notifications, 
+        /// takes a ms int as the delay for starting,
+        /// if this is called with no delay TheFragment5 sometimes
+        /// is null or has issues when it's methods are called
+        /// immediately after the app initially loads.
         /// </summary>
-        public async void ForegroundNotificationLoop()
+        public async void StartNotificationLoop(int delay)
         {
+            await Task.Delay(delay);
+
             if (_fm5 == null)
             {
                 _fm5 = MainActivity._fm5;
             }
 
-            while (_foregroundNotify && Globals.AppSettings._notifying)
+            while (Globals.AppSettings._notifying)
             {
                 if (!TheFragment5._notificationHttpRequestInProgress)
                 {
-
-                        await _fm5.SendNotifications(
-                            _extNotifications.DecodeHtmlNotifications(
-                                _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
-                        
+                    await _fm5.SendNotifications(
+                        _extNotifications.DecodeHtmlNotifications(
+                            _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
                 }
 
                 if (_notificationsHaveBeenSent)
                 {
-                    await Task.Delay(900000);
+                    await Task.Delay(600000);
                 }
                 else
                 {
@@ -121,9 +125,7 @@ namespace StartServices.Servicesclass
                 }
             }
         }
-
-        public static bool _notesSent = false;
-
+        
         //public async void SendBackgroundNotification()
         //{
         //    _notesSent = false;
@@ -155,17 +157,6 @@ namespace StartServices.Servicesclass
             _main.SetVisible(true);
             _main.SetWebViewVisibility();
         }
-
-        public void StartTimer()
-        {
-            //set a new Timer
-            timer = new Timer();
-            //initialize the TimerTask's job
-            InitializeTimerTask();
-
-            if (timer != null)
-            timer.Schedule(one, 20000, 20000); //
-        }
         public void InitializeTimerTask()
         {
             one = new SampleOne();
@@ -178,27 +169,12 @@ namespace StartServices.Servicesclass
             {
                 //Intent ll24 = new Intent(this, typeof(SensorRestarterBroadcastReceiver));
                 //SendBroadcast(ll24);
-                StopTimerTask();
                 base.OnDestroy();
 
             }
             catch (Exception ex)
             {
-            }
-        }
-        public void StopTimerTask()
-        {
-            try
-            {
-                //stop the timer, if it's not already null
-                if (timer != null)
-                {
-                    timer.Cancel();
-                }
-            }
-            catch (Exception ex)
-            {
-
+                Console.WriteLine(ex.Message);
             }
         }
         public class SampleOne : TimerTask

@@ -25,13 +25,24 @@ namespace BottomNavigationViewPager.Classes
         public static List<CustomNotification> _previousNoteList = new List<CustomNotification>();
         private int currentListIndex;
         
-        public class CustomNotification
+        public class CustomNotification : IEquatable<CustomNotification>
         {
             public string _noteType { get; set; }
             public string _noteText { get; set; }
             public string _noteLink { get; set; }
-            public bool _noteSent { get; set; }
-            public int _noteIndex { get; set; }
+
+            public bool Equals(CustomNotification other)
+            {
+                if (this._noteType == other._noteType && this._noteText == other._noteText
+                    && this._noteLink == other._noteLink)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
         
         public List<CustomNotification> DecodeHtmlNotifications(string html)
@@ -102,17 +113,11 @@ namespace BottomNavigationViewPager.Classes
                         note._noteType = nt.ToString();
                         note._noteLink = _notificationLinks[currentListIndex].ToString();
                         note._noteText = _notificationTextList[currentListIndex].ToString();
-                        note._noteIndex = currentListIndex;
                         _customNoteList.Add(note);
                         currentListIndex++;
                     }
                     }
                     _fm5 = TheFragment5._fm5;
-                
-                    if (_customNoteList == _previousNoteList)
-                    {
-                        return null;
-                    }
                 }
                 catch (Exception ex)
                 {

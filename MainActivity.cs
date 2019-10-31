@@ -544,60 +544,38 @@ namespace BottomNavigationViewPager
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        public async override void OnWindowFocusChanged(bool hasFocus)
+        public override void OnWindowFocusChanged(bool hasFocus)
         {
             Globals._bkgrd = true;
-            
-            if (hasFocus)
-            {
-                CustomStickyService._backgroundNotify = false;
-                CustomStickyService._foregroundNotify = true;
-                StartNotificationsWithDelay(30000);
-                //_service.ForegroundNotificationLoop();
-            }
-            else
-            {
-                CustomStickyService._foregroundNotify = false;
-                CustomStickyService._backgroundNotify = true;
-                //_service.SendBackgroundNotification();
-            }
 
+            //while (_globals.IsInBkGrd())
+            //{
 
-            while (_globals.IsInBkGrd())
-            {
+            //    Task.Delay(_backgroundLoopMsDelayInt);
+            //    _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
 
-                Task.Delay(_backgroundLoopMsDelayInt);
-                _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
+            //    if (!CustomStickyService._backgroundTimeout && Globals.AppSettings._notifying && !_notificationHttpRequestInProgress)
+            //    {
+            //        CustomStickyService._backgroundTimeout = true;
+            //        await _fm5.SendNotifications(
+            //            _extNotifications.DecodeHtmlNotifications(
+            //                _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
+            //    }
 
-                if (!CustomStickyService._backgroundTimeout && Globals.AppSettings._notifying)
-                {
-                    CustomStickyService._foregroundNotify = false;
-                    CustomStickyService._backgroundNotify = true;
-                    await _fm5.SendNotifications(
-                        _extNotifications.DecodeHtmlNotifications(
-                            _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
-                    CustomStickyService._backgroundTimeout = true;
-                }
+            //    if (_backgroundTimeoutInt >= 300000)
+            //    {
+            //        CustomStickyService._backgroundTimeout = false;
+            //        _backgroundTimeoutInt = 0;
+            //    }
 
-                if (_backgroundTimeoutInt >= 900000)
-                {
-                    CustomStickyService._backgroundTimeout = false;
-                    _backgroundTimeoutInt = 0;
-                }
-
-                if (!CustomStickyService._serviceIsLooping)
-                {
-                    _service.StickyLoop();
-                }
-            }
+            //    if (!CustomStickyService._serviceIsLooping)
+            //    {
+            //        _service.StickyLoop();
+            //    }
+            //}
+            _service.StartNotificationLoop(30000);
         }
-
-        async void StartNotificationsWithDelay(int delay)
-        {
-            await Task.Delay(delay);
-            _service.ForegroundNotificationLoop();
-        }
-
+        
         void CreateNotificationChannel()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
