@@ -544,36 +544,33 @@ namespace BottomNavigationViewPager
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        public override void OnWindowFocusChanged(bool hasFocus)
+        public async override void OnWindowFocusChanged(bool hasFocus)
         {
             Globals._bkgrd = true;
+            bool _notificationStackExecutionInProgress = false;
 
-            //while (_globals.IsInBkGrd())
-            //{
+            while (_globals.IsInBkGrd())
+            {
 
-            //    Task.Delay(_backgroundLoopMsDelayInt);
-            //    _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
-
-            //    if (!CustomStickyService._backgroundTimeout && Globals.AppSettings._notifying && !_notificationHttpRequestInProgress)
-            //    {
-            //        CustomStickyService._backgroundTimeout = true;
-            //        await _fm5.SendNotifications(
-            //            _extNotifications.DecodeHtmlNotifications(
-            //                _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
-            //    }
-
-            //    if (_backgroundTimeoutInt >= 300000)
-            //    {
-            //        CustomStickyService._backgroundTimeout = false;
-            //        _backgroundTimeoutInt = 0;
-            //    }
-
-            //    if (!CustomStickyService._serviceIsLooping)
-            //    {
-            //        _service.StickyLoop();
-            //    }
-            //}
-            _service.StartNotificationLoop(30000);
+                Task.Delay(_backgroundLoopMsDelayInt);
+                _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
+                
+                    if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                    {
+                        _notificationStackExecutionInProgress = true;
+                        await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                        await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                        _fm5.SendNotifications(_fm5.GetNotifications());
+                        _notificationStackExecutionInProgress = false;
+                    }
+                    
+                if (_backgroundTimeoutInt >= 780000)
+                {
+                    CustomStickyService._backgroundTimeout = false;
+                    _backgroundTimeoutInt = 0;
+                }
+            }
+            _service.StartNotificationLoop(60000);
         }
         
         void CreateNotificationChannel()

@@ -122,7 +122,7 @@ namespace StartServices.Servicesclass
 
                     if (_notificationsHaveBeenSent)
                     {
-                        await Task.Delay(120000);
+                        await Task.Delay(Globals.AppSettings._notificationDelay);
                     }
                     else
                     {

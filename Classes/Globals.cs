@@ -154,7 +154,7 @@ namespace BottomNavigationViewPager.Classes
             /// parsed and then sent out.  It should be set to a high int
             /// so as to not overload bitchute.com with httprequests
             /// </summary>
-            public static int _notificationDelay = 666666;
+            public static int _notificationDelay = 780000;
 
             /// <summary>
             /// this bool should be set to/returns whether or not the navbar

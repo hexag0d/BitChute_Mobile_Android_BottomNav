@@ -641,6 +641,11 @@ namespace BottomNavigationViewPager.Fragments
         public static string _cookieString { get; set; }
         internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
+        public List<CustomNotification> GetNotifications()
+        {
+            return ExtNotifications._customNoteList;
+        }
+
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
         /// </summary>
