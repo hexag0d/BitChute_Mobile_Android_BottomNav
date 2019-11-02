@@ -129,8 +129,6 @@ namespace BottomNavigationViewPager.Classes
 
                 _previousNoteList = _customNoteList;
                 //_fm5.SendNotifications();
-
-                
             });
 
             return _customNoteList;
