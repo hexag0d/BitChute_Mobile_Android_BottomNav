@@ -273,7 +273,6 @@ namespace BottomNavigationViewPager.Fragments
             {
                 Globals.AppSettings._notifying = true;
                 //start the notification timer as setting _notifying false breaks the loop
-                NotificationTimer();
                 _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
                 _appIsNotifying = true;
             }
@@ -426,13 +425,13 @@ namespace BottomNavigationViewPager.Fragments
 
         public static MainActivity _main = new MainActivity();
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnTouch();
-        //    }
-        //}
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _main.CustomOnTouch();
+            }
+        }
 
         public void WebViewGoBack()
         {
@@ -485,15 +484,10 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 await Task.Delay(1666);
-
                 mysteryInt = 0;
-
                 _wvRling = false;
             }
         }
@@ -653,25 +647,11 @@ namespace BottomNavigationViewPager.Fragments
         public static async void HideLinkOverflow()
         {
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
 
         public static bool _appNotifications = true;
-
         public static bool _appIsNotifying = true;
-
-        public async void NotificationTimer()
-        {
-            while (_appIsNotifying)
-            {
-                if (!_notificationHttpRequestInProgress)
-                {
-                    _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                }
-                await Task.Delay(Globals.AppSettings._notificationDelay);
-            }
-        }
 
         private static async void HideWatchLabel()
         {
@@ -684,15 +664,17 @@ namespace BottomNavigationViewPager.Fragments
         
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
 
-        public Task<bool> SendNotifications(List<CustomNotification> notificationList)
+        public async void SendNotifications(List<CustomNotification> notificationList)
         {
-                try
-                {
+            await Task.Run(() =>
+            {
+               try
+               {
                    var _ctx = Android.App.Application.Context;
 
                     // When the user clicks the notification, MainActivity will start up.
 
-                   MainActivity._NotificationURLList.Clear();
+                    MainActivity._NotificationURLList.Clear();
 
                    foreach (var note in notificationList)
                    {
@@ -702,41 +684,36 @@ namespace BottomNavigationViewPager.Fragments
                        MainActivity._NotificationURLList.Add(note._noteLink);
                        valuesForActivity.PutString("URL", note._noteLink);
                        resultIntent.PutExtras(valuesForActivity);
-                        
                        var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-
                        resultIntent.AddFlags(ActivityFlags.SingleTop);
 
                        if (!_sentNotificationList.Contains(note))
                        {
-                            
                             // Build the notification:
                             var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                                     .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                     .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                     .SetContentTitle(note._noteText) // Set the title
-                                     .SetNumber(1) // Display the count in the Content Info
-                                     .SetSmallIcon(2130837590) // This is the icon to display
-                                     .SetContentText(note._noteType);
-                        
+                                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                    .SetContentTitle(note._noteText) // Set the title
+                                    .SetNumber(1) // Display the count in the Content Info
+                                    .SetSmallIcon(2130837590) // This is the icon to display
+                                    .SetContentText(note._noteType);
+
                            MainActivity.NOTIFICATION_ID++;
 
                             // Finally, publish the notification:
                             var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                            notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-
-                            _sentNotificationList.Add(note);
+                           notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                           _sentNotificationList.Add(note);
                        }
 
-                   CustomStickyService._notificationsHaveBeenSent = true;
+                       CustomStickyService._notificationsHaveBeenSent = true;
                    }
-                }
-                catch
-                {
+               }
+               catch
+               {
 
-                }
-
-            return Task.FromResult<bool>(false);
+               }
+            });
         }
         public void LoadCustomUrl(string url)
         {
@@ -751,37 +728,37 @@ namespace BottomNavigationViewPager.Fragments
 
             public static string _htmlCode = "";
 
-            public string GetNotificationText(string url)
+            public async Task<string> GetNotificationText(string url)
             {
-                _htmlCode = "";
-                
+                await Task.Run(() =>
+                {
+                   _htmlCode = "";
+                   HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
 
-                    HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
-                    
+                   try
+                   {
+                       Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
+                       var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
 
-                    try
-                    {
-                        Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
-                        
-                        var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-
-                        using (HttpClient _client = new HttpClient(handler))
-                        {
-                            _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
-                            _notificationHttpRequestInProgress = true;
+                       using (HttpClient _client = new HttpClient(handler))
+                       {
+                           _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
+                           _notificationHttpRequestInProgress = true;
                             var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                            _notificationHttpRequestInProgress = false;
-                            var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                           _notificationHttpRequestInProgress = false;
+                           var resultContent = getRequest.Content.ReadAsStringAsync().Result;
 
-                            _htmlCode = resultContent;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                           _htmlCode = resultContent;
+                       }
+                   }
+                   catch (Exception ex)
+                   {
+                       Console.WriteLine(ex.Message);
+                   }
 
+                   
+                });
                 return _htmlCode;
             }
         }
@@ -795,7 +772,6 @@ namespace BottomNavigationViewPager.Fragments
                 if (_settingsTabOverride)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
                     if (_tab5OverridePreference == "Feed")

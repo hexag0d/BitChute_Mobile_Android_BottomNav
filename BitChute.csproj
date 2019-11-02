@@ -170,7 +170,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="license.txt" />
     <AndroidResource Include="Resources\drawable\bitchute_notification2.png" />
     <AndroidResource Include="Resources\drawable\bitchute_notification.png" />
   </ItemGroup>

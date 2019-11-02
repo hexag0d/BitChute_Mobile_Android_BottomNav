@@ -99,31 +99,36 @@ namespace StartServices.Servicesclass
         /// </summary>
         public async void StartNotificationLoop(int delay)
         {
+            bool _notificationStackExecutionInProgress = false;
+
             await Task.Delay(delay);
-
-            if (_fm5 == null)
-            {
-                _fm5 = MainActivity._fm5;
-            }
-
-            while (Globals.AppSettings._notifying)
-            {
-                if (!TheFragment5._notificationHttpRequestInProgress)
+            
+                if (_fm5 == null)
                 {
-                    await _fm5.SendNotifications(
-                        _extNotifications.DecodeHtmlNotifications(
-                            _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/")));
+                    await Task.Run (() => _fm5 = MainActivity._fm5);
                 }
 
-                if (_notificationsHaveBeenSent)
+                while (Globals.AppSettings._notifying)
                 {
-                    await Task.Delay(600000);
+                    if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                    {
+
+                        _notificationStackExecutionInProgress = true;
+                        await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                        await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                        _fm5.SendNotifications(ExtNotifications._customNoteList);
+                        _notificationStackExecutionInProgress = false;
+                    }
+
+                    if (_notificationsHaveBeenSent)
+                    {
+                        await Task.Delay(120000);
+                    }
+                    else
+                    {
+                        await Task.Delay(30000);
+                    }
                 }
-                else
-                {
-                    await Task.Delay(30000);
-                }
-            }
         }
         
         //public async void SendBackgroundNotification()

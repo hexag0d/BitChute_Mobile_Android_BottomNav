@@ -125,11 +125,8 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 _wvRling = false;
             }
         }
@@ -141,11 +138,9 @@ namespace BottomNavigationViewPager.Fragments
             if (Convert.ToBoolean(settings[3]))
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
             }
             if (TheFragment5._fanMode)
             {
-
             }
 
             if (TheFragment5._zoomControl)
@@ -163,13 +158,9 @@ namespace BottomNavigationViewPager.Fragments
                 if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-
                     _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
                 }
             }
