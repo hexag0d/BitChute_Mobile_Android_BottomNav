@@ -72,11 +72,6 @@ namespace BottomNavigationViewPager.Classes
                             _notificationTextList.Add(_tagContents);
                         }
 
-                        if (_customNoteList == _previousNoteList)
-                        {
-                            _customNoteList.Clear();
-                            return;
-                        }
 
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
                         {
@@ -114,6 +109,15 @@ namespace BottomNavigationViewPager.Classes
                             _customNoteList.Add(note);
                             currentListIndex++;
                         }
+
+                        _customNoteList.Reverse();
+
+                        if (_customNoteList == _previousNoteList)
+                        {
+                            _customNoteList.Clear();
+                            return;
+                        }
+
                     }
                     _fm5 = TheFragment5._fm5;
                 }
@@ -126,7 +130,6 @@ namespace BottomNavigationViewPager.Classes
                 _previousNoteList = _customNoteList;
                 //_fm5.SendNotifications();
 
-                _customNoteList.Reverse();
                 
             });
 
