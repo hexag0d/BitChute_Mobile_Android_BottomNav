@@ -33,7 +33,7 @@ namespace StartServices.Servicesclass
 
         public int counter = 0;
 
-        private static AudioManager _am;
+        //private static AudioManager _am;
         private static WifiManager wifiManager;
         private static WifiManager.WifiLock wifiLock;
 
