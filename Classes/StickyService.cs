@@ -39,18 +39,15 @@ namespace StartServices.Servicesclass
 
         public CustomStickyService(Context applicationContext)
         {
-            //_context=applicationContext;
-            //Log.Info("HERE", "here I am!");
+
         }
         public CustomStickyService()
         {
-            //Log.Info("HERE", "here I am contructor!");
+
         }
         public override void OnCreate()
         {
             base.OnCreate();
-
-
         }
         public override IBinder OnBind(Intent intent)
         {
@@ -90,8 +87,7 @@ namespace StartServices.Servicesclass
             }
             wifiLock.Acquire();
         }
-
-
+        
         //public static List<bool> _recentAudioFocusStates = new List<bool>();
         //public static int _numberOfAudioChecks = 0;
         
@@ -129,9 +125,7 @@ namespace StartServices.Servicesclass
         //        return false;
         //    }
         //}
-
-
-
+        
         public async void StickyLoop()
         {
             AquireWifiLock();
@@ -143,16 +137,12 @@ namespace StartServices.Servicesclass
                 //bool loopme = true;
             }
         }
-
-        public static bool _foregroundNotify = true;
-        public static bool _backgroundNotify = false;
-
+        
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
         public static ExtNotifications _extNotifications = new ExtNotifications();
         public static TheFragment5 _fm5;
-
-
+        
         /// <summary>
         /// returns false when the ActivityManager contains
         /// an entry for this app running in foreground: 
@@ -164,15 +154,10 @@ namespace StartServices.Servicesclass
         public bool IsInBkGrd()
         {
             var _ctx = Android.App.Application.Context;
-
-            //var runningAppProcesses = _am.RunningAppProcesses;
-
+            
             ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
             ActivityManager.GetMyMemoryState(myProcess);
-
-            //List<Android.App.ActivityManager.RunningAppProcessInfo> list
-            //    = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
-
+            
             if (myProcess.Importance == Importance.Foreground)
             {
                 Globals.AppState._bkgrd = false;
@@ -183,60 +168,6 @@ namespace StartServices.Servicesclass
                 Globals.AppState._bkgrd = true;
                 return true;
             }
-
-            //if (_am != null && list != null)
-            //{
-            //    try
-            //    {
-            //        list.AddRange(_am.RunningAppProcesses);
-            //    }
-            //    catch
-            //    {
-
-            //    }
-            //}
-            //else
-            //{
-            //    try
-            //    {
-            //        _main = MainActivity._main;
-            //        _am = _main.CustomGetActivityManager();
-            //        list.AddRange(_am.RunningAppProcesses);
-            //    }
-            //    catch
-            //    {
-
-            //    }
-            //    Globals.AppState._bkgrd = true;
-//                return _bkgrd;
-//            }
-
-//            if (list != null)
-//            {
-//                foreach (var _process in list)
-//                {
-//                    //this needs to be replaced with a newer enum
-//#pragma warning disable CS0618 // Type or member is obsolete
-//                    //if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
-//#pragma warning restore CS0618 // Type or member is obsolete
-
-//                    {
-//                        foreach (var _pkg in _process.PkgList)
-//                        {
-//                            if (_pkg == _ctx.PackageName)
-//                            {
-//                                _bkgrd = false;
-//                            }
-
-//                            else
-//                            {
-//                                _bkgrd = true;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            return _bkgrd;
         }
 
         /// <summary>
@@ -248,65 +179,37 @@ namespace StartServices.Servicesclass
         /// </summary>
         public async void StartNotificationLoop(int delay)
         {
-
             bool _notificationStackExecutionInProgress = false;
-
             await Task.Delay(delay);
-            
-                if (_fm5 == null)
+
+            if (_fm5 == null)
+            {
+                await Task.Run(() => _fm5 = MainActivity._fm5);
+            }
+
+            while (Globals.AppSettings._notifying)
+            {
+                //var _afs = GetAudioFocusState();
+
+                if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
-                    await Task.Run (() => _fm5 = MainActivity._fm5);
+                    _notificationStackExecutionInProgress = true;
+                    await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                    await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                    _fm5.SendNotifications(ExtNotifications._customNoteList);
+                    _notificationStackExecutionInProgress = false;
                 }
 
-                while (Globals.AppSettings._notifying)
+                if (_notificationsHaveBeenSent)
                 {
-                    //var _afs = GetAudioFocusState();
-                    
-                    if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
-                    {
-                        _notificationStackExecutionInProgress = true;
-                        await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                        await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
-                        _fm5.SendNotifications(ExtNotifications._customNoteList);
-                        _notificationStackExecutionInProgress = false;
-                    }
-
-                    if (_notificationsHaveBeenSent)
-                    {
-                        await Task.Delay(Globals.AppSettings._notificationDelay);
-                    }
-                    else
-                    {
-                        await Task.Delay(30000);
-                    }
+                    await Task.Delay(Globals.AppSettings._notificationDelay);
                 }
+                else
+                {
+                    await Task.Delay(30000);
+                }
+            }
         }
-        
-        //public async void SendBackgroundNotification()
-        //{
-        //    _notesSent = false;
-        //    if (_backgroundNotify)
-        //    {
-        //        await Task.Run(() =>
-        //        {
-        //            try
-        //            {
-        //                if (!TheFragment5._notificationHttpRequestInProgress)
-        //                {
-        //                    _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-        //                    TheFragment5._notificationHttpRequestInProgress = true;
-        //                    Globals.AppState._backgroundTimeOut = true;
-        //                }
-
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Console.WriteLine(ex.Message);
-        //            }
-        //        });
-        //    }
-        //    return;
-        //}
         
         public void ServiceViewOverride()
         {

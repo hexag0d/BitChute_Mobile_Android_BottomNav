@@ -161,7 +161,9 @@
 			<Spinner
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-					android:background="@color/material_grey_600"
+				
+					android:background="@android:color/darker_gray"
+									
 				android:id="@+id/tab4OverrideSpinner" />
 		</LinearLayout>
 		<LinearLayout
@@ -211,7 +213,10 @@
 				<Spinner
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:background="@color/material_grey_600"
+					
+			        android:textColor="#3498db"
+					
+					android:background="@android:color/darker_gray"
 					android:id="@+id/tab5OverrideSpinner" />
 			</LinearLayout>
 	</LinearLayout>

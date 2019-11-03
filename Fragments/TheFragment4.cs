@@ -196,6 +196,7 @@ namespace BottomNavigationViewPager.Fragments
         private static async void HideWatchLabel()
         {
             await Task.Delay(1000);
+            if (Globals.AppState.Display._horizontal)
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
 

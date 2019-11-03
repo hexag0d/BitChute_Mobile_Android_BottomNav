@@ -78,7 +78,6 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
-
                 return false;
             }
         }

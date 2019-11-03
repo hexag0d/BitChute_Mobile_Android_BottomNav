@@ -37,8 +37,7 @@ namespace BottomNavigationViewPager.Fragments
         public static List<object> _settingsList = new List<object>();
         public static Spinner _tab4OverrideSpinner;
         public static Spinner _tab5OverrideSpinner;
-
-
+        
         public static bool _zoomControl { get; set; }
         public static bool _tab1FeaturedOn { get; set; }
         public static bool _fanMode { get; set; }
@@ -125,14 +124,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            
-
             _fm5 = this;
-
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
-
             _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
-
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
             //var _view2 = inflater.Inflate(Resource.Layout.SettingsFragmentLayout, container, false);
@@ -186,40 +180,23 @@ namespace BottomNavigationViewPager.Fragments
 
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
-                //_notificationTestButton.Click += ExtNotificationEvents;
-
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
-
                 _tab4OverrideSpinner.Adapter = _tab4SpinOverrideAdapter;
-
                 _tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
-
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
-
                 _versionTextView.Text = Globals._appVersion;
-
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
             _appSettingsLayout.Visibility = ViewStates.Gone;
-
             GetNotificationSetting();
             GetNavBarPrefs();
-
             SetCheckedState();
-            
-            //_notificationWebView.SetWebViewClient(new NotificationWebClient());
-            //_notificationWebView.Settings.DomStorageEnabled = true;
-            //_notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
-
-            //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
-
             return _view;
         }
-
-
+        
         private void GetNavBarPrefs()
         {
             Globals.AppSettings._hideHorizontalNavBar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
@@ -232,6 +209,11 @@ namespace BottomNavigationViewPager.Fragments
         {
             _systemCheckingRb = true;
             _hidehorizontalnavbaronrb.Checked = pref;
+        }
+
+        public void SetSpinnerColors()
+        {
+
         }
 
         private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
@@ -258,7 +240,6 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
-
                 return false;
             }
         }
@@ -268,36 +249,40 @@ namespace BottomNavigationViewPager.Fragments
             _wv.Visibility = ViewStates.Visible;
         }
 
+        private static bool _notificationCheckInProgress = false;
+
         public bool GetNotificationSetting()
         {
             Globals.AppSettings._notifying = _prefs.GetBoolean("notificationson", true);
-
+            _notificationCheckInProgress = true;
             if (Globals.AppSettings._notifying)
             {
                 _notificationonrb.Checked = true;
             }
             else
             {
-                _notificationonrb.Checked = false;
+                _notificationoffrb.Checked = true;
             }
-
+            _notificationCheckInProgress = false;
             return Globals.AppSettings._notifying;
         }
 
         public void OnNotificationRbChecked(object sender, EventArgs e)
         {
-            if (_notificationonrb.Checked)
+            if (!_notificationCheckInProgress)
             {
-                Globals.AppSettings._notifying = true;
-                //start the notification timer as setting _notifying false breaks the loop
-                _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
-                _appIsNotifying = true;
-            }
-            else
-            {
-                Globals.AppSettings._notifying = false;
-                _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
-                _appIsNotifying = false;
+                if (_notificationonrb.Checked)
+                {
+                    Globals.AppSettings._notifying = true;
+                    //start the notification timer as setting _notifying false breaks the loop
+                    _stickyService.StartNotificationLoop(10000);
+                    _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                }
+                else
+                {
+                    Globals.AppSettings._notifying = false;
+                    _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                }
             }
         }
         
@@ -325,14 +310,12 @@ namespace BottomNavigationViewPager.Fragments
         {
             _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
             _tab5OverridePreference = _prefs.GetString("settingstaboverridestring", "Settings");
-
             _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             _fanMode = _prefs.GetBoolean("fanmode", false);
             _tab3Hide = _prefs.GetBoolean("tab3hide", true);
             _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
             
-
             _isNowCheckingBoxes = true;
             
             if (_zoomControl)
@@ -341,7 +324,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _zconrb.Checked = false;
+                _zcoffrb.Checked = true;
             }
             if (_fanMode)
             {
@@ -349,7 +332,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _fmonrb.Checked = false;
+                _fmoffrb.Checked = true;
             }
             if (_tab1FeaturedOn)
             {
@@ -357,7 +340,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _t1fonrb.Checked = true;
+                _t1foffrb.Checked = true;
             }
             if (_tab3Hide)
             {
@@ -365,7 +348,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _t3honrb.Checked = false;
+                _t3hoffrb.Checked = true;
             }
             if (_settingsTabOverride)
             {
@@ -373,7 +356,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _stoverrideonrb.Checked = false;
+                _stoverrideoffrb.Checked = true;
             }
 
             switch (_tab4OverridePreference)
@@ -512,7 +495,6 @@ namespace BottomNavigationViewPager.Fragments
         public void GetPendingIntent()
         {
             List<object> list = new List<object>();
-
             int zero = 0;
             list.Add(zero);
             var update = Android.App.PendingIntentFlags.UpdateCurrent;
@@ -530,7 +512,6 @@ namespace BottomNavigationViewPager.Fragments
                 _settingsTabOverride = false;
             }
             var prefEditor = _prefs.Edit();
-
             prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
         }
 
@@ -723,7 +704,7 @@ namespace BottomNavigationViewPager.Fragments
 
                            MainActivity.NOTIFICATION_ID++;
 
-                            // Finally, publish the notification:
+                            // publish the notification:
                             var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
                            notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
                            _sentNotificationList.Add(note);

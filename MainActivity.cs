@@ -118,6 +118,13 @@ namespace BottomNavigationViewPager
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            try
+            {
+            }
+            catch
+            {
+
+            }
             _main = this;
             _window = this.Window;
             
@@ -136,26 +143,16 @@ namespace BottomNavigationViewPager
             }
 
             _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
-
-            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
-            TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
-            TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
-            TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
-            TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-
-            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-
+            
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            _mainView = FindViewById(Resource.Layout.Main);
-            
-
             InitializeTabs();
 
+            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
@@ -190,6 +187,11 @@ namespace BottomNavigationViewPager
             };
         }
 
+        public void GetIconsFromPrefs()
+        {
+
+        }
+
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
         public static bool _navHidden = false;
@@ -214,7 +216,7 @@ namespace BottomNavigationViewPager
         }
 
         /// <summary>
-        /// listens for scroll events and hides the navbar after x seconds
+        /// invoked on scroll events and hides the navbar after x seconds
         /// .. timer resets every time it's called
         /// . works with a custom scroll listener
         /// </summary>
@@ -354,8 +356,11 @@ namespace BottomNavigationViewPager
             }
             if (TheFragment5._settingsTabOverride)
             {
-                _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
-                _navViewItemList[4].SetIcon(_tab5Icon);
+                if (TheFragment5._tab5OverridePreference != null && _tab5Icon != null)
+                {
+                    _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
+                    _navViewItemList[4].SetIcon(_tab5Icon);
+                }
             }
 
             CustomOnSwipe();
@@ -529,6 +534,10 @@ namespace BottomNavigationViewPager
         /// <param name="e"></param>
         public void SettingsTabLongClickListener(object sender, LongClickEventArgs e)
         {
+            if (_viewPager.CurrentItem != 4)
+            {
+                _viewPager.CurrentItem = 4;
+            }
             _fm5.ShowAppSettingsMenu();
         }
 
