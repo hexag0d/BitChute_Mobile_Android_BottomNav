@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "18.7.1.NotificationStickyLoop.nonGPS";
+        public static string _appVersion = "18.7.1.2.NotificationStickyLoop.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -32,89 +32,10 @@ namespace BottomNavigationViewPager.Classes
         /// </summary>
         public static string _cookieString { get; set; }
 
-        public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
-             .Context.GetSystemService(Context.ActivityService);
+        //public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
+        //     .Context.GetSystemService(Context.ActivityService);
 
-        public static MainActivity _main;
-        /// <summary>
-        /// global bool setting: 
-        /// returns/should be set to false if this app is in the foreground
-        /// returns/should be set to true when the app goes background
-        /// 
-        /// it doesn't override the OS setting; it keeps the status for you
-        /// </summary>
-        public static bool _bkgrd = true;
 
-        /// <summary>
-        /// returns false when the ActivityManager contains
-        /// an entry for this app running in foreground: 
-        /// importance is present in package.name with OS focus
-        /// 
-        /// requires a modified an  droid manifest for get_task ALLOWED
-        /// </summary>
-        /// <returns>bool</returns>
-        public bool IsInBkGrd()
-        {
-            var _ctx = Android.App.Application.Context;
-
-            var runningAppProcesses = _am.RunningAppProcesses;
-
-            List<Android.App.ActivityManager.RunningAppProcessInfo> list
-                = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
-
-            if (_am != null && list != null)
-            {
-                try
-                {
-                    list.AddRange(_am.RunningAppProcesses);
-                }
-                catch
-                {
-
-                }
-            }
-            else
-            {
-                try
-                {
-                    _main = MainActivity._main;
-                    _am = _main.CustomGetActivityManager();
-                    list.AddRange(_am.RunningAppProcesses);
-                }
-                catch
-                {
-
-                }
-                _bkgrd = true;
-                return _bkgrd;
-            }
-
-            if (list != null)
-            {
-                foreach (var _process in list)
-                {
-                    //this needs to be replaced with a newer enum
-#pragma warning disable CS0618 // Type or member is obsolete
-                    if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
-#pragma warning restore CS0618 // Type or member is obsolete
-                    {
-                        foreach (var _pkg in _process.PkgList)
-                        {
-                            if (_pkg == _ctx.PackageName)
-                            {
-                                _bkgrd = false;
-                            }
-
-                            else
-                            {
-                                _bkgrd = true;
-                            }
-                        }
-                    }
-                }
-            }
-            return _bkgrd;
-        }
 
         /// <summary>
         /// should be set to and return variables based upon the current appstate
@@ -130,6 +51,15 @@ namespace BottomNavigationViewPager.Classes
                 public static bool _horizontal = false;
             }
             
+            /// <summary>
+            /// global bool setting: 
+            /// returns/should be set to false if this app is in the foreground
+            /// returns/should be set to true when the app goes background
+            /// 
+            /// it doesn't override the OS setting; it keeps the status for you
+            /// </summary>
+            public static bool _bkgrd = true;
+
             public static bool _backgroundTimeOut = false;
 
         }
@@ -154,7 +84,7 @@ namespace BottomNavigationViewPager.Classes
             /// parsed and then sent out.  It should be set to a high int
             /// so as to not overload bitchute.com with httprequests
             /// </summary>
-            public static int _notificationDelay = 780000;
+            public static int _notificationDelay = 600000;
 
             /// <summary>
             /// this bool should be set to/returns whether or not the navbar

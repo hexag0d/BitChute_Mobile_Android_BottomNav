@@ -279,12 +279,23 @@
 				android:id="@+id/versionTextView"/>
 		</GridLayout>
 		<LinearLayout
-			android:orientation="vertical"
+			android:orientation="horizontal"
 			android:minWidth="25px"
 			android:minHeight="25px"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/linearLayout11">
+			<LinearLayout
+				android:orientation="horizontal"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/linearLayout13" >
+
+			</LinearLayout>
+
+
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="horizontal"

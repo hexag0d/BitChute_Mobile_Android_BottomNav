@@ -1,6 +1,9 @@
-﻿using Android.Graphics.Drawables;
+﻿using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.App;
+using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
@@ -52,6 +55,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            
+
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView1);
@@ -242,6 +247,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             _wv.Visibility = ViewStates.Visible;
         }
+
 
         private class ExtWebViewClient : WebViewClient
         {

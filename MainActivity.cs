@@ -66,6 +66,7 @@ using Android.Content.Res;
 using StartServices.Servicesclass;
 using System;
 using static BottomNavigationViewPager.Fragments.TheFragment5;
+using System.Threading;
 
 namespace BottomNavigationViewPager
 {
@@ -107,6 +108,7 @@ namespace BottomNavigationViewPager
         public static readonly string COUNT_KEY = "count";
 
         public static Window _window;
+        public static View _mainView;
 
         public static List<string> _NotificationURLList = new List<string>();
 
@@ -118,7 +120,7 @@ namespace BottomNavigationViewPager
         {
             _main = this;
             _window = this.Window;
-
+            
             var mServiceIntent = new Intent(this, typeof(CustomStickyService));
             StartService(mServiceIntent);
             try
@@ -149,6 +151,9 @@ namespace BottomNavigationViewPager
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            _mainView = FindViewById(Resource.Layout.Main);
+            
+
             InitializeTabs();
 
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
@@ -159,7 +164,7 @@ namespace BottomNavigationViewPager
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
-            _navigationView.LongClick += NavigationViewLongClickListener;
+            //_navigationView.LongClick += NavigationViewLongClickListener;
 
             _viewPager.OffscreenPageLimit = 4;
 
@@ -375,8 +380,15 @@ namespace BottomNavigationViewPager
                     item.SetShiftingMode(false);
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
-                    item.LongClick += NavigationViewLongClickListener;
-                    
+
+                    if (i == 2)
+                    {
+                        item.LongClick += FeedTabLongClickListener;
+                    }
+                    if (i == 4)
+                    {
+                        item.LongClick += SettingsTabLongClickListener; 
+                    }
                     if (_navViewItemList != null)
                     {
                         _navViewItemList.Add(item);
@@ -511,13 +523,26 @@ namespace BottomNavigationViewPager
         }
 
         /// <summary>
+        /// Listens for long click events on tab 4
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void SettingsTabLongClickListener(object sender, LongClickEventArgs e)
+        {
+            _fm5.ShowAppSettingsMenu();
+        }
+
+        public bool _backgroundRequested = false;
+
+        /// <summary>
         /// Listens for long click events on the navbar
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void NavigationViewLongClickListener(object sender, LongClickEventArgs e)
+        public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            _fm5.ShowAppSettingsMenu();
+            _backgroundRequested = true;
+            _main.MoveTaskToBack(true);
         }
 
         public void SetWebViewVisibility()
@@ -544,32 +569,56 @@ namespace BottomNavigationViewPager
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        public async override void OnWindowFocusChanged(bool hasFocus)
+        public override void OnWindowFocusChanged(bool hasFocus)
         {
-            Globals._bkgrd = true;
+            Globals.AppState._bkgrd = true;
             bool _notificationStackExecutionInProgress = false;
+            bool _backgroundNotificationTimeout = false;
 
-            while (_globals.IsInBkGrd())
+            if (_backgroundRequested)
             {
+                _service.AquireWifiLock();
+                while (_service.IsInBkGrd())
+                {
+                    //var afs = _service.GetAudioFocusState();
+                    
+                    Thread.Sleep(3600);
+                    //Task.Delay(3600);
+                    _backgroundTimeoutInt += 3600;
 
-                Task.Delay(_backgroundLoopMsDelayInt);
-                _backgroundTimeoutInt += _backgroundLoopMsDelayInt;
-                
-                    if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                    if (!TheFragment5._notificationHttpRequestInProgress
+                    && !_notificationStackExecutionInProgress && !_backgroundNotificationTimeout)
                     {
+                        _backgroundNotificationTimeout = true;
                         _notificationStackExecutionInProgress = true;
-                        await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                        await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+
+                        _extNotifications.DecodeHtmlNotifications(
+                            _extWebInterface.GetBackgroundNotificationText("https://www.bitchute.com/notifications/"));
                         _fm5.SendNotifications(_fm5.GetNotifications());
                         _notificationStackExecutionInProgress = false;
                     }
-                    
-                if (_backgroundTimeoutInt >= 780000)
-                {
-                    CustomStickyService._backgroundTimeout = false;
-                    _backgroundTimeoutInt = 0;
+                    if (CustomStickyService._notificationsHaveBeenSent)
+                    {
+                        if (_backgroundTimeoutInt >= 500000)
+                        {
+                            _backgroundNotificationTimeout = false;
+                            CustomStickyService._backgroundTimeout = false;
+                            _backgroundTimeoutInt = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (_backgroundTimeoutInt >= 60000)
+                        {
+                            _backgroundNotificationTimeout = false;
+                            CustomStickyService._backgroundTimeout = false;
+                            _backgroundTimeoutInt = 0;
+                        }
+                    }
+
                 }
             }
+            _backgroundRequested = false;
             _service.StartNotificationLoop(60000);
         }
         
@@ -585,7 +634,7 @@ namespace BottomNavigationViewPager
             
             var name = "BitChute";
             var description = "BitChute for Android";
-            var channel = new Android.App.NotificationChannel(CHANNEL_ID, name, Android.App.NotificationImportance.Default)
+            var channel = new Android.App.NotificationChannel(CHANNEL_ID, name, Android.App.NotificationImportance.High)
             {
                 Description = description
             };

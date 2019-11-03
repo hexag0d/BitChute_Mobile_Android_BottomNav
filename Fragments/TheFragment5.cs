@@ -125,6 +125,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            
+
             _fm5 = this;
 
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
@@ -204,6 +206,7 @@ namespace BottomNavigationViewPager.Fragments
             _appSettingsLayout.Visibility = ViewStates.Gone;
 
             GetNotificationSetting();
+            GetNavBarPrefs();
 
             SetCheckedState();
             
@@ -216,25 +219,39 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+
         private void GetNavBarPrefs()
         {
             Globals.AppSettings._hideHorizontalNavBar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+            SetHorizontalNavBarCheckedState(Globals.AppSettings._hideHorizontalNavBar);
+        }
+
+        private static bool _systemCheckingRb = false;
+
+        private void SetHorizontalNavBarCheckedState(bool pref)
+        {
+            _systemCheckingRb = true;
+            _hidehorizontalnavbaronrb.Checked = pref;
         }
 
         private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
         {
-            if (_hidehorizontalnavbaronrb.Checked)
+            if (!_systemCheckingRb)
             {
-                Globals.AppSettings._hideHorizontalNavBar = true;
-                _prefEditor.PutBoolean("hidehorizontalnavbar", true);
+                if (_hidehorizontalnavbaronrb.Checked)
+                {
+                    Globals.AppSettings._hideHorizontalNavBar = true;
+                    _prefEditor.PutBoolean("hidehorizontalnavbar", true);
+                }
+                else
+                {
+                    Globals.AppSettings._hideHorizontalNavBar = false;
+                    _prefEditor.PutBoolean("hidehorizontalnavbar", false);
+                }
             }
-            else
-            {
-                Globals.AppSettings._hideHorizontalNavBar = false;
-                _prefEditor.PutBoolean("hidehorizontalnavbar", false);
-            }
+            _systemCheckingRb = false;
         }
-
+        
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
@@ -701,7 +718,8 @@ namespace BottomNavigationViewPager.Fragments
                                     .SetContentTitle(note._noteText) // Set the title
                                     .SetNumber(1) // Display the count in the Content Info
                                     .SetSmallIcon(2130837590) // This is the icon to display
-                                    .SetContentText(note._noteType);
+                                    .SetContentText(note._noteType)
+                                    .SetPriority(NotificationCompat.PriorityHigh);
 
                            MainActivity.NOTIFICATION_ID++;
 
@@ -764,6 +782,37 @@ namespace BottomNavigationViewPager.Fragments
 
                    
                 });
+                return _htmlCode;
+            }
+
+            public string GetBackgroundNotificationText(string url)
+            {
+
+                    _htmlCode = "";
+                    HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+
+                    try
+                    {
+                        Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
+
+                        var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
+
+                        using (HttpClient _client = new HttpClient(handler))
+                        {
+                            _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
+                            _notificationHttpRequestInProgress = true;
+                            var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                            _notificationHttpRequestInProgress = false;
+                            var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+
+                            _htmlCode = resultContent;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
                 return _htmlCode;
             }
         }
