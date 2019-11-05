@@ -670,8 +670,7 @@ namespace BottomNavigationViewPager
 
                 }
             }
-
-            var index = MainActivity._NotificationURLList.Count;
+            
             try
             {
                 switch (_viewPager.CurrentItem)
@@ -697,7 +696,6 @@ namespace BottomNavigationViewPager
             {
 
             }
-            //_fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
         }
         
         WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;

@@ -153,8 +153,6 @@ namespace StartServices.Servicesclass
         /// <returns>bool</returns>
         public bool IsInBkGrd()
         {
-            var _ctx = Android.App.Application.Context;
-            
             ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
             ActivityManager.GetMyMemoryState(myProcess);
             
@@ -220,6 +218,7 @@ namespace StartServices.Servicesclass
         {
             one = new SampleOne();
             one.Run();
+            
         }
 
         public override void OnDestroy()
