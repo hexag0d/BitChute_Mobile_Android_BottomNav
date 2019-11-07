@@ -75,7 +75,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
-        //public ExtNotifications _extNotifications = new ExtNotifications();
+
         public static TheFragment5.ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static TextView _versionTextView;
         public static bool _notificationHttpRequestInProgress = false;
@@ -213,9 +213,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public void SetSpinnerColors()
         {
-
+            
         }
-
+        
         private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
         {
             if (!_systemCheckingRb)
@@ -231,6 +231,7 @@ namespace BottomNavigationViewPager.Fragments
                     _prefEditor.PutBoolean("hidehorizontalnavbar", false);
                 }
             }
+            _prefEditor.Commit();
             _systemCheckingRb = false;
         }
         
@@ -267,7 +268,9 @@ namespace BottomNavigationViewPager.Fragments
             return Globals.AppSettings._notifying;
         }
 
-        public void OnNotificationRbChecked(object sender, EventArgs e)
+        private static bool _notificationsOnRbRecentlyChecked = false;
+
+        private void OnNotificationRbChecked(object sender, EventArgs e)
         {
             if (!_notificationCheckInProgress)
             {
@@ -285,6 +288,8 @@ namespace BottomNavigationViewPager.Fragments
                 }
             }
         }
+
+
         
         public void CustomLoadUrl(string url)
         {

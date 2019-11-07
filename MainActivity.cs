@@ -118,13 +118,6 @@ namespace BottomNavigationViewPager
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            try
-            {
-            }
-            catch
-            {
-
-            }
             _main = this;
             _window = this.Window;
             
@@ -196,7 +189,7 @@ namespace BottomNavigationViewPager
 
         public static bool _navHidden = false;
 
-        public static bool _navTimeout = false;
+        public static bool _navTimeout = true;
 
         public static int _navTimer = 0;
 
@@ -225,22 +218,15 @@ namespace BottomNavigationViewPager
                 if (_navTimer != 0)
                     _navTimer = 0;
 
-            if (Globals.AppState.Display._horizontal)
+            if (Globals.AppState.Display._horizontal && !Globals.AppSettings._hideHorizontalNavBar)
             {
-                if (!Globals.AppSettings._hideHorizontalNavBar)
+                if (!_navTimeout)
                 {
-                    if (!_navTimeout)
-                    {
-                        _navigationView.Visibility = ViewStates.Visible;
-                        _navHidden = false;
-                        NavBarRemove();
-                        _navTimeout = true;
-                        // _fm3.ShowMore();
-                    }
-                }
-                else
-                {
-
+                    _navigationView.Visibility = ViewStates.Visible;
+                    _navHidden = false;
+                    NavBarRemove();
+                    _navTimeout = true;
+                    // _fm3.ShowMore();
                 }
             }
             else
@@ -763,6 +749,11 @@ namespace BottomNavigationViewPager
                 Globals.AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
+            }
+
+            if (!Globals.AppSettings._hideHorizontalNavBar)
+            {
+                _navTimeout = false;
             }
 
             base.OnConfigurationChanged(newConfig);

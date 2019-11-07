@@ -5,7 +5,11 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "18.7.1.4.NotificationStickyLoop.nonGPS";
+        /// <summary>
+        /// this string is sent into the app settings fragment to notify user 
+        /// of version they're running
+        /// </summary>
+        public static string _appVersion = "18.7.1.8.NotificationStickyLoop";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -34,9 +38,7 @@ namespace BottomNavigationViewPager.Classes
 
         //public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //     .Context.GetSystemService(Context.ActivityService);
-
-
-
+        
         /// <summary>
         /// should be set to and return variables based upon the current appstate
         /// </summary>
@@ -52,7 +54,7 @@ namespace BottomNavigationViewPager.Classes
             }
             
             /// <summary>
-            /// global bool setting: 
+            /// global bool state: 
             /// returns/should be set to false if this app is in the foreground
             /// returns/should be set to true when the app goes background
             /// 
