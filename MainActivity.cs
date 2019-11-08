@@ -751,7 +751,7 @@ namespace BottomNavigationViewPager
                 _window.AddFlags(_winflagnotfullscreen);
             }
 
-            if (!Globals.AppSettings._hideHorizontalNavBar)
+            if (!Globals.AppSettings._hideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {
                 _navTimeout = false;
             }
