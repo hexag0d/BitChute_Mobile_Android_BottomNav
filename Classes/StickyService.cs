@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Util;
-using Java.Util;
+
 using Android.Telephony;
 using BottomNavigationViewPager.Classes;
 using BottomNavigationViewPager;
@@ -72,7 +72,7 @@ namespace StartServices.Servicesclass
 
             return StartCommandResult.Sticky;
         }
-        public static Timer timer;
+        //public static Timer timer;
         //private TimerTask timerTask;
         private SampleOne one;
 
@@ -87,10 +87,10 @@ namespace StartServices.Servicesclass
             }
             wifiLock.Acquire();
         }
-        
+
         //public static List<bool> _recentAudioFocusStates = new List<bool>();
         //public static int _numberOfAudioChecks = 0;
-        
+
         //public bool GetAudioFocusState()
         //{
 
@@ -125,18 +125,12 @@ namespace StartServices.Servicesclass
         //        return false;
         //    }
         //}
-        
-        public async void StickyLoop()
+
+        public void StartStickyTimer()
         {
-            AquireWifiLock();
-            while (Globals.AppState._bkgrd)
-            {
-                //_main.SetWebViewVisibility();
-                _serviceIsLooping = true;
-                await Task.Delay(60000);
-                //bool loopme = true;
-            }
+
         }
+        
         
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
@@ -168,6 +162,8 @@ namespace StartServices.Servicesclass
             }
         }
 
+        private int _notificationMsElapsed = 0;
+
         /// <summary>
         /// starts/restarts the notifications, 
         /// takes a ms int as the delay for starting,
@@ -179,6 +175,49 @@ namespace StartServices.Servicesclass
         {
             bool _notificationStackExecutionInProgress = false;
             await Task.Delay(delay);
+
+            if (_fm5 == null)
+            {
+                await Task.Run(() => _fm5 = MainActivity._fm5);
+            }
+
+            while (Globals.AppSettings._notifying)
+            {
+                //var _afs = GetAudioFocusState();
+
+                if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                {
+                    _notificationStackExecutionInProgress = true;
+                    await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                    await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                    _fm5.SendNotifications(ExtNotifications._customNoteList);
+                    _notificationStackExecutionInProgress = false;
+                }
+
+                if (_notificationsHaveBeenSent)
+                {
+                    await Task.Delay(Globals.AppSettings._notificationDelay);
+                    _notificationMsElapsed += Globals.AppSettings._notificationDelay;
+                }
+                else
+                {
+                    await Task.Delay(30000);
+                    _notificationMsElapsed += 30000;
+                }
+
+                if (_notificationMsElapsed >= 888888)
+                {
+                    _notificationStackExecutionInProgress = false;
+                    TheFragment5._notificationHttpRequestInProgress = false;
+                }
+            }
+        }
+
+        private static bool _notificationStackExecutionInProgress = false;
+
+        private async void OnTimerElapsed()
+        {
+            await Task.Delay(30000);
 
             if (_fm5 == null)
             {
@@ -235,11 +274,39 @@ namespace StartServices.Servicesclass
                 Console.WriteLine(ex.Message);
             }
         }
-        public class SampleOne : TimerTask
+        public class SampleOne : Java.Util.TimerTask
         {
-            public override void Run()
+            public async override void Run()
             {
-                
+                bool _notificationStackExecutionInProgress = false;
+
+                if (_fm5 == null)
+                {
+                    await Task.Run(() => _fm5 = MainActivity._fm5);
+                }
+
+                while (Globals.AppSettings._notifying)
+                {
+                    //var _afs = GetAudioFocusState();
+
+                    if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                    {
+                        _notificationStackExecutionInProgress = true;
+                        await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                        await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                        _fm5.SendNotifications(ExtNotifications._customNoteList);
+                        _notificationStackExecutionInProgress = false;
+                    }
+
+                    if (_notificationsHaveBeenSent)
+                    {
+                        await Task.Delay(Globals.AppSettings._notificationDelay);
+                    }
+                    else
+                    {
+                        await Task.Delay(30000);
+                    }
+                }
 
             }
         }
