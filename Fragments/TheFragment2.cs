@@ -8,6 +8,7 @@ using BottomNavigationViewPager.Classes;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -16,7 +17,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        protected static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://bitchute.com/subscriptions/";
@@ -49,7 +50,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
 
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView2);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
 
             if (!tabLoaded)
             {

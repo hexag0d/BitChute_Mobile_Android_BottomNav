@@ -10,6 +10,7 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -19,7 +20,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        protected static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
@@ -53,7 +54,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
 
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView3);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
 
             if (!tabLoaded)
             {

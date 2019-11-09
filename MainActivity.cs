@@ -114,14 +114,14 @@ namespace BottomNavigationViewPager
 
         public static ISharedPreferences _prefs;
         //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
-        public static CustomStickyService _service = new CustomStickyService();
+        public static ExtStickyService _service = new ExtStickyService();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
             _window = this.Window;
             
-            var mServiceIntent = new Intent(this, typeof(CustomStickyService));
+            var mServiceIntent = new Intent(this, typeof(ExtStickyService));
             StartService(mServiceIntent);
             try
             {
@@ -527,7 +527,7 @@ namespace BottomNavigationViewPager
             _fm5.ShowAppSettingsMenu();
         }
 
-        public bool _backgroundRequested = false;
+        public static bool _backgroundRequested = false;
 
         /// <summary>
         /// Listens for long click events on the navbar
@@ -549,7 +549,7 @@ namespace BottomNavigationViewPager
             _fm5.SetWebViewVis();
         }
 
-        public Android.App.ActivityManager CustomGetActivityManager()
+        public Android.App.ActivityManager GetCustomActivityManager()
         {
             
             Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
@@ -564,58 +564,63 @@ namespace BottomNavigationViewPager
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            Globals.AppState._bkgrd = true;
-            bool _notificationStackExecutionInProgress = false;
-            bool _backgroundNotificationTimeout = false;
+        //public override void OnWindowFocusChanged(bool hasFocus)
+        //{
+        //    Globals.AppState._bkgrd = true;
+        //    bool _notificationStackExecutionInProgress = false;
+        //    bool _backgroundNotificationTimeout = false;
 
-            if (_backgroundRequested)
-            {
-                _service.AquireWifiLock();
-                while (_service.IsInBkGrd())
-                {
-                    //var afs = _service.GetAudioFocusState();
-                    
-                    Thread.Sleep(3600);
-                    //Task.Delay(3600);
-                    _backgroundTimeoutInt += 3600;
+        //    if (_backgroundRequested)
+        //    {
+        //        _service.AquireWifiLock();
+        //        while (_service.IsInBkGrd())
+        //        {
+        //            //var afs = _service.GetAudioFocusState();
 
-                    if (!TheFragment5._notificationHttpRequestInProgress
-                    && !_notificationStackExecutionInProgress && !_backgroundNotificationTimeout)
-                    {
-                        _backgroundNotificationTimeout = true;
-                        _notificationStackExecutionInProgress = true;
+        //            _service.DummyService();
 
-                        _extNotifications.DecodeHtmlNotifications(
-                            _extWebInterface.GetBackgroundNotificationText("https://www.bitchute.com/notifications/"));
-                        _fm5.SendNotifications(_fm5.GetNotifications());
-                        _notificationStackExecutionInProgress = false;
-                    }
-                    if (CustomStickyService._notificationsHaveBeenSent)
-                    {
-                        if (_backgroundTimeoutInt >= 500000)
-                        {
-                            _backgroundNotificationTimeout = false;
-                            CustomStickyService._backgroundTimeout = false;
-                            _backgroundTimeoutInt = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (_backgroundTimeoutInt >= 60000)
-                        {
-                            _backgroundNotificationTimeout = false;
-                            CustomStickyService._backgroundTimeout = false;
-                            _backgroundTimeoutInt = 0;
-                        }
-                    }
+        //            Thread.Sleep(3600);
+        //            //Task.Delay(3600);
+        //            _backgroundTimeoutInt += 3600;
 
-                }
-            }
-            _backgroundRequested = false;
-            _service.StartNotificationLoop(60000);
-        }
+        //            if (!TheFragment5._notificationHttpRequestInProgress
+        //            && !_notificationStackExecutionInProgress && !_backgroundNotificationTimeout)
+        //            {
+        //                _backgroundNotificationTimeout = true;
+        //                _notificationStackExecutionInProgress = true;
+
+        //                _extNotifications.DecodeHtmlNotifications(
+        //                    _extWebInterface.GetBackgroundNotificationText("https://www.bitchute.com/notifications/"));
+        //                _fm5.SendNotifications(_fm5.GetNotifications());
+        //                _notificationStackExecutionInProgress = false;
+        //            }
+        //            if (ExtStickyService._notificationsHaveBeenSent)
+        //            {
+        //                if (_backgroundTimeoutInt >= 500000)
+        //                {
+        //                    _backgroundNotificationTimeout = false;
+        //                    ExtStickyService._backgroundTimeout = false;
+        //                    _backgroundTimeoutInt = 0;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (_backgroundTimeoutInt >= 60000)
+        //                {
+        //                    _backgroundNotificationTimeout = false;
+        //                    ExtStickyService._backgroundTimeout = false;
+        //                    _backgroundTimeoutInt = 0;
+        //                }
+        //            }
+
+        //        }
+        //    }
+        //    _backgroundRequested = false;
+        //    if (!ExtStickyService._notificationsHaveBeenSent)
+        //    {
+        //        _service.StartNotificationLoop(30000);
+        //    }
+        //}
         
         void CreateNotificationChannel()
         {

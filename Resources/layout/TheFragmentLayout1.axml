@@ -4,7 +4,7 @@
 	android:background="@android:color/black"
 	android:backgroundTint="@android:color/black"
     android:layout_height="match_parent">
-    <WebView
+    <StartServices.Servicesclass.ExtStickyService.ServiceWebView
         android:id="@+id/webView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

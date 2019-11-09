@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "18.7.1.8.NotificationStickyLoop";
+        public static string _appVersion = "18.7.2.2.NotificationTimerSwap";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -86,7 +86,7 @@ namespace BottomNavigationViewPager.Classes
             /// parsed and then sent out.  It should be set to a high int
             /// so as to not overload bitchute.com with httprequests
             /// </summary>
-            public static int _notificationDelay = 600000;
+            public static int _notificationDelay = 120000;
 
             /// <summary>
             /// this bool should be set to/returns whether or not the navbar
@@ -245,13 +245,9 @@ namespace BottomNavigationViewPager.Classes
         public class URLs
         {
             public static string _homepage = "https://www.bitchute.com/";
-
             public static string _subspage = "https://www.bitchute.com/subscriptions/";
-
             public static string _explore =  "https://www.bitchute.com/channels/";
-
             public static string _settings = "https://www.bitchute.com/settings/";
-
             public static string _myChannel = "https://www.bitchute.com/channel/";
         }
     }

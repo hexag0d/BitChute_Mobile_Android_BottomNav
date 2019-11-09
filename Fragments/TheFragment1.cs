@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
+using static BottomNavigationViewPager.Fragments.TheFragment5;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -21,12 +23,15 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        protected static ServiceWebView _wv;
         protected static View _view;
 
         public string _url = "https://bitchute.com/";
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
+
+        private static ExtNotifications _extNotifications = MainActivity.notifications;
+        private static ExtWebInterface _extWebInterface = MainActivity._extWebInterface;
 
         bool tabLoaded = false;
         //static MainActivity _main = new MainActivity();
@@ -55,26 +60,18 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            
-
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
 
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView1);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(_wvc);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-                
                 _wv.LoadUrl(_url);
-
                 tabLoaded = true;
             }
             
@@ -251,6 +248,25 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
+            
+            //public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            //{
+            //    return base.ShouldOverrideUrlLoading(view, request);
+            //}
+
+            //public override bool ShouldOverrideUrlLoading(WebView view, string url)
+            //{
+            //    if (url.Contains("disqus.com"))
+            //    {
+            //        string noteText = _extWebInterface.GetNotificationText("url").Result;
+            //        string newURL = _extNotifications.GetBitChuteChannelLinkFromDiscus(noteText).Result;
+            //        _wv.LoadUrl(newURL);
+            //        url = newURL;
+            //    }
+
+            //    return base.ShouldOverrideUrlLoading(view, url);
+            //}
+
             public override void OnPageFinished(WebView _view, string url)
             {
 

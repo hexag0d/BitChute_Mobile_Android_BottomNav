@@ -44,7 +44,7 @@ namespace BottomNavigationViewPager.Classes
                 }
             }
         }
-
+         
         public async Task<List<CustomNotification>> DecodeHtmlNotifications(string html)
         {
             await Task.Run(() =>
@@ -55,7 +55,7 @@ namespace BottomNavigationViewPager.Classes
                     {
                         _fm5 = TheFragment5._fm5;
                     }
-
+                     
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(html);
                     var check = doc;
@@ -212,5 +212,32 @@ namespace BottomNavigationViewPager.Classes
 
         }
 
+        public async Task<string> GetBitChuteChannelLinkFromDiscus(string html)
+        {
+            string profileLink = "";
+
+            await Task.Run(() =>
+            {
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                int _nCount = 0;
+
+                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                {
+                    var _tagContents = "https://bitchute.com/profile" + link.Attributes["href"].Value.ToString();
+
+                    if (_nCount == 0)
+                    {
+                        profileLink = _tagContents;
+                    }
+
+
+                    _nCount++;
+                }
+            });
+
+            return profileLink;
+        }
     }
 }

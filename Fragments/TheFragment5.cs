@@ -18,6 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static BottomNavigationViewPager.Classes.ExtNotifications;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -29,7 +30,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        public static WebView _wv;
+        public static ServiceWebView _wv;
         public static LinearLayout _wvLayout;
         public static LinearLayout _appSettingsLayout;
         public static View _view;
@@ -85,7 +86,7 @@ namespace BottomNavigationViewPager.Fragments
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
-        public static CustomStickyService _stickyService = new CustomStickyService();
+        public static ExtStickyService _stickyService = new ExtStickyService();
 
         private static CookieCollection cookies = new CookieCollection();
 
@@ -126,7 +127,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             _fm5 = this;
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
             //var _view2 = inflater.Inflate(Resource.Layout.SettingsFragmentLayout, container, false);
@@ -617,6 +618,7 @@ namespace BottomNavigationViewPager.Fragments
                         _settingsTabOverride = false;
 
                     }
+                    //write the android prefs
                     _prefEditor.PutBoolean("zoomcontrol", _zoomControl);
                     _prefEditor.PutBoolean("fanmode", _fanMode);
                     _prefEditor.PutBoolean("tab3hide", _tab3Hide);
@@ -625,6 +627,7 @@ namespace BottomNavigationViewPager.Fragments
                     _prefEditor.Commit();
 
                     _settingsList.Clear();
+                    //then add the settings app settings list
                     _settingsList.Add(_zoomControl);
                     _settingsList.Add(_fanMode);
                     _settingsList.Add(_tab3Hide);
@@ -657,17 +660,14 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
-
-        public static bool _appNotifications = true;
-        public static bool _appIsNotifying = true;
-
+        
         private static async void HideWatchLabel()
         {
             await Task.Delay(1000);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
       
-        public static string _cookieHeader;
+        private static string _cookieHeader;
         private static ExtNotifications _extNotifications = new ExtNotifications();
         
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
@@ -715,7 +715,7 @@ namespace BottomNavigationViewPager.Fragments
                            _sentNotificationList.Add(note);
                        }
 
-                       CustomStickyService._notificationsHaveBeenSent = true;
+                       ExtStickyService._notificationsHaveBeenSent = true;
                    }
                }
                catch
@@ -732,9 +732,7 @@ namespace BottomNavigationViewPager.Fragments
         public class ExtWebInterface
         {
             public static string _notificationRawText;
-
             public static CookieContainer _cookieCon = new CookieContainer();
-
             public static string _htmlCode = "";
 
             public async Task<string> GetNotificationText(string url)
@@ -773,31 +771,30 @@ namespace BottomNavigationViewPager.Fragments
 
             public string GetBackgroundNotificationText(string url)
             {
+                _htmlCode = "";
+                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
 
-                    _htmlCode = "";
-                    HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+                try
+                {
+                    Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
-                    try
+                    var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
+
+                    using (HttpClient _client = new HttpClient(handler))
                     {
-                        Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
+                        _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
+                        _notificationHttpRequestInProgress = true;
+                        var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                        _notificationHttpRequestInProgress = false;
+                        var resultContent = getRequest.Content.ReadAsStringAsync().Result;
 
-                        var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-
-                        using (HttpClient _client = new HttpClient(handler))
-                        {
-                            _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
-                            _notificationHttpRequestInProgress = true;
-                            var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                            _notificationHttpRequestInProgress = false;
-                            var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-
-                            _htmlCode = resultContent;
-                        }
+                        _htmlCode = resultContent;
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
                 return _htmlCode;
             }
