@@ -232,11 +232,47 @@ namespace BottomNavigationViewPager.Classes
             
             public static string  _jsHideNavTabsList = "javascript:(function() { " +
                             "document.getElementsByClassName('nav nav-tabs nav-tabs-list')[0].style.display='none'; " + "})()";
-
-            //tab-scroll-inner            
+      
             public static string  _jsHideTabInner = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+              
+            public static string _jsFillAvailable = "javascript:(function() { " +
+                            @"document.getElementsByClassName('video-card-image')[0].style.width='fill-available'; " + "})()";
+            
+            public static string _jsBorderBox = "javascript:(function() { " +
+                            @"document.getElementsByClassName('video-card-image').style.box-sizing='border-box'; " + "})()";
 
+            public static string _jsBorderBoxAll = "javascript:(function() { " +
+                @"var video_card_image_array = document.getElementsByClassName('img-responsive lazyloaded');
+                                    for (var i = 0; i < video_card_image_array.length; ++i) {
+                                             var item66 = video_card_image_array[i];  
+                                            item66.style.boxSizing = 'border-box';
+                                            item66.style.width = '100%';
+                                        }" + "})()";
+
+            public static string _jsVideoCardImage = "javascript:(function() { " +
+            @"var video_card_image_array = document.getElementsByClassName('video-card-image');
+                                    for (var i = 0; i < video_card_image_array.length; ++i) {
+                                             var item66 = video_card_image_array[i];  
+                                            item66.style.width = '100%';
+                                            item66.style.boxSizing = 'border-box';
+                                        }" + "})()";
+
+
+
+            public static string _jsRemoveMaxWidthAll = "javascript:(function() { " +
+                            @"var videocard_array = document.getElementsByClassName('video-card');
+                                    for (var i = 0; i < videocard_array.length; ++i) {
+                                             var item55 = videocard_array[i];  
+                                            item55.style.maxWidth = 'none';
+                                            item55.style.width = '100%';
+                                        }" + "})()";
+
+            public static string _jsWidth100Percent = "javascript:(function() { " +
+                            @"document.getElementsByClassName('video-card')[0].style.width='100%'; " + "})()";
+
+            public static string _jsRemoveMaxWidth = "javascript:(function() { " +
+                            @"document.getElementsByClassName('video-card').style.max-width=''; " + "})()";
         }
 
         /// <summary>

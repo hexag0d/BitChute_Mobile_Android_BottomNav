@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using Android.Content.Res;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
+using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using Java.IO;
 using static Android.Views.View;
 using static StartServices.Servicesclass.ExtStickyService;
 
@@ -48,6 +52,7 @@ namespace BottomNavigationViewPager.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
+
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -75,6 +80,7 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
 
             return _view;
         }
@@ -125,13 +131,20 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnTouch();
-        //    }
-        //}
+        private static int _scrollY = 0;
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _scrollY += scrollY;
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
 
         public void WebViewGoBack()
         {
@@ -225,6 +238,38 @@ namespace BottomNavigationViewPager.Fragments
             _wv.Visibility = ViewStates.Visible;
         }
 
+        private static async void ExpandVideoCards(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+        }
+
+        private static void InjectCSS()
+        {
+        //    var _check = Assets.CSS._bootstrap;
+        //    _wv.LoadUrl("javascript:(function() {" +
+        //"var parent = document.getElementsByTagName('head').item(0);" +
+        //"var style = document.createElement('style');" +
+        //"style.type = 'text/css';" +
+        //// Tell the browser to BASE64-decode the string into your script !!!
+        //"style.innerHTML = window.atob('" + Assets.CSS._bootstrap + "');" +
+        //"parent.appendChild(style)" +
+        //"})()");
+        //    var _check2 = Assets.CSS._common;
+        //    _wv.LoadUrl("javascript:(function() {" +
+        //            "var parent = document.getElementsByTagName('head').item(0);" +
+        //            "var style = document.createElement('style');" +
+        //            "style.type = 'text/css';" +
+        //            // Tell the browser to BASE64-decode the string into your script !!!
+        //            "style.innerHTML = window.atob('" + Assets.CSS._common + "');" +
+        //            "parent.appendChild(style)" +
+        //            "})()");
+        }
+
         public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -256,9 +301,11 @@ namespace BottomNavigationViewPager.Fragments
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
+                InjectCSS();
                 SetReload();
                 HideLinkOverflow();
+                ExpandVideoCards(true);
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsFillAvailable);
 
                 base.OnPageFinished(view, url);
             }

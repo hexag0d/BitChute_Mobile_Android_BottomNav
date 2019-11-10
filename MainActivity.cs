@@ -62,11 +62,11 @@ using static Android.Views.View;
 using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
-using Android.Content.Res;
 using StartServices.Servicesclass;
 using System;
 using static BottomNavigationViewPager.Fragments.TheFragment5;
 using System.Threading;
+using Android.Content.Res;
 
 namespace BottomNavigationViewPager
 {
@@ -159,7 +159,7 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
-
+            
             //_customAudioMan.GetAudioManager();
         }
 
