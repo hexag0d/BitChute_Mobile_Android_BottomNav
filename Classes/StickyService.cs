@@ -169,11 +169,6 @@ namespace StartServices.Servicesclass
             }
         }
 
-        public void DummyService()
-        {
-            bool _stayAwake = true;
-        }
-
         private int _notificationMsElapsed = 0;
         private static bool _notificationLongTimerSet = false;
 
@@ -289,9 +284,15 @@ namespace StartServices.Servicesclass
             }
         }
 
+        public static string _tab1LastURLLoaded = "";
+        public static string _tab2LastURLLoaded = "";
+        public static string _tab3LastURLLoaded = "";
 
         public class ServiceWebView : Android.Webkit.WebView
         {
+
+            public override string Url => base.Url;
+
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 Globals.AppState._bkgrd = true;
@@ -313,7 +314,7 @@ namespace StartServices.Servicesclass
                     {
                         //var afs = _service.GetAudioFocusState();
 
-                        _service.DummyService();
+                        //_service.DummyService();
                         System.Threading.Thread.Sleep(3600);
                     }
                 }

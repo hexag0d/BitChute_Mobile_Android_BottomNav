@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "18.7.2.2.NotificationTimerSwap";
+        public static string _appVersion = "18.7.3.1.ExpandVideoCards";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -52,7 +52,7 @@ namespace BottomNavigationViewPager.Classes
                 /// </summary>
                 public static bool _horizontal = false;
             }
-            
+
             /// <summary>
             /// global bool state: 
             /// returns/should be set to false if this app is in the foreground
@@ -258,8 +258,7 @@ namespace BottomNavigationViewPager.Classes
                                             item66.style.boxSizing = 'border-box';
                                         }" + "})()";
 
-
-
+            
             public static string _jsRemoveMaxWidthAll = "javascript:(function() { " +
                             @"var videocard_array = document.getElementsByClassName('video-card');
                                     for (var i = 0; i < videocard_array.length; ++i) {
@@ -268,9 +267,49 @@ namespace BottomNavigationViewPager.Classes
                                             item55.style.width = '100%';
                                         }" + "})()";
 
-            public static string _jsWidth100Percent = "javascript:(function() { " +
-                            @"document.getElementsByClassName('video-card')[0].style.width='100%'; " + "})()";
+            public static string _jsExpandSubs = "javascript:(function() { " +
+                @"var videocard_array = document.getElementsByClassName('subscription-container');
+                                    for (var i = 0; i < videocard_array.length; ++i) {
+                                             var item55 = videocard_array[i];  
+                                            item55.style.maxWidth = 'none';
+                                            item55.style.width = '100%';
+                                        }" + "})()";
 
+            public static string _jsExpandFeatured = "javascript:(function() { " +
+                 @"var videocard_array = document.getElementsByClassName('mg-responsive hidden-md hidden-lg lazyloaded');
+                                    for (var i = 0; i < videocard_array.length; ++i) {
+                                             var ite5 = videocard_array[i];  
+                                            ite5.style.maxWidth = 'none';
+                                            ite5.style.width = '100%';
+                                        }" + "})()";
+
+            public static string _jsFeaturedRemoveMaxWidth = "javascript:(function() { " +
+     @"var videocard_array = document.getElementsByClassName('channel-card');
+                                    for (var i = 0; i < videocard_array.length; ++i) {
+                                             var ite5 = videocard_array[i];  
+                                            ite5.style.maxWidth = 'none';
+                                        }" + "})()";
+
+
+            public static string _jsHideVideoMargin = "javascript:(function() { " +
+                            @"document.getElementsByClassName('container')[0].style.paddingLeft='0px'; " +
+                            @"document.getElementsByClassName('container')[0].style.paddingRight='0px'; "+
+                            @"document.getElementsByClassName('video-container')[0].style.paddingLeft='0px'; " +
+                            @"document.getElementsByClassName('video-container')[0].style.paddingRight='0px'; " +
+                            @"document.getElementsByClassName('row')[2].style.marginLeft='0px';"+ 
+                            @"document.getElementsByClassName('row')[2].style.marginRight='0px';" + "})()";
+
+            public static string _jsPageBarDelete =  "javascript:(function() { " +
+                            @"document.getElementById('page-bar').style='padding-top: 0px;padding-bottom: 0px;border-bottom-width: 0px;'" + "})()";
+
+            public static string _jsPut5pxMarginOnRows = "javascript:(function() { " +
+                             @"var row_array = document.getElementsByClassName('row');
+                                    for (var i = 3; i < row_array.length; ++i) {
+                                             var ite5 = row_array[i];  
+                                            ite5.style.marginLeft = '5px';
+                                            ite5.style.marginRight = '5px';
+                                        }" + "})()";
+            
             public static string _jsRemoveMaxWidth = "javascript:(function() { " +
                             @"document.getElementsByClassName('video-card').style.max-width=''; " + "})()";
         }

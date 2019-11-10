@@ -76,22 +76,16 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 _wv.LoadUrl(_url);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
         }
 
@@ -105,14 +99,20 @@ namespace BottomNavigationViewPager.Fragments
                 return false;
             }
         }
+        private static int _scrollY = 0;
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnTouch();
-        //    }
-        //}
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _scrollY += scrollY;
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
 
         public static bool _wvRling = false;
 
@@ -182,35 +182,39 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public static async void HidePageTitle()
+        public static async void HidePageTitle(int delay)
         {
-            await Task.Delay(1000);
+            await Task.Delay(delay);
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            if (Globals.AppState.Display._horizontal)
+            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
             {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
             }
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
         }
 
-        private static async void HideWatchLabel()
-        {
-            await Task.Delay(1000);
-            if (Globals.AppState.Display._horizontal)
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
-        }
 
         public void SetWebViewVis()
         {
             _wv.Visibility = ViewStates.Visible;
         }
 
+        private static async void ExpandVideoCards(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                HideWatchLabel();
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
@@ -231,18 +235,12 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    HidePageTitle();
+                    HidePageTitle(5000);
                 }
                 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
                 HideLinkOverflow();
-                
                 SetReload();
-
                 base.OnPageFinished(view, url);
             }
         }

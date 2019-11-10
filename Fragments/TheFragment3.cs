@@ -24,7 +24,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static ServiceWebView _wv;
+        public static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
@@ -64,19 +64,12 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(_wvc);
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 _wv.LoadUrl(_url);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
@@ -218,13 +211,21 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public static async void HidePageTitle()
+        public static async void HidePageTitle(int delay)
         {
-            await Task.Delay(5000);
+            if (delay != 0)
+            {
+                await Task.Delay(delay);
+            }
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+            }
+            
         }
 
         private static async void HideWatchLabel()
@@ -247,31 +248,10 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
             _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
         }
-
-        private static void InjectCSS()
-        {
-        //    var _check = Assets.CSS._bootstrap;
-        //    _wv.LoadUrl("javascript:(function() {" +
-        //"var parent = document.getElementsByTagName('head').item(0);" +
-        //"var style = document.createElement('style');" +
-        //"style.type = 'text/css';" +
-        //// Tell the browser to BASE64-decode the string into your script !!!
-        //"style.innerHTML = window.atob('" + Assets.CSS._bootstrap + "');" +
-        //"parent.appendChild(style)" +
-        //"})()");
-        //    var _check2 = Assets.CSS._common;
-        //    _wv.LoadUrl("javascript:(function() {" +
-        //            "var parent = document.getElementsByTagName('head').item(0);" +
-        //            "var style = document.createElement('style');" +
-        //            "style.type = 'text/css';" +
-        //            // Tell the browser to BASE64-decode the string into your script !!!
-        //            "style.innerHTML = window.atob('" + Assets.CSS._common + "');" +
-        //            "parent.appendChild(style)" +
-        //            "})()");
-        }
-
+        
         public class ExtWebViewClient : WebViewClient
         {
+
             public override void OnPageFinished(WebView view, string url)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -294,19 +274,25 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    HidePageTitle();
+                    //if (url != "https://www.bitchute.com/")
+                    //{
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                    //    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                    //}
+
+                    HidePageTitle(5000);
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-                InjectCSS();
+                //InjectCSS();
                 SetReload();
                 HideLinkOverflow();
                 ExpandVideoCards(true);
                 //_wv.LoadUrl(Globals.JavascriptCommands._jsFillAvailable);
-
+                
                 base.OnPageFinished(view, url);
             }
         }

@@ -85,7 +85,7 @@ namespace BottomNavigationViewPager
     {
         int _tabSelected;
 
-        ViewPager _viewPager;
+        public static ViewPager _viewPager;
         public static BottomNavigationView _navigationView;
         public static List<BottomNavigationItemView> _navViewItemList
             = new List<BottomNavigationItemView>();
@@ -126,9 +126,6 @@ namespace BottomNavigationViewPager
             try
             {
                 StartService(mServiceIntent);
-                PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My WakeLock");
-                wl.Acquire();
             }
             catch (Exception ex)
             {
@@ -198,7 +195,7 @@ namespace BottomNavigationViewPager
             if (_navTimer != 0)
                 _navTimer = 0;
 
-            if (!_navTimeout)
+            if (!_navTimeout || Globals.AppState.Display._horizontal)
             {
                 _navigationView.Visibility = ViewStates.Visible;
                 _navHidden = false;
@@ -229,15 +226,14 @@ namespace BottomNavigationViewPager
                     // _fm3.ShowMore();
                 }
             }
-            else
+            else if (!Globals.AppState.Display._horizontal)
             {
-                if (!_navTimeout)
+                if (_navigationView.Visibility == ViewStates.Gone)
                 {
                     _navigationView.Visibility = ViewStates.Visible;
                     _navHidden = false;
                     NavBarRemove();
                     _navTimeout = true;
-                    // _fm3.ShowMore();
                 }
             }
         }
@@ -642,9 +638,7 @@ namespace BottomNavigationViewPager
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
         }
-
         
-
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
@@ -664,24 +658,26 @@ namespace BottomNavigationViewPager
             
             try
             {
-                switch (_viewPager.CurrentItem)
-                {
-                    case 0:
-                        _fm1.LoadCustomUrl(url);
-                        break;
-                    case 1:
-                        _fm2.LoadCustomUrl(url);
-                        break;
-                    case 2:
-                        _fm3.LoadCustomUrl(url);
-                        break;
-                    case 3:
-                        _fm4.LoadCustomUrl(url);
-                        break;
-                    case 4:
-                        _fm5.LoadCustomUrl(url);
-                        break;
-                }
+
+                    switch (_viewPager.CurrentItem)
+                    {
+                        case 0:
+                            _fm1.LoadCustomUrl(url);
+                            break;
+                        case 1:
+                            _fm2.LoadCustomUrl(url);
+                            break;
+                        case 2:
+                            _fm3.LoadCustomUrl(url);
+                            break;
+                        case 3:
+                            _fm4.LoadCustomUrl(url);
+                            break;
+                        case 4:
+                            _fm5.LoadCustomUrl(url);
+                            break;
+                    }
+                
             }
             catch 
             {
@@ -690,7 +686,6 @@ namespace BottomNavigationViewPager
         }
         
         WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
-        
         WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
 
         public override void OnConfigurationChanged(Configuration newConfig)
@@ -702,20 +697,33 @@ namespace BottomNavigationViewPager
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        if (TheFragment1._wv.Url != "https://www.bitchute.com/")
+                        {
+                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        }
                         break;
                     case 1:
-                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        if (TheFragment2._wv.Url != "https://www.bitchute.com/")
+                        {
+                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        }
                         break;
                     case 2:
-                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        if (TheFragment3._wv.Url != "https://www.bitchute.com/")
+                        {
+                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        }
                         break;
                     case 3:
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
                         break;
                     case 4:
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
@@ -754,6 +762,7 @@ namespace BottomNavigationViewPager
                 Globals.AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
+                CustomOnTouch();
             }
 
             if (!Globals.AppSettings._hideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)

@@ -73,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
-    <Compile Include="Assets\css.cs" />
     <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
     <Compile Include="Classes\StickyService.cs" />

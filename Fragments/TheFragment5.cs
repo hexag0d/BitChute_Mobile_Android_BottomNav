@@ -87,7 +87,6 @@ namespace BottomNavigationViewPager.Fragments
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
         public static ExtStickyService _stickyService = new ExtStickyService();
-
         private static CookieCollection cookies = new CookieCollection();
 
         public static TheFragment5 _fm5;

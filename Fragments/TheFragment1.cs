@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
@@ -23,7 +24,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static ServiceWebView _wv;
+        public static ServiceWebView _wv;
         protected static View _view;
 
         public string _url = "https://bitchute.com/";
@@ -75,8 +76,7 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             
-            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
-            //_wv.Touch += ViewOnTouch;
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
             _wv.SetOnTouchListener(new ExtTouchListener());
             
             return _view;
@@ -143,18 +143,24 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
-
                 return false;
             }
         }
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnScroll();
-        //    }
-        //}
+        private static int _scrollY = 0;
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                _scrollY += scrollY;
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
 
         /// <summary>
         /// tells the webview to GoBack, if it can
@@ -195,11 +201,8 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 _wvRling = false;
             }
         }
@@ -213,9 +216,7 @@ namespace BottomNavigationViewPager.Fragments
         public static async void HideLinkOverflow()
         {
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
             _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
 
@@ -228,15 +229,20 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(5000);
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+            if (_wv.Url != "https://www.bitchute.com/")
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+            }
             //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
         }
 
         private static async void HideWatchLabel()
         {
-            await Task.Delay(2000);
+            await Task.Delay(4000);
+            if (_wv.Url != "https://www.bitchute.com/")
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
 
@@ -245,40 +251,48 @@ namespace BottomNavigationViewPager.Fragments
             _wv.Visibility = ViewStates.Visible;
         }
 
+        private static async void ExpandVideoCards(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+        }
 
+        private static async void ExpandFeaturedChannels(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(3000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsFeaturedRemoveMaxWidth);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsExpandFeatured);
+        }
+
+        private static async void ExpandPage(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(3000);
+            }
+            //_wv.LoadUrl(Globals.JavascriptCommands._jsHideVideoMargin);
+
+            //_wv.LoadUrl(Globals.JavascriptCommands._jsPut5pxMarginOnRows);
+        }
+        
         private class ExtWebViewClient : WebViewClient
         {
-            
-            //public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
-            //{
-            //    return base.ShouldOverrideUrlLoading(view, request);
-            //}
-
-            //public override bool ShouldOverrideUrlLoading(WebView view, string url)
-            //{
-            //    if (url.Contains("disqus.com"))
-            //    {
-            //        string noteText = _extWebInterface.GetNotificationText("url").Result;
-            //        string newURL = _extNotifications.GetBitChuteChannelLinkFromDiscus(noteText).Result;
-            //        _wv.LoadUrl(newURL);
-            //        url = newURL;
-            //    }
-
-            //    return base.ShouldOverrideUrlLoading(view, url);
-            //}
-
             public override void OnPageFinished(WebView _view, string url)
             {
-
-
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+                
                 //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
 
-                if (url != "https://www.bitchute.com/")
-                {
                     HideWatchLabel();
-                }
+                
 
                 if (!TheFragment5._tab1FeaturedOn)
                 {
@@ -287,16 +301,17 @@ namespace BottomNavigationViewPager.Fragments
                 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                    if (url != "https://www.bitchute.com/")
+                    {
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                    }
 
                     HidePageTitle();
                 }
-
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
                 
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
@@ -314,7 +329,9 @@ namespace BottomNavigationViewPager.Fragments
                 SetReload();
 
                 HideLinkOverflow();
-
+                ExpandFeaturedChannels(true);
+                ExpandVideoCards(true);
+                ExpandPage(true);
 
                 base.OnPageFinished(_view, url);
             }
