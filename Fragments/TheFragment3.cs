@@ -13,6 +13,7 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using Java.IO;
+using StartServices.Servicesclass;
 using static Android.Views.View;
 using static StartServices.Servicesclass.ExtStickyService;
 
@@ -130,13 +131,23 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                _scrollY += scrollY;
-                if (_scrollY >= 4000)
-                {
-                    ExpandVideoCards(false);
-                    _scrollY = 0;
-                }
+                OnScrollChanged(scrollY);
             }
+        }
+
+        public static async void OnScrollChanged(int scrollY)
+        {
+
+               if (Globals.AppState.Display._horizontal)
+               {
+                   _scrollY += scrollY;
+                   if (_scrollY >= 4000)
+                   {
+                       ExpandVideoCards(false);
+                   }
+               }
+
+
         }
 
         public void WebViewGoBack()
@@ -195,10 +206,10 @@ namespace BottomNavigationViewPager.Fragments
 
         //    }
         //}
-
-        /// <summary>
-        /// we have to set this with a delay or it won't fix the link overflow
-        /// </summary>
+        
+            /// <summary>
+            /// hides the link overflow
+            /// </summary>
         public static async void HideLinkOverflow()
         {
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
@@ -225,21 +236,15 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
             }
-            
         }
 
-        private static async void HideWatchLabel()
+        private static async void HideWatchLabel(int delay)
         {
-            await Task.Delay(2000);
+            await Task.Delay(delay);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
-
-        public void SetWebViewVis()
-        {
-            _wv.Visibility = ViewStates.Visible;
-        }
-
-        private static async void ExpandVideoCards(bool delayed)
+        
+        public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)
             {
@@ -259,7 +264,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (url != "https://www.bitchute.com/")
                 {
-                    HideWatchLabel();
+                    HideWatchLabel(2000);
                 }
 
                 if (TheFragment5._tab3Hide)

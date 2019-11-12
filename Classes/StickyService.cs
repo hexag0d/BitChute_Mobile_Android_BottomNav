@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using BottomNavigationViewPager.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
+using Android.Support.V4.App;
 
 namespace StartServices.Servicesclass
 {
@@ -33,13 +34,11 @@ namespace StartServices.Servicesclass
 
         public static Java.Util.Timer _timer = new Java.Util.Timer();
         public static ExtTimerTask _timerTask = new ExtTimerTask();
-        public static ExtStickyService _service;
 
+        public static ExtStickyService _service;
         private static PowerManager _pm;
-        private static PowerManager.WakeLock _wl;
         public int counter = 0;
 
-        //private static AudioManager _am;
         private static WifiManager wifiManager;
         private static WifiManager.WifiLock wifiLock;
 
@@ -70,7 +69,8 @@ namespace StartServices.Servicesclass
         {
             wifiManager = (WifiManager)GetSystemService(Context.WifiService);
             _main = MainActivity._main;
-            
+            _service = this;
+
             try
             {
                 _pm = (PowerManager)GetSystemService(Context.PowerService);
@@ -86,7 +86,7 @@ namespace StartServices.Servicesclass
         }
         //public static Timer timer;
         //private TimerTask timerTask;
-        private static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
+        public static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
 
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
@@ -100,49 +100,11 @@ namespace StartServices.Servicesclass
             wifiLock.Acquire();
         }
 
-        //public static List<bool> _recentAudioFocusStates = new List<bool>();
-        //public static int _numberOfAudioChecks = 0;
-
-        //public bool GetAudioFocusState()
-        //{
-
-        //    _numberOfAudioChecks++;
-
-        //    if (_numberOfAudioChecks <= 13)
-        //    {
-        //        bool _currentAudioActive = true;
-
-        //        try
-        //        {
-        //            _currentAudioActive = _am.IsMusicActive;
-        //        }
-        //        catch
-        //        {
-
-        //        }
-        //        _recentAudioFocusStates.Add(_currentAudioActive);
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        foreach (var state in _recentAudioFocusStates)
-        //        {
-        //            if (state)
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //        _recentAudioFocusStates.Clear();
-        //        _numberOfAudioChecks = 0;
-        //        return false;
-        //    }
-        //}
-        
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
         public static ExtNotifications _extNotifications = new ExtNotifications();
         public static TheFragment5 _fm5;
-        
+
         private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
 
         /// <summary>
@@ -153,10 +115,10 @@ namespace StartServices.Servicesclass
         /// requires a modified an  droid manifest for get_task ALLOWED
         /// </summary>
         /// <returns>bool</returns>
-        public bool IsInBkGrd()
+        public static bool IsInBkGrd()
         {
             ActivityManager.GetMyMemoryState(myProcess);
-            
+
             if (myProcess.Importance == Importance.Foreground)
             {
                 Globals.AppState._bkgrd = false;
@@ -170,7 +132,7 @@ namespace StartServices.Servicesclass
         }
 
         private int _notificationMsElapsed = 0;
-        private static bool _notificationLongTimerSet = false;
+        public static bool _notificationLongTimerSet = false;
 
         /// <summary>
         /// starts/restarts the notifications, 
@@ -186,7 +148,7 @@ namespace StartServices.Servicesclass
         /// system for the long running task to see if that
         /// will prevent the loop from breaking.
         /// </summary>
-        public async void StartNotificationLoop(int delay)
+        public static async void StartNotificationLoop(int delay)
         {
             bool _notificationStackExecutionInProgress = false;
             //wait on a delay so that the cookie is ready when we make
@@ -210,14 +172,13 @@ namespace StartServices.Servicesclass
                     _fm5.SendNotifications(ExtNotifications._customNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
-
-                if (_notificationsHaveBeenSent)
+                if (ExtStickyService._notificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
-                    if (!_notificationLongTimerSet)
+                    if (!ExtStickyService._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(_extTimerTask, 180000, 660000);
+                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 400000);
                         _notificationLongTimerSet = true;
                     }
                     return;
@@ -225,18 +186,12 @@ namespace StartServices.Servicesclass
                 else
                 {
                     await Task.Delay(30000);
-                    _notificationMsElapsed += 30000;
                 }
             }
         }
-        
+
         private static bool _notificationStackExecutionInProgress = false;
-        
-        public void ServiceViewOverride()
-        {
-            _main.SetVisible(true);
-            _main.SetWebViewVisibility();
-        }
+
 
         public override void OnDestroy()
         {
@@ -252,7 +207,7 @@ namespace StartServices.Servicesclass
                 Console.WriteLine(ex.Message);
             }
         }
-        
+
 
         public class ExtTimerTask : Java.Util.TimerTask
         {
@@ -280,56 +235,61 @@ namespace StartServices.Servicesclass
 
                     }
                 }
-
             }
         }
 
-        public static string _tab1LastURLLoaded = "";
-        public static string _tab2LastURLLoaded = "";
-        public static string _tab3LastURLLoaded = "";
+        public static Notification GetStartServiceNotification()
+        {
+
+            var _ctx = Android.App.Application.Context;
+            Notification note = new Notification();
+
+            var resultIntent = new Intent(_ctx, typeof(MainActivity));
+            var valuesForActivity = new Bundle();
+            valuesForActivity.PutInt(MainActivity.COUNT_KEY, 1);
+            MainActivity.NOTIFICATION_ID += 6;
+            var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
+
+
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                    .SetContentTitle("BitChute Entering Background Mode") // Set the title
+                    .SetNumber(1) // Display the count in the Content Info
+                    .SetSmallIcon(2130837590) // This is the icon to display
+                    .SetContentText("now Notifying");
+
+            var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+            note = builder.Build();
+            return note;
+        }
+
+
+
+            public static int _startForegroundNotificationId = 6666;
+
 
         public class ServiceWebView : Android.Webkit.WebView
         {
 
             public override string Url => base.Url;
 
+            public ExtStickyService _serviceContext;
+
+
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
-                Globals.AppState._bkgrd = true;
 
                 if (MainActivity._backgroundRequested)
                 {
-                    try
-                    {
-                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                        _service.AquireWifiLock();
-                        _wl.Acquire();
-                    }
-                    catch
-                    {
 
-                    }
-                    while (_service.IsInBkGrd())
+                    while (ExtStickyService.IsInBkGrd())
                     {
-                        //var afs = _service.GetAudioFocusState();
-
-                        //_service.DummyService();
                         System.Threading.Thread.Sleep(3600);
                     }
                 }
                 MainActivity._backgroundRequested = false;
-                if (!ExtStickyService._notificationsHaveBeenSent)
-                {
-                    try
-                    {
-                        _service.StartNotificationLoop(30000);
-                    }
-                    catch
-                    {
-
-                    }
-                }
+                
                 base.OnWindowFocusChanged(hasWindowFocus);
             }
 
@@ -345,10 +305,6 @@ namespace StartServices.Servicesclass
             {
             }
 
-            public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr, bool privateBrowsing) : base(context, attrs, defStyleAttr, privateBrowsing)
-            {
-            }
-
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
             {
             }
@@ -357,6 +313,5 @@ namespace StartServices.Servicesclass
             {
             }
         }
-
     }
 }  

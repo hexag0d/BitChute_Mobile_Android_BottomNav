@@ -111,6 +111,7 @@ namespace BottomNavigationViewPager
         public static View _mainView;
 
         public static List<string> _NotificationURLList = new List<string>();
+        public static Java.Util.Timer _timer = new Java.Util.Timer();
 
         public static ISharedPreferences _prefs;
         //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
@@ -156,7 +157,8 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
-            
+
+            ExtStickyService.StartNotificationLoop(30000);
             //_customAudioMan.GetAudioManager();
         }
 
@@ -536,15 +538,6 @@ namespace BottomNavigationViewPager
             _main.MoveTaskToBack(true);
         }
 
-        public void SetWebViewVisibility()
-        {
-            _fm1.SetWebViewVis();
-            _fm2.SetWebViewVis();
-            _fm3.SetWebViewVis();
-            _fm4.SetWebViewVis();
-            _fm5.SetWebViewVis();
-        }
-
         public Android.App.ActivityManager GetCustomActivityManager()
         {
             
@@ -686,7 +679,7 @@ namespace BottomNavigationViewPager
         }
         
         WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
-        WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
+        WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen; 
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
@@ -703,6 +696,7 @@ namespace BottomNavigationViewPager
                             _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
                         }
+                        TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
                         if (TheFragment2._wv.Url != "https://www.bitchute.com/")
@@ -711,6 +705,7 @@ namespace BottomNavigationViewPager
                             _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
                         }
+                        TheFragment2.ExpandVideoCards(false);
                         break;
                     case 2:
                         if (TheFragment3._wv.Url != "https://www.bitchute.com/")
@@ -719,11 +714,13 @@ namespace BottomNavigationViewPager
                             _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
                         }
+                        TheFragment3.ExpandVideoCards(false);
                         break;
                     case 3:
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        TheFragment4.ExpandVideoCards(false);
                         break;
                     case 4:
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);

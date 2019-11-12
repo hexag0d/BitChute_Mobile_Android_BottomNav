@@ -276,10 +276,12 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (_notificationonrb.Checked)
                 {
-                    Globals.AppSettings._notifying = true;
-                    //start the notification timer as setting _notifying false breaks the loop
-                    _stickyService.StartNotificationLoop(10000);
-                    _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                    if (!ExtStickyService._notificationsHaveBeenSent)
+                    {
+                        Globals.AppSettings._notifying = true;
+                        //start the notification timer as setting _notifying false breaks the loop
+                        _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
+                    }
                 }
                 else
                 {
@@ -289,8 +291,6 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-
-        
         public void CustomLoadUrl(string url)
         {
             _wv.LoadUrl(url);
@@ -738,33 +738,36 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Run(() =>
                 {
-                   _htmlCode = "";
-                   HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+                _htmlCode = "";
+                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
 
-                   try
-                   {
-                       Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
+                    if (!_notificationHttpRequestInProgress)
+                    {
+                        try
+                        {
+                            Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
-                       var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
+                            var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
 
-                       using (HttpClient _client = new HttpClient(handler))
-                       {
-                           _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
-                           _notificationHttpRequestInProgress = true;
-                            var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                           _notificationHttpRequestInProgress = false;
-                           var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                            using (HttpClient _client = new HttpClient(handler))
+                            {
+                                _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
+                                _notificationHttpRequestInProgress = true;
 
-                           _htmlCode = resultContent;
-                       }
-                   }
-                   catch (Exception ex)
-                   {
-                       Console.WriteLine(ex.Message);
-                   }
+                                    var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                                    var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                                    _htmlCode = resultContent;
+                                _notificationHttpRequestInProgress = false;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
 
-                   
-                });
+                    }
+                }); 
+
                 return _htmlCode;
             }
 

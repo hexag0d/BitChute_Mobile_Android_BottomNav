@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "18.7.3.1.ExpandVideoCards";
+        public static string _appVersion = "19.7.3.2.ExpandVideoCards";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -224,18 +224,33 @@ namespace BottomNavigationViewPager.Classes
             public static string _jsShowWatchTab = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
             
+            /// <summary>
+            /// hides the page bar
+            /// </summary>
             public static string _jsHidePageBar = "javascript:(function() { " +
                             "document.getElementsByClassName('page-bar')[0].style.display='none'; " + "})()";
             
+            /// <summary>
+            /// shows the page bar
+            /// </summary>
             public static string _jsShowPageBar = "javascript:(function() { " +
                             "document.getElementsByClassName('page-bar')[0].style.display='block'; " + "})()";
             
+            /// <summary>
+            /// hides the nav tab list (warning, not good on tab 3)
+            /// </summary>
             public static string  _jsHideNavTabsList = "javascript:(function() { " +
                             "document.getElementsByClassName('nav nav-tabs nav-tabs-list')[0].style.display='none'; " + "})()";
       
+            /// <summary>
+            /// hides the tab inner
+            /// </summary>
             public static string  _jsHideTabInner = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
               
+            /// <summary>
+            /// sets
+            /// </summary>
             public static string _jsFillAvailable = "javascript:(function() { " +
                             @"document.getElementsByClassName('video-card-image')[0].style.width='fill-available'; " + "})()";
             

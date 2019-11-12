@@ -5,6 +5,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -104,13 +105,23 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                _scrollY += scrollY;
-                if (_scrollY >= 4000)
-                {
-                    ExpandVideoCards(false);
-                    _scrollY = 0;
-                }
+                OnScrollChanged(scrollY);
             }
+        }
+
+        public static async void OnScrollChanged(int scrollY)
+        {
+
+               if (Globals.AppState.Display._horizontal)
+               {
+                   _scrollY += scrollY;
+                   if (_scrollY >= 4000)
+                   {
+                       ExpandVideoCards(false);
+                   }
+               }
+
+
         }
 
         public void WebViewGoBack()
@@ -188,7 +199,19 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        private static async void ExpandVideoCards(bool delayed)
+        public static async void HideWatchTab(int delay)
+        {
+            if (delay != 0)
+            {
+                await Task.Delay(delay);
+            }
+            if (_wv.Url != "https://www.bitchute.com/")
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+            }
+        }
+
+        public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)
             {
@@ -201,6 +224,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                HideWatchTab(5000);
+
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);

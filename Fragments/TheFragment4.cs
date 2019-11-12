@@ -5,6 +5,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -105,13 +106,22 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                _scrollY += scrollY;
-                if (_scrollY >= 4000)
-                {
-                    ExpandVideoCards(false);
-                    _scrollY = 0;
-                }
+                OnScrollChanged(scrollY);
             }
+        }
+
+        public static async void OnScrollChanged(int scrollY)
+        {
+
+               if (Globals.AppState.Display._horizontal)
+               {
+                   _scrollY += scrollY;
+                   if (_scrollY >= 4000)
+                   {
+                       ExpandVideoCards(false);
+                   }
+               }
+
         }
 
         public static bool _wvRling = false;
@@ -201,7 +211,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.Visibility = ViewStates.Visible;
         }
 
-        private static async void ExpandVideoCards(bool delayed)
+        public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)
             {
