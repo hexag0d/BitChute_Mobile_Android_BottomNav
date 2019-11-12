@@ -178,7 +178,7 @@ namespace StartServices.Servicesclass
                     if (!ExtStickyService._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 400000);
+                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 780000);
                         _notificationLongTimerSet = true;
                     }
                     return;
