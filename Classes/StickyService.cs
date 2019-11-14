@@ -108,11 +108,8 @@ namespace StartServices.Servicesclass
         private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
 
         /// <summary>
-        /// returns false when the ActivityManager contains
-        /// an entry for this app running in foreground: 
-        /// importance is present in package.name with OS focus
-        /// 
-        /// requires a modified an  droid manifest for get_task ALLOWED
+        /// returns true when the app detects that it's running
+        /// in background
         /// </summary>
         /// <returns>bool</returns>
         public static bool IsInBkGrd()
@@ -150,7 +147,6 @@ namespace StartServices.Servicesclass
         /// </summary>
         public static async void StartNotificationLoop(int delay)
         {
-            bool _notificationStackExecutionInProgress = false;
             //wait on a delay so that the cookie is ready when we make
             //httprequest for the notifications
             await Task.Delay(delay);
@@ -191,8 +187,7 @@ namespace StartServices.Servicesclass
         }
 
         private static bool _notificationStackExecutionInProgress = false;
-
-
+        
         public override void OnDestroy()
         {
             try
@@ -264,11 +259,8 @@ namespace StartServices.Servicesclass
             return note;
         }
 
-
-
-            public static int _startForegroundNotificationId = 6666;
-
-
+        public static int _startForegroundNotificationId = 6666;
+        
         public class ServiceWebView : Android.Webkit.WebView
         {
 

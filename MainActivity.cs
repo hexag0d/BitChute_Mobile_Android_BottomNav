@@ -109,8 +109,7 @@ namespace BottomNavigationViewPager
 
         public static Window _window;
         public static View _mainView;
-
-        public static List<string> _NotificationURLList = new List<string>();
+        
         public static Java.Util.Timer _timer = new Java.Util.Timer();
 
         public static ISharedPreferences _prefs;
@@ -185,11 +184,8 @@ namespace BottomNavigationViewPager
         }
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
-
         public static bool _navHidden = false;
-
         public static bool _navTimeout = true;
-
         public static int _navTimer = 0;
 
         public void CustomOnSwipe()
@@ -738,22 +734,27 @@ namespace BottomNavigationViewPager
                     case 0:
                         _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
                         _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
                         _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
                         _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
                         _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
                         _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                 }
                 Globals.AppState.Display._horizontal = false;

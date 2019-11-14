@@ -162,11 +162,8 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 _wvRling = false;
             }
         }
@@ -179,6 +176,7 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -234,6 +232,8 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     HidePageTitle(5000);
                 }
+
+                HideWatchTab(3000);
 
                 SetReload();
                 HideLinkOverflow();

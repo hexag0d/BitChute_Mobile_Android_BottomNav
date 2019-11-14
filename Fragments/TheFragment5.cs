@@ -80,7 +80,6 @@ namespace BottomNavigationViewPager.Fragments
         public static TheFragment5.ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static TextView _versionTextView;
         public static bool _notificationHttpRequestInProgress = false;
-        public static List<string> _notificationList = new List<string>();
 
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
@@ -680,15 +679,12 @@ namespace BottomNavigationViewPager.Fragments
                    var _ctx = Android.App.Application.Context;
 
                     // When the user clicks the notification, MainActivity will start up.
-
-                    MainActivity._NotificationURLList.Clear();
-
+                    
                    foreach (var note in notificationList)
                    {
                        var resultIntent = new Intent(_ctx, typeof(MainActivity));
                        var valuesForActivity = new Bundle();
                        valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
-                       MainActivity._NotificationURLList.Add(note._noteLink);
                        valuesForActivity.PutString("URL", note._noteLink);
                        resultIntent.PutExtras(valuesForActivity);
                        var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);

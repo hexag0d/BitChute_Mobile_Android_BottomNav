@@ -110,18 +110,16 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static async void OnScrollChanged(int scrollY)
+        public static void OnScrollChanged(int scrollY)
         {
-
-               if (Globals.AppState.Display._horizontal)
-               {
-                   _scrollY += scrollY;
-                   if (_scrollY >= 4000)
-                   {
-                       ExpandVideoCards(false);
-                   }
-               }
-
+            if (Globals.AppState.Display._horizontal)
+            {
+                _scrollY += scrollY;
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                }
+            }
         }
 
         public static bool _wvRling = false;
@@ -185,6 +183,7 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
         
         public void LoadCustomUrl(string url)

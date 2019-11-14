@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "19.7.3.4.ExpandVideoCards";
+        public static string _appVersion = "19.7.3.5.ExpandVideoCards";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -299,7 +299,7 @@ namespace BottomNavigationViewPager.Classes
                                         }" + "})()";
 
             public static string _jsFeaturedRemoveMaxWidth = "javascript:(function() { " +
-     @"var videocard_array = document.getElementsByClassName('channel-card');
+                  @"var videocard_array = document.getElementsByClassName('channel-card');
                                     for (var i = 0; i < videocard_array.length; ++i) {
                                              var ite5 = videocard_array[i];  
                                             ite5.style.maxWidth = 'none';

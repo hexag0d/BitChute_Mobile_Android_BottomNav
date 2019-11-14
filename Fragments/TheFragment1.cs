@@ -80,6 +80,8 @@ namespace BottomNavigationViewPager.Fragments
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
             _wv.SetOnTouchListener(new ExtTouchListener());
             
+            
+
             return _view;
         }
 
@@ -112,32 +114,6 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static MainActivity _main = new MainActivity();
 
-        //public bool OnTouch(View v, MotionEvent e)
-        //{
-        //    return false;
-        //}
-
-        //private void ViewOnTouch(object sender, View.TouchEventArgs touchEventArgs)
-        //{
-        //    // _wv.ComputeScroll();
-        //    //Globals._wvHeight = _wv.ContentHeight;
-
-        //    //string message;
-        //    switch (touchEventArgs.Event.Action & MotionEventActions.Mask)
-        //    {
-        //        case MotionEventActions.Down:
-        //        //case MotionEventActions.Move:
-        //        //    _main.CustomOnScroll();
-        //        //    break;
-
-        //        case MotionEventActions.Up:
-        //            var check = 0;
-        //            //_main.HideNavBarAfterDelay();
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
@@ -154,22 +130,19 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                OnScrollChanged(scrollY);
+                if (scrollY >= 4000)
+                {
+                    OnScrollChanged(scrollY);
+                }
             }
         }
 
         public static async void OnScrollChanged(int scrollY)
         {
-
-               if (Globals.AppState.Display._horizontal)
-               {
-                   _scrollY += scrollY;
-                   if (_scrollY >= 4000)
-                   {
-                       ExpandVideoCards(false);
-                   }
-               }
-
+            if (Globals.AppState.Display._horizontal)
+            {
+                ExpandVideoCards(false);
+            }
         }
 
         /// <summary>

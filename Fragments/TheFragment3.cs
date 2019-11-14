@@ -53,13 +53,11 @@ namespace BottomNavigationViewPager.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
-
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
-
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
 
             if (!tabLoaded)
@@ -131,23 +129,23 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                OnScrollChanged(scrollY);
+                if (scrollY >= 4000)
+                {
+                    OnScrollChanged(scrollY);
+                }
             }
         }
 
-        public static async void OnScrollChanged(int scrollY)
+        public static void OnScrollChanged(int scrollY)
         {
-
-               if (Globals.AppState.Display._horizontal)
-               {
-                   _scrollY += scrollY;
-                   if (_scrollY >= 4000)
-                   {
-                       ExpandVideoCards(false);
-                   }
-               }
-
-
+            if (Globals.AppState.Display._horizontal)
+            {
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
         }
 
         public void WebViewGoBack()
@@ -183,29 +181,11 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 _wvRling = false;
             }
         }
-
-        //public static bool _showMoreTimeout = false;
-
-        //public void ShowMore()
-        //{
-        //    if (!_showMoreTimeout)
-        //    {
-        //        _showMoreTimeout = true;
-        //        System.Threading.Thread.Sleep(5000);
-        //        _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
-
-        //        _showMoreTimeout = false;
-
-        //    }
-        //}
         
             /// <summary>
             /// hides the link overflow
@@ -213,8 +193,8 @@ namespace BottomNavigationViewPager.Fragments
         public static async void HideLinkOverflow()
         {
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
 
         public void LoadCustomUrl(string url)
