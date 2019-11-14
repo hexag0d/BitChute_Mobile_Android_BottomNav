@@ -70,6 +70,7 @@ namespace BottomNavigationViewPager.Classes
                         {
                             //&#39; <<< '   ... &amp; <<< &
                             var _tagContents = node.InnerText;
+                            _tagContents = _tagContents.Replace(@"&#39;", @"'").Replace(@"&amp;", @"&");
                             _notificationTextList.Add(_tagContents);
                         }
 

@@ -116,6 +116,8 @@ namespace BottomNavigationViewPager
         //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
         public static ExtStickyService _service = new ExtStickyService();
 
+        WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
@@ -158,6 +160,7 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
 
             ExtStickyService.StartNotificationLoop(30000);
+            _window.AddFlags(_winFlagUseHw);
             //_customAudioMan.GetAudioManager();
         }
 
@@ -188,7 +191,7 @@ namespace BottomNavigationViewPager
         public static bool _navTimeout = true;
         public static int _navTimer = 0;
 
-        public void CustomOnSwipe()
+        public async void CustomOnSwipe()
         {
             if (_navTimer != 0)
                 _navTimer = 0;
@@ -536,10 +539,8 @@ namespace BottomNavigationViewPager
 
         public Android.App.ActivityManager GetCustomActivityManager()
         {
-            
             Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
                     .Context.GetSystemService(Context.ActivityService);
-            
             return _am;
         }
 

@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "19.7.3.5.ExpandVideoCards";
+        public static string _appVersion = "19.7.3.6.OptimizeUI";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);

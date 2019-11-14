@@ -22,7 +22,6 @@ namespace BottomNavigationViewPager.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://www.bitchute.com/profile";
-
         bool tabLoaded = false;
 
         public static TheFragment4 NewInstance(string title, string icon) {
@@ -36,7 +35,6 @@ namespace BottomNavigationViewPager.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             if (Arguments != null)
             {
                 if(Arguments.ContainsKey("title"))
@@ -110,14 +108,17 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static void OnScrollChanged(int scrollY)
+        public static async void OnScrollChanged(int scrollY)
         {
+            await Task.Delay(60);
+            _scrollY += scrollY;
             if (Globals.AppState.Display._horizontal)
             {
-                _scrollY += scrollY;
+                await Task.Delay(500);
                 if (_scrollY >= 4000)
                 {
                     ExpandVideoCards(false);
+                    _scrollY = 0;
                 }
             }
         }
@@ -203,7 +204,6 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
             }
         }
-
 
         public void SetWebViewVis()
         {

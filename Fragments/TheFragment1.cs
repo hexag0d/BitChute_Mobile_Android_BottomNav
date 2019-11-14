@@ -130,18 +130,22 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                if (scrollY >= 4000)
-                {
-                    OnScrollChanged(scrollY);
-                }
+                 OnScrollChanged(scrollY);
             }
         }
 
         public static async void OnScrollChanged(int scrollY)
         {
+            await Task.Delay(60);
+            _scrollY += scrollY;
             if (Globals.AppState.Display._horizontal)
             {
-                ExpandVideoCards(false);
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
             }
         }
 

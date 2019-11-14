@@ -111,17 +111,17 @@ namespace BottomNavigationViewPager.Fragments
 
         public static async void OnScrollChanged(int scrollY)
         {
-
-               if (Globals.AppState.Display._horizontal)
-               {
-                   _scrollY += scrollY;
-                   if (_scrollY >= 4000)
-                   {
-                       ExpandVideoCards(false);
-                   }
-               }
-
-
+            await Task.Delay(60);
+            _scrollY += scrollY;
+            if (Globals.AppState.Display._horizontal)
+            {
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
         }
 
         public void WebViewGoBack()
@@ -222,8 +222,6 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                HideWatchTab(5000);
-
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
@@ -232,11 +230,9 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     HidePageTitle(5000);
                 }
-
-                HideWatchTab(3000);
-
                 SetReload();
                 HideLinkOverflow();
+                HideWatchTab(5000);
                 ExpandVideoCards(true);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
                 base.OnPageFinished(view, url);
