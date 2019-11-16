@@ -565,8 +565,7 @@ namespace BottomNavigationViewPager
         public static int _backgroundLoopMsDelayInt = 3600;
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
-
-   
+        
         void CreateNotificationChannel()
         {
             var alarmAttributes = new Android.Media.AudioAttributes.Builder()

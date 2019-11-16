@@ -89,9 +89,7 @@ namespace BottomNavigationViewPager.Fragments
         private static CookieCollection cookies = new CookieCollection();
 
         public static TheFragment5 _fm5;
-
-        private static Android.Graphics.Bitmap _notificationBMP;
-
+        
         public static TheFragment5 NewInstance(string title, string icon)
         {
             var fragment = new TheFragment5();

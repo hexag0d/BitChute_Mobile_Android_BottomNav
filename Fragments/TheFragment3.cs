@@ -241,7 +241,6 @@ namespace BottomNavigationViewPager.Fragments
         
         public class ExtWebViewClient : WebViewClient
         {
-
             public override void OnPageFinished(WebView view, string url)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -269,7 +268,7 @@ namespace BottomNavigationViewPager.Fragments
                     //if (url != "https://www.bitchute.com/")
                     //{
                     //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    //    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     //    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
                     //    _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
                     //    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);

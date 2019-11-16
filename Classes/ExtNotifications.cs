@@ -66,6 +66,20 @@ namespace BottomNavigationViewPager.Classes
 
                     if (doc != null)
                     {
+                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
+                        {
+                            var _tagContents = node.InnerText;
+                            if (_tagContents.Contains("Notifications"))
+                            {
+                                Globals.AppState._userIsLoggedIn = true;
+                            }
+                            else
+                            {
+                                Globals.AppState._userIsLoggedIn = false;
+                                return;
+                            }
+                        }
+
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                         {
                             //&#39; <<< '   ... &amp; <<< &

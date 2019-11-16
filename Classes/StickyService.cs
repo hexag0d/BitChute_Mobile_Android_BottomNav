@@ -173,14 +173,19 @@ namespace StartServices.Servicesclass
                     if (!ExtStickyService._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 780000); // 780000
+                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 500000, 780000); // 780000
                         _notificationLongTimerSet = true;
                     }
                     return;
                 }
+                else if (!Globals.AppState._userIsLoggedIn)
+                {
+                    await Task.Delay(380000);
+                }
+                //user is logged in but has not yet received a notification
                 else
                 {
-                    await Task.Delay(240000);
+                    await Task.Delay(420000);
                 }
             }
         }
@@ -232,31 +237,6 @@ namespace StartServices.Servicesclass
             }
         }
 
-        public static Notification GetStartServiceNotification()
-        {
-
-            var _ctx = Android.App.Application.Context;
-            Notification note = new Notification();
-
-            var resultIntent = new Intent(_ctx, typeof(MainActivity));
-            var valuesForActivity = new Bundle();
-            valuesForActivity.PutInt(MainActivity.COUNT_KEY, 1);
-            MainActivity.NOTIFICATION_ID += 6;
-            var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-
-
-            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                    .SetContentTitle("BitChute Entering Background Mode") // Set the title
-                    .SetNumber(1) // Display the count in the Content Info
-                    .SetSmallIcon(2130837590) // This is the icon to display
-                    .SetContentText("now Notifying");
-
-            var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-            note = builder.Build();
-            return note;
-        }
 
         public static int _startForegroundNotificationId = 6666;
         
@@ -272,10 +252,8 @@ namespace StartServices.Servicesclass
             {
                 if (MainActivity._backgroundRequested)
                 {
-
                     while (ExtStickyService.IsInBkGrd())
                     {
-
                         System.Threading.Thread.Sleep(3600);
                     }
                 }
@@ -303,5 +281,32 @@ namespace StartServices.Servicesclass
             {
             }
         }
+
+        //public static Notification GetStartServiceNotification()
+        //{
+
+        //    var _ctx = Android.App.Application.Context;
+        //    Notification note = new Notification();
+
+        //    var resultIntent = new Intent(_ctx, typeof(MainActivity));
+        //    var valuesForActivity = new Bundle();
+        //    valuesForActivity.PutInt(MainActivity.COUNT_KEY, 1);
+        //    MainActivity.NOTIFICATION_ID += 6;
+        //    var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
+
+
+        //    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+        //            .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+        //            .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+        //            .SetContentTitle("BitChute Entering Background Mode") // Set the title
+        //            .SetNumber(1) // Display the count in the Content Info
+        //            .SetSmallIcon(2130837590) // This is the icon to display
+        //            .SetContentText("now Notifying");
+
+        //    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+        //    note = builder.Build();
+        //    return note;
+        //}
     }
-}  
+}
+
