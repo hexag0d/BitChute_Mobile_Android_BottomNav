@@ -424,7 +424,7 @@ namespace BottomNavigationViewPager
         /// <param name="changeDetails"></param>
         /// <param name="tab"></param>
         /// 
-        public void TabDetailChanger(int tab, string changeDetails)
+        public static void TabDetailChanger(int tab, string changeDetails)
         {
             switch (tab)
             {
@@ -464,6 +464,13 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
                             TheFragment4._url = Globals.URLs._homepage;
+                        }
+                        if (changeDetails == "MyChannel")
+                        {
+                            _navViewItemList[tab].SetTitle("MyChannel");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            TheFragment4._url = Globals.URLs._myChannel;
                         }
                         if (changeDetails == "Explore")
                         {

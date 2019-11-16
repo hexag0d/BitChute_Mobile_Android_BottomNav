@@ -194,9 +194,7 @@
     <AndroidResource Include="Resources\drawable\tab_home.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\raw\blank.mp3" />
     <AndroidAsset Include="Assets\blank.mp3" />
-    <Content Include="sounds\blank.mp3" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
