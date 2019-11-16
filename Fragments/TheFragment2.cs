@@ -69,9 +69,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
-            _wv.SetOnTouchListener(new ExtTouchListener());
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
         }
 

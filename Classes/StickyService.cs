@@ -127,8 +127,7 @@ namespace StartServices.Servicesclass
                 return true;
             }
         }
-
-        private int _notificationMsElapsed = 0;
+        
         public static bool _notificationLongTimerSet = false;
 
         /// <summary>
@@ -174,14 +173,14 @@ namespace StartServices.Servicesclass
                     if (!ExtStickyService._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 780000);
+                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 180000, 780000); // 780000
                         _notificationLongTimerSet = true;
                     }
                     return;
                 }
                 else
                 {
-                    await Task.Delay(180000);
+                    await Task.Delay(240000);
                 }
             }
         }
@@ -271,17 +270,16 @@ namespace StartServices.Servicesclass
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
-
                 if (MainActivity._backgroundRequested)
                 {
 
                     while (ExtStickyService.IsInBkGrd())
                     {
+
                         System.Threading.Thread.Sleep(3600);
                     }
                 }
                 MainActivity._backgroundRequested = false;
-                
                 base.OnWindowFocusChanged(hasWindowFocus);
             }
 

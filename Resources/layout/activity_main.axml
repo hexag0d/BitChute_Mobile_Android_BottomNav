@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+	android:background="@android:color/black"
     android:layout_width="0dp"
     android:layout_height="0dp">
 </RelativeLayout>

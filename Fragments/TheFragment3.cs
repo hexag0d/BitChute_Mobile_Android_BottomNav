@@ -73,7 +73,6 @@ namespace BottomNavigationViewPager.Fragments
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
-
             return _view;
         }
 
@@ -139,8 +138,8 @@ namespace BottomNavigationViewPager.Fragments
             _scrollY += scrollY;
             if (Globals.AppState.Display._horizontal)
             {
-                await Task.Delay(500);
-                if (_scrollY >= 4000)
+                await Task.Delay(100);
+                if (_scrollY >= 3500)
                 {
                     ExpandVideoCards(false);
                     _scrollY = 0;
@@ -233,6 +232,12 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
             _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
         }
+
+        public static async void SelectSubscribedTab(int delay)
+        {
+            await Task.Delay(delay);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
+        }
         
         public class ExtWebViewClient : WebViewClient
         {
@@ -250,11 +255,13 @@ namespace BottomNavigationViewPager.Fragments
                 if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    TheFragment3.SelectSubscribedTab(5000);
                 }
 
                 if (Globals.AppState.Display._horizontal)

@@ -90,6 +90,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public static TheFragment5 _fm5;
 
+        private static Android.Graphics.Bitmap _notificationBMP;
+
         public static TheFragment5 NewInstance(string title, string icon)
         {
             var fragment = new TheFragment5();
@@ -193,8 +195,12 @@ namespace BottomNavigationViewPager.Fragments
             GetNotificationSetting();
             GetNavBarPrefs();
             SetCheckedState();
+            _notificationBMP = Android.Graphics.BitmapFactory.DecodeResource(Resources, 2130837590);
+
             return _view;
         }
+
+
         
         private void GetNavBarPrefs()
         {
@@ -266,9 +272,7 @@ namespace BottomNavigationViewPager.Fragments
             _notificationCheckInProgress = false;
             return Globals.AppSettings._notifying;
         }
-
-        private static bool _notificationsOnRbRecentlyChecked = false;
-
+        
         private void OnNotificationRbChecked(object sender, EventArgs e)
         {
             if (!_notificationCheckInProgress)
@@ -504,7 +508,21 @@ namespace BottomNavigationViewPager.Fragments
             var update = Android.App.PendingIntentFlags.UpdateCurrent;
             list.Add(update);
         }
-        
+
+        public void OnTab4OverrideChanged(object sender, EventArgs e)
+        {
+            if (_fmonrb.Checked)
+            {
+                _fanMode = true;
+            }
+            else
+            {
+                _fanMode = false;
+            }
+            var prefEditor = _prefs.Edit();
+            _prefEditor.PutBoolean("fanmode", _fanMode);
+        }
+
         public void OnTab5OverrideChanged(object sender, EventArgs e)
         {
             if (_stoverrideonrb.Checked)
@@ -669,54 +687,97 @@ namespace BottomNavigationViewPager.Fragments
         private static ExtNotifications _extNotifications = new ExtNotifications();
         
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
+        private static NotificationManagerCompat _notificationManager;
 
         public async void SendNotifications(List<CustomNotification> notificationList)
         {
             await Task.Run(() =>
             {
-               try
-               {
-                   var _ctx = Android.App.Application.Context;
+                try
+                {
+                    var _ctx = Android.App.Application.Context;
+
+                    if (_notificationManager == null)
+                    {
+                        _notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                    }
+
+                    if (notificationList.Count == 0)
+                    {
+                        return;
+                    }
+                    int notePos = 0;
 
                     // When the user clicks the notification, MainActivity will start up.
-                    
-                   foreach (var note in notificationList)
-                   {
-                       var resultIntent = new Intent(_ctx, typeof(MainActivity));
-                       var valuesForActivity = new Bundle();
-                       valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
-                       valuesForActivity.PutString("URL", note._noteLink);
-                       resultIntent.PutExtras(valuesForActivity);
-                       var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-                       resultIntent.AddFlags(ActivityFlags.SingleTop);
 
-                       if (!_sentNotificationList.Contains(note))
-                       {
-                            // Build the notification:
-                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                        foreach (var note in notificationList)
+                        {
+                            var resultIntent = new Intent(_ctx, typeof(MainActivity));
+                            var valuesForActivity = new Bundle();
+                            valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                            valuesForActivity.PutString("URL", note._noteLink);
+                            resultIntent.PutExtras(valuesForActivity);
+                            var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
+                            resultIntent.AddFlags(ActivityFlags.SingleTop);
+
+                            var alarmAttributes = new Android.Media.AudioAttributes.Builder()
+                                    .SetContentType(Android.Media.AudioContentType.Sonification)
+                                    .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
+
+                            var uri = Android.Net.Uri.Parse("file:///Assets/blank.mp3");
+                            
+                            
+                            if (!_sentNotificationList.Contains(note) && notePos == 0)
+                            {
+                                // Build the notification:
+                                var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID + 1)
+                                        .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                        .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                        .SetContentTitle(note._noteText) // Set the title
+                                        .SetNumber(1) // Display the count in the Content Info
+                                        //.SetLargeIcon(_notificationBMP) // This is the icon to display
+                                        .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                        .SetContentText(note._noteType)
+                                        .SetPriority(NotificationCompat.PriorityMin);
+
+                                MainActivity.NOTIFICATION_ID++;
+
+
+                                // publish the notification:
+                                //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                                _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                                _sentNotificationList.Add(note);
+                                 notePos++;
+                            }
+                            else if (!_sentNotificationList.Contains(note))
+                            {
+                                var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                                     .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                                     .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                                     .SetContentTitle(note._noteText) // Set the title
                                     .SetNumber(1) // Display the count in the Content Info
-                                    .SetSmallIcon(2130837590) // This is the icon to display
+                                    //.SetLargeIcon(_notificationBMP) // This is the icon to display
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                     .SetContentText(note._noteType)
                                     .SetPriority(NotificationCompat.PriorityHigh);
 
-                           MainActivity.NOTIFICATION_ID++;
+                                 MainActivity.NOTIFICATION_ID++;
 
-                            // publish the notification:
-                            var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                           notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-                           _sentNotificationList.Add(note);
-                       }
 
-                       ExtStickyService._notificationsHaveBeenSent = true;
-                   }
-               }
-               catch
-               {
+                                // publish the notification:
+                                //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                                 _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                                 _sentNotificationList.Add(note);
+                                 notePos++;
+                            }
 
-               }
+                            ExtStickyService._notificationsHaveBeenSent = true;
+                    }
+                }
+                catch
+                {
+
+                }
             });
         }
         public void LoadCustomUrl(string url)

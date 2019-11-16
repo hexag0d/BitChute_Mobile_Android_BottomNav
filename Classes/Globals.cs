@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "19.7.3.6.OptimizeUI";
+        public static string _appVersion = "20.0.OptimizeUI";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -61,9 +61,7 @@ namespace BottomNavigationViewPager.Classes
             /// it doesn't override the OS setting; it keeps the status for you
             /// </summary>
             public static bool _bkgrd = true;
-
-            public static bool _backgroundTimeOut = false;
-
+            
         }
 
         /// <summary>
@@ -327,6 +325,10 @@ namespace BottomNavigationViewPager.Classes
             
             public static string _jsRemoveMaxWidth = "javascript:(function() { " +
                             @"document.getElementsByClassName('video-card').style.max-width=''; " + "})()";
+
+            public static string _jsSelectSubscribed = "javascript:(function() { " +
+                            @"document.querySelectorAll("
+                            + "\"" + @"a[data-toggle]" + "\"" + @")[16].click()" + @"})()";
         }
 
         /// <summary>
@@ -339,6 +341,7 @@ namespace BottomNavigationViewPager.Classes
             public static string _explore =  "https://www.bitchute.com/channels/";
             public static string _settings = "https://www.bitchute.com/settings/";
             public static string _myChannel = "https://www.bitchute.com/channel/";
+            //https://www.bitchute.com/playlist/watch-later/ https://www.bitchute.com/playlists/
         }
     }
 }

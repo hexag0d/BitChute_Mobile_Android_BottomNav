@@ -28,7 +28,7 @@ namespace BottomNavigationViewPager.Fragments
         public static ServiceWebView _wv;
         protected static View _view;
 
-        public string _url = "https://bitchute.com/";
+        public static string _url = "https://bitchute.com/";
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -77,11 +77,10 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
-            _wv.SetOnTouchListener(new ExtTouchListener());
-            
             
 
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
         }
 
@@ -113,8 +112,7 @@ namespace BottomNavigationViewPager.Fragments
         ///compiler is all about that
         /// </summary>
         public static MainActivity _main = new MainActivity();
-
-
+        
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
@@ -265,7 +263,6 @@ namespace BottomNavigationViewPager.Fragments
                 await Task.Delay(3000);
             }
             //_wv.LoadUrl(Globals.JavascriptCommands._jsHideVideoMargin);
-
             //_wv.LoadUrl(Globals.JavascriptCommands._jsPut5pxMarginOnRows);
         }
         
@@ -318,7 +315,7 @@ namespace BottomNavigationViewPager.Fragments
                 HideLinkOverflow();
                 ExpandFeaturedChannels(true);
                 ExpandVideoCards(true);
-                ExpandPage(true);
+                //ExpandPage(true);
 
                 base.OnPageFinished(_view, url);
             }

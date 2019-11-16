@@ -41,32 +41,26 @@ https://github.com/hnabbasi/BottomNavigationViewPager
  *̙͓̠̲̼͆ͣ̔̒̂/
 
 */
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.Design.Internal;
-using Android.Support.V4.View;
-using BottomNavigationViewPager.Adapters;
-using System.Collections.Generic;
-using Android.Support.V4.App;
-using BottomNavigationViewPager.Fragments;
-using Android.InputMethodServices;
-using Android.Views;
+using Android.App;
 using Android.Content;
-using Android.Webkit;
-using Android.Support.V4.Content;
-using static Android.Support.Design.Widget.BottomNavigationView;
-using Android.Graphics;
-using System.Threading.Tasks;
-using BottomNavigationViewPager.Classes;
-using static Android.Views.View;
+using Android.Content.Res;
 using Android.Graphics.Drawables;
-using System.Net;
-using Java.Net;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Internal;
+using Android.Support.Design.Widget;
+using Android.Support.V4.App;
+using Android.Support.V4.View;
+using Android.Views;
+using BottomNavigationViewPager.Adapters;
+using BottomNavigationViewPager.Classes;
+using BottomNavigationViewPager.Fragments;
 using StartServices.Servicesclass;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static Android.Views.View;
 using static BottomNavigationViewPager.Fragments.TheFragment5;
-using System.Threading;
-using Android.Content.Res;
 
 namespace BottomNavigationViewPager
 {
@@ -93,7 +87,7 @@ namespace BottomNavigationViewPager
         IMenuItem _menu;
         public static Drawable _tab4Icon;
         public static Drawable _tab5Icon;
-        Fragment[] _fragments;
+        Android.Support.V4.App.Fragment[] _fragments;
 
         public static MainActivity _main;
         public static Bundle _bundle;
@@ -115,7 +109,7 @@ namespace BottomNavigationViewPager
         public static ISharedPreferences _prefs;
         //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
         public static ExtStickyService _service = new ExtStickyService();
-
+        
         WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -125,19 +119,35 @@ namespace BottomNavigationViewPager
             
             var mServiceIntent = new Intent(this, typeof(ExtStickyService));
             StartService(mServiceIntent);
+
+            //get the intent incase a notification started the activity
+            Intent _sentIntent = Intent;
+
+            if (_sentIntent != null)
+            {
+                //if it's not null then set the fragment1 url to our intent url string
+                try
+                {
+                    TheFragment1._url = _sentIntent.Extras.GetString("URL");
+                }
+                catch
+                {
+
+                }
+            }
             try
             {
                 StartService(mServiceIntent);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
+                
             }
 
             _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
             
             base.OnCreate(savedInstanceState);
-
+            _window.AddFlags(_winFlagUseHw);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
@@ -160,7 +170,8 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
 
             ExtStickyService.StartNotificationLoop(30000);
-            _window.AddFlags(_winFlagUseHw);
+
+
             //_customAudioMan.GetAudioManager();
         }
 
@@ -172,7 +183,7 @@ namespace BottomNavigationViewPager
 
         void InitializeTabs()
         {
-            _fragments = new Fragment[] {
+            _fragments = new Android.Support.V4.App.Fragment[] {
                 _fm1,
                 _fm2,
                 _fm3,
@@ -180,11 +191,7 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
-
-        public void GetIconsFromPrefs()
-        {
-
-        }
+        
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
         public static bool _navHidden = false;
@@ -193,6 +200,8 @@ namespace BottomNavigationViewPager
 
         public async void CustomOnSwipe()
         {
+            await Task.Delay(1);
+
             if (_navTimer != 0)
                 _navTimer = 0;
 
@@ -527,7 +536,7 @@ namespace BottomNavigationViewPager
         public static bool _backgroundRequested = false;
 
         /// <summary>
-        /// Listens for long click events on the navbar
+        /// Listens for long click events on tab 2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -550,66 +559,15 @@ namespace BottomNavigationViewPager
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static ExtNotifications _extNotifications = new ExtNotifications();
 
-        //public override void OnWindowFocusChanged(bool hasFocus)
-        //{
-        //    Globals.AppState._bkgrd = true;
-        //    bool _notificationStackExecutionInProgress = false;
-        //    bool _backgroundNotificationTimeout = false;
-
-        //    if (_backgroundRequested)
-        //    {
-        //        _service.AquireWifiLock();
-        //        while (_service.IsInBkGrd())
-        //        {
-        //            //var afs = _service.GetAudioFocusState();
-
-        //            _service.DummyService();
-
-        //            Thread.Sleep(3600);
-        //            //Task.Delay(3600);
-        //            _backgroundTimeoutInt += 3600;
-
-        //            if (!TheFragment5._notificationHttpRequestInProgress
-        //            && !_notificationStackExecutionInProgress && !_backgroundNotificationTimeout)
-        //            {
-        //                _backgroundNotificationTimeout = true;
-        //                _notificationStackExecutionInProgress = true;
-
-        //                _extNotifications.DecodeHtmlNotifications(
-        //                    _extWebInterface.GetBackgroundNotificationText("https://www.bitchute.com/notifications/"));
-        //                _fm5.SendNotifications(_fm5.GetNotifications());
-        //                _notificationStackExecutionInProgress = false;
-        //            }
-        //            if (ExtStickyService._notificationsHaveBeenSent)
-        //            {
-        //                if (_backgroundTimeoutInt >= 500000)
-        //                {
-        //                    _backgroundNotificationTimeout = false;
-        //                    ExtStickyService._backgroundTimeout = false;
-        //                    _backgroundTimeoutInt = 0;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (_backgroundTimeoutInt >= 60000)
-        //                {
-        //                    _backgroundNotificationTimeout = false;
-        //                    ExtStickyService._backgroundTimeout = false;
-        //                    _backgroundTimeoutInt = 0;
-        //                }
-        //            }
-
-        //        }
-        //    }
-        //    _backgroundRequested = false;
-        //    if (!ExtStickyService._notificationsHaveBeenSent)
-        //    {
-        //        _service.StartNotificationLoop(30000);
-        //    }
-        //}
-        
+   
         void CreateNotificationChannel()
         {
+            var alarmAttributes = new Android.Media.AudioAttributes.Builder()
+                .SetContentType(Android.Media.AudioContentType.Sonification)
+                    .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
+
+            var uri = Android.Net.Uri.Parse("file:///Assets/blank.mp3");
+            
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 // Notification channels are new in API 26 (and not a part of the
@@ -620,13 +578,21 @@ namespace BottomNavigationViewPager
             
             var name = "BitChute";
             var description = "BitChute for Android";
-            var channel = new Android.App.NotificationChannel(CHANNEL_ID, name, Android.App.NotificationImportance.High)
+            var channelSilent = new Android.App.NotificationChannel(CHANNEL_ID, name + " Silent", Android.App.NotificationImportance.High)
+            {
+                Description = description
+            };
+            
+            var channel = new Android.App.NotificationChannel(CHANNEL_ID + 1, name, Android.App.NotificationImportance.High)
             {
                 Description = description
             };
 
+            channel.LockscreenVisibility = NotificationVisibility.Private;
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
+            channelSilent.SetSound(uri, alarmAttributes);
             notificationManager.CreateNotificationChannel(channel);
+            notificationManager.CreateNotificationChannel(channelSilent);
         }
         
         protected override void OnNewIntent(Intent intent)
@@ -692,6 +658,7 @@ namespace BottomNavigationViewPager
                             _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                             _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment1.ExpandVideoCards(false);
                         break;
@@ -701,6 +668,7 @@ namespace BottomNavigationViewPager
                             _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                             _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment2.ExpandVideoCards(false);
                         break;
@@ -710,6 +678,7 @@ namespace BottomNavigationViewPager
                             _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                             _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                             _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment3.ExpandVideoCards(false);
                         break;
@@ -717,6 +686,7 @@ namespace BottomNavigationViewPager
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
                         TheFragment4.ExpandVideoCards(false);
                         break;
                     case 4:
@@ -734,27 +704,27 @@ namespace BottomNavigationViewPager
                 {
                     case 0:
                         _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        //_fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
                         _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        //_fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
                         _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        //_fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        //_fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        //_fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
                         break;
                 }
@@ -777,6 +747,7 @@ namespace BottomNavigationViewPager
         {
             _viewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
+            
             base.OnDestroy();
         }
     }
