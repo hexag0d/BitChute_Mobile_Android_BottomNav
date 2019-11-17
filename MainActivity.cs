@@ -363,20 +363,22 @@ namespace BottomNavigationViewPager
         void RemoveShiftMode(BottomNavigationView view)
         {
             var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
+            
 
             try
             {
-                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
-                shiftingMode.Accessible = true;
-                shiftingMode.SetBoolean(menuView, false);
-                shiftingMode.Accessible = false;
-
+                
                 for (int i = 0; i < menuView.ChildCount; i++)
                 {
                     var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-                    item.SetShiftingMode(false);
-                    // set once again checked value, so view will be updated
-                    item.SetChecked(item.ItemData.IsChecked);
+                    View label = item.FindViewById(Resource.Id.largeLabel);
+                    if (label != null)
+                    {
+                        ((Android.Widget.TextView)label).SetPadding(0, 0, 0, 0);
+                    }
+                //item.SetShiftingMode(false);
+                // set once again checked value, so view will be updated
+                item.SetChecked(item.ItemData.IsChecked);
 
                     if (i == 2)
                     {
