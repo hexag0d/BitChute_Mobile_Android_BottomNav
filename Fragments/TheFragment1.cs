@@ -28,7 +28,7 @@ namespace BottomNavigationViewPager.Fragments
         public static ServiceWebView _wv;
         protected static View _view;
 
-        public static string _url = "https://bitchute.com/";
+        public static string _url = "https://www.bitchute.com/";
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -79,7 +79,7 @@ namespace BottomNavigationViewPager.Fragments
             
             
 
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             _wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
         }
@@ -118,24 +118,14 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
+                CustomOnTouch();
                 return false;
             }
         }
 
-        private static int _scrollY = 0;
-
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        private static async void CustomOnTouch()
         {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                 OnScrollChanged(scrollY);
-            }
-        }
-
-        public static async void OnScrollChanged(int scrollY)
-        {
-            await Task.Delay(60);
-            _scrollY += scrollY;
+            _scrollY += _wv.ScrollY;
             if (Globals.AppState.Display._horizontal)
             {
                 await Task.Delay(500);
@@ -146,6 +136,31 @@ namespace BottomNavigationViewPager.Fragments
                 }
             }
         }
+
+        private static int _scrollY = 0;
+
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //         OnScrollChanged(scrollY);
+        //    }
+        //}
+
+        //public static async void OnScrollChanged(int scrollY)
+        //{
+        //    await Task.Delay(60);
+        //    _scrollY += scrollY;
+        //    if (Globals.AppState.Display._horizontal)
+        //    {
+        //        await Task.Delay(500);
+        //        if (_scrollY >= 4000)
+        //        {
+        //            ExpandVideoCards(false);
+        //            _scrollY = 0;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// tells the webview to GoBack, if it can
@@ -214,7 +229,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(5000);
 
-            if (_wv.Url != "https://www.bitchute.com/")
+            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
@@ -272,7 +287,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
-                
+               
                 //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
 
                     HideWatchLabel();
@@ -316,7 +331,7 @@ namespace BottomNavigationViewPager.Fragments
                 ExpandFeaturedChannels(true);
                 ExpandVideoCards(true);
                 //ExpandPage(true);
-
+                _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
                 base.OnPageFinished(_view, url);
             }
         }

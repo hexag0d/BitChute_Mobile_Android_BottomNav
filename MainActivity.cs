@@ -169,7 +169,7 @@ namespace BottomNavigationViewPager
 
             CreateNotificationChannel();
 
-            ExtStickyService.StartNotificationLoop(30000);
+            ExtStickyService.StartNotificationLoop(90000);
 
 
             //_customAudioMan.GetAudioManager();
@@ -364,7 +364,6 @@ namespace BottomNavigationViewPager
         {
             var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
             
-
             try
             {
                 
@@ -571,10 +570,8 @@ namespace BottomNavigationViewPager
         void CreateNotificationChannel()
         {
             var alarmAttributes = new Android.Media.AudioAttributes.Builder()
-                .SetContentType(Android.Media.AudioContentType.Sonification)
-                    .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
-
-            var uri = Android.Net.Uri.Parse("file:///Assets/blank.mp3");
+                .SetContentType(Android.Media.AudioContentType.Unknown)
+                    .SetUsage(Android.Media.AudioUsageKind.NotificationRingtone).Build();
             
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
@@ -598,7 +595,7 @@ namespace BottomNavigationViewPager
 
             channel.LockscreenVisibility = NotificationVisibility.Private;
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
-            channelSilent.SetSound(uri, alarmAttributes);
+            channelSilent.SetSound(null, null);
             notificationManager.CreateNotificationChannel(channel);
             notificationManager.CreateNotificationChannel(channelSilent);
         }
@@ -641,7 +638,6 @@ namespace BottomNavigationViewPager
                             _fm5.LoadCustomUrl(url);
                             break;
                     }
-                
             }
             catch 
             {

@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "21.0";
+        public static string _appVersion = "22.0";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -327,9 +327,15 @@ namespace BottomNavigationViewPager.Classes
             public static string _jsRemoveMaxWidth = "javascript:(function() { " +
                             @"document.getElementsByClassName('video-card').style.max-width=''; " + "})()";
 
+            //lets not talk about all the dislikes this must have caused =/ ... whoopsies
+            //public static string _jsSelectSubscribed = "javascript:(function() { " +
+            //                @"document.querySelectorAll("
+            //                + "\"" + @"a[data-toggle]" + "\"" + @")[16].click()" + @"})()";
+
             public static string _jsSelectSubscribed = "javascript:(function() { " +
-                            @"document.querySelectorAll("
-                            + "\"" + @"a[data-toggle]" + "\"" + @")[16].click()" + @"})()";
+                            @"$(" + "\"" + @"a[href*='#listing-subscribed']" + "\"" + @").click()" + @"})()";
+
+            //$("a[href*='#listing-subscribed']").click()
         }
 
         /// <summary>
@@ -341,7 +347,7 @@ namespace BottomNavigationViewPager.Classes
             public static string _subspage = "https://www.bitchute.com/subscriptions/";
             public static string _explore =  "https://www.bitchute.com/channels/";
             public static string _settings = "https://www.bitchute.com/settings/";
-            public static string _myChannel = "https://www.bitchute.com/channel/";
+            public static string _myChannel = "https://www.bitchute.com/profile";
             //https://www.bitchute.com/playlist/watch-later/ https://www.bitchute.com/playlists/
         }
     }

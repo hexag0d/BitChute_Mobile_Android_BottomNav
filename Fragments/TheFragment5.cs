@@ -139,8 +139,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.JavaScriptEnabled = true;
                 _wv.Settings.DisplayZoomControls = false;
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
-                _wv.LoadUrl(_url);
+                
 
                 //_wv.Settings.AllowFileAccess = true;
 
@@ -193,11 +192,17 @@ namespace BottomNavigationViewPager.Fragments
             GetNotificationSetting();
             GetNavBarPrefs();
             SetCheckedState();
-           
+
+            LoadUrlWithDelay(_url, 5000);
+
             return _view;
         }
 
-
+        public async void LoadUrlWithDelay(string url, int delay)
+        {
+            await Task.Delay(delay);
+            _wv.LoadUrl(url);
+        }
         
         private void GetNavBarPrefs()
         {
@@ -759,7 +764,7 @@ namespace BottomNavigationViewPager.Fragments
                                     //.SetLargeIcon(_notificationBMP) // This is the icon to display
                                     .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                     .SetContentText(note._noteType)
-                                    .SetPriority(NotificationCompat.PriorityHigh);
+                                    .SetPriority(NotificationCompat.PriorityLow);
 
                                  MainActivity.NOTIFICATION_ID++;
 

@@ -56,20 +56,14 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(_wvc);
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
                 _wv.LoadUrl(_url);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 tabLoaded = true;
             }
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             _wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
         }
@@ -79,7 +73,22 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
+                CustomOnTouch();
                 return false;
+            }
+        }
+
+        private static async void CustomOnTouch()
+        {
+            _scrollY += _wv.ScrollY;
+            if (Globals.AppState.Display._horizontal)
+            {
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
             }
         }
 
@@ -100,28 +109,27 @@ namespace BottomNavigationViewPager.Fragments
 
         private static int _scrollY = 0;
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                OnScrollChanged(scrollY);
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        OnScrollChanged(scrollY);
+        //    }
+        //}
 
-        public static async void OnScrollChanged(int scrollY)
-        {
-            await Task.Delay(60);
-            _scrollY += scrollY;
-            if (Globals.AppState.Display._horizontal)
-            {
-                await Task.Delay(500);
-                if (_scrollY >= 4000)
-                {
-                    ExpandVideoCards(false);
-                    _scrollY = 0;
-                }
-            }
-        }
+        //public static async void OnScrollChanged(int scrollY)
+        //{
+        //    await Task.Delay(60);
+        //    _scrollY += scrollY;
+        //    if (Globals.AppState.Display._horizontal)
+        //    {
+        //        if (_scrollY >= 4000)
+        //        {
+        //            ExpandVideoCards(false);
+        //            _scrollY = 0;
+        //        }
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -215,8 +223,11 @@ namespace BottomNavigationViewPager.Fragments
                 await Task.Delay(4000);
             }
             _wv.LoadUrl(Globals.JavascriptCommands._jsExpandSubs);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+
         }
-        
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -234,6 +245,7 @@ namespace BottomNavigationViewPager.Fragments
                 HideWatchTab(5000);
                 ExpandVideoCards(true);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
                 base.OnPageFinished(view, url);
             }
         }

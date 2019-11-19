@@ -71,9 +71,16 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
             }
+            LoadUrlWithDelay(_url, 2000);
             _wv.SetOnTouchListener(new ExtTouchListener());
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+          //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
+        }
+
+        public async void LoadUrlWithDelay(string url, int delay)
+        {
+            await Task.Delay(delay);
+            _wv.LoadUrl(url);
         }
 
         public void OnSettingsChanged(List<object> settings)
@@ -118,28 +125,43 @@ namespace BottomNavigationViewPager.Fragments
             public bool OnTouch(View v, MotionEvent e)
             {
                 _main.CustomOnTouch();
+                CustomOnTouch();
                 return false;
             }
         }
 
         private static int _scrollY = 0;
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                OnScrollChanged(scrollY);
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        OnScrollChanged(scrollY);
+        //    }
+        //}
 
-        public static async void OnScrollChanged(int scrollY)
+        //public static async void OnScrollChanged(int scrollY)
+        //{
+        //    await Task.Delay(60);
+        //    _scrollY += scrollY;
+        //    if (Globals.AppState.Display._horizontal)
+        //    {
+        //        await Task.Delay(100);
+        //        if (_scrollY >= 3500)
+        //        {
+        //            ExpandVideoCards(false);
+        //            _scrollY = 0;
+        //        }
+        //    }
+        //}
+
+        private static async void CustomOnTouch()
         {
-            await Task.Delay(60);
-            _scrollY += scrollY;
+            _scrollY += _wv.ScrollY;
             if (Globals.AppState.Display._horizontal)
             {
-                await Task.Delay(100);
-                if (_scrollY >= 3500)
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
                 {
                     ExpandVideoCards(false);
                     _scrollY = 0;
@@ -254,13 +276,16 @@ namespace BottomNavigationViewPager.Fragments
                 if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
-                    TheFragment3.SelectSubscribedTab(5000);
+                    if (_wv.Url == "https://www.bitchute.com/")
+                    {
+                        TheFragment3.SelectSubscribedTab(2000);
+                    }
                 }
 
                 if (Globals.AppState.Display._horizontal)
@@ -277,13 +302,14 @@ namespace BottomNavigationViewPager.Fragments
                     HidePageTitle(5000);
                 }
 
+                _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
                 //InjectCSS();
                 SetReload();
                 HideLinkOverflow();
                 ExpandVideoCards(true);
                 //_wv.LoadUrl(Globals.JavascriptCommands._jsFillAvailable);
-                
                 base.OnPageFinished(view, url);
             }
         }
