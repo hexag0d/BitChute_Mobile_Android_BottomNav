@@ -75,6 +75,7 @@ namespace BottomNavigationViewPager
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
 
+    //This branch will retain target API8 for performance concerns on older devices
     public class MainActivity : FragmentActivity
     {
         int _tabSelected;
