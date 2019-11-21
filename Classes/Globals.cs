@@ -9,7 +9,7 @@ namespace BottomNavigationViewPager.Classes
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "22.0";
+        public static string _appVersion = "22.1";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
