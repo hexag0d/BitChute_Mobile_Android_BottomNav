@@ -216,6 +216,7 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
             _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -288,6 +289,8 @@ namespace BottomNavigationViewPager.Fragments
                     }
                 }
 
+                SelectSubscribedTab(4000);
+
                 if (Globals.AppState.Display._horizontal)
                 {
                     //if (url != "https://www.bitchute.com/")
@@ -303,7 +306,7 @@ namespace BottomNavigationViewPager.Fragments
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
-
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
                 //InjectCSS();
                 SetReload();

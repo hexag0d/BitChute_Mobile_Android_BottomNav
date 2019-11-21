@@ -192,7 +192,10 @@ namespace BottomNavigationViewPager.Classes
 
             /// <summary>
             /// disables the tooltips because they block the controls and stick
-            /// on screen in all android browsers
+            /// on screen in all android browsers.. note: this does not actually
+            /// hide the sticking tooltips, it just disables them from appearing
+            /// and due to android OnPageFinished being EXTREMELY flaky, this
+            /// doesn't work all the time
             /// </summary>
             public static string _jsDisableTooltips = "javascript:(function() { " +
                             "document.getElementById('video-like').data-toggle=''; " + "})()" + "\r\n"
@@ -206,7 +209,7 @@ namespace BottomNavigationViewPager.Classes
                             "document.getElementById('video-title').style.display='none'; " + "})()";
 
             /// <summary>
-            /// shows the title bar
+            /// shows the title 
             /// </summary>
             public static string _jsShowTitle = "javascript:(function() { " +
                             "document.getElementById('video-title').style.display='block'; " + "})()";
@@ -335,7 +338,13 @@ namespace BottomNavigationViewPager.Classes
             public static string _jsSelectSubscribed = "javascript:(function() { " +
                             @"$(" + "\"" + @"a[href*='#listing-subscribed']" + "\"" + @").click()" + @"})()";
 
-            //$("a[href*='#listing-subscribed']").click()
+            //$(".tooltip").tooltip("hide");
+            /// <summary>
+            /// Hides the sticking tooltips that happen on all android browsers.  Not to be
+            /// confused with disabletooltips, which disables the data-toggle attribute.
+            /// </summary>
+            public static string _jsHideTooltips = "javascript:(function() { " +
+                            @"$(" + "\"" + @".tooltip" + "\"" + @").tooltip(" + "\"" + "hide" + "\"" + ")" + @"})()";
         }
 
         /// <summary>

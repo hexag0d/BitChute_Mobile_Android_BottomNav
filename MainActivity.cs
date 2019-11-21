@@ -104,8 +104,6 @@ namespace BottomNavigationViewPager
         public static Window _window;
         public static View _mainView;
         
-        public static Java.Util.Timer _timer = new Java.Util.Timer();
-
         public static ISharedPreferences _prefs;
         //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
         public static ExtStickyService _service = new ExtStickyService();
@@ -128,7 +126,9 @@ namespace BottomNavigationViewPager
                 //if it's not null then set the fragment1 url to our intent url string
                 try
                 {
-                    TheFragment1._url = _sentIntent.Extras.GetString("URL");
+                    var _tempUrl = _sentIntent.Extras.GetString("URL");
+                    if (_tempUrl != "" && _tempUrl != null)
+                        TheFragment1._url = _tempUrl;
                 }
                 catch
                 {

@@ -73,11 +73,11 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.DisplayZoomControls = false;
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
-                _wv.LoadUrl(_url);
+                
                 tabLoaded = true;
             }
-            
-            
+            _wv.LoadUrl(_url);
+
 
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             _wv.SetOnTouchListener(new ExtTouchListener());
@@ -218,6 +218,7 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
             _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -324,14 +325,13 @@ namespace BottomNavigationViewPager.Fragments
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
                 SetReload();
-
                 HideLinkOverflow();
                 ExpandFeaturedChannels(true);
                 ExpandVideoCards(true);
                 //ExpandPage(true);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(_view, url);
             }
         }

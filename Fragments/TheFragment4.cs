@@ -210,6 +210,7 @@ namespace BottomNavigationViewPager.Fragments
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
             _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
         }
         
         public void LoadCustomUrl(string url)
@@ -247,7 +248,6 @@ namespace BottomNavigationViewPager.Fragments
             }
             _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
             _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
-
         }
 
 
@@ -282,6 +282,7 @@ namespace BottomNavigationViewPager.Fragments
                 HideLinkOverflow();
                 SetReload();
                 _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(view, url);
             }
         }

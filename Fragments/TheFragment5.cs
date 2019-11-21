@@ -217,11 +217,6 @@ namespace BottomNavigationViewPager.Fragments
             _systemCheckingRb = true;
             _hidehorizontalnavbaronrb.Checked = pref;
         }
-
-        public void SetSpinnerColors()
-        {
-            
-        }
         
         private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
         {
@@ -455,7 +450,6 @@ namespace BottomNavigationViewPager.Fragments
         }
 
         public static int mysteryInt = 0;
-
         static bool _wvRl = true;
 
         public void Pop2Root()
@@ -728,10 +722,7 @@ namespace BottomNavigationViewPager.Fragments
                             var alarmAttributes = new Android.Media.AudioAttributes.Builder()
                                     .SetContentType(Android.Media.AudioContentType.Sonification)
                                     .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
-
-                            var uri = Android.Net.Uri.Parse("file:///Assets/blank.mp3");
-                            
-                            
+                        
                             if (!_sentNotificationList.Contains(note) && notePos == 0)
                             {
                                 // Build the notification:
@@ -864,12 +855,12 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                HideWatchLabel();
-
                 if (_settingsTabOverride)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -882,13 +873,13 @@ namespace BottomNavigationViewPager.Fragments
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
                         _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
                         _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     }
                 }
 
                 if (Globals.AppState.Display._horizontal)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
                 }
 

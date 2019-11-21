@@ -184,6 +184,7 @@ namespace BottomNavigationViewPager.Fragments
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
             _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -246,6 +247,7 @@ namespace BottomNavigationViewPager.Fragments
                 ExpandVideoCards(true);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(view, url);
             }
         }
