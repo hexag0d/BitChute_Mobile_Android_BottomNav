@@ -91,7 +91,7 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
-        public async void LoadUrlWithDelay(string url, int delay)
+        public static async void LoadUrlWithDelay(string url, int delay)
         {
             await Task.Delay(delay);
             _wv.LoadUrl(url);

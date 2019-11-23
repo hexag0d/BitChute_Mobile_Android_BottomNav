@@ -225,7 +225,7 @@ namespace BottomNavigationViewPager
                 if (_navTimer != 0)
                     _navTimer = 0;
 
-            if (Globals.AppState.Display._horizontal && !Globals.AppSettings._hideHorizontalNavBar)
+            if (Globals.AppState.Display._horizontal && !Globals.AppSettings._hideHorizontalNavbar)
             {
                 if (!_navTimeout)
                 {
@@ -261,6 +261,13 @@ namespace BottomNavigationViewPager
                     if (Globals.AppState.Display._horizontal)
                     {
                         _navigationView.Visibility = ViewStates.Gone;
+                    }
+                    else
+                    {
+                        if (Globals.AppSettings._hideVerticalNavbar)
+                        {
+                            _navigationView.Visibility = ViewStates.Gone;
+                        }
                     }
                     _navTimeout = false;
                     _navHidden = true;
@@ -480,7 +487,7 @@ namespace BottomNavigationViewPager
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment4._url = Globals.URLs._explore;
                         }
-                        _fm4.Pop2Root();
+                        TheFragment4.LoadUrlWithDelay(TheFragment4._url, 0);
                     }
                     break;
                 case 4:
@@ -521,7 +528,7 @@ namespace BottomNavigationViewPager
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment5._url = Globals.URLs._explore;
                         }
-                        _fm5.Pop2Root();
+                        TheFragment5.LoadUrlWithDelay(TheFragment5._url, 0);
                     }
                     break;
             }
@@ -738,7 +745,7 @@ namespace BottomNavigationViewPager
                 CustomOnTouch();
             }
 
-            if (!Globals.AppSettings._hideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
+            if (!Globals.AppSettings._hideHorizontalNavbar || newConfig.Orientation == Orientation.Portrait)
             {
                 _navTimeout = false;
             }

@@ -91,9 +91,13 @@ namespace BottomNavigationViewPager.Classes
             /// this bool should be set to/returns whether or not the navbar
             /// will be hidden by default when the device is held horizontally
             /// </summary>
-            public static bool _hideHorizontalNavBar = true;
+            public static bool _hideHorizontalNavbar = true;
+
+            public static bool _hideVerticalNavbar = false;
 
             public static bool _notifying = true;
+
+            
         }
 
         /// <summary>
@@ -239,7 +243,7 @@ namespace BottomNavigationViewPager.Classes
                             "document.getElementsByClassName('page-bar')[0].style.display='block'; " + "})()";
             
             /// <summary>
-            /// hides the nav tab list (warning, not good on tab 3)
+            /// hides the nav tab list
             /// </summary>
             public static string  _jsHideNavTabsList = "javascript:(function() { " +
                             "document.getElementsByClassName('nav nav-tabs nav-tabs-list')[0].style.display='none'; " + "})()";

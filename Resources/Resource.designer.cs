@@ -3440,23 +3440,23 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f090070
 			public const int list_item = 2131296368;
 			
-			// aapt resource value: 0x7f0900eb
-			public const int masked = 2131296491;
-			
-			// aapt resource value: 0x7f0900ec
-			public const int menu_home = 2131296492;
+			// aapt resource value: 0x7f0900ee
+			public const int masked = 2131296494;
 			
 			// aapt resource value: 0x7f0900ef
-			public const int menu_mychannel = 2131296495;
+			public const int menu_home = 2131296495;
+			
+			// aapt resource value: 0x7f0900f2
+			public const int menu_mychannel = 2131296498;
+			
+			// aapt resource value: 0x7f0900f3
+			public const int menu_settings = 2131296499;
+			
+			// aapt resource value: 0x7f0900f1
+			public const int menu_stream = 2131296497;
 			
 			// aapt resource value: 0x7f0900f0
-			public const int menu_settings = 2131296496;
-			
-			// aapt resource value: 0x7f0900ee
-			public const int menu_stream = 2131296494;
-			
-			// aapt resource value: 0x7f0900ed
-			public const int menu_subs = 2131296493;
+			public const int menu_subs = 2131296496;
 			
 			// aapt resource value: 0x7f09009c
 			public const int message = 2131296412;
@@ -3523,6 +3523,9 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f0900e7
 			public const int radioGroup1 = 2131296487;
+			
+			// aapt resource value: 0x7f0900ea
+			public const int radioGroup2 = 2131296490;
 			
 			// aapt resource value: 0x7f090055
 			public const int right = 2131296341;
@@ -3755,14 +3758,20 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f0900e3
 			public const int versionTextView = 2131296483;
 			
+			// aapt resource value: 0x7f0900ec
+			public const int verticalNavbarRbOff = 2131296492;
+			
+			// aapt resource value: 0x7f0900eb
+			public const int verticalNavbarRbOn = 2131296491;
+			
 			// aapt resource value: 0x7f09001b
 			public const int view_offset_helper = 2131296283;
 			
 			// aapt resource value: 0x7f0900ac
 			public const int viewpager = 2131296428;
 			
-			// aapt resource value: 0x7f0900ea
-			public const int visible = 2131296490;
+			// aapt resource value: 0x7f0900ed
+			public const int visible = 2131296493;
 			
 			// aapt resource value: 0x7f0900bb
 			public const int webView1 = 2131296443;

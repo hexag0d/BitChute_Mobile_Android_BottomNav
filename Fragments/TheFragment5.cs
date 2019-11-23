@@ -74,6 +74,9 @@ namespace BottomNavigationViewPager.Fragments
         private static RadioButton _hidehorizontalnavbaronrb;
         private static RadioButton _hidehorizontalnavbaroffrb;
 
+        private static RadioButton _hideverticalnavbaronrb;
+        private static RadioButton _hideverticalnavbaroffrb;
+
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
 
@@ -140,7 +143,6 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.DisplayZoomControls = false;
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 
-
                 //_wv.Settings.AllowFileAccess = true;
 
                 //_wv.Settings.AllowContentAccess = true;
@@ -164,6 +166,8 @@ namespace BottomNavigationViewPager.Fragments
                 _notificationoffrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
                 _hidehorizontalnavbaronrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
                 _hidehorizontalnavbaroffrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
+                _hideverticalnavbaronrb = _view.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOn);
+                _hideverticalnavbaroffrb = _view.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOff);
 
                 _versionTextView = _view.FindViewById<TextView>(Resource.Id.versionTextView);
                 //_notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
@@ -174,7 +178,8 @@ namespace BottomNavigationViewPager.Fragments
                 _t1foffrb.CheckedChange += ExtSettingChanged;
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _notificationonrb.CheckedChange += OnNotificationRbChecked;
-                _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavBarRbChecked;
+                _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
+                _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
 
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
@@ -198,7 +203,7 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
-        public async void LoadUrlWithDelay(string url, int delay)
+        public static async void LoadUrlWithDelay(string url, int delay)
         {
             await Task.Delay(delay);
             _wv.LoadUrl(url);
@@ -206,38 +211,68 @@ namespace BottomNavigationViewPager.Fragments
         
         private void GetNavBarPrefs()
         {
-            Globals.AppSettings._hideHorizontalNavBar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
-            SetHorizontalNavBarCheckedState(Globals.AppSettings._hideHorizontalNavBar);
+            Globals.AppSettings._hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+            Globals.AppSettings._hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
+            SetNavbarCheckedState(Globals.AppSettings._hideHorizontalNavbar, Globals.AppSettings._hideVerticalNavbar);
         }
 
         private static bool _systemCheckingRb = false;
 
-        private void SetHorizontalNavBarCheckedState(bool pref)
+        private static void OnVerticalNavbarRbChecked (object sender, EventArgs e)
+        {
+            if (_hideverticalnavbaronrb.Checked)
+            {
+                Globals.AppSettings._hideVerticalNavbar = true;
+            }
+            else
+            {
+                Globals.AppSettings._hideVerticalNavbar = false;
+            }
+            _prefEditor.PutBoolean("hideverticalnavbar", Globals.AppSettings._hideVerticalNavbar);
+            _prefEditor.Commit();
+            _systemCheckingRb = false;
+        }
+
+        private void SetNavbarCheckedState(bool horizontalPref, bool verticalPref)
         {
             _systemCheckingRb = true;
-            _hidehorizontalnavbaronrb.Checked = pref;
+            if (horizontalPref)
+            {
+                _hidehorizontalnavbaronrb.Checked = true;
+            }
+            else
+            {
+                _hidehorizontalnavbaroffrb.Checked = true;
+            }
+            if (verticalPref)
+            {
+                _hideverticalnavbaronrb.Checked = true;
+            }
+            else
+            {
+                _hideverticalnavbaroffrb.Checked = true;
+            }
+            
         }
         
-        private static void OnHorizontalNavBarRbChecked(object sender, EventArgs e)
+        private static void OnHorizontalNavbarRbChecked(object sender, EventArgs e)
         {
             if (!_systemCheckingRb)
             {
                 if (_hidehorizontalnavbaronrb.Checked)
                 {
-                    Globals.AppSettings._hideHorizontalNavBar = true;
+                    Globals.AppSettings._hideHorizontalNavbar = true;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", true);
                 }
                 else
                 {
-                    Globals.AppSettings._hideHorizontalNavBar = false;
+                    Globals.AppSettings._hideHorizontalNavbar = false;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", false);
                 }
                 _prefEditor.Commit();
             }
-            _systemCheckingRb = false;
         }
         
-
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
