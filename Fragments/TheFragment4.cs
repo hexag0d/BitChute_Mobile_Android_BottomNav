@@ -72,6 +72,8 @@ namespace BottomNavigationViewPager.Fragments
 
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView4);
 
+            //get the url string from prefs
+            _url = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
@@ -90,20 +92,18 @@ namespace BottomNavigationViewPager.Fragments
 
             return _view;
         }
-
+        
         public static async void LoadUrlWithDelay(string url, int delay)
         {
             await Task.Delay(delay);
             _wv.LoadUrl(url);
         }
         
-        public static MainActivity _main = new MainActivity();
-
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
             {
-                _main.CustomOnTouch();
+                MainActivity.CustomOnTouch();
                 CustomOnTouch();
                 return false;
             }
@@ -112,7 +112,7 @@ namespace BottomNavigationViewPager.Fragments
         private static async void CustomOnTouch()
         {
             _scrollY += _wv.ScrollY;
-            if (Globals.AppState.Display._horizontal)
+            if (AppState.Display._horizontal)
             {
                 await Task.Delay(500);
                 if (_scrollY >= 4000)
@@ -137,7 +137,7 @@ namespace BottomNavigationViewPager.Fragments
         //{
         //    await Task.Delay(60);
         //    _scrollY += scrollY;
-        //    if (Globals.AppState.Display._horizontal)
+        //    if (AppState.Display._horizontal)
         //    {
         //        await Task.Delay(500);
         //        if (_scrollY >= 4000)
@@ -160,7 +160,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(Globals.AppSettings._tabDelay);
+                await Task.Delay(AppSettings._tabDelay);
                 _wvRl = true;
                 _wvRling = false;
             }
@@ -172,7 +172,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (Convert.ToBoolean(settings[3]))
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
             if (TheFragment5._fanMode)
             {
@@ -192,11 +192,11 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (TheFragment5._tab3Hide)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTab1);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTab2);
+                    _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
+                    _wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
             }
         }
@@ -206,11 +206,11 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+            await Task.Delay(AppSettings._linkOverflowFixDelay);
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
+            _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
         }
         
         public void LoadCustomUrl(string url)
@@ -222,12 +222,12 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(delay);
 
-            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
+            if (_wv.Url != "https://www.bitchute.com/" && AppState.Display._horizontal)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                _wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                _wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
             }
         }
 
@@ -244,10 +244,10 @@ namespace BottomNavigationViewPager.Fragments
             }
             if (TheFragment5._tab5OverridePreference == "Subs" || TheFragment5._fanMode)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsExpandSubs);
+                _wv.LoadUrl(JavascriptCommands._jsExpandSubs);
             }
-            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+            _wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
 
 
@@ -255,34 +255,34 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+                _wv.LoadUrl(JavascriptCommands._jsHideBanner);
+                _wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
-                if (Globals._t4Is == "Feed")
+                if (AppState._t4Is == "Feed")
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
-                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTab1);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTab2);
+                    _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTrending);
+                    //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
 
                 if (!TheFragment5._tab1FeaturedOn)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
 
-                if (Globals.AppState.Display._horizontal)
+                if (AppState.Display._horizontal)
                 {
                     HidePageTitle(5000);
                 }
                 
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 HideLinkOverflow();
                 SetReload();
-                _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTooltips);
+                _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+                _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(view, url);
             }
         }

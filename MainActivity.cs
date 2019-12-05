@@ -91,8 +91,7 @@ namespace BottomNavigationViewPager
 
         public static MainActivity _main;
         public static Bundle _bundle;
-
-        public static Globals _globals = new Globals();
+        
         public static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
@@ -205,7 +204,7 @@ namespace BottomNavigationViewPager
             if (_navTimer != 0)
                 _navTimer = 0;
 
-            if (!_navTimeout || Globals.AppState.Display._horizontal)
+            if (!_navTimeout || AppState.Display._horizontal)
             {
                 _navigationView.Visibility = ViewStates.Visible;
                 _navHidden = false;
@@ -220,12 +219,12 @@ namespace BottomNavigationViewPager
         /// .. timer resets every time it's called
         /// . works with a custom scroll listener
         /// </summary>
-        public void CustomOnTouch()
+        public static void CustomOnTouch()
         { 
                 if (_navTimer != 0)
                     _navTimer = 0;
 
-            if (Globals.AppState.Display._horizontal && !Globals.AppSettings._hideHorizontalNavbar)
+            if (AppState.Display._horizontal && !AppSettings._hideHorizontalNavbar)
             {
                 if (!_navTimeout)
                 {
@@ -236,7 +235,7 @@ namespace BottomNavigationViewPager
                     // _fm3.ShowMore();
                 }
             }
-            else if (!Globals.AppState.Display._horizontal)
+            else if (!AppState.Display._horizontal)
             {
                 if (_navigationView.Visibility == ViewStates.Gone)
                 {
@@ -248,7 +247,7 @@ namespace BottomNavigationViewPager
             }
         }
 
-        public async void NavBarRemove()
+        public static async void NavBarRemove()
         {
             while (!_navHidden)
             {
@@ -258,13 +257,13 @@ namespace BottomNavigationViewPager
 
                 if (_navTimer >= 8)
                 {
-                    if (Globals.AppState.Display._horizontal)
+                    if (AppState.Display._horizontal)
                     {
                         _navigationView.Visibility = ViewStates.Gone;
                     }
                     else
                     {
-                        if (Globals.AppSettings._hideVerticalNavbar)
+                        if (AppSettings._hideVerticalNavbar)
                         {
                             _navigationView.Visibility = ViewStates.Gone;
                         }
@@ -414,7 +413,6 @@ namespace BottomNavigationViewPager
         {
             if (TheFragment5._fanMode)
             {
-                //_main.TabDetailChanger();
             }
             _fm1.OnSettingsChanged(oa);
             _fm2.OnSettingsChanged(oa);
@@ -450,42 +448,42 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetTitle("MyChannel");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment4._url = Globals.URLs._myChannel;
+                            TheFragment4._url = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_home);
-                            TheFragment4._url = Globals.URLs._homepage;
+                            TheFragment4._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Globals.URLs._subspage;
+                            TheFragment4._url = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
-                            TheFragment4._url = Globals.URLs._homepage;
+                            TheFragment4._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "MyChannel")
                         {
                             _navViewItemList[tab].SetTitle("MyChannel");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment4._url = Globals.URLs._myChannel;
+                            TheFragment4._url = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Globals.URLs._explore;
+                            TheFragment4._url = Https.URLs._explore;
                         }
                         TheFragment4.LoadUrlWithDelay(TheFragment4._url, 0);
                     }
@@ -498,35 +496,35 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment5._url = Globals.URLs._settings;
+                            TheFragment5._url = Https.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_home);
-                            TheFragment5._url = Globals.URLs._homepage;
+                            TheFragment5._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Globals.URLs._subspage;
+                            TheFragment5._url = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
-                            TheFragment5._url = Globals.URLs._homepage;
+                            TheFragment5._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Globals.URLs._explore;
+                            TheFragment5._url = Https.URLs._explore;
                         }
                         TheFragment5.LoadUrlWithDelay(TheFragment5._url, 0);
                     }
@@ -666,46 +664,46 @@ namespace BottomNavigationViewPager
                     case 0:
                         if (TheFragment1._wv.Url != "https://www.bitchute.com/")
                         {
-                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                            _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                            _fm1.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                            _fm1.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                            _fm1.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                            _fm1.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
                         if (TheFragment2._wv.Url != "https://www.bitchute.com/")
                         {
-                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                            _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                            _fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                            _fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                            _fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                            _fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment2.ExpandVideoCards(false);
                         break;
                     case 2:
                         if (TheFragment3._wv.Url != "https://www.bitchute.com/")
                         {
-                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                            _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                            _fm3.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                            _fm3.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                            _fm3.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                            _fm3.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
                         TheFragment3.ExpandVideoCards(false);
                         break;
                     case 3:
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsDisableTooltips);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         TheFragment4.ExpandVideoCards(false);
                         break;
                     case 4:
-                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        _fm5.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                        _fm5.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                         break;
                 }
-                Globals.AppState.Display._horizontal = true;
+                AppState.Display._horizontal = true;
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
@@ -714,38 +712,38 @@ namespace BottomNavigationViewPager
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        //_fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
-                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
+                        _fm1.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        //_fm1.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        _fm1.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
-                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        //_fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
-                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
+                        _fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        //_fm2.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        _fm2.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
-                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        //_fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
-                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
+                        _fm3.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        //_fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        _fm3.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        //_fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
-                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        //_fm4.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        _fm4.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
-                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
-                        //_fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
-                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowPageBar);
+                        _fm5.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        //_fm5.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        _fm5.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                 }
-                Globals.AppState.Display._horizontal = false;
+                AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();
             }
 
-            if (!Globals.AppSettings._hideHorizontalNavbar || newConfig.Orientation == Orientation.Portrait)
+            if (!AppSettings._hideHorizontalNavbar || newConfig.Orientation == Orientation.Portrait)
             {
                 _navTimeout = false;
             }

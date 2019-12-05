@@ -118,12 +118,12 @@ namespace StartServices.Servicesclass
 
             if (myProcess.Importance == Importance.Foreground)
             {
-                Globals.AppState._bkgrd = false;
+                AppState._bkgrd = false;
                 return false;
             }
             else
             {
-                Globals.AppState._bkgrd = true;
+                AppState._bkgrd = true;
                 return true;
             }
         }
@@ -157,7 +157,7 @@ namespace StartServices.Servicesclass
 
             //use a while loop to start the notifications
             //they move over to a service timer eventually to prevent the loop from breaking
-            while (Globals.AppSettings._notifying)
+            while (AppSettings._notifying)
             {
                 if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
@@ -178,7 +178,7 @@ namespace StartServices.Servicesclass
                     }
                     return;
                 }
-                else if (!Globals.AppState._userIsLoggedIn)
+                else if (!AppState._userIsLoggedIn)
                 {
                     await Task.Delay(380000);
                 }
@@ -212,7 +212,7 @@ namespace StartServices.Servicesclass
         {
             public async override void Run()
             {
-                if (Globals.AppSettings._notifying)
+                if (AppSettings._notifying)
                 {
                     if (_fm5 == null)
                     {
@@ -242,12 +242,10 @@ namespace StartServices.Servicesclass
         
         public class ServiceWebView : Android.Webkit.WebView
         {
-
             public override string Url => base.Url;
 
             public ExtStickyService _serviceContext;
-
-
+            
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 if (MainActivity._backgroundRequested)

@@ -78,8 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
-    <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Classes\AppSettings.cs" />
+    <Compile Include="Classes\AppState.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
+    <Compile Include="Classes\Https.cs" />
+    <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />

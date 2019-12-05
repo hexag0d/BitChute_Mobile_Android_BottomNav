@@ -111,6 +111,8 @@ namespace BottomNavigationViewPager.Fragments
             _tabOverrideStringList.Add("Explore");
             _tabOverrideStringList.Add("Settings");
             _tabOverrideStringList.Add("MyChannel");
+            _tabOverrideStringList.Add("WatchL8r");
+            _tabOverrideStringList.Add("Playlists");
 
             base.OnCreate(savedInstanceState);
 
@@ -131,10 +133,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
-            //var _view2 = inflater.Inflate(Resource.Layout.SettingsFragmentLayout, container, false);
-
-            var _ctx = Android.App.Application.Context;
-
+            _url = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
@@ -180,7 +179,9 @@ namespace BottomNavigationViewPager.Fragments
                 _notificationonrb.CheckedChange += OnNotificationRbChecked;
                 _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
                 _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
-
+                
+                var _ctx = Android.App.Application.Context;
+                
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
@@ -189,7 +190,7 @@ namespace BottomNavigationViewPager.Fragments
                 _tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
-                _versionTextView.Text = Globals._appVersion;
+                _versionTextView.Text = AppState._appVersion;
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
@@ -211,9 +212,9 @@ namespace BottomNavigationViewPager.Fragments
         
         private void GetNavBarPrefs()
         {
-            Globals.AppSettings._hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
-            Globals.AppSettings._hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
-            SetNavbarCheckedState(Globals.AppSettings._hideHorizontalNavbar, Globals.AppSettings._hideVerticalNavbar);
+            AppSettings._hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+            AppSettings._hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
+            SetNavbarCheckedState(AppSettings._hideHorizontalNavbar, AppSettings._hideVerticalNavbar);
         }
 
         private static bool _systemCheckingRb = false;
@@ -222,13 +223,13 @@ namespace BottomNavigationViewPager.Fragments
         {
             if (_hideverticalnavbaronrb.Checked)
             {
-                Globals.AppSettings._hideVerticalNavbar = true;
+                AppSettings._hideVerticalNavbar = true;
             }
             else
             {
-                Globals.AppSettings._hideVerticalNavbar = false;
+                AppSettings._hideVerticalNavbar = false;
             }
-            _prefEditor.PutBoolean("hideverticalnavbar", Globals.AppSettings._hideVerticalNavbar);
+            _prefEditor.PutBoolean("hideverticalnavbar", AppSettings._hideVerticalNavbar);
             _prefEditor.Commit();
             _systemCheckingRb = false;
         }
@@ -261,12 +262,12 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (_hidehorizontalnavbaronrb.Checked)
                 {
-                    Globals.AppSettings._hideHorizontalNavbar = true;
+                    AppSettings._hideHorizontalNavbar = true;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", true);
                 }
                 else
                 {
-                    Globals.AppSettings._hideHorizontalNavbar = false;
+                    AppSettings._hideHorizontalNavbar = false;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", false);
                 }
                 _prefEditor.Commit();
@@ -277,7 +278,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             public bool OnTouch(View v, MotionEvent e)
             {
-                _main.CustomOnTouch();
+                MainActivity.CustomOnTouch();
                 return false;
             }
         }
@@ -291,9 +292,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public bool GetNotificationSetting()
         {
-            Globals.AppSettings._notifying = _prefs.GetBoolean("notificationson", true);
+            AppSettings._notifying = _prefs.GetBoolean("notificationson", true);
             _notificationCheckInProgress = true;
-            if (Globals.AppSettings._notifying)
+            if (AppSettings._notifying)
             {
                 _notificationonrb.Checked = true;
             }
@@ -302,29 +303,25 @@ namespace BottomNavigationViewPager.Fragments
                 _notificationoffrb.Checked = true;
             }
             _notificationCheckInProgress = false;
-            return Globals.AppSettings._notifying;
+            return AppSettings._notifying;
         }
         
         private void OnNotificationRbChecked(object sender, EventArgs e)
         {
-            if (!_notificationCheckInProgress)
+            if (_notificationonrb.Checked)
             {
-                if (_notificationonrb.Checked)
+                if (!ExtStickyService._notificationsHaveBeenSent)
                 {
-                    if (!ExtStickyService._notificationsHaveBeenSent)
-                    {
-                        Globals.AppSettings._notifying = true;
-                        //start the notification timer as setting _notifying false breaks the loop
-                        _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
-                    }
+                    AppSettings._notifying = true;
+                    _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
                 }
-                else
-                {
-                    Globals.AppSettings._notifying = false;
-                    _prefEditor.PutBoolean("notificationson", Globals.AppSettings._notifying);
-                }
-                _prefEditor.Commit();
             }
+            else
+            {
+                AppSettings._notifying = false;
+                _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
+            }
+            _prefEditor.Commit();
         }
 
         public void CustomLoadUrl(string url)
@@ -338,10 +335,10 @@ namespace BottomNavigationViewPager.Fragments
 
             if (Convert.ToBoolean(settings[2]))
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                _wv.LoadUrl(JavascriptCommands._jsHideTab1);
+                _wv.LoadUrl(JavascriptCommands._jsHideTab2);
+                _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
+                //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
         }
 
@@ -467,14 +464,12 @@ namespace BottomNavigationViewPager.Fragments
                 _wvLayout.Visibility = ViewStates.Visible;
             }
         }
-
-        public static MainActivity _main = new MainActivity();
-
+        
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
-                _main.CustomOnTouch();
+                MainActivity.CustomOnTouch();
             }
         }
 
@@ -528,7 +523,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(Globals.AppSettings._tabDelay);
+                await Task.Delay(AppSettings._tabDelay);
                 _wvRl = true;
                 await Task.Delay(1666);
                 mysteryInt = 0;
@@ -707,14 +702,14 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            await Task.Delay(AppSettings._linkOverflowFixDelay);
+            _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
         }
         
         private static async void HideWatchLabel()
         {
             await Task.Delay(1000);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
+            _wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
       
         private static string _cookieHeader;
@@ -890,43 +885,41 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-
-
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
                 if (_settingsTabOverride)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+                    _wv.LoadUrl(JavascriptCommands._jsHideBanner);
+                    _wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
                     if (_tab5OverridePreference == "Feed")
                     {
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
+                        _wv.LoadUrl(JavascriptCommands._jsHideTab1);
+                        _wv.LoadUrl(JavascriptCommands._jsHideTab2);
+                        _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
+                        _wv.LoadUrl(JavascriptCommands._jsHideTrending);
+                        _wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
                     }
                 }
 
-                if (Globals.AppState.Display._horizontal)
+                if (AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                    _wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                    _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
                 }
 
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
 
                 SetReload();
 
                 TheFragment5._cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
-                Globals._cookieString = TheFragment5._cookieHeader.ToString();
+                Https._cookieString = TheFragment5._cookieHeader.ToString();
                 var cookiePairs = TheFragment5._cookieHeader.Split('&');
 
-                Globals._cookieString = "";
+                Https._cookieString = "";
 
                 foreach (var cookiePair in cookiePairs)
                 {
@@ -944,13 +937,13 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     c.Domain = "https://bitchute.com/notifications/";
 
-                    if (Globals._cookieString == "")
+                    if (Https._cookieString == "")
                     {
-                        Globals._cookieString = c.ToString();
+                        Https._cookieString = c.ToString();
                     }
                     else
                     {
-                        Globals._cookieString += c.ToString();
+                        Https._cookieString += c.ToString();
                     }
                 }
                 HideLinkOverflow();
