@@ -180,12 +180,12 @@ namespace StartServices.Servicesclass
                 }
                 else if (!AppState._userIsLoggedIn)
                 {
-                    await Task.Delay(60000); //380000 debug
+                    await Task.Delay(380000); 
                 }
                 //user is logged in but has not yet received a notification
                 else
                 {
-                    await Task.Delay(60000);
+                    await Task.Delay(380000);
                 }
             }
         }

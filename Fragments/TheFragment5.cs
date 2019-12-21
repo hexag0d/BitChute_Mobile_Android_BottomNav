@@ -125,7 +125,6 @@ namespace BottomNavigationViewPager.Fragments
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
-            var _debug = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             _url = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             if (!tabLoaded)
             {
