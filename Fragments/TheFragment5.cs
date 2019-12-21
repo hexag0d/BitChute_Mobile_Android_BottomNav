@@ -17,6 +17,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static BottomNavigationViewPager.Classes.ExtendedWebChromeClient;
 using static BottomNavigationViewPager.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
 
@@ -129,7 +130,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
-                //_wv.SetWebChromeClient(new ExtWebChromeClient());
+                _wv.SetWebChromeClient(new ExtendedChromeClient(_main));
                 _wv.Settings.JavaScriptEnabled = true;
                 _wv.Settings.DisplayZoomControls = false;
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -930,15 +931,5 @@ namespace BottomNavigationViewPager.Fragments
                 HideLinkOverflow();
             }
         }
-
-        //private class ExtWebChromeClient : WebChromeClient
-        //{
-        //    public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback, FileChooserParams fileChooserParams)
-        //    {
-                
-
-        //        return base.OnShowFileChooser(webView, filePathCallback, fileChooserParams);
-        //    }
-        //}
     }
 }
