@@ -97,20 +97,27 @@ namespace BottomNavigationViewPager
 
         //notification items:
         public static int NOTIFICATION_ID = 1000;
-        public static readonly string CHANNEL_ID = "location_notification";
+        public static readonly string CHANNEL_ID = "notification";
         public static readonly string COUNT_KEY = "count";
 
         public static Window _window;
         public static View _mainView;
         
-        public static ISharedPreferences _prefs;
-        //public static CustomAudioManager _customAudioMan = new CustomAudioManager();
         public static ExtStickyService _service = new ExtStickyService();
-        
-        WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
+        readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AppSettings.LoadAllPrefsFromSettings();
+
+            if (Resources.Configuration.Orientation == Orientation.Landscape)
+            {
+                AppState.Display._horizontal = true;
+            }
+            else
+            {
+                AppState.Display._horizontal = false;
+            }
             _main = this;
             _window = this.Window;
             
@@ -142,8 +149,6 @@ namespace BottomNavigationViewPager
             {
                 
             }
-
-            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
             
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
@@ -169,7 +174,6 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
 
             ExtStickyService.StartNotificationLoop(90000);
-
 
             //_customAudioMan.GetAudioManager();
         }
@@ -219,8 +223,10 @@ namespace BottomNavigationViewPager
         /// .. timer resets every time it's called
         /// . works with a custom scroll listener
         /// </summary>
-        public static void CustomOnTouch()
-        { 
+        public static async void CustomOnTouch()
+        {
+            await Task.Delay(1);
+
                 if (_navTimer != 0)
                     _navTimer = 0;
 
@@ -344,19 +350,19 @@ namespace BottomNavigationViewPager
 
             _tabSelected = _viewPager.CurrentItem;
 
-            if (TheFragment5._fanMode)
+            if (AppSettings._fanMode)
             {
-                if (TheFragment5._tab4OverridePreference != null && _tab4Icon != null)
+                if (AppSettings._tab4OverridePreference != null && _tab4Icon != null)
                 {
-                    _navViewItemList[3].SetTitle(TheFragment5._tab4OverridePreference);
+                    _navViewItemList[3].SetTitle(AppSettings._tab4OverridePreference);
                     _navViewItemList[3].SetIcon(_tab4Icon);
                 }
             }
-            if (TheFragment5._settingsTabOverride)
+            if (AppSettings._settingsTabOverride)
             {
-                if (TheFragment5._tab5OverridePreference != null && _tab5Icon != null)
+                if (AppSettings._tab5OverridePreference != null && _tab5Icon != null)
                 {
-                    _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
+                    _navViewItemList[4].SetTitle(AppSettings._tab5OverridePreference);
                     _navViewItemList[4].SetIcon(_tab5Icon);
                 }
             }
@@ -411,7 +417,7 @@ namespace BottomNavigationViewPager
         /// <param name="oa"></param>
         public void OnSettingsChanged(List<object> oa)
         {
-            if (TheFragment5._fanMode)
+            if (AppSettings._fanMode)
             {
             }
             _fm1.OnSettingsChanged(oa);
@@ -441,7 +447,7 @@ namespace BottomNavigationViewPager
                 case 2:
                     break;
                 case 3: 
-                    if (TheFragment5._fanMode)
+                    if (AppSettings._fanMode)
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
@@ -485,11 +491,25 @@ namespace BottomNavigationViewPager
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment4._url = Https.URLs._explore;
                         }
+                        if (changeDetails == "Settings")
+                        {
+                            _navViewItemList[tab].SetTitle("Settings");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                            TheFragment4._url = Https.URLs._settings;
+                        }
+                        if (changeDetails == "WatchL8r")
+                        {
+                            _navViewItemList[tab].SetTitle("WatchL8r");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            TheFragment4._url = Https.URLs._watchLater;
+                        }
                         TheFragment4.LoadUrlWithDelay(TheFragment4._url, 0);
                     }
                     break;
                 case 4:
-                    if (TheFragment5._settingsTabOverride)
+                    if (AppSettings._settingsTabOverride)
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
@@ -525,6 +545,20 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment5._url = Https.URLs._explore;
+                        }
+                        if (changeDetails == "Settings")
+                        {
+                            _navViewItemList[tab].SetTitle("Settings");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                            TheFragment5._url = Https.URLs._settings;
+                        }
+                        if (changeDetails == "WatchL8r")
+                        {
+                            _navViewItemList[tab].SetTitle("WatchL8r");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            TheFragment5._url = Https.URLs._watchLater;
                         }
                         TheFragment5.LoadUrlWithDelay(TheFragment5._url, 0);
                     }
@@ -624,34 +658,33 @@ namespace BottomNavigationViewPager
             
             try
             {
-
-                    switch (_viewPager.CurrentItem)
-                    {
-                        case 0:
-                            _fm1.LoadCustomUrl(url);
-                            break;
-                        case 1:
-                            _fm2.LoadCustomUrl(url);
-                            break;
-                        case 2:
-                            _fm3.LoadCustomUrl(url);
-                            break;
-                        case 3:
-                            _fm4.LoadCustomUrl(url);
-                            break;
-                        case 4:
-                            _fm5.LoadCustomUrl(url);
-                            break;
-                    }
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.LoadCustomUrl(url);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(url);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(url);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(url);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(url);
+                        break;
+                }
             }
             catch 
             {
-
             }
         }
+
+        readonly WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
+        readonly WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
         
-        WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
-        WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen; 
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
@@ -747,6 +780,13 @@ namespace BottomNavigationViewPager
             {
                 _navTimeout = false;
             }
+
+            //app seems to be lagging ontouch so removing the touch listener when app is portrait
+            _fm1.CustomSetTouchListener(AppState.Display._horizontal);
+            _fm2.CustomSetTouchListener(AppState.Display._horizontal);
+            _fm3.CustomSetTouchListener(AppState.Display._horizontal);
+            _fm4.CustomSetTouchListener(AppState.Display._horizontal);
+            _fm5.CustomSetTouchListener(AppState.Display._horizontal);
 
             base.OnConfigurationChanged(newConfig);
 

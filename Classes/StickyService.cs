@@ -180,12 +180,12 @@ namespace StartServices.Servicesclass
                 }
                 else if (!AppState._userIsLoggedIn)
                 {
-                    await Task.Delay(380000);
+                    await Task.Delay(60000); //380000 debug
                 }
                 //user is logged in but has not yet received a notification
                 else
                 {
-                    await Task.Delay(420000);
+                    await Task.Delay(60000);
                 }
             }
         }
@@ -238,6 +238,12 @@ namespace StartServices.Servicesclass
         }
 
 
+        public static bool DummyLoop()
+        {
+            var dummyVar = true;
+            return dummyVar;
+        }
+
         public static int _startForegroundNotificationId = 6666;
         
         public class ServiceWebView : Android.Webkit.WebView
@@ -252,6 +258,7 @@ namespace StartServices.Servicesclass
                 {
                     while (ExtStickyService.IsInBkGrd())
                     {
+                        var dontSleep = DummyLoop();
                         System.Threading.Thread.Sleep(3600);
                     }
                 }

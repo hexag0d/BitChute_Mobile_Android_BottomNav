@@ -85,14 +85,26 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
             }
-            _wv.SetOnTouchListener(new ExtTouchListener());
+            CustomSetTouchListener(AppState.Display._horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
 
             LoadUrlWithDelay(_url, 4000);
 
             return _view;
         }
-        
+
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
+        }
+
         public static async void LoadUrlWithDelay(string url, int delay)
         {
             await Task.Delay(delay);
@@ -174,11 +186,11 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
-            if (TheFragment5._fanMode)
+            if (AppSettings._fanMode)
             {
             }
 
-            if (TheFragment5._zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -188,9 +200,9 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = false;
             }
 
-            if (TheFragment5._tab4OverridePreference == "feed" && TheFragment5._tab3Hide)
+            if (AppSettings._tab4OverridePreference == "feed" && AppSettings._tab3Hide)
             {
-                if (TheFragment5._tab3Hide)
+                if (AppSettings._tab3Hide)
                 {
                     _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                     _wv.LoadUrl(JavascriptCommands._jsHideTab1);
@@ -242,7 +254,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Delay(4000);
             }
-            if (TheFragment5._tab5OverridePreference == "Subs" || TheFragment5._fanMode)
+            if (AppSettings._tab5OverridePreference == "Subs" || AppSettings._fanMode)
             {
                 _wv.LoadUrl(JavascriptCommands._jsExpandSubs);
             }
@@ -268,7 +280,7 @@ namespace BottomNavigationViewPager.Fragments
                     //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
 
-                if (!TheFragment5._tab1FeaturedOn)
+                if (!AppSettings._tab1FeaturedOn)
                 {
                     _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }

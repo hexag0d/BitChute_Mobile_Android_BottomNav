@@ -64,8 +64,20 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
-            _wv.SetOnTouchListener(new ExtTouchListener());
+            CustomSetTouchListener(AppState.Display._horizontal);
             return _view;
+        }
+
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
         }
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
@@ -96,7 +108,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
-            if (TheFragment5._zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;

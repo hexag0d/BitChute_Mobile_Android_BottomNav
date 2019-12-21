@@ -63,7 +63,6 @@ namespace BottomNavigationViewPager.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
-
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
             if (!tabLoaded)
@@ -78,10 +77,22 @@ namespace BottomNavigationViewPager.Fragments
             }
             _wv.LoadUrl(_url);
 
-
+            CustomSetTouchListener(AppState.Display._horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
-            _wv.SetOnTouchListener(new ExtTouchListener());
+            //_wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
+        }
+
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
         }
 
         public void OnSettingsChanged(List<object> settings)
@@ -97,7 +108,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(JavascriptCommands._jsShowCarousel);
             }
 
-            if (TheFragment5._zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
             }
@@ -289,7 +300,7 @@ namespace BottomNavigationViewPager.Fragments
                     HideWatchLabel();
                 
 
-                if (!TheFragment5._tab1FeaturedOn)
+                if (!AppSettings._tab1FeaturedOn)
                 {
                     _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }

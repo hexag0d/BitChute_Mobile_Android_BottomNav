@@ -72,8 +72,8 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             LoadUrlWithDelay(_url, 2000);
-            _wv.SetOnTouchListener(new ExtTouchListener());
-          //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            CustomSetTouchListener(AppState.Display._horizontal);
+            //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
         }
 
@@ -97,7 +97,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(JavascriptCommands._jsShowCarousel);
             }
 
-            if (TheFragment5._zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -107,7 +107,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = false;
             }
 
-            if (TheFragment5._tab3Hide)
+            if (AppSettings._tab3Hide)
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 _wv.LoadUrl(JavascriptCommands._jsHideTab1);
@@ -118,7 +118,19 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static MainActivity _main = new MainActivity();
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
+        }
+
+        public static MainActivity _main = MainActivity._main;
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
@@ -274,7 +286,7 @@ namespace BottomNavigationViewPager.Fragments
                     HideWatchLabel(2000);
                 }
 
-                if (TheFragment5._tab3Hide)
+                if (AppSettings._tab3Hide)
                 {
                     _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                     //_wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);

@@ -38,38 +38,29 @@ namespace BottomNavigationViewPager.Fragments
         public static List<object> _settingsList = new List<object>();
         public static Spinner _tab4OverrideSpinner;
         public static Spinner _tab5OverrideSpinner;
-        
-        public static bool _zoomControl { get; set; }
-        public static bool _tab1FeaturedOn { get; set; }
-        public static bool _fanMode { get; set; }
-        public static bool _tab3Hide { get; set; }
-        public static bool _settingsTabOverride { get; set; }
-
-        public static string _tab4OverridePreference { get; set; }
-        public static string _tab5OverridePreference { get; set; }
 
         bool tabLoaded = false;
 
         public static string _tab5Title = "Settings";
         public static string _url = "https://www.bitchute.com/settings/";
 
-        public static RadioButton _fmoffrb;
-        public static RadioButton _fmonrb;
+        private static RadioButton _fmoffrb;
+        private static RadioButton _fmonrb;
 
-        public static RadioButton _zcoffrb;
-        public static RadioButton _zconrb;
+        private static RadioButton _zcoffrb;
+        private static RadioButton _zconrb;
 
-        public static RadioButton _t3honrb;
-        public static RadioButton _t3hoffrb;
+        private static RadioButton _t3honrb;
+        private static RadioButton _t3hoffrb;
 
-        public static RadioButton _t1fonrb;
-        public static RadioButton _t1foffrb;
+        private static RadioButton _t1fonrb;
+        private static RadioButton _t1foffrb;
 
-        public static RadioButton _stoverrideoffrb;
-        public static RadioButton _stoverrideonrb;
+        private static RadioButton _stoverrideoffrb;
+        private static RadioButton _stoverrideonrb;
 
-        public static RadioButton _notificationonrb;
-        public static RadioButton _notificationoffrb;
+        private static RadioButton _notificationonrb;
+        private static RadioButton _notificationoffrb;
 
         private static RadioButton _hidehorizontalnavbaronrb;
         private static RadioButton _hidehorizontalnavbaroffrb;
@@ -133,6 +124,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
+            var _debug = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             _url = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             if (!tabLoaded)
             {
@@ -172,18 +164,18 @@ namespace BottomNavigationViewPager.Fragments
                 //_notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
 
                 _zcoffrb.CheckedChange += ExtSettingChanged;
-                _fmonrb.CheckedChange += OnTab4OverrideChanged;
+                _fmonrb.CheckedChange += ExtSettingChanged;
                 _t3hoffrb.CheckedChange += ExtSettingChanged;
                 _t1foffrb.CheckedChange += ExtSettingChanged;
-                _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
-                _notificationonrb.CheckedChange += OnNotificationRbChecked;
+                _stoverrideonrb.CheckedChange += ExtSettingChanged;
+                _notificationonrb.CheckedChange += ExtSettingChanged;
                 _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
                 _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
                 
                 var _ctx = Android.App.Application.Context;
                 
-                _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
-                _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
+                _tab4OverrideSpinner.ItemSelected += ExtSettingChanged;
+                _tab5OverrideSpinner.ItemSelected += ExtSettingChanged;
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab4OverrideSpinner.Adapter = _tab4SpinOverrideAdapter;
@@ -193,15 +185,22 @@ namespace BottomNavigationViewPager.Fragments
                 _versionTextView.Text = AppState._appVersion;
                 tabLoaded = true;
             }
-            _wv.SetOnTouchListener(new ExtTouchListener());
+            CustomSetTouchListener(AppState.Display._horizontal);
             _appSettingsLayout.Visibility = ViewStates.Gone;
-            GetNotificationSetting();
-            GetNavBarPrefs();
-            SetCheckedState();
-
             LoadUrlWithDelay(_url, 5000);
-
             return _view;
+        }
+
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
         }
 
         public static async void LoadUrlWithDelay(string url, int delay)
@@ -210,13 +209,6 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
         
-        private void GetNavBarPrefs()
-        {
-            AppSettings._hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
-            AppSettings._hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
-            SetNavbarCheckedState(AppSettings._hideHorizontalNavbar, AppSettings._hideVerticalNavbar);
-        }
-
         private static bool _systemCheckingRb = false;
 
         private static void OnVerticalNavbarRbChecked (object sender, EventArgs e)
@@ -234,27 +226,6 @@ namespace BottomNavigationViewPager.Fragments
             _systemCheckingRb = false;
         }
 
-        private void SetNavbarCheckedState(bool horizontalPref, bool verticalPref)
-        {
-            _systemCheckingRb = true;
-            if (horizontalPref)
-            {
-                _hidehorizontalnavbaronrb.Checked = true;
-            }
-            else
-            {
-                _hidehorizontalnavbaroffrb.Checked = true;
-            }
-            if (verticalPref)
-            {
-                _hideverticalnavbaronrb.Checked = true;
-            }
-            else
-            {
-                _hideverticalnavbaroffrb.Checked = true;
-            }
-            
-        }
         
         private static void OnHorizontalNavbarRbChecked(object sender, EventArgs e)
         {
@@ -287,43 +258,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             _wv.Visibility = ViewStates.Visible;
         }
-
-        private static bool _notificationCheckInProgress = false;
-
-        public bool GetNotificationSetting()
-        {
-            AppSettings._notifying = _prefs.GetBoolean("notificationson", true);
-            _notificationCheckInProgress = true;
-            if (AppSettings._notifying)
-            {
-                _notificationonrb.Checked = true;
-            }
-            else
-            {
-                _notificationoffrb.Checked = true;
-            }
-            _notificationCheckInProgress = false;
-            return AppSettings._notifying;
-        }
         
-        private void OnNotificationRbChecked(object sender, EventArgs e)
-        {
-            if (_notificationonrb.Checked)
-            {
-                if (!ExtStickyService._notificationsHaveBeenSent)
-                {
-                    AppSettings._notifying = true;
-                    _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
-                }
-            }
-            else
-            {
-                AppSettings._notifying = false;
-                _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
-            }
-            _prefEditor.Commit();
-        }
-
         public void CustomLoadUrl(string url)
         {
             _wv.LoadUrl(url);
@@ -341,23 +276,14 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
         }
-
+         
         public bool _isNowCheckingBoxes = false;
 
         public async void SetCheckedState()
         {
-            await Task.Delay(2000);
-            _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
-            _tab5OverridePreference = _prefs.GetString("settingstaboverridestring", "Settings");
-            _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
-            _fanMode = _prefs.GetBoolean("fanmode", false);                                                       
-            _tab3Hide = _prefs.GetBoolean("tab3hide", true);
-            _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
-            _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            
             _isNowCheckingBoxes = true;
             
-            if (_zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _zconrb.Checked = true;
             }
@@ -365,16 +291,16 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _zcoffrb.Checked = true;
             }
-            if (_fanMode)
+            if (AppSettings._fanMode)
             {
-                MainActivity.TabDetailChanger(3, _tab4OverridePreference);
+                MainActivity.TabDetailChanger(3, AppSettings._tab4OverridePreference);
                 _fmonrb.Checked = true;
             }
             else
             {
                 _fmoffrb.Checked = true;
             }
-            if (_tab1FeaturedOn)
+            if (AppSettings._tab1FeaturedOn)
             {
                 _t1fonrb.Checked = true;
             }
@@ -382,7 +308,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _t1foffrb.Checked = true;
             }
-            if (_tab3Hide)
+            if (AppSettings._tab3Hide)
             {
                 _t3honrb.Checked = true;
             }
@@ -390,18 +316,17 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _t3hoffrb.Checked = true;
             }
-            if (_settingsTabOverride)
+            if (AppSettings._fanMode)
             {
-
-                MainActivity.TabDetailChanger(4, _tab4OverridePreference);
-                _stoverrideonrb.Checked = true;
+                MainActivity.TabDetailChanger(4, AppSettings._tab4OverridePreference);
+                _fmonrb.Checked = true;
             }
             else
             {
-                _stoverrideoffrb.Checked = true;
+                _fmoffrb.Checked = true;
             }
 
-            switch (_tab4OverridePreference)
+            switch (AppSettings._tab4OverridePreference)
             {
                 case "Home":
                     _tab4OverrideSpinner.SetSelection(0);
@@ -422,8 +347,17 @@ namespace BottomNavigationViewPager.Fragments
                     _tab4OverrideSpinner.SetSelection(5);
                     break;  
             }
+            
+            if (AppSettings._settingsTabOverride)
+            {
+                _stoverrideonrb.Checked = true;
+            }
+            else
+            {
+                _stoverrideoffrb.Checked = true;
+            }
 
-            switch (_tab5OverridePreference)
+            switch (AppSettings._tab5OverridePreference)
             {
                 case "Home":
                     _tab5OverrideSpinner.SetSelection(0);
@@ -444,8 +378,148 @@ namespace BottomNavigationViewPager.Fragments
                     _tab5OverrideSpinner.SetSelection(5);
                     break;
             }
+            if (AppSettings._notifying)
+            {
+                _notificationonrb.Checked = true;
+            }
+            else
+            {
+                _notificationoffrb.Checked = true;
+            }
+            if (AppSettings._hideHorizontalNavbar)
+            {
+                _hidehorizontalnavbaronrb.Checked = true;
+            }
+            else
+            {
+                _hidehorizontalnavbaroffrb.Checked = true;
+            }
+            if (AppSettings._hideVerticalNavbar)
+            {
+                _hideverticalnavbaronrb.Checked = true;
+            }
+            else
+            {
+                _hideverticalnavbaroffrb.Checked = true;
+            }
+
+            await Task.Delay(1000);
             _isNowCheckingBoxes = false;
         }
+
+
+        public static Android.Content.ISharedPreferences _prefs;
+        public static Android.Content.ISharedPreferencesEditor _prefEditor;
+
+        /// <summary>
+        /// called when the .Checked state of radio buttons in the app settings fragment is changed
+        /// sets the settings when this event occurs and calls a method to notify all fragments via mainactivity.
+        ///writes the values to android preferences aswell using the api
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ExtSettingChanged(object sender, EventArgs e)
+        {
+            if (!_isNowCheckingBoxes)
+            {
+                if (_tab4OverrideSpinner.SelectedItem == null)
+                {
+                    return;
+                }
+                if (_tab4OverrideSpinner == null)
+                {
+                    _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
+                }
+                if (_tab4OverrideSpinner != null)
+                {
+                    AppSettings._tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
+                    MainActivity.TabDetailChanger(3, _tab4OverrideSpinner.SelectedItem.ToString());
+                }
+                if (_tab5OverrideSpinner == null)
+                {
+                    _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
+                }
+                if (_tab5OverrideSpinner != null)
+                {
+                    AppSettings._tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
+                    MainActivity.TabDetailChanger(4, _tab5OverrideSpinner.SelectedItem.ToString());
+                }
+
+                if (_notificationonrb.Checked)
+                {
+                    AppSettings._notifying = true;
+                }
+                else
+                {
+                    AppSettings._notifying = false;
+                }
+                if (_zconrb.Checked)
+                {
+                    AppSettings._zoomControl = true;
+                }
+                else
+                {
+                    AppSettings._zoomControl = false;
+                }
+                if (_t3honrb.Checked)
+                {
+                    AppSettings._tab3Hide = true;
+                }
+                else
+                {
+                    AppSettings._tab3Hide = false;
+                }
+                if (_t1fonrb.Checked)
+                {
+                    AppSettings._tab1FeaturedOn = true;
+                }
+                else
+                {
+                    AppSettings._tab1FeaturedOn = false;
+                }
+                if (_fmonrb.Checked)
+                {
+                    AppSettings._fanMode = true;
+                }
+                else
+                {
+                    AppSettings._fanMode = false;
+                }
+                if (_stoverrideonrb.Checked)
+                {
+                    AppSettings._settingsTabOverride = true;
+
+                    MainActivity.TabDetailChanger(4, AppSettings._tab5OverridePreference);
+                }
+                else
+                {
+                    AppSettings._settingsTabOverride = false;
+
+                }
+                //write the android prefs
+                _prefEditor.PutBoolean("zoomcontrol", AppSettings._zoomControl);
+                _prefEditor.PutBoolean("fanmode", AppSettings._fanMode);
+                _prefEditor.PutBoolean("tab3hide", AppSettings._tab3Hide);
+                _prefEditor.PutBoolean("t1featured", AppSettings._tab1FeaturedOn);
+                _prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
+                _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
+                _prefEditor.PutString("tab4overridestring", AppSettings._tab4OverridePreference);
+                _prefEditor.PutString("tab5overridestring", AppSettings._tab5OverridePreference);
+                _prefEditor.Commit();
+
+                _settingsList.Clear();
+                //then add the settings app settings list
+                _settingsList.Add(AppSettings._zoomControl);
+                _settingsList.Add(AppSettings._fanMode);
+                _settingsList.Add(AppSettings._tab3Hide);
+                _settingsList.Add(AppSettings._tab1FeaturedOn);
+                _settingsList.Add(AppSettings._settingsTabOverride);
+
+                _main.OnSettingsChanged(_settingsList);
+            }
+        }
+
+        static bool _firstTimeLoad = true;
 
         /// <summary>
         /// shows the app specific settings menu
@@ -453,6 +527,12 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public void ShowAppSettingsMenu()
         {
+            if (_firstTimeLoad)
+            {
+                SetCheckedState();
+                _firstTimeLoad = false;
+            }
+
             if (_wvLayout.Visibility == ViewStates.Visible)
             {
                 _wvLayout.Visibility = ViewStates.Gone;
@@ -465,13 +545,13 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
         
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                MainActivity.CustomOnTouch();
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        MainActivity.CustomOnTouch();
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -546,15 +626,15 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (_fmonrb.Checked)
                 {
-                    _fanMode = true;
+                    AppSettings._fanMode = true;
                 }
                 else
                 {
                     MainActivity.TabDetailChanger(3, "MyChannel");
-                    _fanMode = false;
+                    AppSettings._fanMode = false;
                 }
                 var prefEditor = _prefs.Edit();
-                _prefEditor.PutBoolean("fanmode", _fanMode);
+                _prefEditor.PutBoolean("fanmode", AppSettings._fanMode);
                 _prefEditor.Commit();
             }
         }
@@ -565,128 +645,19 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (_stoverrideonrb.Checked)
                 {
-                    _settingsTabOverride = true;
+                    AppSettings._settingsTabOverride = true;
                 }
                 else
                 {
                     MainActivity.TabDetailChanger(4, "Settings");
-                    _settingsTabOverride = false;
+                    AppSettings._settingsTabOverride = false;
                 }
                 var prefEditor = _prefs.Edit();
-                prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
+                prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
                 prefEditor.Commit();
             }
         }
-
-        public void OnTab4OverrideSelectionChanged(object sender, EventArgs e)
-        {
-            _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
-
-            
-            if (_tab4OverrideSpinner != null)
-            {
-                _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
-                MainActivity.TabDetailChanger(3, _tab4OverrideSpinner.SelectedItem.ToString());
-            }
-
-            _prefEditor.PutString("tab4overridestring", _tab4OverridePreference);
-            _prefEditor.Commit();
-        }
-
-        public void OnTab5OverrideSelectionChanged(object sender, EventArgs e)
-        {
-            _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
-
-            if (_tab5OverrideSpinner != null)
-            {
-                _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
-                MainActivity.TabDetailChanger(4, _tab5OverrideSpinner.SelectedItem.ToString());
-            }
-            
-            _prefEditor.PutString("settingstaboverridestring", _tab5OverridePreference);
-            _prefEditor.Commit();
-        }
-
-        public static Android.Content.ISharedPreferences _prefs;
-        public static Android.Content.ISharedPreferencesEditor _prefEditor;
         
-        /// <summary>
-        /// called when the .Checked state of radio buttons in the app settings fragment is changed
-        /// sets the settings when this event occurs and calls a method to notify all fragments via mainactivity.
-        ///writes the values to android preferences aswell using the api
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void ExtSettingChanged(object sender, EventArgs e)
-        {
-            if (!_isNowCheckingBoxes)
-            {
-                if (_tab4OverrideSpinner.SelectedItem == null)
-                {
-                    return;
-                }
-                //_tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
-                //_tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
-                
-                if (tabLoaded)
-                {
-                    if (_zconrb.Checked)
-                    {
-                        _zoomControl = true;
-                    }
-                    else
-                    {
-                        _zoomControl = false;
-                    }
-                    if (_t3honrb.Checked)
-                    {
-                        _tab3Hide = true;
-                    }
-                    else
-                    {
-                        _tab3Hide = false;
-                    }
-                    if (_t1fonrb.Checked)
-                    {
-                        _tab1FeaturedOn = true;
-                    }
-                    else
-                    {
-                        _tab1FeaturedOn = false;
-                    }
-                    if (_stoverrideonrb.Checked)
-                    {
-                        _settingsTabOverride = true;
-
-                        MainActivity.TabDetailChanger(4, _tab5OverridePreference);
-                    }
-                    else
-                    {
-                        _settingsTabOverride = false;
-
-                    }
-                    //write the android prefs
-                    _prefEditor.PutBoolean("zoomcontrol", _zoomControl);
-                    _prefEditor.PutBoolean("fanmode", _fanMode);
-                    _prefEditor.PutBoolean("tab3hide", _tab3Hide);
-                    _prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
-                    _prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
-                    _prefEditor.Commit();
-
-                    _settingsList.Clear();
-                    //then add the settings app settings list
-                    _settingsList.Add(_zoomControl);
-                    _settingsList.Add(_fanMode);
-                    _settingsList.Add(_tab3Hide);
-                    _settingsList.Add(_tab1FeaturedOn);
-                    _settingsList.Add(_settingsTabOverride);
-                    //we don't need to add the notification preference because it's only used in frag5
-
-                    _main.OnSettingsChanged(_settingsList);
-                }
-            }
-        }
-
         public static string _rawNoteText = "";
 
         public static string _cookieString { get; set; }
@@ -889,12 +860,14 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                if (_settingsTabOverride)
+                if (AppSettings._settingsTabOverride)
                 {
-                    _wv.LoadUrl(JavascriptCommands._jsHideBanner);
-                    _wv.LoadUrl(JavascriptCommands._jsHideBuff);
-
-                    if (_tab5OverridePreference == "Feed")
+                    if (AppSettings._tab5OverridePreference != "Settings")
+                    {
+                        _wv.LoadUrl(JavascriptCommands._jsHideBanner);
+                        _wv.LoadUrl(JavascriptCommands._jsHideBuff);
+                    }
+                    if (AppSettings._tab5OverridePreference == "Feed")
                     {
                         _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                         _wv.LoadUrl(JavascriptCommands._jsHideTab1);
@@ -915,36 +888,44 @@ namespace BottomNavigationViewPager.Fragments
 
                 SetReload();
 
-                TheFragment5._cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
-                Https._cookieString = TheFragment5._cookieHeader.ToString();
-                var cookiePairs = TheFragment5._cookieHeader.Split('&');
-
-                Https._cookieString = "";
-
-                foreach (var cookiePair in cookiePairs)
+                try
                 {
-                    var cookiePieces = cookiePair.Split('=');
-                    if (cookiePieces[0].Contains(":"))
-                        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
-                    cookies.Add(new Cookie
+                    TheFragment5._cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
+                    Https._cookieString = TheFragment5._cookieHeader.ToString();
+                    var cookiePairs = TheFragment5._cookieHeader.Split('&');
+
+
+                    Https._cookieString = "";
+
+                    foreach (var cookiePair in cookiePairs)
                     {
-                        Name = cookiePieces[0],
-                        Value = cookiePieces[1]
-                    });
+                        var cookiePieces = cookiePair.Split('=');
+                        if (cookiePieces[0].Contains(":"))
+                            cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
+                        cookies.Add(new Cookie
+                        {
+                            Name = cookiePieces[0],
+                            Value = cookiePieces[1]
+                        });
+                    }
+
+                    foreach (Cookie c in cookies)
+                    {
+                        c.Domain = "https://bitchute.com/notifications/";
+
+                        if (Https._cookieString == "")
+                        {
+                            Https._cookieString = c.ToString();
+                        }
+                        else
+                        {
+                            Https._cookieString += c.ToString();
+                        }
+                    }
                 }
-
-                foreach (Cookie c in cookies)
+                catch
                 {
-                    c.Domain = "https://bitchute.com/notifications/";
 
-                    if (Https._cookieString == "")
-                    {
-                        Https._cookieString = c.ToString();
-                    }
-                    else
-                    {
-                        Https._cookieString += c.ToString();
-                    }
                 }
                 HideLinkOverflow();
             }

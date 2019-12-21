@@ -6,34 +6,15 @@ namespace BottomNavigationViewPager.Classes
     {
         public static Android.Content.ISharedPreferences _prefs;
 
-        /// <summary>
-        /// gets the app preferences object from android
-        /// </summary>
-        /// <returns></returns>
-        public static Android.Content.ISharedPreferences GetAppSharedPrefs()
-        {
-            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
-            return _prefs;
-        }
-
-        /// <summary>
-        /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"
-        /// </summary>
-        /// <param name="tabPref"></param>
-        /// <returns></returns>
-        public static string GetTabOverrideUrlPref(string tabPref)
-        {
-            GetAppSharedPrefs();
-            switch (tabPref)
-            {
-                case "tab4overridestring":
-                    return Https.URLs.GetUrlStringFromPref(_prefs.GetString(tabPref, Https.URLs._myChannel)); 
-                case "tab5overridestring":
-                    return Https.URLs.GetUrlStringFromPref(_prefs.GetString(tabPref, Https.URLs._settings)); 
-            }
-            return Https.URLs._homepage;
-        }
-
+        public static bool _zoomControl { get; set; }
+        public static bool _tab1FeaturedOn { get; set; }
+        public static bool _fanMode { get; set; }
+        public static bool _tab3Hide { get; set; }
+        public static bool _settingsTabOverride { get; set; }
+        
+        public static string _tab4OverridePreference { get; set; }
+        public static string _tab5OverridePreference { get; set; }
+        
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
         /// </summary>
@@ -60,6 +41,55 @@ namespace BottomNavigationViewPager.Classes
         public static bool _hideVerticalNavbar = false;
 
         public static bool _notifying = true;
+
+
+        /// <summary>
+        /// gets the app preferences object from android
+        /// </summary>
+        /// <returns></returns>
+        public static Android.Content.ISharedPreferences GetAppSharedPrefs()
+        {
+            _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+            return _prefs;
+        }
+
+        public static void LoadAllPrefsFromSettings()
+        {
+            GetAppSharedPrefs();
+            _notifying = _prefs.GetBoolean("notificationson", true);
+            _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
+            _tab5OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
+            _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
+            _fanMode = _prefs.GetBoolean("fanmode", false);
+            _tab3Hide = _prefs.GetBoolean("tab3hide", true);
+            _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
+            _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            _hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+            _hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
+
+            return;
+        }
+
+        /// <summary>
+        /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"
+        /// </summary>
+        /// <param name="tabPref"></param>
+        /// <returns></returns>
+        public static string GetTabOverrideUrlPref(string tabPref)
+        {
+            _prefs = GetAppSharedPrefs();
+
+            switch (tabPref)
+            {
+                case "tab4overridestring":
+                    string t4url = Https.URLs.GetUrlStringFromPref(_prefs.GetString("tab4overridestring", "MyChannel"));
+                    return t4url;
+                case "tab5overridestring":
+                    string t5url = Https.URLs.GetUrlStringFromPref(_prefs.GetString("tab5overridestring", "Settings"));
+                    return t5url;
+            }
+            return Https.URLs._homepage;
+        }
 
     }
 }
