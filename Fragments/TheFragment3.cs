@@ -30,7 +30,7 @@ namespace BottomNavigationViewPager.Fragments
 
         bool tabLoaded = false;
 
-        public static string _url = "https://bitchute.com";
+        public static string _url = "https://www.bitchute.com/";
 
         public static TheFragment3 NewInstance(string title, string icon)
         {
@@ -71,6 +71,11 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
             }
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
             LoadUrlWithDelay(_url, 2000);
             CustomSetTouchListener(AppState.Display._horizontal);
             //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
@@ -85,18 +90,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
-
-            if (Convert.ToBoolean(settings[3]))
-            {
-                _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-
-            }
-            else
-            {
-                _wv.LoadUrl(JavascriptCommands._jsShowCarousel);
-            }
-
             if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
@@ -110,11 +103,10 @@ namespace BottomNavigationViewPager.Fragments
             if (AppSettings._tab3Hide)
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                _wv.LoadUrl(JavascriptCommands._jsHideTab1);
-                _wv.LoadUrl(JavascriptCommands._jsHideTab2);
-                _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
-                _wv.LoadUrl(JavascriptCommands._jsHideTrending);
-                //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
+            }
+            else
+            {
+                _wv.LoadUrl(JavascriptCommands._jsShowCarousel);
             }
         }
 
@@ -289,12 +281,7 @@ namespace BottomNavigationViewPager.Fragments
                 if (AppSettings._tab3Hide)
                 {
                     _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                    //_wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideTab1);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideTab2);
-                    //_wv.LoadUrl(JavascriptCommands._jsSelectTab3);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideTrending);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
+
                     if (_wv.Url == "https://www.bitchute.com/")
                     {
                         TheFragment3.SelectSubscribedTab(2000);
@@ -305,22 +292,12 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (AppState.Display._horizontal)
                 {
-                    //if (url != "https://www.bitchute.com/")
-                    //{
-                    //    _wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                    //    //_wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                    //    _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                    //    _wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                    //    //_wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
-                    //}
-
                     HidePageTitle(5000);
                 }
 
                 _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-                //InjectCSS();
                 SetReload();
                 HideLinkOverflow();
                 ExpandVideoCards(true);

@@ -256,10 +256,42 @@ namespace StartServices.Servicesclass
             {
                 if (MainActivity._backgroundRequested)
                 {
+                    try
+                    {
+                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        _wl.Acquire();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    try
+                    {
+                        if (wifiLock == null)
+                        {
+                            wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                        }
+                        wifiLock.Acquire();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                     while (ExtStickyService.IsInBkGrd())
                     {
                         var dontSleep = DummyLoop();
                         System.Threading.Thread.Sleep(3600);
+                    }
+                    try
+                    {
+                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        _wl.Release();
+                    }
+                    catch
+                    {
+
                     }
                 }
                 MainActivity._backgroundRequested = false;

@@ -22,6 +22,7 @@ namespace BottomNavigationViewPager.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://www.bitchute.com/profile";
+        
         bool tabLoaded = false;
 
         public static TheFragment4 NewInstance(string title, string icon) {
@@ -69,11 +70,13 @@ namespace BottomNavigationViewPager.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout4, container, false);
-
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView4);
 
-            //get the url string from prefs
-            _url = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
+            if (AppSettings._fanMode)
+            {
+                //get the url string from prefs
+                _url = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
+            }
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
@@ -84,6 +87,11 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
+            }
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
             }
             CustomSetTouchListener(AppState.Display._horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
@@ -180,14 +188,13 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
-
-            if (Convert.ToBoolean(settings[3]))
+            if (AppSettings._fanMode && AppSettings._tab4OverridePreference == "Feed")
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-            }
-            if (AppSettings._fanMode)
-            {
+                _wv.LoadUrl(JavascriptCommands._jsHideTab1);
+                _wv.LoadUrl(JavascriptCommands._jsHideTab2);
+                _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
+                _wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
 
             if (AppSettings._zoomControl)
@@ -198,18 +205,6 @@ namespace BottomNavigationViewPager.Fragments
             else
             {
                 _wv.Settings.BuiltInZoomControls = false;
-            }
-
-            if (AppSettings._tab4OverridePreference == "feed" && AppSettings._tab3Hide)
-            {
-                if (AppSettings._tab3Hide)
-                {
-                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(JavascriptCommands._jsHideLabel);
-                }
             }
         }
 
@@ -261,8 +256,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             _wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
-
-
+        
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)

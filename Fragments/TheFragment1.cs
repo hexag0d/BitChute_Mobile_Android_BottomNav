@@ -76,13 +76,22 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             _wv.LoadUrl(_url);
-
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
             CustomSetTouchListener(AppState.Display._horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             //_wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
         }
 
+        /// <summary>
+        /// sets the touch listener when device is in landscape mode
+        /// sets it to null when the device goes back into portrait mode
+        /// </summary>
+        /// <param name="landscape"></param>
         public void CustomSetTouchListener(bool landscape)
         {
             if (landscape)
@@ -97,9 +106,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+            _wv.Settings.SetSupportZoom(AppSettings._zoomControl);
 
-            if (Convert.ToBoolean(settings[3]))
+            if (!AppSettings._tab1FeaturedOn)
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
@@ -142,6 +151,8 @@ namespace BottomNavigationViewPager.Fragments
                 }
             }
         }
+
+
 
         private static int _scrollY = 0;
 

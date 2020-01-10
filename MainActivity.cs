@@ -156,9 +156,7 @@ namespace BottomNavigationViewPager
             SetContentView(Resource.Layout.Main);
 
             InitializeTabs();
-
-            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+            
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
@@ -174,6 +172,7 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
 
             ExtStickyService.StartNotificationLoop(90000);
+
 
             //_customAudioMan.GetAudioManager();
         }
@@ -404,10 +403,39 @@ namespace BottomNavigationViewPager
                         _navViewItemList.Add(item);
                     }
                 }
+
+
             }
             catch (System.Exception ex)
             {
                 System.Console.WriteLine((ex.InnerException ?? ex).Message);
+            }
+            try
+            {
+                if (!AppSettings._fanMode)
+                {
+                    _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                }
+                else
+                {
+                    _navViewItemList[3].SetTitle(AppSettings._tab4OverridePreference);
+                    _navViewItemList[3].SetIcon(GetTabIconFromString(AppSettings._tab4OverridePreference));
+                    _tab4Icon = GetTabIconFromString(AppSettings._tab4OverridePreference);
+                }
+                if (!AppSettings._settingsTabOverride)
+                {
+                    _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                }
+                else
+                {
+                    _navViewItemList[4].SetTitle(AppSettings._tab5OverridePreference);
+                    _navViewItemList[4].SetIcon(GetTabIconFromString(AppSettings._tab5OverridePreference));
+                    _tab5Icon = GetTabIconFromString(AppSettings._tab5OverridePreference);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -435,7 +463,6 @@ namespace BottomNavigationViewPager
         /// </summary>
         /// <param name="changeDetails"></param>
         /// <param name="tab"></param>
-        /// 
         public static void TabDetailChanger(int tab, string changeDetails)
         {
             switch (tab)
@@ -447,8 +474,7 @@ namespace BottomNavigationViewPager
                 case 2:
                     break;
                 case 3: 
-                    if (AppSettings._fanMode)
-                    {
+
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("MyChannel");
@@ -506,11 +532,10 @@ namespace BottomNavigationViewPager
                             TheFragment4._url = Https.URLs._watchLater;
                         }
                         TheFragment4.LoadUrlWithDelay(TheFragment4._url, 0);
-                    }
+                    
                     break;
                 case 4:
-                    if (AppSettings._settingsTabOverride)
-                    {
+
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Settings");
@@ -561,7 +586,7 @@ namespace BottomNavigationViewPager
                             TheFragment5._url = Https.URLs._watchLater;
                         }
                         TheFragment5.LoadUrlWithDelay(TheFragment5._url, 0);
-                    }
+                    
                     break;
             }
         }
@@ -811,8 +836,46 @@ namespace BottomNavigationViewPager
 
         }
 
+        /// <summary>
+        /// returns a Drawable icon to be used for tab detail changing
+        /// takes string arguments like "Home" "Subs" "Feed" "MyChannel" "Settings"
+        /// </summary>
+        /// <param name="tabString"></param>
+        /// <returns></returns>
+        public static Drawable GetTabIconFromString(string tabString)
+        {
+            Drawable icon;
 
-
+            switch (tabString)
+            {
+                case "Home":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_home);
+                    return icon;
+                case "Subs":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_subs);
+                    return icon;
+                case "Feed":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
+                    return icon;
+                case "MyChannel":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                    return icon;
+                case "Settings":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                    return icon;
+                case "Playlists":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
+                    return icon;
+                case "WatchL8r":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
+                    return icon;
+                case "Explore":
+                    icon = _main.GetDrawable(Resource.Drawable.tab_home);
+                    return icon;
+            }
+            return _main.GetDrawable(Resource.Drawable.tab_home);
+        }
+        
         protected override void OnDestroy()
         {
             _viewPager.PageSelected -= ViewPager_PageSelected;

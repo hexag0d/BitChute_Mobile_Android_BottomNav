@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Graphics.Drawables;
 
 namespace BottomNavigationViewPager.Classes
 {
@@ -41,8 +42,7 @@ namespace BottomNavigationViewPager.Classes
         public static bool _hideVerticalNavbar = false;
 
         public static bool _notifying = true;
-
-
+        
         /// <summary>
         /// gets the app preferences object from android
         /// </summary>
@@ -69,6 +69,8 @@ namespace BottomNavigationViewPager.Classes
 
             return;
         }
+
+
 
         /// <summary>
         /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"

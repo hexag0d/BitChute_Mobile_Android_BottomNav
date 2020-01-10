@@ -63,6 +63,11 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowFileAccess = true;
                 tabLoaded = true;
             }
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             CustomSetTouchListener(AppState.Display._horizontal);
             return _view;
