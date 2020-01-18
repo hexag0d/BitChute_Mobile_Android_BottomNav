@@ -26,7 +26,7 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "22.5.1";
+        public static string _appVersion = "22.6";
 
         /// <summary>
         /// tab 4 string should be set to strings like
