@@ -18,7 +18,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static ServiceWebView _wv;
+        public static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://www.bitchute.com/profile";

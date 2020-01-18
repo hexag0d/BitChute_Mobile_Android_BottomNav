@@ -87,6 +87,13 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        public override void OnResume()
+        {
+            base.OnResume();
+            IntentFilter intentFilter = new IntentFilter(Intent.ActionHeadsetPlug);
+
+        }
+
         /// <summary>
         /// sets the touch listener when device is in landscape mode
         /// sets it to null when the device goes back into portrait mode

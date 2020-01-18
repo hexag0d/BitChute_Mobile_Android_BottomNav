@@ -111,8 +111,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
-
             if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;

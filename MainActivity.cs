@@ -106,6 +106,8 @@ namespace BottomNavigationViewPager
         public static ExtStickyService _service = new ExtStickyService();
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
+        public static HeadphoneIntent.MusicIntentReceiver _musicIntentReceiver;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
@@ -173,9 +175,11 @@ namespace BottomNavigationViewPager
 
             ExtStickyService.StartNotificationLoop(90000);
 
-
+            _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
             //_customAudioMan.GetAudioManager();
         }
+
+       
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
         public static TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");

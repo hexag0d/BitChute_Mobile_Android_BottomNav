@@ -229,11 +229,6 @@
         public static string _jsRemoveMaxWidth = "javascript:(function() { " +
                         @"document.getElementsByClassName('video-card').style.max-width=''; " + "})()";
 
-        //lets not talk about all the dislikes this must have caused =/ ... whoopsies
-        //public static string _jsSelectSubscribed = "javascript:(function() { " +
-        //                @"document.querySelectorAll("
-        //                + "\"" + @"a[data-toggle]" + "\"" + @")[16].click()" + @"})()";
-
         public static string _jsSelectSubscribed = "javascript:(function() { " +
                         @"$(" + "\"" + @"a[href*='#listing-subscribed']" + "\"" + @").click()" + @"})()";
 
@@ -243,5 +238,16 @@
         /// </summary>
         public static string _jsHideTooltips = "javascript:(function() { " +
                         @"$(" + "\"" + @".tooltip" + "\"" + @").tooltip(" + "\"" + "hide" + "\"" + ")" + @"})()";
+
+        /// <summary>
+        /// pauses the video
+        /// </summary>
+        public static string _jsPauseVideo = "javascript:(function() { " + "plyr.pause()" +  "})()";
+
+
+        /// <summary>
+        /// plays the video
+        /// </summary>
+        public static string _jsPlayVideo = "javascript:(function() { " + "plyr.play()" + "})()";
     }
 }

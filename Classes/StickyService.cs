@@ -196,18 +196,14 @@ namespace StartServices.Servicesclass
         {
             try
             {
-                //Intent ll24 = new Intent(this, typeof(SensorRestarterBroadcastReceiver));
-                //SendBroadcast(ll24);
                 base.OnDestroy();
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
-
-
+        
         public class ExtTimerTask : Java.Util.TimerTask
         {
             public async override void Run()
