@@ -36,16 +36,21 @@ namespace BottomNavigationViewPager.Classes
                     }
                 }
             }
-            
+
             private void SendStopVideoCommand()
             {
-                TheFragment1._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                TheFragment2._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                TheFragment3._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                TheFragment5._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                try {
+                    TheFragment1._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment2._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment3._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment5._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                }
+                catch ( Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
-
         }
     }
 }

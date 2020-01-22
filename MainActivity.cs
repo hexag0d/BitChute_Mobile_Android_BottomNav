@@ -167,8 +167,6 @@ namespace BottomNavigationViewPager
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
-            //_navigationView.LongClick += NavigationViewLongClickListener;
-
             _viewPager.OffscreenPageLimit = 4;
 
             CreateNotificationChannel();
@@ -176,7 +174,6 @@ namespace BottomNavigationViewPager
             ExtStickyService.StartNotificationLoop(90000);
 
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
-            //_customAudioMan.GetAudioManager();
         }
 
        
@@ -217,7 +214,6 @@ namespace BottomNavigationViewPager
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
-                // _fm3.ShowMore();
             }
         }
 
@@ -241,7 +237,6 @@ namespace BottomNavigationViewPager
                     _navHidden = false;
                     NavBarRemove();
                     _navTimeout = true;
-                    // _fm3.ShowMore();
                 }
             }
             else if (!AppState.Display._horizontal)
@@ -337,9 +332,6 @@ namespace BottomNavigationViewPager
             }
             else
             {
-                //_navigationView.SelectedItemId = e.Item.Order;
-                //_menu = _navigationView.Menu.GetItem(e2.Position);
-                //_navigationView.SelectedItemId = _menu.ItemId;
                 _viewPager.SetCurrentItem(e.Item.Order, true);
             }
         }
@@ -390,7 +382,9 @@ namespace BottomNavigationViewPager
                     {
                         ((Android.Widget.TextView)label).SetPadding(0, 0, 0, 0);
                     }
-                //item.SetShiftingMode(false);
+                        //api_8
+                        //item.SetShiftingMode(false);
+
                 // set once again checked value, so view will be updated
                 item.SetChecked(item.ItemData.IsChecked);
 
@@ -444,7 +438,7 @@ namespace BottomNavigationViewPager
         }
 
         /// <summary>
-        /// forwards the setting object array to all fragments
+        /// forwards the settings to fragments
         /// </summary>
         /// <param name="oa"></param>
         public void OnSettingsChanged(List<object> oa)
@@ -459,14 +453,14 @@ namespace BottomNavigationViewPager
             _fm5.OnSettingsChanged(oa);
         }
 
+
         /// <summary>
-        /// method to change any tab icon, title
-        /// it takes the tab number integer and string change details
-        /// string can be null for now can be null or blank, use "Home" "Feed" "Subs" or "Explore" with int s 3 & 4
-        /// int representing tab 0 is farthest left going up to the right
+        /// changes tabs 4 and 5
+        /// int use 3 for MyChannel tab and 4 for Settings tab
+        /// string use strings like "Home" "Subs" "Feed" "MyChannel" "Settings" "WatchL8r" "Playlists"
         /// </summary>
-        /// <param name="changeDetails"></param>
         /// <param name="tab"></param>
+        /// <param name="changeDetails"></param>
         public static void TabDetailChanger(int tab, string changeDetails)
         {
             switch (tab)
@@ -478,7 +472,6 @@ namespace BottomNavigationViewPager
                 case 2:
                     break;
                 case 3: 
-
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("MyChannel");
@@ -878,6 +871,20 @@ namespace BottomNavigationViewPager
                     return icon;
             }
             return _main.GetDrawable(Resource.Drawable.tab_home);
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            try {
+                IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
+                RegisterReceiver(_musicIntentReceiver, filter);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         
         protected override void OnDestroy()

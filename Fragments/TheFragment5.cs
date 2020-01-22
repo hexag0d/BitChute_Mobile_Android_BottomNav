@@ -544,7 +544,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             if (_stoverrideonrb.Checked)
             {
-                MainActivity.TabDetailChanger(4, AppSettings._tab5OverridePreference);
+                MainActivity. TabDetailChanger(4, AppSettings._tab5OverridePreference);
             }
             else
             {
@@ -827,6 +827,7 @@ namespace BottomNavigationViewPager.Fragments
                 }
             });
         }
+
         public void LoadCustomUrl(string url)
         {
             _wv.LoadUrl(url);
@@ -838,6 +839,11 @@ namespace BottomNavigationViewPager.Fragments
             public static CookieContainer _cookieCon = new CookieContainer();
             public static string _htmlCode = "";
 
+            /// <summary>
+            /// returns html source of url requested
+            /// </summary>
+            /// <param name="url">use the string you want to get html source from</param>
+            /// <returns></returns>
             public async Task<string> GetNotificationText(string url)
             {
                 await Task.Run(() =>
@@ -868,39 +874,8 @@ namespace BottomNavigationViewPager.Fragments
                         {
                             Console.WriteLine(ex.Message);
                         }
-
                     }
                 });
-
-                return _htmlCode;
-            }
-
-            public string GetBackgroundNotificationText(string url)
-            {
-                _htmlCode = "";
-                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
-
-                try
-                {
-                    Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
-
-                    var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-
-                    using (HttpClient _client = new HttpClient(handler))
-                    {
-                        _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
-                        _notificationHttpRequestInProgress = true;
-                        var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                        _notificationHttpRequestInProgress = false;
-                        var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-
-                        _htmlCode = resultContent;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
 
                 return _htmlCode;
             }
