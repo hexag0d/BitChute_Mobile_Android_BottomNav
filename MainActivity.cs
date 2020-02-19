@@ -163,7 +163,8 @@ namespace BottomNavigationViewPager
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
 
-            _navigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
+            //can probably eventually set this back to Resource.Id.bottom_navigation but xamarin is whacked out atm so using the int
+            _navigationView = FindViewById<BottomNavigationView>(2131230874);
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
@@ -372,20 +373,21 @@ namespace BottomNavigationViewPager
             
             try
             {
-                
+                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
+                shiftingMode.Accessible = true;
+                shiftingMode.SetBoolean(menuView, false);
+                shiftingMode.Accessible = false;
+
                 for (int i = 0; i < menuView.ChildCount; i++)
                 {
                     var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-                    View label = item.FindViewById(Resource.Id.largeLabel);
-                    if (label != null)
-                    {
-                        ((Android.Widget.TextView)label).SetPadding(0, 0, 0, 0);
-                    }
-                        //api_8
-                        //item.SetShiftingMode(false);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(item.ItemData.IsChecked);
 
-                // set once again checked value, so view will be updated
-                item.SetChecked(item.ItemData.IsChecked);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(item.ItemData.IsChecked);
 
                     if (i == 2)
                     {
