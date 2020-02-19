@@ -311,7 +311,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textColor="#3498db"
-					android:visibility="visible"
+					android:visibility="gone"
 					android:buttonTint="#3498db"
 					android:text="Show Navbar when Horizontal Off"
 					android:id="@+id/_hideNavBarHorizontalOn" />
@@ -319,11 +319,35 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textColor="#3498db"
-					android:visibility="visible"
+					android:visibility="gone"
 					android:buttonTint="#3498db"
 					android:text="On"
 					android:id="@+id/_hideNavBarHorizontalOff" />
 			</RadioGroup>
 		</LinearLayout>
+		<RadioGroup
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/radioGroup2">
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#3498db"
+				android:buttonTint="#3498db"
+				android:visibility="gone"
+				android:text="Vertical Navbar On"
+				android:id="@+id/verticalNavbarRbOn" />
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="#3498db"
+				android:buttonTint="#3498db"
+				android:visibility="gone"
+				android:text="Autohide"
+				android:id="@+id/verticalNavbarRbOff" />
+		</RadioGroup>
 </LinearLayout>
 </RelativeLayout>

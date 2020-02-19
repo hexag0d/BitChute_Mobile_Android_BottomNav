@@ -1,6 +1,6 @@
 /*
 this license only applies to the code contained in  this github repository.
-You must contact Ray Vahey or Rich to get the status of BitChute website code
+You must contact Ray Vahey or Rich Jones to get the status of BitChute website code
 licensing.
 
 MIT License

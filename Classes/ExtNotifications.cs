@@ -71,11 +71,11 @@ namespace BottomNavigationViewPager.Classes
                             var _tagContents = node.InnerText;
                             if (_tagContents.Contains("Notifications"))
                             {
-                                Globals.AppState._userIsLoggedIn = true;
+                                AppState._userIsLoggedIn = true;
                             }
                             else
                             {
-                                Globals.AppState._userIsLoggedIn = false;
+                                AppState._userIsLoggedIn = false;
                                 return;
                             }
                         }

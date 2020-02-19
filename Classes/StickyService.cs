@@ -118,12 +118,12 @@ namespace StartServices.Servicesclass
 
             if (myProcess.Importance == Importance.Foreground)
             {
-                Globals.AppState._bkgrd = false;
+                AppState._bkgrd = false;
                 return false;
             }
             else
             {
-                Globals.AppState._bkgrd = true;
+                AppState._bkgrd = true;
                 return true;
             }
         }
@@ -157,7 +157,7 @@ namespace StartServices.Servicesclass
 
             //use a while loop to start the notifications
             //they move over to a service timer eventually to prevent the loop from breaking
-            while (Globals.AppSettings._notifying)
+            while (AppSettings._notifying)
             {
                 if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
@@ -178,14 +178,14 @@ namespace StartServices.Servicesclass
                     }
                     return;
                 }
-                else if (!Globals.AppState._userIsLoggedIn)
+                else if (!AppState._userIsLoggedIn)
                 {
-                    await Task.Delay(380000);
+                    await Task.Delay(380000); 
                 }
                 //user is logged in but has not yet received a notification
                 else
                 {
-                    await Task.Delay(420000);
+                    await Task.Delay(380000);
                 }
             }
         }
@@ -196,23 +196,19 @@ namespace StartServices.Servicesclass
         {
             try
             {
-                //Intent ll24 = new Intent(this, typeof(SensorRestarterBroadcastReceiver));
-                //SendBroadcast(ll24);
                 base.OnDestroy();
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
-
-
+        
         public class ExtTimerTask : Java.Util.TimerTask
         {
             public async override void Run()
             {
-                if (Globals.AppSettings._notifying)
+                if (AppSettings._notifying)
                 {
                     if (_fm5 == null)
                     {
@@ -238,23 +234,60 @@ namespace StartServices.Servicesclass
         }
 
 
+        public static bool DummyLoop()
+        {
+            var dummyVar = true;
+            return dummyVar;
+        }
+
         public static int _startForegroundNotificationId = 6666;
         
         public class ServiceWebView : Android.Webkit.WebView
         {
-
             public override string Url => base.Url;
 
             public ExtStickyService _serviceContext;
-
-
+            
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 if (MainActivity._backgroundRequested)
                 {
+                    try
+                    {
+                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        _wl.Acquire();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    try
+                    {
+                        if (wifiLock == null)
+                        {
+                            wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                        }
+                        wifiLock.Acquire();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                     while (ExtStickyService.IsInBkGrd())
                     {
+                        var dontSleep = DummyLoop();
                         System.Threading.Thread.Sleep(3600);
+                    }
+                    try
+                    {
+                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        _wl.Release();
+                    }
+                    catch
+                    {
+
                     }
                 }
                 MainActivity._backgroundRequested = false;

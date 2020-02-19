@@ -28,7 +28,7 @@ namespace BottomNavigationViewPager.Fragments
         public static ServiceWebView _wv;
         protected static View _view;
 
-        public static string _url = "https://bitchute.com/";
+        public static string _url = "https://www.bitchute.com/";
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -63,7 +63,6 @@ namespace BottomNavigationViewPager.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
-
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
             if (!tabLoaded)
@@ -73,31 +72,59 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.DisplayZoomControls = false;
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
-                _wv.LoadUrl(_url);
+                
                 tabLoaded = true;
             }
-            
-            
-
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
-            _wv.SetOnTouchListener(new ExtTouchListener());
+            _wv.LoadUrl(_url);
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            CustomSetTouchListener(AppState.Display._horizontal);
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
+            //_wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+            IntentFilter intentFilter = new IntentFilter(Intent.ActionHeadsetPlug);
+
+        }
+
+        /// <summary>
+        /// sets the touch listener when device is in landscape mode
+        /// sets it to null when the device goes back into portrait mode
+        /// </summary>
+        /// <param name="landscape"></param>
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape)
+            {
+                _wv.SetOnTouchListener(new ExtTouchListener());
+            }
+            else
+            {
+                _wv.SetOnTouchListener(null);
+            }
         }
 
         public void OnSettingsChanged(List<object> settings)
         {
-            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+            _wv.Settings.SetSupportZoom(AppSettings._zoomControl);
 
-            if (Convert.ToBoolean(settings[3]))
+            if (!AppSettings._tab1FeaturedOn)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
             else
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
+                _wv.LoadUrl(JavascriptCommands._jsShowCarousel);
             }
 
-            if (TheFragment5._zoomControl)
+            if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
             }
@@ -106,37 +133,22 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = false;
             }
         }
-
-        /// <summary>
-        /// gotta instantiate that MainActivity _maing
-        ///compiler is all about that
-        /// </summary>
-        public static MainActivity _main = new MainActivity();
+        
         
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
             {
-                _main.CustomOnTouch();
+                MainActivity.CustomOnTouch();
+                CustomOnTouch();
                 return false;
             }
         }
 
-        private static int _scrollY = 0;
-
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        private static async void CustomOnTouch()
         {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                 OnScrollChanged(scrollY);
-            }
-        }
-
-        public static async void OnScrollChanged(int scrollY)
-        {
-            await Task.Delay(60);
-            _scrollY += scrollY;
-            if (Globals.AppState.Display._horizontal)
+            _scrollY += _wv.ScrollY;
+            if (AppState.Display._horizontal)
             {
                 await Task.Delay(500);
                 if (_scrollY >= 4000)
@@ -146,6 +158,33 @@ namespace BottomNavigationViewPager.Fragments
                 }
             }
         }
+
+
+
+        private static int _scrollY = 0;
+
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //         OnScrollChanged(scrollY);
+        //    }
+        //}
+
+        //public static async void OnScrollChanged(int scrollY)
+        //{
+        //    await Task.Delay(60);
+        //    _scrollY += scrollY;
+        //    if (AppState.Display._horizontal)
+        //    {
+        //        await Task.Delay(500);
+        //        if (_scrollY >= 4000)
+        //        {
+        //            ExpandVideoCards(false);
+        //            _scrollY = 0;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// tells the webview to GoBack, if it can
@@ -186,7 +225,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(Globals.AppSettings._tabDelay);
+                await Task.Delay(AppSettings._tabDelay);
                 _wvRl = true;
                 _wvRling = false;
             }
@@ -200,9 +239,10 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+            await Task.Delay(AppSettings._linkOverflowFixDelay);
+            _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+            _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -214,21 +254,21 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(5000);
 
-            if (_wv.Url != "https://www.bitchute.com/")
+            if (_wv.Url != "https://www.bitchute.com/" && AppState.Display._horizontal)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                _wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                _wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
             }
-            //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+            //_wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
         }
 
         private static async void HideWatchLabel()
         {
             await Task.Delay(4000);
             if (_wv.Url != "https://www.bitchute.com/")
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
+            _wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
 
         public void SetWebViewVis()
@@ -242,8 +282,8 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Delay(5000);
             }
-            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+            _wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
 
         private static async void ExpandFeaturedChannels(bool delayed)
@@ -252,8 +292,8 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Delay(3000);
             }
-            _wv.LoadUrl(Globals.JavascriptCommands._jsFeaturedRemoveMaxWidth);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsExpandFeatured);
+            _wv.LoadUrl(JavascriptCommands._jsFeaturedRemoveMaxWidth);
+            _wv.LoadUrl(JavascriptCommands._jsExpandFeatured);
         }
 
         private static async void ExpandPage(bool delayed)
@@ -262,36 +302,36 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Delay(3000);
             }
-            //_wv.LoadUrl(Globals.JavascriptCommands._jsHideVideoMargin);
-            //_wv.LoadUrl(Globals.JavascriptCommands._jsPut5pxMarginOnRows);
+            //_wv.LoadUrl(JavascriptCommands._jsHideVideoMargin);
+            //_wv.LoadUrl(JavascriptCommands._jsPut5pxMarginOnRows);
         }
         
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView _view, string url)
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
-                
-                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                _wv.LoadUrl(JavascriptCommands._jsHideBanner);
+                _wv.LoadUrl(JavascriptCommands._jsHideBuff);
+               
+                //_wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
 
                     HideWatchLabel();
                 
 
-                if (!TheFragment5._tab1FeaturedOn)
+                if (!AppSettings._tab1FeaturedOn)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
                 
-                if (Globals.AppState.Display._horizontal)
+                if (AppState.Display._horizontal)
                 {
                     if (url != "https://www.bitchute.com/")
                     {
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
-                        //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                        _wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                        _wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                        _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
+                        _wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                        //_wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
                     }
 
                     HidePageTitle();
@@ -308,15 +348,14 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
+                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 SetReload();
-
                 HideLinkOverflow();
                 ExpandFeaturedChannels(true);
                 ExpandVideoCards(true);
                 //ExpandPage(true);
-
+                _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+                _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(_view, url);
             }
         }
