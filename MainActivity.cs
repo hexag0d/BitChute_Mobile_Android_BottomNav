@@ -51,16 +51,19 @@ using Android.Support.Design.Internal;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
+using Android.Support.V7.Widget;
 using Android.Views;
 using BottomNavigationViewPager.Adapters;
 using BottomNavigationViewPager.Classes;
 using BottomNavigationViewPager.Fragments;
+using RecyclerViewer;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
 using static BottomNavigationViewPager.Fragments.TheFragment5;
+
 
 namespace BottomNavigationViewPager
 {
@@ -107,6 +110,9 @@ namespace BottomNavigationViewPager
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static HeadphoneIntent.MusicIntentReceiver _musicIntentReceiver;
+
+        // Underlying data set (a photo album):
+        public static PhotoAlbum _photoAlbum;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -174,10 +180,11 @@ namespace BottomNavigationViewPager
             ExtStickyService.StartNotificationLoop(90000);
 
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
+            
+            //debug subs
+            _viewPager.CurrentItem = 1;
         }
-
-       
-
+        
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
         public static TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
         public static TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");

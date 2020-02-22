@@ -69,9 +69,7 @@ namespace BottomNavigationViewPager.Classes
 
             return;
         }
-
-
-
+        
         /// <summary>
         /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"
         /// </summary>
@@ -92,6 +90,5 @@ namespace BottomNavigationViewPager.Classes
             }
             return Https.URLs._homepage;
         }
-
     }
 }

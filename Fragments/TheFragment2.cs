@@ -1,14 +1,17 @@
 ﻿using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using RecyclerViewer;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using XamarinRecycleView.Adapter;
 using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
@@ -17,6 +20,11 @@ namespace BottomNavigationViewPager.Fragments
     {
         string _title;
         string _icon;
+        
+        Android.Support.V7.Widget.RecyclerView mRecycleView;
+        Android.Support.V7.Widget.RecyclerView.LayoutManager mLayoutManager;
+        PhotoAlbum mPhotoAlbum;
+        PhotoAlbumAdapter mAdapter;
 
         public static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
@@ -33,9 +41,13 @@ namespace BottomNavigationViewPager.Fragments
             return fragment;
         }
 
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+
+            // Set our view from the "main" layout resource  
 
             if (Arguments != null)
             {
@@ -50,6 +62,15 @@ namespace BottomNavigationViewPager.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
+
+            mPhotoAlbum = new PhotoAlbum();
+            mRecycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
+
+            mLayoutManager = new LinearLayoutManager(container.Context);
+            mRecycleView.SetLayoutManager(mLayoutManager);
+            mAdapter = new PhotoAlbumAdapter(mPhotoAlbum);
+            mAdapter.ItemClick += MAdapter_ItemClick;
+            mRecycleView.SetAdapter(mAdapter);
 
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
 
@@ -71,6 +92,12 @@ namespace BottomNavigationViewPager.Fragments
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             CustomSetTouchListener(AppState.Display._horizontal);
             return _view;
+        }
+
+        private void MAdapter_ItemClick(object sender, int e)
+        {
+            int photoNum = e + 1;
+            Toast.MakeText(ParentFragment.Context, "This is photo number " + photoNum, ToastLength.Short).Show();
         }
 
         public void CustomSetTouchListener(bool landscape)
