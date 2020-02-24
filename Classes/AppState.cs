@@ -26,7 +26,7 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "25.API_Implementation";
+        public static string _appVersion = "25.1.API_Implementation";
 
         /// <summary>
         /// tab 4 string should be set to strings like

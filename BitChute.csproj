@@ -88,7 +88,8 @@
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
-    <Compile Include="Classes\PhotoAlbum.cs" />
+    <Compile Include="Classes\JSONParsing.cs" />
+    <Compile Include="Classes\PhotoSet.cs" />
     <Compile Include="Classes\ResourceHelpers.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\TheFragment2.cs" />
@@ -97,10 +98,15 @@
     <Compile Include="Fragments\TheFragment3.cs" />
     <Compile Include="Fragments\TheFragment1.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Models\HomepageModel.cs" />
+    <Compile Include="Models\SubscriptionModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\RecyclerViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\articlesExample.json" />
+    <None Include="DeveloperItems\articlesExample.json" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
@@ -135,6 +141,9 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.12</Version>
+    </PackageReference>
+    <PackageReference Include="MvvmCross">
+      <Version>6.4.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -383,6 +392,18 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\_i99.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\FeedPhotoCardView.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DeveloperItems\APIMapping.txt" />
+    <AndroidResource Include="Resources\layout\VideoDetail.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

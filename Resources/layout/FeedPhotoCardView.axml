@@ -7,9 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
 
-		android:id="@+id/subsCardView"
 		android:layout_weight=".1"
-        card_view:cardElevation="4dp"
+		card_view:cardElevation="4dp"
+		
+		
         card_view:cardUseCompatPadding="true"
         card_view:cardCornerRadius="5dp">
         <LinearLayout
@@ -22,7 +23,8 @@
                 android:layout_height="100dp"
                 android:id="@+id/imageView"
 				android:scaleType="fitStart"
-				android:layout_gravity="fill"/>
+				android:layout_gravity="fill"
+               />
 			<LinearLayout
             android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
@@ -33,6 +35,8 @@
                 android:layout_height="50dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ffffff"
+				android:backgroundTint="#2F4F4F"
+					
                 android:text="Caption"
                 android:id="@+id/titleCaptionTextView"
 				android:layout_gravity="right"
@@ -41,7 +45,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ffffff"
+                android:textColor="#333333"
+				android:backgroundTint="#2F4F4F"
                 android:text="Caption"
                 android:id="@+id/descriptionCaptionTextView"
 				android:layout_gravity="right"

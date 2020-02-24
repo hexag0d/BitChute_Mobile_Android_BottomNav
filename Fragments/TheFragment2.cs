@@ -23,7 +23,7 @@ namespace BottomNavigationViewPager.Fragments
         
         Android.Support.V7.Widget.RecyclerView mRecycleView;
         Android.Support.V7.Widget.RecyclerView.LayoutManager mLayoutManager;
-        PhotoAlbum mPhotoAlbum;
+        PhotoSet mPhotoAlbum;
         PhotoAlbumAdapter mAdapter;
 
         public static ServiceWebView _wv;
@@ -63,7 +63,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
 
-            mPhotoAlbum = new PhotoAlbum();
+            mPhotoAlbum = new PhotoSet();
             mRecycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
 
             mLayoutManager = new LinearLayoutManager(container.Context);
@@ -96,8 +96,8 @@ namespace BottomNavigationViewPager.Fragments
 
         private void MAdapter_ItemClick(object sender, int e)
         {
-            int photoNum = e + 1;
-            Toast.MakeText(ParentFragment.Context, "This is photo number " + photoNum, ToastLength.Short).Show();
+
+            var check = e;
         }
 
         public void CustomSetTouchListener(bool landscape)

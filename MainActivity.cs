@@ -90,7 +90,9 @@ namespace BottomNavigationViewPager
         IMenuItem _menu;
         public static Drawable _tab4Icon;
         public static Drawable _tab5Icon;
+        public static AssetManager _assets;
         Android.Support.V4.App.Fragment[] _fragments;
+        
 
         public static MainActivity _main;
         public static Bundle _bundle;
@@ -110,9 +112,10 @@ namespace BottomNavigationViewPager
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static HeadphoneIntent.MusicIntentReceiver _musicIntentReceiver;
+        
 
         // Underlying data set (a photo album):
-        public static PhotoAlbum _photoAlbum;
+        public static PhotoSet _photoAlbum;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -878,6 +881,12 @@ namespace BottomNavigationViewPager
                     return icon;
             }
             return _main.GetDrawable(Resource.Drawable.tab_home);
+        }
+
+        public static AssetManager GetAssetManager()
+        {
+            _assets = _main.Assets;
+            return _assets;
         }
 
         protected override void OnResume()

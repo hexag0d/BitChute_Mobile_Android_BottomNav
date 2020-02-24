@@ -1,0 +1,5 @@
+﻿Types that will use recyclerview:
+
+Homepage - parse featured creators, trending, subscribed
+Subs - parse recently posting creators
+Feed - parse list 

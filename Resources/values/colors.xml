@@ -3,6 +3,7 @@
     <color name="colorPrimary">#FFA500</color>
     <color name="colorPrimaryDark">#EE7600</color>
     <color name="colorAccent">#3498db</color>
-    <color name="defaultColor">#FF8C00</color>
+    <color name="colorAccent">#3498db</color>
+  <color name="defaultColor">#FF8C00</color>
     <color name="selectedTabColor">#FFFF00</color>
 </resources>
