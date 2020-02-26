@@ -120,6 +120,8 @@ namespace BottomNavigationViewPager.Fragments
             _fm5 = this;
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
+
+            
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
             if (AppSettings._settingsTabOverride)
@@ -826,6 +828,11 @@ namespace BottomNavigationViewPager.Fragments
 
                 }
             });
+        }
+
+        public static string GetCookieHeader()
+        {
+            return _cookieHeader;
         }
 
         public void LoadCustomUrl(string url)

@@ -12,8 +12,15 @@ using Android.Widget;
 
 namespace BottomNavigationViewPager.Classes
 {
-    class ResourceHelpers
+    public class BitChuteAPI
     {
-       
+        private string _response;
+
+        public string MakeAPICall(string details)
+        {
+            //get details then make api call
+            _response = "";
+            return _response;
+        }
     }
 }

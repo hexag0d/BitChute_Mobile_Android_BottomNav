@@ -41,7 +41,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 try {
                     TheFragment1._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment2._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Fragments.SubscriptionFragment._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment3._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment5._wv.LoadUrl(JavascriptCommands._jsPauseVideo);

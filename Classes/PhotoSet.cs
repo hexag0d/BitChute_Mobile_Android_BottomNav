@@ -9,10 +9,10 @@ using Android.Support.V7.Widget;
 using System.Collections.Generic;
 using BottomNavigationViewPager;
 using Android.Media;
+using static BottomNavigationViewPager.Models.VideoModel;
 
 namespace RecyclerViewer
 {
-
     // Photo: contains image resource ID and caption:
     public class VideoCard
     {
@@ -23,9 +23,6 @@ namespace RecyclerViewer
             Caption = caption;
             //description
             Caption2 = caption2;
-
-            
-
         }
 
         // Return the ID of the photo:
@@ -40,8 +37,12 @@ namespace RecyclerViewer
     }
 
     // Photo album: holds image resource IDs and caption:
-    public class PhotoSet
+    public class VideoCardSet
     {
+        public List<VideoCard> GetVideoCardSet(List<VideoInfo> videoInfoSet)
+        {
+            return mBuiltInPhotos;
+        }
         // Built-in photo collection - this could be replaced with
         // a photo database:
 
@@ -97,9 +98,7 @@ new VideoCard (Resource.Drawable._i97, "postedvideotitledBITCHUTEGETSTHEAPIxxxxx
 new VideoCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago98", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51"),
             };
 
-
-
-
+        
         // Array of photos that make up the album:
         private List<VideoCard> mPhotos;
 
@@ -108,7 +107,7 @@ new VideoCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxxxx
 
         // Create an instance copy of the built-in photo list and
         // create the random number generator:
-        public PhotoSet()
+        public VideoCardSet()
         {
             mPhotos = mBuiltInPhotos;
             mRandom = new Random();

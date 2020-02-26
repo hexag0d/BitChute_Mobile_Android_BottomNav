@@ -51,7 +51,10 @@ using Android.Support.Design.Internal;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
+using Android.Support.V7.App;
+using Android.Support.V7.View;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using BottomNavigationViewPager.Adapters;
 using BottomNavigationViewPager.Classes;
@@ -115,7 +118,7 @@ namespace BottomNavigationViewPager
         
 
         // Underlying data set (a photo album):
-        public static PhotoSet _photoAlbum;
+        public static VideoCardSet _photoAlbum;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -187,9 +190,9 @@ namespace BottomNavigationViewPager
             //debug subs
             _viewPager.CurrentItem = 1;
         }
-        
+
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
-        public static TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
+        public static SubscriptionFragment _fm2 = SubscriptionFragment.NewInstance("Subs", "tab_subs");
         public static TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");
         public static TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
         public static TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
@@ -756,14 +759,14 @@ namespace BottomNavigationViewPager
                         TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
-                        if (TheFragment2._wv.Url != "https://www.bitchute.com/")
+                        if (SubscriptionFragment._wv.Url != "https://www.bitchute.com/")
                         {
                             _fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
                             _fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                             _fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
                             _fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
-                        TheFragment2.ExpandVideoCards(false);
+                        SubscriptionFragment.ExpandVideoCards(false);
                         break;
                     case 2:
                         if (TheFragment3._wv.Url != "https://www.bitchute.com/")
@@ -881,6 +884,92 @@ namespace BottomNavigationViewPager
                     return icon;
             }
             return _main.GetDrawable(Resource.Drawable.tab_home);
+        }
+
+
+        public class PhotoAlbumAdapter : RecyclerView.Adapter
+        {
+            public event EventHandler<int> ItemClick;
+
+            public static RecyclerViewer.VideoCardSet _photoAlbum;
+
+            public static View itemView;
+            public static View itemView2;
+            public static View itemView3;
+
+            public PhotoAlbumAdapter(RecyclerViewer.VideoCardSet photoAlbum)
+            {
+                if (photoAlbum == null)
+                {
+                    photoAlbum = new RecyclerViewer.VideoCardSet();
+                }
+                _photoAlbum = photoAlbum;
+            }
+
+            // Create a new photo CardView (invoked by the layout manager): 
+            public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
+            {
+                // Inflate the CardView for the photo:
+                View itemView = LayoutInflater.From(parent.Context).
+                            Inflate(Resource.Layout.PhotoCardView, parent, false);
+
+                Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
+                CardView cv = itemView.FindViewById<CardView>(Resource.Id.cardView);
+                //  cv.SetBackgroundColor(_darkGrey);
+
+                // Create a ViewHolder to find and hold these view references, and 
+                // register OnClick with the view holder:
+                RecyclerViewer.PhotoViewHolder vh = new RecyclerViewer.PhotoViewHolder(itemView, OnClick);
+
+                return vh;
+            }
+
+            // Fill in the contents of the photo card (invoked by the layout manager):
+            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            {
+                RecyclerViewer.PhotoViewHolder vh = holder as RecyclerViewer.PhotoViewHolder;
+
+
+                // Set the ImageView and TextView in this ViewHolder's CardView 
+                // from this position in the photo album:
+                vh.Image.SetImageResource(_photoAlbum[position].PhotoID);
+
+                if (_photoAlbum == null)
+                {
+                    _photoAlbum = new RecyclerViewer.VideoCardSet();
+                }
+
+                try
+                {
+                    vh.Caption.Text = _photoAlbum[position].Caption;
+                    vh.Caption2.Text = _photoAlbum[position].Caption2;
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            // Return the number of photos available in the photo album:
+            public override int ItemCount
+            {
+                get
+                {
+                    if (_photoAlbum != null)
+                        return _photoAlbum.NumPhotos;
+                    else
+                        return 36;
+                }
+            }
+
+            // Raise an event when the item-click takes place:
+            void OnClick(int position)
+            {
+                var pos = position;
+
+                if (ItemClick != null)
+                    ItemClick(this, position);
+            }
         }
 
         public static AssetManager GetAssetManager()

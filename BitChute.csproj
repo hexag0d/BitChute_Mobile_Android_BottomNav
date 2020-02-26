@@ -83,16 +83,17 @@
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
+    <Compile Include="Classes\BitChuteAPI.cs" />
     <Compile Include="Classes\ExtendedChromeClient.cs" />
+    <Compile Include="Classes\ExtendedWebInterface.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\JSONParsing.cs" />
     <Compile Include="Classes\PhotoSet.cs" />
-    <Compile Include="Classes\ResourceHelpers.cs" />
     <Compile Include="Classes\StickyService.cs" />
-    <Compile Include="Fragments\TheFragment2.cs" />
+    <Compile Include="Fragments\SubscriptionFragment.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
     <Compile Include="Fragments\TheFragment3.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\HomepageModel.cs" />
     <Compile Include="Models\SubscriptionModel.cs" />
+    <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\RecyclerViewModel.cs" />
@@ -153,6 +155,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.Percent">
+      <Version>28.0.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
       <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
@@ -217,17 +222,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\tab_home.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\SubsFragment.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\PhotoCard2.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\TheFragmentLayout2.axml">
@@ -394,12 +388,7 @@
     <AndroidResource Include="Resources\drawable\_i99.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\FeedPhotoCardView.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
+    <AndroidAsset Include="Assets\sample.mp4" />
     <Content Include="DeveloperItems\APIMapping.txt" />
     <AndroidResource Include="Resources\layout\VideoDetail.axml">
       <SubType>Designer</SubType>

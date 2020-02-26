@@ -2,12 +2,13 @@
 <LinearLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
+	android:id="@+id/subsLinearLayout"
     android:layout_height="wrap_content">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="100dp"
 
-		android:id="@+id/subsCardView"
+		android:id="@+id/cardView"
 		android:layout_weight=".1"
         card_view:cardElevation="4dp"
         card_view:cardUseCompatPadding="true"

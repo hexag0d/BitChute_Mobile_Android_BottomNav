@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+	android:id="@+id/videoDetailView"
+	android:background="@android:color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 	<LinearLayout
@@ -9,12 +11,75 @@
 		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/linearLayout1" >
+		android:id="@+id/videoLayout" >
 		<TextView
 			android:text="Title"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/textView1" />
+			android:id="@+id/videoDetailTitleTextView" />
+		<VideoView
+		android:layout_width="match_parent"
+		android:layout_height="480px"
+			
+		android:id="@+id/videoView" />
+
 	</LinearLayout>
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout1">
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout2">
+			<ImageView
+				android:src="@android:drawable/ic_menu_gallery"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/creatorAvatarImageView" />
+			<LinearLayout
+				android:orientation="vertical"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/linearLayout3" >
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout4">
+					<TextView
+						android:text="[creator name]"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView2" />
+					<Button
+						android:text="Subscribe"
+						android:backgroundTint="@android:color/holo_red_dark"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/creatorSubscribeButton" />
+					<TextView
+						android:text="[subcount]"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/creatorSubscriberCount" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+	
+	</LinearLayout>
+
 
 </LinearLayout>
