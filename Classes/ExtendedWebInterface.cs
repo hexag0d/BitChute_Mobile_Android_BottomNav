@@ -23,6 +23,8 @@ namespace BottomNavigationViewPager.Classes
             public static CookieContainer _cookieCon = new CookieContainer();
             public static string _htmlCode = "";
 
+            public static string _endPoint = "https://bitchute.com/";
+
             /// <summary>
             /// returns html source of url requested
             /// </summary>

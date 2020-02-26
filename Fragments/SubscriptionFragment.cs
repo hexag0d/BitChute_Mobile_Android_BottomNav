@@ -7,14 +7,15 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using Java.IO;
-using RecyclerViewer;
+using BitChute;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XamarinRecycleView.Adapter;
+
 using static BottomNavigationViewPager.MainActivity;
 using static StartServices.Servicesclass.ExtStickyService;
+using BottomNavigationViewPager.Models;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -56,7 +57,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-
+            //GetSubscriptionList();
             // Set our view from the "main" layout resource  
 
             if (Arguments != null)
@@ -84,11 +85,6 @@ namespace BottomNavigationViewPager.Fragments
             // Use the built-in linear layout manager:
             mLayoutManager = new LinearLayoutManager(container.Context);
 
-            // Or use the built-in grid layout manager (two horizontal rows):
-            // mLayoutManager = new GridLayoutManager
-            //        (this, 2, GridLayoutManager.Horizontal, false);
-
-            // Plug the layout manager into the RecyclerView:
             mRecyclerView.SetLayoutManager(mLayoutManager);
 
             //............................................................
@@ -107,38 +103,50 @@ namespace BottomNavigationViewPager.Fragments
             _tab2ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab2ParentFragmentLayout);
 
             _videoDetailView = LayoutInflater.Inflate(Resource.Layout.VideoDetail, container, false);
+            
             _viewGroup = container;
             _inflater = inflater;
             return _view;
         }
         
+        /// <summary>
+        /// click event for the adapter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MAdapter_ItemClick(object sender, int e)
         {
-            bool test = true;
-            if (test)
-                SwapView(true);
-            else
-                SwapView(false);
-
-            //var file = new File(Android.Net.Uri.Parse("file:///Assets/sample.mp4").ToString());
-            //var uri = file.AbsolutePath;
-
+            SwapView(_videoDetailView);
             var check = e;
         }
 
-        public static void SwapView(bool swap)
+        /// <summary>
+        /// Navigates the selected tab to a new page
+        /// </summary>
+        /// <param name="view">the view you want to swap</param>
+        /// <param name="type"></param>
+        /// <param name=""></param>
+        public static void NavigateToNewPage(View view, string linkId)
+        {
+            // the link will most likely be tagged with an identifier
+            //this will tell the app what type of layout to load the page link in
+            switch (linkId.Substring(0, 2))
+            {
+                //for example, link id starts with vd for videodetail
+                case "vd":
+                    // pass the link details to the video detail view
+
+                    SwapView(_videoDetailView);
+                    break;
+
+            }
+        }
+
+        public static void SwapView(View view)
         {
             _tab2ParentLayout.RemoveAllViews();
-            _tab2ParentLayout.AddView(_videoDetailView);
-
-            if (swap)
-            {
-
-            }
-            else
-            {
-
-            }
+            VideoDetailLoader.LoadVideoFromDetail(_videoDetailView, VideoModel.GetSample());
+            _tab2ParentLayout.AddView(view);
         }
         
         public void CustomSetTouchListener(bool landscape)

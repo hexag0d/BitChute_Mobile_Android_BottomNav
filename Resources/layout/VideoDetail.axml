@@ -15,6 +15,7 @@
 		<TextView
 			android:text="Title"
 			android:layout_width="match_parent"
+			android:textColor="#ffffff"
 			android:layout_height="wrap_content"
 			android:id="@+id/videoDetailTitleTextView" />
 		<VideoView
@@ -61,18 +62,21 @@
 						android:text="[creator name]"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
+						android:textColor="#ffffff"
 						android:layout_height="match_parent"
-						android:id="@+id/textView2" />
+						android:id="@+id/videoDetailCreatorName" />
 					<Button
 						android:text="Subscribe"
 						android:backgroundTint="@android:color/holo_red_dark"
 						android:layout_width="wrap_content"
+						android:textColor="#ffffff"
 						android:layout_height="match_parent"
 						android:id="@+id/creatorSubscribeButton" />
 					<TextView
 						android:text="[subcount]"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
+						android:textColor="#ffffff"
 						android:layout_height="match_parent"
 						android:id="@+id/creatorSubscriberCount" />
 				</LinearLayout>

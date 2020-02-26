@@ -59,7 +59,7 @@ using Android.Views;
 using BottomNavigationViewPager.Adapters;
 using BottomNavigationViewPager.Classes;
 using BottomNavigationViewPager.Fragments;
-using RecyclerViewer;
+using BitChute;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
@@ -891,17 +891,17 @@ namespace BottomNavigationViewPager
         {
             public event EventHandler<int> ItemClick;
 
-            public static RecyclerViewer.VideoCardSet _photoAlbum;
+            public static BitChute.VideoCardSet _photoAlbum;
 
             public static View itemView;
             public static View itemView2;
             public static View itemView3;
 
-            public PhotoAlbumAdapter(RecyclerViewer.VideoCardSet photoAlbum)
+            public PhotoAlbumAdapter(BitChute.VideoCardSet photoAlbum)
             {
                 if (photoAlbum == null)
                 {
-                    photoAlbum = new RecyclerViewer.VideoCardSet();
+                    photoAlbum = new BitChute.VideoCardSet();
                 }
                 _photoAlbum = photoAlbum;
             }
@@ -915,11 +915,11 @@ namespace BottomNavigationViewPager
 
                 Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
                 CardView cv = itemView.FindViewById<CardView>(Resource.Id.cardView);
-                //  cv.SetBackgroundColor(_darkGrey);
+                cv.SetBackgroundColor(_darkGrey);
 
                 // Create a ViewHolder to find and hold these view references, and 
                 // register OnClick with the view holder:
-                RecyclerViewer.PhotoViewHolder vh = new RecyclerViewer.PhotoViewHolder(itemView, OnClick);
+                BitChute.PhotoViewHolder vh = new BitChute.PhotoViewHolder(itemView, OnClick);
 
                 return vh;
             }
@@ -927,7 +927,7 @@ namespace BottomNavigationViewPager
             // Fill in the contents of the photo card (invoked by the layout manager):
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                RecyclerViewer.PhotoViewHolder vh = holder as RecyclerViewer.PhotoViewHolder;
+                BitChute.PhotoViewHolder vh = holder as BitChute.PhotoViewHolder;
 
 
                 // Set the ImageView and TextView in this ViewHolder's CardView 
@@ -936,7 +936,7 @@ namespace BottomNavigationViewPager
 
                 if (_photoAlbum == null)
                 {
-                    _photoAlbum = new RecyclerViewer.VideoCardSet();
+                    _photoAlbum = new BitChute.VideoCardSet();
                 }
 
                 try
@@ -972,10 +972,10 @@ namespace BottomNavigationViewPager
             }
         }
 
-        public static AssetManager GetAssetManager()
+        public static Drawable UniversalGetDrawable(string name)
         {
-            _assets = _main.Assets;
-            return _assets;
+            Drawable drawable = _main.GetDrawable(Resource.Drawable._i50);
+            return drawable;
         }
 
         protected override void OnResume()

@@ -3950,9 +3950,6 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f09005c
 			public const int textStart = 2131296348;
 			
-			// aapt resource value: 0x7f0900fc
-			public const int textView2 = 2131296508;
-			
 			// aapt resource value: 0x7f0900aa
 			public const int text_input_password_toggle = 2131296426;
 			
@@ -4024,6 +4021,9 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f0900f4
 			public const int verticalNavbarRbOn = 2131296500;
+			
+			// aapt resource value: 0x7f0900fc
+			public const int videoDetailCreatorName = 2131296508;
 			
 			// aapt resource value: 0x7f0900f8
 			public const int videoDetailTitleTextView = 2131296504;

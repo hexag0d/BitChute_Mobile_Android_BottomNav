@@ -77,9 +77,6 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\PhotoAlbumAdapter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
@@ -90,8 +87,8 @@
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
-    <Compile Include="Classes\JSONParsing.cs" />
-    <Compile Include="Classes\PhotoSet.cs" />
+    <Compile Include="Classes\VideoDetailLoader.cs" />
+    <Compile Include="Classes\VideoCard.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\SubscriptionFragment.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
@@ -388,7 +385,7 @@
     <AndroidResource Include="Resources\drawable\_i99.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\sample.mp4" />
+    <AndroidAsset Include="Resources\Raw\sample.mp4" />
     <Content Include="DeveloperItems\APIMapping.txt" />
     <AndroidResource Include="Resources\layout\VideoDetail.axml">
       <SubType>Designer</SubType>
