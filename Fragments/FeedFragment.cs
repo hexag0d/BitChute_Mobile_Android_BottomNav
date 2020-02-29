@@ -1,30 +1,32 @@
-﻿using Android.Graphics.Drawables;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Android.Content.Res;
+using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
 using Java.IO;
-using BitChute;
 using StartServices.Servicesclass;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
+using static Android.Views.View;
 using static BitChute.MainActivity;
-using static StartServices.Servicesclass.ExtStickyService;
-using BitChute.Models;
 using static BitChute.Models.VideoModel;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
-    public class SubscriptionFragment : Fragment
+    public class FeedFragment : Fragment
     {
         string _title;
         string _icon;
-        
+
         public static Android.Support.V7.Widget.RecyclerView _recycleView;
         public static Android.Support.V7.Widget.RecyclerView.LayoutManager _layoutManager;
 
@@ -34,8 +36,7 @@ namespace BitChute.Fragments
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
-
-        public static VideoCard _videoCard = new VideoCard();
+        
         public static ImageRecyclerViewAdapter _rootAdapter;
 
         public static View _videoDetailView;
@@ -46,25 +47,24 @@ namespace BitChute.Fragments
         public static LayoutInflater _inflater;
         public static LinearLayoutManager _layoutMan;
 
-        public static SubscriptionFragment NewInstance(string title, string icon) {
-            var fragment = new SubscriptionFragment();
+        bool tabLoaded = false;
+
+        public static FeedFragment NewInstance(string title, string icon)
+        {
+            var fragment = new FeedFragment();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
             return fragment;
         }
-        
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            _creatorCardSetRoot = new VideoCardSet();
-            //GetSubscriptionList();
-            // Set our view from the "main" layout resource  
-
             if (Arguments != null)
             {
-                if(Arguments.ContainsKey("title"))
+                if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
 
                 if (Arguments.ContainsKey("icon"))
@@ -74,23 +74,33 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
-            _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            _videoDetailView = inflater.Inflate(Resource.Layout.VideoDetail, container, false);
+            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
+            
+            _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
+            _videoDetailView = inflater.Inflate(Resource.Layout.FeedVideoDetail, container, false);
             _layoutManager = new LinearLayoutManager(container.Context);
             _recycleView.SetLayoutManager(_layoutManager);
             _rootAdapter = new ImageRecyclerViewAdapter(_creatorCardSetRoot);
             _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
-           // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
+            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             _recycleView.SetAdapter(_rootAdapter);
             _tab2ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab2ParentFragmentLayout);
             _videoDetailView = LayoutInflater.Inflate(Resource.Layout.VideoDetail, container, false);
-            
+
             _viewGroup = container;
             _inflater = inflater;
+
+            if (!tabLoaded)
+            {
+                tabLoaded = true;
+            }
+            if (AppSettings._zoomControl)
+            {
+            }
+            CustomSetTouchListener(AppState.Display._horizontal);
             return _view;
         }
-        
+
         /// <summary>
         /// click event for the adapter
         /// </summary>
@@ -100,7 +110,7 @@ namespace BitChute.Fragments
         {
             NavigateToNewPageFromVideoCard(_videoDetailView, _creatorCardSetRoot[e]);
         }
-        
+
         /// <summary>
         /// Navigates the selected tab to a new page
         /// </summary>
@@ -133,26 +143,30 @@ namespace BitChute.Fragments
         {
             // VideoDetailLoader.LoadVideoFromDetail()
             SwapView(_videoDetailView);
-
-
-            //// the link will most likely be tagged with an identifier
-            ////this will tell the app what type of layout to load the page link in
-            //switch (linkId.Substring(0, 2))
-            //{
-            //    //for example, link id starts with vd for videodetail
-            //    case "vd":
-            //        // pass the link details to the video detail view
-            //        SwapView(_videoDetailView);
-            //        break;
-
-            //}
         }
 
+        public void OnSettingsChanged()
+        {
+            if (AppSettings._zoomControl)
+            {
+            }
+            else
+            {
+            }
+
+        }
 
         public void CustomSetTouchListener(bool landscape)
         {
-
+            if (landscape)
+            {
+            }
+            else
+            {
+            }
         }
+
+        public static MainActivity _main = MainActivity._main;
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
@@ -164,44 +178,51 @@ namespace BitChute.Fragments
             }
         }
 
+        private static int _scrollY = 0;
+
+
+
         private static async void CustomOnTouch()
         {
-
-        }
-
-        public void OnSettingsChanged()
-        {
-            if (AppSettings._zoomControl)
+            if (AppState.Display._horizontal)
             {
-
-            }
-            else
-            {
-
             }
         }
 
-
-        public void SubsTabGoBack()
+        public void WebViewGoBack()
         {
         }
-        
-        /// <summary>
-        /// pops back to the root of the subscription tab
-        /// </summary>
+
         public void Pop2Root()
         {
 
         }
+
+        public static bool _wvRling = false;
+
+        /// <summary>
+        /// this is to allow faster phones and connections the ability to Pop2Root
+        /// used to be set without delay inside OnPageFinished but I don't think 
+        /// that would work on faster phones
+        /// </summary>
+        public static async void SetReload()
+        {
+
+        }
+
+
+        public void LoadCustomUrl(string url)
+        {
+        }
+
+        public static async void HidePageTitle(int delay)
+        {
+
+        }
+
+        private static async void HideWatchLabel(int delay)
+        {
+            await Task.Delay(delay);
+        }
     }
 }
-///// <summary>
-///// click event for the adapter
-///// </summary>
-///// <param name="sender"></param>
-///// <param name="e"></param>
-//private void MAdapter_ItemClick(object sender, int e, VideoCard vc)
-//{
-//    SwapView(_videoDetailView);
-//    var check = e;
-//}

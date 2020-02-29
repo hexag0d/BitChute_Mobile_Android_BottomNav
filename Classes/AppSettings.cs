@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using Android.Graphics.Drawables;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     class AppSettings
     {

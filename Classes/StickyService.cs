@@ -12,10 +12,10 @@ using Android.Widget;
 using Android.Util;
 
 using Android.Telephony;
-using BottomNavigationViewPager.Classes;
-using BottomNavigationViewPager;
+using BitChute.Classes;
+using BitChute;
 using System.Threading.Tasks;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
 using Android.Support.V4.App;
@@ -24,7 +24,7 @@ namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
-    public class ExtStickyService : Service
+    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener
     {
         #region members
 
@@ -37,8 +37,8 @@ namespace StartServices.Servicesclass
         public static MainActivity _main;
         public static ExtNotifications _extNotes = MainActivity.notifications;
 
-        public static BottomNavigationViewPager.Fragments.TheFragment5.ExtWebInterface _extWebInterface =
-            BottomNavigationViewPager.Fragments.TheFragment5._extWebInterface;
+        public static BitChute.Fragments.TheFragment5.ExtWebInterface _extWebInterface =
+            BitChute.Fragments.TheFragment5._extWebInterface;
 
         public static Java.Util.Timer _timer = new Java.Util.Timer();
         public static ExtTimerTask _timerTask = new ExtTimerTask();
@@ -49,6 +49,7 @@ namespace StartServices.Servicesclass
 
         private static WifiManager wifiManager;
         private static WifiManager.WifiLock wifiLock;
+        public static AudioManager _audioManager;
 
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
@@ -60,7 +61,131 @@ namespace StartServices.Servicesclass
         private static bool _notificationStackExecutionInProgress = false;
         public static bool _notificationLongTimerSet = false;
 
+        public static MediaPlayer _player;
+        public static bool _paused;
+
         #endregion
+
+        private void IntializePlayer()
+        {
+            _player = new MediaPlayer();
+
+            //Wake mode will be partial to keep the CPU still running under lock screen
+            _player.SetWakeMode(ApplicationContext, WakeLockFlags.Partial);
+
+            //When we have prepared the song start playback
+            _player.Prepared += (sender, args) => _player.Start();
+
+            //When we have reached the end of the song stop ourselves, however you could signal next track here.
+            _player.Completion += (sender, args) => Stop();
+
+            _player.Error += (sender, args) =>
+            {
+                //playback error
+                Console.WriteLine("Error in playback resetting: " + args.What);
+                Stop();//this will clean up and reset properly.
+            };
+        }
+
+        private async void Play()
+        {
+
+            if (_paused && _player != null)
+            {
+                _paused = false;
+                //We are simply paused so just start again
+                _player.Start();
+                StartForeground();
+                return;
+            }
+
+            if (_player == null)
+            {
+                IntializePlayer();
+            }
+
+            if (_player.IsPlaying)
+                return;
+
+            try
+            {
+                // await _player.SetDataSourceAsync(ApplicationContext, Android.Net.Uri.Parse(Mp3));
+
+                //var focusResult = _audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
+                //var focusResult = _audioManager.RequestAudioFocus(Stream.Music, AudioFocus.Gain);
+                //if (focusResult != AudioFocusRequest.Granted)
+                //{
+                //    //could not get audio focus
+                //    Console.WriteLine("Could not get audio focus");
+                //}
+
+                _player.PrepareAsync();
+                AquireWifiLock();
+                StartForeground();
+            }
+            catch (Exception ex)
+            {
+                //unable to start playback log error
+                Console.WriteLine("Unable to start playback: " + ex);
+            }
+        }
+
+        private void Pause()
+        {
+            if (_player == null)
+                return;
+
+            if (_player.IsPlaying)
+                _player.Pause();
+
+            StopForeground(true);
+            _paused = true;
+        }
+
+        private void Stop()
+        {
+            if (_player == null)
+                return;
+
+            if (_player.IsPlaying)
+                _player.Stop();
+
+            _player.Reset();
+            _paused = false;
+            StopForeground(true);
+            ReleaseWifiLock();
+        }
+
+
+
+        /// <summary>
+        /// This will release the wifi lock if it is no longer needed
+        /// </summary>
+        private void ReleaseWifiLock()
+        {
+            if (wifiLock == null)
+                return;
+
+            wifiLock.Release();
+            wifiLock = null;
+        }
+
+        /// <summary>
+        /// When we start on the foreground we will present a notification to the user
+        /// When they press the notification it will take them to the main page so they can control the music
+        /// </summary>
+        private void StartForeground()
+        {
+
+            var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
+                            new Intent(ApplicationContext, typeof(MainActivity)),
+                            PendingIntentFlags.UpdateCurrent);
+
+            var notification = new Notification();
+
+
+            StartForeground(6666, notification);
+        }
 
         #region StickyServiceMethods
         public ExtStickyService(Context applicationContext)
@@ -79,8 +204,11 @@ namespace StartServices.Servicesclass
 
         public override void OnCreate()
         {
-            _service = this;
             base.OnCreate();
+            //Find our audio and notificaton managers
+            _audioManager = (AudioManager)GetSystemService(AudioService);
+            wifiManager = (WifiManager)GetSystemService(WifiService);
+            _service = this;
         }
         public override IBinder OnBind(Intent intent)
         {
@@ -88,6 +216,13 @@ namespace StartServices.Servicesclass
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            switch (intent.Action)
+            {
+                case ActionPlay: Play(); break;
+                case ActionStop: Stop(); break;
+                case ActionPause: Pause(); break;
+            }
+
             wifiManager = (WifiManager)GetSystemService(Context.WifiService);
             _main = MainActivity._main;
             _service = this;
@@ -184,6 +319,7 @@ namespace StartServices.Servicesclass
                 }
             }
         }
+
 
 
         public override void OnDestroy()
@@ -330,6 +466,10 @@ namespace StartServices.Servicesclass
             }
         }
 
+        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 
 
-namespace BottomNavigationViewPager.Models
+namespace BitChute.Models
 {
     class HomepageModel 
     {

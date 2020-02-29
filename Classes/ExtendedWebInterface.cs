@@ -11,9 +11,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     class ExtendedWebInterface
     {

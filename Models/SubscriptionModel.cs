@@ -9,18 +9,24 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using static BottomNavigationViewPager.Models.CreatorModel;
-using static BottomNavigationViewPager.Models.VideoModel;
+using static BitChute.Models.CreatorModel;
+using static BitChute.Models.VideoModel;
 
-namespace BottomNavigationViewPager.Models
+namespace BitChute.Models
 {
     public class SubscriptionModel 
     {
         //a list of ALL creators user is subscribed to
         public List<Creator> subscriptionListLight;
 
+        public List<Creator> GetLightSubscriptionList()
+        {
+            subscriptionListLight = new List<Creator>();
+            return subscriptionListLight;
+        }
+
         /// <summary>
-        /// only the first 25 recent posts from users they're sub'd tp
+        /// only the first 25 recent posts from users they're sub'd to
         /// </summary>
         public List<CreatorPackage> subscriptionListFullPackage;
 
@@ -41,16 +47,16 @@ namespace BottomNavigationViewPager.Models
         {
             public string CreatorName { get; set; }
             public string CreatorLinkToChannel { get; set; }
-            public string _creatorDescription { get; set; }
+            public string CreatorDescription { get; set; }
 
-            private List<VideoInfo> recentVideos;
+            private List<VideoCard> recentVideos;
 
-            public List<VideoInfo> GetRecentVideos()
+            public List<VideoCard> GetRecentVideos()
             {
                 return recentVideos;
             }
 
-            private void SetRecentVideos(List<VideoInfo> value)
+            private void SetRecentVideos(List<VideoCard> value)
             {
                 recentVideos = value;
             }

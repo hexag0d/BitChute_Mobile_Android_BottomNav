@@ -12,9 +12,9 @@ using Android.Views;
 using Android.Widget;
 using BitChute;
 using Newtonsoft.Json.Linq;
-using static BottomNavigationViewPager.Models.SubscriptionModel;
+using static BitChute.Models.SubscriptionModel;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class BitChuteAPI
     {

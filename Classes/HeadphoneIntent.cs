@@ -1,9 +1,9 @@
 ﻿using System;
 using Android.Content;
 using Android.Runtime;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class HeadphoneIntent
     {
@@ -41,7 +41,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 try {
                     TheFragment1._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment3._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+
                     TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment5._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                 }

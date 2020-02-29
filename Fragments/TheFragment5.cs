@@ -7,7 +7,7 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
 using Java.Interop;
 using Java.Net;
 using StartServices.Servicesclass;
@@ -17,11 +17,11 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static BottomNavigationViewPager.Classes.ExtendedWebChromeClient;
-using static BottomNavigationViewPager.Classes.ExtNotifications;
+using static BitChute.Classes.ExtendedWebChromeClient;
+using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     public class TheFragment5 : Android.Support.V4.App.Fragment
     {
@@ -905,7 +905,6 @@ namespace BottomNavigationViewPager.Fragments
 
                         if (_wv.Url == "https://www.bitchute.com/")
                         {
-                            TheFragment3.SelectSubscribedTab(2000);
                         }
                     }
                 }

@@ -8,16 +8,16 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BottomNavigationViewPager.Fragments.TheFragment5;
+using static BitChute.Fragments.TheFragment5;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
     public class TheFragment1 : Fragment

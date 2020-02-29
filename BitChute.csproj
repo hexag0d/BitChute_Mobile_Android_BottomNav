@@ -10,8 +10,8 @@
     <TemplateGuid>{122416d6-6b49-4ee2-a1e8-b825f31c79fe}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BottomNavigationViewPager</RootNamespace>
-    <AssemblyName>BottomNavigationViewPager</AssemblyName>
+    <RootNamespace>BitChute</RootNamespace>
+    <AssemblyName>BitChute</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
@@ -93,11 +93,12 @@
     <Compile Include="Fragments\SubscriptionFragment.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
-    <Compile Include="Fragments\TheFragment3.cs" />
+    <Compile Include="Fragments\FeedFragment.cs" />
     <Compile Include="Fragments\TheFragment1.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\HomepageModel.cs" />
+    <Compile Include="Models\NavigationModel.cs" />
     <Compile Include="Models\SubscriptionModel.cs" />
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -224,7 +225,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\PhotoCardView.axml">
+    <AndroidResource Include="Resources\layout\SubscriptionsCardView.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -383,8 +384,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Resources\Raw\sample.mp4" />
+    <AndroidAsset Include="Assets\sample.mp4" />
     <Content Include="DeveloperItems\APIMapping.txt" />
     <AndroidResource Include="Resources\layout\VideoDetail.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\FeedCardView.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\_sampleVideoThumb.jpg" />
+    <AndroidResource Include="Resources\drawable\_sampleVideoThumb2.png" />
+    <AndroidResource Include="Resources\drawable\_sampleVideoThumb3.png" />
+    <AndroidResource Include="Resources\drawable\_sampleVideoThumb4.png" />
+    <AndroidResource Include="Resources\layout\FeedVideoDetail.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

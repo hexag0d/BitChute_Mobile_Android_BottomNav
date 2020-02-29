@@ -9,8 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using static BitChute.Models.VideoModel;
 
-namespace BottomNavigationViewPager.Models
+namespace BitChute.Models
 {
     public class CreatorModel
     {
@@ -20,13 +21,28 @@ namespace BottomNavigationViewPager.Models
         /// </summary>
         public class Creator
         {
-            string CreatorName { get; set; }
-            string CreatorLinkToChannel { get; set; }
+            public string Name { get; set; }
+            public string LinkToChannel { get; set; }
+            public string MostRecentVideoLink { get; set; }
+
+            public class CreatorDetail
+            {
+                string CreatorDescription { get; set; }
+                VideoCardSet RecentVideos { get; set; }
+
+                public class CreatorVideos
+                {
+
+                }
+            }
         }
 
-        public class CreatorVideos
+        public static Creator GetSampleCreator()
         {
-
+            Creator sample = new Creator();
+            sample.Name = "A Random Creator";
+            sample.LinkToChannel = "/channel/aRandomNameHere";
+            return sample;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Android.Support.V4.App;
 
-namespace BottomNavigationViewPager.Adapters
+namespace BitChute.Adapters
 {
     public class ViewPagerAdapter : FragmentPagerAdapter
     {

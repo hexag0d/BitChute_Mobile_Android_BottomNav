@@ -4,14 +4,14 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     public class TheFragment4 : Fragment
     {

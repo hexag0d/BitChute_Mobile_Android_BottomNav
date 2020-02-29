@@ -20,19 +20,19 @@ using Android.Support.V7.View;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
-using BottomNavigationViewPager.Adapters;
-using BottomNavigationViewPager.Classes;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Adapters;
+using BitChute.Classes;
+using BitChute.Fragments;
 using BitChute;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BottomNavigationViewPager.Fragments.TheFragment5;
+using static BitChute.Fragments.TheFragment5;
+using static BitChute.Models.VideoModel;
 
-
-namespace BottomNavigationViewPager
+namespace BitChute
 {
     //we need to set the intent filter so that links can open inapp
     [Android.App.IntentFilter(new[] { Intent.ActionView },
@@ -79,7 +79,6 @@ namespace BottomNavigationViewPager
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static HeadphoneIntent.MusicIntentReceiver _musicIntentReceiver;
-        
 
         // Underlying data set (a photo album):
         public static VideoCardSet _photoAlbum;
@@ -88,6 +87,7 @@ namespace BottomNavigationViewPager
         {
             AppSettings.LoadAllPrefsFromSettings();
 
+            _assets = Resources.Assets;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
                 AppState.Display._horizontal = true;
@@ -157,7 +157,7 @@ namespace BottomNavigationViewPager
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
         public static SubscriptionFragment _fm2 = SubscriptionFragment.NewInstance("Subs", "tab_subs");
-        public static TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");
+        public static FeedFragment _fm3 = FeedFragment.NewInstance("Feed", "tab_playlist");
         public static TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
         public static TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
 
@@ -718,17 +718,8 @@ namespace BottomNavigationViewPager
                         TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
-
                         break;
                     case 2:
-                        if (TheFragment3._wv.Url != "https://www.bitchute.com/")
-                        {
-                            _fm3.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                            _fm3.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                            _fm3.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            _fm3.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        TheFragment3.ExpandVideoCards(false);
                         break;
                     case 3:
                         _fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
@@ -840,19 +831,19 @@ namespace BottomNavigationViewPager
         {
             public event EventHandler<int> ItemClick;
 
-            public static BitChute.VideoCardSet _photoAlbum;
+            public static VideoCardSet _videoCardSet;
 
             public static View itemView;
             public static View itemView2;
             public static View itemView3;
 
-            public ImageRecyclerViewAdapter(BitChute.VideoCardSet photoAlbum)
+            public ImageRecyclerViewAdapter(VideoCardSet videoCardSet)
             {
-                if (photoAlbum == null)
+                if (videoCardSet == null)
                 {
-                    photoAlbum = new BitChute.VideoCardSet();
+                    videoCardSet = new VideoCardSet();
                 }
-                _photoAlbum = photoAlbum;
+                _videoCardSet = videoCardSet;
             }
 
             // Create a new photo CardView (invoked by the layout manager): 
@@ -860,7 +851,7 @@ namespace BottomNavigationViewPager
             {
                 // Inflate the CardView for the photo:
                 View itemView = LayoutInflater.From(parent.Context).
-                            Inflate(Resource.Layout.PhotoCardView, parent, false);
+                            Inflate(Resource.Layout.SubscriptionsCardView, parent, false);
 
                 Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
                 CardView cv = itemView.FindViewById<CardView>(Resource.Id.cardView);
@@ -868,7 +859,7 @@ namespace BottomNavigationViewPager
 
                 // Create a ViewHolder to find and hold these view references, and 
                 // register OnClick with the view holder:
-                BitChute.PhotoViewHolder vh = new BitChute.PhotoViewHolder(itemView, OnClick);
+                PhotoViewHolder vh = new PhotoViewHolder(itemView, OnClick);
 
                 return vh;
             }
@@ -876,21 +867,16 @@ namespace BottomNavigationViewPager
             // Fill in the contents of the photo card (invoked by the layout manager):
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                BitChute.PhotoViewHolder vh = holder as BitChute.PhotoViewHolder;
+                PhotoViewHolder vh = holder as PhotoViewHolder;
                 
                 // Set the ImageView and TextView in this ViewHolder's CardView 
                 // from this position in the photo album:
-                vh.Image.SetImageResource(_photoAlbum[position].PhotoID);
-
-                if (_photoAlbum == null)
-                {
-                    _photoAlbum = new BitChute.VideoCardSet();
-                }
+                vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
 
                 try
                 {
-                    vh.Caption.Text = _photoAlbum[position].Caption;
-                    vh.Caption2.Text = _photoAlbum[position].Caption2;
+                    vh.Caption.Text = _videoCardSet[position].Caption;
+                    vh.Caption2.Text = _videoCardSet[position].Caption2;
                 }
                 catch (Exception ex)
                 {
@@ -903,8 +889,8 @@ namespace BottomNavigationViewPager
             {
                 get
                 {
-                    if (_photoAlbum != null)
-                        return _photoAlbum.NumPhotos;
+                    if (_videoCardSet != null)
+                        return _videoCardSet.NumPhotos;
                     else
                         return 36;
                 }

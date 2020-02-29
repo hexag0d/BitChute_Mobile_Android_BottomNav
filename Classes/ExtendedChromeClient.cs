@@ -12,7 +12,7 @@ using Android.Webkit;
 using Android.Widget;
 
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class ExtendedWebChromeClient
     {

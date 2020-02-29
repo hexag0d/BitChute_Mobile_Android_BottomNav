@@ -1,4 +1,4 @@
-﻿namespace BottomNavigationViewPager.Classes
+﻿namespace BitChute.Classes
 {
     /// <summary>
     /// todo: rename/sort/remove this class
