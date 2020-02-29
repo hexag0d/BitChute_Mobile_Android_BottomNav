@@ -9,12 +9,12 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using MvvmCross.ViewModels;
+using static BottomNavigationViewPager.Models.CreatorModel;
 using static BottomNavigationViewPager.Models.VideoModel;
 
 namespace BottomNavigationViewPager.Models
 {
-    public class SubscriptionModel : MvxViewModel
+    public class SubscriptionModel 
     {
         //a list of ALL creators user is subscribed to
         public List<Creator> subscriptionListLight;
@@ -31,16 +31,7 @@ namespace BottomNavigationViewPager.Models
 
         }
         
-        /// <summary>
-        /// lighter weight class that only contains the creator and link
-        /// for getting the entire list of subs, doesn't contain video info
-        /// </summary>
-        public class Creator
-        {
-            string creatorName { get; set; }
-            string creatorLinkToChannel { get; set; }
-        }
-        
+
         /// <summary>
         /// more resource intensive class for creators who have recently posted
         /// ,, this one contains video information for the creator's recently
@@ -48,8 +39,8 @@ namespace BottomNavigationViewPager.Models
         /// </summary>
         public class CreatorPackage
         {
-            public string _creatorName { get; set; }
-            public string _creatorLinkToChannel { get; set; }
+            public string CreatorName { get; set; }
+            public string CreatorLinkToChannel { get; set; }
             public string _creatorDescription { get; set; }
 
             private List<VideoInfo> recentVideos;

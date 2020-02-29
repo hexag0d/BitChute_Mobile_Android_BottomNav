@@ -274,7 +274,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public void OnSettingsChanged(List<object> settings)
+        public void OnSettingsChanged()
         {
             if (AppSettings._zoomControl)
             {
@@ -506,7 +506,7 @@ namespace BottomNavigationViewPager.Fragments
                 _settingsList.Add(AppSettings._tab1FeaturedOn);
                 _settingsList.Add(AppSettings._settingsTabOverride);
 
-                _main.OnSettingsChanged(_settingsList);
+                _main.OnSettingsChanged();
             }
         }
 
@@ -864,8 +864,8 @@ namespace BottomNavigationViewPager.Fragments
                         {
                             Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
-                            var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-
+                            Https._cookieString = _cookieCon.GetCookieHeader(_notificationURI);
+                            
                             using (HttpClient _client = new HttpClient(handler))
                             {
                                 _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);

@@ -11,7 +11,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using MvvmCross.ViewModels;
 
 namespace BottomNavigationViewPager.Models
 {
@@ -30,30 +29,32 @@ namespace BottomNavigationViewPager.Models
             public VideoInfo BuildVideoInfo(Drawable thumbnail, string creatorName, string videoTitle, 
                 string videoLocation, string videoDescription)
             {
-                videoInfo.thumbnail = thumbnail;
-                videoInfo.creatorName = creatorName;
-                videoInfo.videoTitle = videoTitle;
-                videoInfo.videoLocation = videoLocation;
-                videoInfo.videoDescription = videoDescription;
+                VideoInfo newVid = new VideoInfo();
 
-                return videoInfo;
+                videoInfo.ThumbnailDrawable = thumbnail;
+                videoInfo.CreatorName = creatorName;
+                videoInfo.VideoTitle = videoTitle;
+                videoInfo.VideoLocation = videoLocation;
+                videoInfo.VideoDescription = videoDescription;
+
+                return newVid;
             }
 
-            public string creatorName { get; set; }
-            public string videoTitle { get; set; }
-            public string videoLocation { get; set; }
-            public string videoDescription { get; set; }
-
-            //Bitmap thumbnail { get; set; }
-            public Drawable thumbnail { get; set; }
+            public string CreatorName { get; set; }
+            public string VideoTitle { get; set; }
+            public string VideoLocation { get; set; }
+            public string VideoDescription { get; set; }
+            
+            public Drawable ThumbnailDrawable { get; set; }
+            public Bitmap ThumbnailBitmap { get; set; }
         }
 
         public static VideoInfo GetSample()
         {
             VideoInfo vi = new VideoInfo();
-            vi.creatorName = "Creator Name Here";
-            vi.videoTitle = "Video Title";
-            vi.thumbnail = MainActivity.UniversalGetDrawable("nothing");
+            vi.CreatorName = "Creator Name Here";
+            vi.VideoTitle = "Video Title";
+            vi.ThumbnailDrawable = MainActivity.UniversalGetDrawable("nothing");
 
             return vi;
         }

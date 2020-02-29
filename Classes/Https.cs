@@ -1,9 +1,12 @@
 ﻿namespace BottomNavigationViewPager.Classes
 {
+    /// <summary>
+    /// todo: rename/sort/remove this class
+    /// </summary>
     class Https
     {
         /// <summary>
-        /// this is a string containing cookies for the app.
+        /// this is a string containing cookies for the logged in user.
         /// </summary>
         public static string _cookieString { get; set; }
 

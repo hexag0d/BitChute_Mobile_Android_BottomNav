@@ -23,8 +23,16 @@ using Android.Support.V4.App;
 namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
+    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
     public class ExtStickyService : Service
     {
+        #region members
+
+        //Actions
+        public const string ActionPlay = "com.xamarin.action.PLAY";
+        public const string ActionPause = "com.xamarin.action.PAUSE";
+        public const string ActionStop = "com.xamarin.action.STOP";
+
         public static bool _serviceIsLooping = false;
         public static MainActivity _main;
         public static ExtNotifications _extNotes = MainActivity.notifications;
@@ -42,6 +50,19 @@ namespace StartServices.Servicesclass
         private static WifiManager wifiManager;
         private static WifiManager.WifiLock wifiLock;
 
+        public static bool _backgroundTimeout = false;
+        public static bool _notificationsHaveBeenSent = false;
+        public static ExtNotifications _extNotifications = new ExtNotifications();
+        public static TheFragment5 _fm5;
+        private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
+        public static int _startForegroundNotificationId = 6666;
+
+        private static bool _notificationStackExecutionInProgress = false;
+        public static bool _notificationLongTimerSet = false;
+
+        #endregion
+
+        #region StickyServiceMethods
         public ExtStickyService(Context applicationContext)
         {
 
@@ -100,35 +121,9 @@ namespace StartServices.Servicesclass
             wifiLock.Acquire();
         }
 
-        public static bool _backgroundTimeout = false;
-        public static bool _notificationsHaveBeenSent = false;
-        public static ExtNotifications _extNotifications = new ExtNotifications();
-        public static TheFragment5 _fm5;
+        #endregion
 
-        private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
 
-        /// <summary>
-        /// returns true when the app detects that it's running
-        /// in background
-        /// </summary>
-        /// <returns>bool</returns>
-        public static bool IsInBkGrd()
-        {
-            ActivityManager.GetMyMemoryState(myProcess);
-
-            if (myProcess.Importance == Importance.Foreground)
-            {
-                AppState._bkgrd = false;
-                return false;
-            }
-            else
-            {
-                AppState._bkgrd = true;
-                return true;
-            }
-        }
-        
-        public static bool _notificationLongTimerSet = false;
 
         /// <summary>
         /// starts/restarts the notifications, 
@@ -190,8 +185,7 @@ namespace StartServices.Servicesclass
             }
         }
 
-        private static bool _notificationStackExecutionInProgress = false;
-        
+
         public override void OnDestroy()
         {
             try
@@ -204,6 +198,10 @@ namespace StartServices.Servicesclass
             }
         }
         
+        /// <summary>
+        /// Timer task for background notifications
+        /// has to be within the service so that it's more persistent
+        /// </summary>
         public class ExtTimerTask : Java.Util.TimerTask
         {
             public async override void Run()
@@ -233,21 +231,17 @@ namespace StartServices.Servicesclass
             }
         }
 
-
         public static bool DummyLoop()
         {
+
             var dummyVar = true;
             return dummyVar;
         }
 
-        public static int _startForegroundNotificationId = 6666;
-        
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
-
             public ExtStickyService _serviceContext;
-            
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 if (MainActivity._backgroundRequested)
@@ -314,32 +308,28 @@ namespace StartServices.Servicesclass
             {
             }
         }
+        
+        /// <summary>
+        /// returns true when the app detects that it's running
+        /// in background
+        /// </summary>
+        /// <returns>bool</returns>
+        public static bool IsInBkGrd()
+        {
+            ActivityManager.GetMyMemoryState(myProcess);
 
-        //public static Notification GetStartServiceNotification()
-        //{
+            if (myProcess.Importance == Importance.Foreground)
+            {
+                AppState._bkgrd = false;
+                return false;
+            }
+            else
+            {
+                AppState._bkgrd = true;
+                return true;
+            }
+        }
 
-        //    var _ctx = Android.App.Application.Context;
-        //    Notification note = new Notification();
-
-        //    var resultIntent = new Intent(_ctx, typeof(MainActivity));
-        //    var valuesForActivity = new Bundle();
-        //    valuesForActivity.PutInt(MainActivity.COUNT_KEY, 1);
-        //    MainActivity.NOTIFICATION_ID += 6;
-        //    var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-
-
-        //    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-        //            .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-        //            .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-        //            .SetContentTitle("BitChute Entering Background Mode") // Set the title
-        //            .SetNumber(1) // Display the count in the Content Info
-        //            .SetSmallIcon(2130837590) // This is the icon to display
-        //            .SetContentText("now Notifying");
-
-        //    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-        //    note = builder.Build();
-        //    return note;
-        //}
     }
 }
 

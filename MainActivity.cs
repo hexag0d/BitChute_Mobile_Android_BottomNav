@@ -1,44 +1,8 @@
-﻿/* A̬̤̣̹̱̜̟ͭ̉̋͊̑͊͑p͒ͪͩͨpͣ̽̊̃ ̻̉b̬̫͓̬͇̆̀ͩ̀́y̩͈͕͕̱̗͕ͮͫ̑ͩ̉̐̚:͖̱̥͖̤̫́̌̆͋̂̚
- 
-/̭̝̣̱̳̩̰̥̫̟͎͙̬*̩̤̮̥̖͇̩͙̩̝̦͍͋͒ͣ͑̃ͧ̋̊ͨͫ̅ͬͪ̚ͅͅ ̘͎͎̲̟̬̙͖͚͍͉̹̺͈͋͂̓̾̾ͨ̑ͤ̓ͧ͊̽ͤ͋ͩͅA̲͙͙̦ͮ͌ͥ̍p̝̭͙̣͙̈́ͥ͊͒̒p͖͙̖̝̘͎͙͖̣̟̙̝̺ by̩̱̖̙̲̹̘̱̱̲̼͗̒͒ͦ͒͗͋̒̃̓̔̍ͅ:̣͔͓͊ͫ͑
- ͕͎̖̺͉
- /͇̲̞̬̘ͅ*̝̦̥̹͚̔ͦͥ̑ͨ ̽̐͐̿A̼͔̬̠̮̟̭̾͐̑̂ͮ͂̚pp̫͚͕̳ ̪̻̹̓͒͆by:̤
- ̹̪̋̇
-
-.̤͙̜̥̖̲͗ͤ̎̂ͣͬ_̯̗̠̯̰͑̒̈͆ͩ_͎̬͈̱͉̼͈ͤ̎ͥ̏̊ͪ̓ ̬͉͍̗ ͚ ͙̫͈̪̠̗ ͥ͂̍͐͛̈́ ̂ͭ ͚̰͈̬̜̭͈ͨͫ̈́̇̐̑̂ ͇͇̋̌ ̪̲ ͐ͩ͗̽ͦ ͗̌̓͐ͬ ̊  ̳̝̰ ̠͓̜̠̠͉ͣ͋ͪ̽̆́ ͒̇ͭ̉ ̦̣̫̝͚͈̫̉̂̿́͒̂̉   ̀̈́̅̎ͩ̍ ̩̹̘́̎̏  ̺̙̺͇̆̿́͋ ̜̬̭̰̉̇́̎ ͈̮ ͖̹͓̺ͣ͑ͨͥ͛ͅ ͮ̍  ̹͚ ̀̃̏ͮ̃̈́ ̼̰͕̱ ̬͒  ͖̞͖͋ͬ͂ ̯̦ͬ̾ ͐̓͊ͮ̚ ̽ͦ͒̋̋ ͖͇̈́ͩ ͭ̐͂͆̋́̾    ̺ͦ ̦̱̯͖ͥ͒͐̒ ̼͉͇̠̒̓ͮ̌ ̤̣̩̙̺ͤ͑ͮ͗ͬ.̥̟̦͖̙̠̺͊̓̏̈́͌̈́́_̤͓̱̱̜̫_͕̮̪̝ͅ_͉͙͈̠̣̻̫ͮ̅̓̀ͤ͑̓
-|̼͇̠͓̙͂̏͌ͬ́ ͉̟̭̬̝̎̒́ͥ̚ ͓̼͓̙̟ͤͫ̋̈ͯ|̦̺̞̺͍̄̃̀̓ͧ_̖̰̝̬̘̲_̫̯̫͇̲̗ ̺͕̫͔̍ͧ͒̿ ̲͉̟̰̤̈́ͯͭͯ͋ ̮̯̰͚̭_̼̠͇_͗ͩ̄͛͋̉̚__ ͚̘̈́̓_ͣ̒ͨ̑̚̚_̠̼ͯ̉_  ͙͚̙̱̩͕_̆_͈̯̗̻̙̳͋ͧ̄̿͑͂_͙̠͕_͈̲͒͑_̞̹͋ͫ_̱̞ͬ͊_̻̹̪͚̘̦͋̋̍͊̍ͬ_͗͑̀ͭͯ̑  ͫ̎ ͙͉͚ ̍̄ͫͪ __̱͓̳̬̮ͅ_͉̬̦͉̩̥͈_̯̈ ̋̈̋̇̚  ̱̫ͤ̅_̜̒_̬̯̪̫̓̅ͥͭ_̬͙̟̠̭̋̓͒ͩ͑_͔̏  ̪͕̖̊̍̅̚ͅ ͔͖̼̯̃ͩͫ̓_̻̙̼̟_͔͙͉̗̦͉ͧͯͦ͌̈́̃|̭̞̞̹̙͒̈̑̋ͣ ͈͕̳̟̬̗͚̀ͫ̎ͣͫ͛ͫ_̯̬̠͇ͮ̀ͬ̚/͍̞̦͓̖̘̞̍̒̾̽ͧ̏̅
-|̓͑̆̂ͪ̐̚ ͓̱̱̲̤͇͎̃̑ͣ̾͑ͤ̊ ̹̦̪͒̋͗|̗͙ͬ͌ ͔́ ̼͔͇̮̌̔̈́̓\̾̌ͪͥ̏̚_̹̲̦͎͇͈̜͑̅͑ͫ̇͋̃/̇ͩ __ \̦͔͈͇ͣ̆͌̃͐ͅ\̫͑ ͩ̇ ̗̹\͙͑/ͧ̒̍̚ ̲̤ͯ̐ /̬̳̮̣\̻͕̬̗͖̙̣̋͒̔ͯ͗͑̑_̮͑_͑̈́ ͫͩ͌ ̱̬̒̽\̀ͬͫ̍̆̔ ̓͐͑ ̀͂͗ͪ̽͌ͩ ̜͎̥̱͙ͧ͆͐̔̅/ ͑̎ͫͯ́̿_̎ͤ̐ͣͤ̾__ͥ̉͊ͥͭ\̫̠͉ͤͨ͗ ̯͉͉͍̟͈̙ͧͫ̂ͦ͐̌͛/̳̜̺̤̼̯̝  ̰̪̖͑͒͋_̲̥͈̣ͧ͒͛̌ ̗̩̞̭̖̝ͅ\̣̝̪̒̓̀̓̇ͅͅ ̣̯͎̠͈͔/͊͂ _̣͉̥̺͗̒̏̐_̾ ̹̙̹̳̈̊ͣ̚|͙͉̹̮̾ͭ͊ͫ ͍̪̻̍͆ͭ
-  |̪͈͙ͪͧͬ ̞͓̟̭̻̖̙̅ͨ́ͧ̐͌͒  ̙̠̰̗̥ͣ̂͋ͩ̚Y ͈͍͙͈̺́ͪ̔͑̽ ͧ̔̋ͭͦ̓\  ̮̝̈́̋_̪̯̫̱̳͈_̙͎͙̳͕̺̩̓̓̅͋̃͐ͨ_̳̗̰̘̮̑ͥͧͤ̔/̫̮̙̳̭̭ ̟̖̄͒>̗͇̱̯̫̱ ̠̭̩̘̐̄͗̒ ̲͈͈̀ͥ̋ ̱̻͕͓̮͉͈ͭ̂̈́͛̿ͥͥ ̹̮͕͉͎̝ͬ͊̆̀̈̋͆ͅ<̬̠ͩ͋ ̮̩͙̊ͤ̒ ͦͣ͗̉/ ̞͈̣̤̰͙̟ͩ͒̓͒ͭ̔̚_͗͒͐_̳̘͑̎ ͙̮̤̜̱͙̐̊̐ͨ̋͆\_͍̖̮̜ͩ̽͗̃/ ̙̙̐ͯ/̯̳̠̬̻̯͖_͔̭̫͛͆̋/̘̌ ͇͇̫ ͤ͑̚> ͈̞̼̫̩ ̗͍̞̣̼͔͒͊̒̐̓ͮ<͖̠̪̥͔_̗̪͎̆̆͆> ̳̱̺̟ͨ̄ͣ̚)͉̘̯̋ͧ̈ ͐̌ͮ͗/̮̙͇̾ͪ͐_̣̖͕ͦ̔̀/̱̬̦̻ ͎̟̞̫͔ͦ̒͛̉ͣ|͔̹̲̬͖̬̰̀̏ͣ͐ͫͨ̓ ̬ͥ
- |_̗̰̇̄__̭ͅ|͈ ̼̣ /̳͙̓̊\̣͔̗̱̳_̤͕̻̣͎͓̀̾̆̉ͤ̚_̌_͙̺̗̅̋̿ ̎ͫ̃ ͔̜ͨ̈́>̟̲̫̣͎̝ͯ̀ͭ̾͂͊_̲̱̳_̯̬̙͍ͫ̾̍̎/̖ͭ͑ͅ\͕̱͈̣̟͎̞ͤ̈͐́͌̆̿_͕̩̫̓̔̎ \̤͙͚͇̙͆ͧ̆ͫ̆(͉͖ͭ̒_̤̹̖̖̞̖__͎̹̖̻͋͒ͦ̆_̝̰̖͔͆͛ͦ̀ ̥̻̐̽ ̪̣͙̖/\ͭ͛͂̽̂̋̊_̮͕̥̤̤̈́̽ͫ̓͊_͈̭͔̞͚̔ͥ̀͒̚_͎̜ ̟̭͔̣͋́̈́̿ ̹̰̺͍̙͈̩̔̔̀ͦ͑͛̽/͍̪̲̰̻͚ͅ \͍̺͎̭̞͓̹̒ͩ̔͂̄́̐_̮̻̳_̼̺̄͑_̱̮͍́͌̓_̗̗ͅ/̌̌̇͆\_͉͚͎̺͙̅ͦͤͧ͗_̆ͨ__̼̹̪̱̳̳͔̉̆ͨͦͯ̒͊ |͍̺ͤ̅ ̌ͨ̇
- ̲̺̘̖ͪ̊͐̄ ͔̇ ̭̞͕͓̭̣͎̌̓̿̇̃̅̚ ̮͙̲͓͖̲ͣ̋̏̂͗̒ \̙͚̳̗̝̭́̆͐͗̅ͣ̽ͅ/ͨͣ̅̓̑  ̜͕͈̺̩̺̓ͮ̈́̂ͫ͆ ̤̼̰̖̪̠ ̘̥̩̰̣̗̮͑͒ͩ͗̃͌ͥ ̣͖̐͗\̹̬̖̹̪͕̍̏̈́͊̈ͥ̚ͅ/̝͓͙̜̜͉̿ͭ̉ͩ̽̔ͪͅ ͣ͒̇̽ ̩̳͙̥ͯͧ͗ͪ  ̹̤̗̝͇̄̅͑̿̃  \̰͉ͬ̽/̩̩̻̮ͭ̀̍̒ ͚̼͓̟͍̳ ̭̞  ̞̝̞͉̠̰̾͑̓̎ͦ̂ ̮͇͈͎̫̦̖͌̑͗ͣ̉ͬ̆\//̮̥̤̱̥͚̼̍͗̍̋͑͒ͨ_̺̰̳̲̥̼̀̇͛ͮ̒̑_̼̥̫̼͈ͨ̊̍̀͆̓ͅ__̿ͭ̔_̝/  ̼̗ ͙͓̖͉̯̬̯͋̾͌̍̍͑͐ ͕̺̺̖̖ͬͤ̓̄̀ ̱̻̝̮̩̩ͅ ̭̟̒̎ ̬́ ̪̩̮͓͖̬̣͂̋̐̑̐̽̒ ̖ ̲͉̗̪̗̐ͨͫ̿̇ ̜͔̘̜̫͓̝ ̱̦͓̥͖̼ͧͫ̋̂̓ͫ ̲͕̟͍̱̳ͨͥ̍͌͗ͨ\/ ͍͎̰͙ͩ̓̊͑
-
- b͔͐it̻͔̖̹̭͚͒̓͒̾ͤͩc̘̝͚hut͉͍̮͉̲̃̑̆̑̒e͈̥̠ͅ.̬͖͈͙͎̝̀̇̆ͣ̍̓có̓̏̓ͫm͙͈͚̟̫̝̗ͦ͛̾ͤͤ̅̋/̳̀c͉͎͕̓̂̇ha̞̲̼͕͍͔̫̓̐͋͌̍ͫ͗n͕̦̯ͦ̂ͧne̹͙̙̟̼̼ͯͣͪ̈́́̿l͗ͣ̓̓ͧ͆/͙̬͚̯̍ͩ͌̒h̬̟̼̥e̥̹x̖̖̜̎͂͋a̹̟̟̝̞̰̳̎ͩ͋ͫ̑ͫ̈́g͕̞̻͈ͩ̍ͤͦo͚̮̰̟͓̬̱ͫͦ̾̆ͫ͛̑d͇̐
-sͬ͌ou͈͕͉n͔̣̗͉ͨ͛ͫ̽dc͍̞̰̮l̻̙͇̼͔̦o̪̮u͙̤̹d̟̙͈̗̫̮̥͌̐͐ͬ̈́͑̇.̘̓c̪̹̞͙̯̮̈̌͒͋̓̓om͋̑̉̚/̇̏ͬ̑̈̈͐v̼ẙ̞̦̳̩̥ͤ͌̅͒b̯̟͚̰̎̃̃ͣe͈͔͓ͩͨͦͪͅm̲̯̤̥a̟̫͖̾̂́s̥̞̲͚̬͚̎ͣ̀̎̋̚t̮̺̹ͩ̓̽e̺͓ͣ͆r͐̒̑̿̂̍̚z̏̑̉ͥ̔
-
-tͫ̿w̪͓͓̥ͥ͑̌̾i͈̯̲̦̠͕̿́̇ͬ̀͂t͎͓̟̥̝͍t͉̭̯̓͐̃e͉͈̖̰͇̠̓̂̓̈́̃̏r ̹͇̟̦̜̉ͪͭ̅̾@̳̘̙̗̈ͪ̾̒v̈̊̈́y̠̦̿͑bͪͧ͐̌ͩͥể̪͖̞̤̯̼̪̇͐̔̒͂yp̩͔͈̥͓̤̭̃ͧͯ͆ͭ̈́͌an͖̼̙̤̰̰ͨ͊͒ͤ̊̓ͩͅt͍̲ê͎̪̄l̝ͤo̟̰̻̼n͍̖̍ͨe͕̫͆͛z̲̮̓̿
-m͋ͩͪ͂̃i͕̜̭̜nͮ͒ͫͧ͑ͭͨd̦͚̣̒̉̓̓ͅs̹̫̜͍̄́̈̋ ̲̰͛̍@̜̗̬͍̲̅͗͗͋ͨh͇̹̠͔͖̹̹ͧͪ͑͂ͤͨͬeͧ̿ͣ͊x̥̘͇͖̯̝͊̆̀̔ͥ̈́ag̲͇̬ͯ͐̐o͔͚̞̽̎̾d̼̝
-s͗ͪ̅͌̚t͍ěͧ̈e͐̃̈́̃ͪͬ̐m͇͈̙̏̑̑i̙͓̰̾̊̚ṭ̩̬̼̬̠̅ͨ͐ͪ̂ͣ ͖̗̅͑@ͫ̊v͍̊ỳ̆b̼̟͉̙̲̜e̬̩̰̪̮̗͗̓̍̋́͗̿ͅṁ͊a̋͌̎ͮs̘̺̲t͎̤̖e͍̜͆̽r̠͖̙̹͍̯̀͊ͬ͒ͬ͆z
-g͇̻̤͉̤̞͌̏ͨ̎̆͆a̅̀̊ͦb͔͇̱̰͙ͅ.̠͔̯a̠̜͉̦͊͑̊̿i ̳̳̞̥͈̙̽͋ͦͮ̇͊@̞͍̜͉̼̠̈́̇̐̂̄ͭh͓͓̠̙̪͌ͦ͗̓͌e̟̼̞̱̘̲ͯͦ̔̇̇ͮ̀ͅx̦̻̭̥̉̾̌ͭa͚̙͚̼͙͍g͕̣̣̣̻̀̀̆̔ͥoͥ̓̒͌͐̎̉d
-
-b̟̠̼͕̞̙̈́ͮ̒̀͆̈́a̅̑ṣ̗͇͇̱̄̇ͭ̇̊e̅͂͗̀d̥͉̳͈̻ ̟͔͋͌ö́̀̓͆̈͛ff̻̜͍̼͖̦̔̎̿ͯ͆̆ ̎͗̅th̘̤ͧ͒e̱͐͌ͅ ͈̜̼͕ͅtͨ͒͂emplͫ̆ǎt͗ͣe̗̣̮̠ ̼͈̰̬̩̙̽͐̾ͯͯ͂b͔̫͇̱͔̹̼̃̃̂̊ͥͨͣy ̜̼͓̮̯̤̝h̎n̿̍̓̊̂ā̭̞̥͔̦̭͗ͩ̈̿͛b̞ͅb̹̮ͭ̈ǎ̘s̝̒̑ͅi̩͙̤̘ͅ
-h̠͕̖̟̱t̫tͦͪ͛ͬͬ̿͑p̤̺̯͕̠̺͉̀͆̓̄̃ͦ̔s̜͈̥̖͙͒͗ͥ̆ͧ://̆g̐̑̿ͯͫ̇͌i̱̪̖̹̹̼̱͊̒͒̓̆̈́̆tͬh́̆ͥ͒ub.̣̻̭̯̟͉c͚̦̞̣͌͊ͣ̚o̖̩̦̗̬m̃̌̄̚/͈͕͛́h̹̝̥͍̰ͪ̃̒ͮͨna͎̦̻͍̰̦͇b̻̗̂͌bà̖̭ͣș̏i͓͙̤͖̘̰̣/ͅB̠̥̰͚͓̬̫ͪ̂ͦ͐͌ͩ̚ȍ̝͓͍̙̔͐͌tt̼̪̜̬̬͓om̳̜̖̜̙͆̾̒̏ͨN͓͇aṽ̪̙̰̇̌iͩ̎ͧ̄̆ͪg̬̭̠aẗͩ͋ͭͩio͔̲̯̾ͤ͆n̋̿̓ͭ͌̐Vͦiͮ̑̒͒̇͛eẁ̟̻̪̠̣̄̈̿̐P͕̜͍͕̩ag̺͈̩̹̘̹ͦ͑̓ͫ͗̀er
- ̮̱ͅ
- ͎̈́*̞̹͇ͅ/
-
-
+﻿/* A̬̤̣̹̱̜ͭ̉̋͊̑͊͑
+ based off the template by hnabbasi
 
  bitchute.com/channel/hexagod
 soundcloud.com/vybemasterz
-
-t̻͙͗̓wi͍̼̩̣͛͋ͨ͂tt͊e̫̳͍ͭͯ̐r̠̯ͦ̋ @vybeypantelonez
-mi̘̠̦͔͓͒̓̊͑̂n̈́̔͋ͨ̔ͫ̓d͖̤͆ͨs̙͉̰̼ͣ̐̅̎ ̩͔̤͛͆̓@̦̬̪̰h͇̦̗͚ͅe̞̲͕̳̘̰̿̎ͦ̈́̊ͭ̆ͅx̦̼͓̳̰͍ȁ͍̣̙͓̝͂͋͗́g̫̫̦͉̠̃̍̃̆ͫó͖̭͔̦͉̬̇̽̍ͤͬd̎̄ͦ͗
-s̪͌t̖͑e̯̻͐ͧe̱̅m̙̼̩̤͎̬̞i͓̦͔t͖̺̙̗͍̞ ̪͎͕̲̱ͨ̎͗̒̚@vybemasterz
-g̪ͧab.̖͔͍͖̟ͤ͒͗͆̽ai̹͇̭͙̲̘ͨ͒̅ͥ̂̀ @̜̙͖͕͙̓ͯͪ̌ͩh̏ͭ̿̾e̫̼͓̠̜̭x͚̼̭̩̔͑̅ͦạ͉͓̥͋ͭ̅̒g̹̑o̗͑͌ͅd̠͙͕̤̩ͩ̾͌̽̄
-
-b̏͒a̺̲̺s̲ḛͩd ̲͓̘͇̆̊ͨ̂ȍ̭̙̣̝̈́ͣ̅f̫̩̀̚f͔̹̯̞͓ͮ͋̔̆̃ͮͅ ̥̟ͥ̿t͍̰̗̠ͪ̍̿̓h̘͔͎̲ͅe͎ ̌̄ẗ̩͉̣̬̳̜́͆ͪͣ̄̂e͕̝̭̗̘̘̺̎͗̌ͬ̈́ͤ̒m̬͚ͦ͊ṗ̞̪͍̝̙̞̩͐̃͗̉̅̋l̼̤̲͐̓ͭåͤ̿̐̅͗t͍̠͇e̓ͥ͑ͨ͌͆ ̪̮͇̻̫ͅ hnabbasi
-https://github.com/hnabbasi/BottomNavigationViewPager
- ̮̼̤̯͐̅̆̒
- *̙͓̠̲̼͆ͣ̔̒̂/
 
 */
 using Android.App;
@@ -301,7 +265,7 @@ namespace BottomNavigationViewPager
                         _fm1.WebViewGoBack();
                         break;
                     case 1:
-                        _fm2.WebViewGoBack();
+                        _fm2.SubsTabGoBack();
                         break;
                     case 2:
                         _fm3.WebViewGoBack();
@@ -454,16 +418,12 @@ namespace BottomNavigationViewPager
         /// forwards the settings to fragments
         /// </summary>
         /// <param name="oa"></param>
-        public void OnSettingsChanged(List<object> oa)
+        public void OnSettingsChanged()
         {
-            if (AppSettings._fanMode)
-            {
-            }
-            _fm1.OnSettingsChanged(oa);
-            _fm2.OnSettingsChanged(oa);
-            _fm3.OnSettingsChanged(oa);
-            _fm4.OnSettingsChanged(oa);
-            _fm5.OnSettingsChanged(oa);
+            _fm1.OnSettingsChanged();
+            _fm3.OnSettingsChanged();
+            _fm4.OnSettingsChanged();
+            _fm5.OnSettingsChanged();
         }
 
 
@@ -718,7 +678,6 @@ namespace BottomNavigationViewPager
                         _fm1.LoadCustomUrl(url);
                         break;
                     case 1:
-                        _fm2.LoadCustomUrl(url);
                         break;
                     case 2:
                         _fm3.LoadCustomUrl(url);
@@ -759,14 +718,7 @@ namespace BottomNavigationViewPager
                         TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
-                        if (SubscriptionFragment._wv.Url != "https://www.bitchute.com/")
-                        {
-                            _fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                            _fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                            _fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            _fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        SubscriptionFragment.ExpandVideoCards(false);
+
                         break;
                     case 2:
                         if (TheFragment3._wv.Url != "https://www.bitchute.com/")
@@ -804,9 +756,7 @@ namespace BottomNavigationViewPager
                         _fm1.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
-                        _fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm2.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        _fm2.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
+
                         break;
                     case 2:
                         _fm3.LoadCustomUrl(JavascriptCommands._jsShowTitle);
@@ -886,8 +836,7 @@ namespace BottomNavigationViewPager
             return _main.GetDrawable(Resource.Drawable.tab_home);
         }
 
-
-        public class PhotoAlbumAdapter : RecyclerView.Adapter
+        public class ImageRecyclerViewAdapter : RecyclerView.Adapter
         {
             public event EventHandler<int> ItemClick;
 
@@ -897,7 +846,7 @@ namespace BottomNavigationViewPager
             public static View itemView2;
             public static View itemView3;
 
-            public PhotoAlbumAdapter(BitChute.VideoCardSet photoAlbum)
+            public ImageRecyclerViewAdapter(BitChute.VideoCardSet photoAlbum)
             {
                 if (photoAlbum == null)
                 {
@@ -928,8 +877,7 @@ namespace BottomNavigationViewPager
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
                 BitChute.PhotoViewHolder vh = holder as BitChute.PhotoViewHolder;
-
-
+                
                 // Set the ImageView and TextView in this ViewHolder's CardView 
                 // from this position in the photo album:
                 vh.Image.SetImageResource(_photoAlbum[position].PhotoID);

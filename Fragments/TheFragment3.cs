@@ -88,7 +88,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public void OnSettingsChanged(List<object> settings)
+        public void OnSettingsChanged()
         {
             if (AppSettings._zoomControl)
             {

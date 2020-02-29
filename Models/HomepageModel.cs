@@ -9,11 +9,11 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using MvvmCross.ViewModels;
+
 
 namespace BottomNavigationViewPager.Models
 {
-    class HomepageModel : MvxViewModel
+    class HomepageModel 
     {
     }
 }

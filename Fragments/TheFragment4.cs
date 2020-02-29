@@ -186,7 +186,7 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public void OnSettingsChanged(List<object> settings)
+        public void OnSettingsChanged()
         {
             if (AppSettings._fanMode && AppSettings._tab4OverridePreference == "Feed")
             {
