@@ -23,7 +23,6 @@
         android:layout_gravity="start"
         android:layout_alignParentBottom="true"
 		
-		app:labelVisibilityMode="labeled"
 		app:itemTextColor="@drawable/bottom_navigation_selector"
 		app:itemIconTint="@drawable/bottom_navigation_selector"
         android:background="@android:color/black"

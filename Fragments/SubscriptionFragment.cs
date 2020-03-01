@@ -18,6 +18,9 @@ using static StartServices.Servicesclass.ExtStickyService;
 using BitChute.Models;
 using static BitChute.Models.VideoModel;
 
+using static BitChute.Models.SubscriptionModel;
+using static BitChute.Models.CreatorModel;
+
 namespace BitChute.Fragments
 {
     public class SubscriptionFragment : Fragment
@@ -29,18 +32,17 @@ namespace BitChute.Fragments
         public static Android.Support.V7.Widget.RecyclerView.LayoutManager _layoutManager;
 
         //video cards for the root view
-        public static VideoCardSet _creatorCardSetRoot;
+        public static SubscriptionCardSet _creatorCardSetRoot;
         //video cards for the channel view
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
-
-        public static VideoCard _videoCard = new VideoCard();
-        public static ImageRecyclerViewAdapter _rootAdapter;
+        
+        public static SubscriptionRecyclerViewAdapter _rootAdapter;
 
         public static View _videoDetailView;
         public static LinearLayout _subscriptionRecyclerView;
-        public static LinearLayout _tab2ParentLayout;
+        public static LinearLayout _tab1ParentLayout;
 
         public static ViewGroup _viewGroup;
         public static LayoutInflater _inflater;
@@ -58,8 +60,7 @@ namespace BitChute.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            _creatorCardSetRoot = new VideoCardSet();
-            //GetSubscriptionList();
+            _creatorCardSetRoot = new SubscriptionCardSet();
             // Set our view from the "main" layout resource  
 
             if (Arguments != null)
@@ -74,17 +75,16 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
+            var _view = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
             _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            _videoDetailView = inflater.Inflate(Resource.Layout.VideoDetail, container, false);
+            _videoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
             _layoutManager = new LinearLayoutManager(container.Context);
             _recycleView.SetLayoutManager(_layoutManager);
-            _rootAdapter = new ImageRecyclerViewAdapter(_creatorCardSetRoot);
+            _rootAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
             _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             _recycleView.SetAdapter(_rootAdapter);
-            _tab2ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab2ParentFragmentLayout);
-            _videoDetailView = LayoutInflater.Inflate(Resource.Layout.VideoDetail, container, false);
+            _tab1ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             
             _viewGroup = container;
             _inflater = inflater;
@@ -98,7 +98,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            NavigateToNewPageFromVideoCard(_videoDetailView, _creatorCardSetRoot[e]);
+            NavigateToNewPageFromVideoCard(_videoDetailView, null, _creatorCardSetRoot[e]);
         }
         
         /// <summary>
@@ -107,10 +107,16 @@ namespace BitChute.Fragments
         /// <param name="view">the view you want to swap</param>
         /// <param name="type"></param>
         /// <param name=""></param>
-        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard)
+        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, CreatorCard creatorCard)
         {
-            VideoDetailLoader.LoadVideoFromVideoCard(view, videoCard);
-            SwapView(view);
+            if (videoCard != null)
+            {
+                VideoDetailLoader.LoadVideoFromVideoCard(view, videoCard);
+            }
+            else
+            {
+                VideoDetailLoader.LoadVideoFromCreatorCard(view, creatorCard);
+            }
         }
 
         /// <summary>
@@ -119,8 +125,8 @@ namespace BitChute.Fragments
         /// <param name="view"></param>
         public static void SwapView(View view)
         {
-            _tab2ParentLayout.RemoveAllViews();
-            _tab2ParentLayout.AddView(view);
+            _tab1ParentLayout.RemoveAllViews();
+            _tab1ParentLayout.AddView(view);
         }
 
         /// <summary>

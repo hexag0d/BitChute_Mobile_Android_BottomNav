@@ -88,7 +88,6 @@
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\VideoDetailLoader.cs" />
-    <Compile Include="Classes\VideoCard.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\SubscriptionFragment.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
@@ -170,13 +169,13 @@
     <AndroidResource Include="Resources\menu\navigation_main.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout4.axml">
+    <AndroidResource Include="Resources\layout\Tab3FragmentLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout5.axml">
+    <AndroidResource Include="Resources\layout\Tab4FragmentLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -188,13 +187,13 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout1.axml">
+    <AndroidResource Include="Resources\layout\Tab0FragmentLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout3.axml">
+    <AndroidResource Include="Resources\layout\Tab2FragmentLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -219,7 +218,7 @@
     <AndroidResource Include="Resources\drawable\tab_home.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout2.axml">
+    <AndroidResource Include="Resources\layout\Tab1FragmentLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -386,7 +385,7 @@
     <AndroidAsset Include="Resources\Raw\sample.mp4" />
     <AndroidAsset Include="Assets\sample.mp4" />
     <Content Include="DeveloperItems\APIMapping.txt" />
-    <AndroidResource Include="Resources\layout\VideoDetail.axml">
+    <AndroidResource Include="Resources\layout\Tab1VideoDetail.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\FeedCardView.axml">
@@ -397,10 +396,15 @@
     <AndroidResource Include="Resources\drawable\_sampleVideoThumb2.png" />
     <AndroidResource Include="Resources\drawable\_sampleVideoThumb3.png" />
     <AndroidResource Include="Resources\drawable\_sampleVideoThumb4.png" />
-    <AndroidResource Include="Resources\layout\FeedVideoDetail.axml">
+    <AndroidResource Include="Resources\layout\Tab2VideoDetail.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\_testThumb360_0.jpg" />
+    <AndroidResource Include="Resources\drawable\_testThumb360_1.jpg" />
+    <AndroidResource Include="Resources\drawable\_testThumb360_2.jpg" />
+    <AndroidResource Include="Resources\drawable\_testThumb360_3.jpg" />
+    <AndroidResource Include="Resources\drawable\_testThumb360_4.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

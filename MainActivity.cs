@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.TheFragment5;
 using static BitChute.Models.VideoModel;
+using static BitChute.Models.SubscriptionModel;
 
 namespace BitChute
 {
@@ -110,7 +111,8 @@ namespace BitChute
                 //if it's not null then set the fragment1 url to our intent url string
                 try
                 {
-                    var _tempUrl = _sentIntent.Extras.GetString("URL");
+                    //var _tempUrl = _sentIntent.Extras.GetString("URL");
+                    var _tempUrl = "";
                     if (_tempUrl != "" && _tempUrl != null)
                         TheFragment1._url = _tempUrl;
                 }
@@ -359,11 +361,12 @@ namespace BitChute
                     {
                         ((Android.Widget.TextView)label).SetPadding(0, 0, 0, 0);
                     }
-                        //api_8
-                        //item.SetShiftingMode(false);
+                    //api_8
+                    //item.SetShiftingMode(false);
 
-                // set once again checked value, so view will be updated
-                item.SetChecked(item.ItemData.IsChecked);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(item.ItemData.IsChecked);
+
 
                     if (i == 2)
                     {
@@ -708,24 +711,12 @@ namespace BitChute
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        if (TheFragment1._wv.Url != "https://www.bitchute.com/")
-                        {
-                            _fm1.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                            _fm1.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                            _fm1.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            _fm1.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        TheFragment1.ExpandVideoCards(false);
                         break;
                     case 1:
                         break;
                     case 2:
                         break;
                     case 3:
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         TheFragment4.ExpandVideoCards(false);
                         break;
                     case 4:
@@ -827,23 +818,19 @@ namespace BitChute
             return _main.GetDrawable(Resource.Drawable.tab_home);
         }
 
-        public class ImageRecyclerViewAdapter : RecyclerView.Adapter
+        public class SubscriptionRecyclerViewAdapter : RecyclerView.Adapter
         {
             public event EventHandler<int> ItemClick;
-
-            public static VideoCardSet _videoCardSet;
-
+            public static SubscriptionCardSet _subscriptionCardSet;
             public static View itemView;
-            public static View itemView2;
-            public static View itemView3;
 
-            public ImageRecyclerViewAdapter(VideoCardSet videoCardSet)
+            public SubscriptionRecyclerViewAdapter(SubscriptionCardSet videoCardSet)
             {
                 if (videoCardSet == null)
                 {
-                    videoCardSet = new VideoCardSet();
+                    videoCardSet = new SubscriptionCardSet();
                 }
-                _videoCardSet = videoCardSet;
+                _subscriptionCardSet = videoCardSet;
             }
 
             // Create a new photo CardView (invoked by the layout manager): 
@@ -859,7 +846,7 @@ namespace BitChute
 
                 // Create a ViewHolder to find and hold these view references, and 
                 // register OnClick with the view holder:
-                PhotoViewHolder vh = new PhotoViewHolder(itemView, OnClick);
+                SubscriptionViewHolder vh = new SubscriptionViewHolder(itemView, OnClick);
 
                 return vh;
             }
@@ -867,16 +854,16 @@ namespace BitChute
             // Fill in the contents of the photo card (invoked by the layout manager):
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                PhotoViewHolder vh = holder as PhotoViewHolder;
+                SubscriptionViewHolder vh = holder as SubscriptionViewHolder;
                 
                 // Set the ImageView and TextView in this ViewHolder's CardView 
                 // from this position in the photo album:
-                vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
+                vh.Image.SetImageResource(_subscriptionCardSet[position].PhotoID);
 
                 try
                 {
-                    vh.Caption.Text = _videoCardSet[position].Caption;
-                    vh.Caption2.Text = _videoCardSet[position].Caption2;
+                    vh.Caption.Text = _subscriptionCardSet[position].Caption;
+                    vh.Caption2.Text = _subscriptionCardSet[position].Caption2;
                 }
                 catch (Exception ex)
                 {
@@ -889,8 +876,8 @@ namespace BitChute
             {
                 get
                 {
-                    if (_videoCardSet != null)
-                        return _videoCardSet.NumPhotos;
+                    if (_subscriptionCardSet != null)
+                        return _subscriptionCardSet.NumPhotos;
                     else
                         return 36;
                 }
@@ -900,15 +887,88 @@ namespace BitChute
             void OnClick(int position)
             {
                 var pos = position;
-
                 if (ItemClick != null)
                     ItemClick(this, position);
             }
         }
 
-        public static Drawable UniversalGetDrawable(string name)
+
+        public class FeedRecyclerViewAdapter : RecyclerView.Adapter
         {
-            Drawable drawable = _main.GetDrawable(Resource.Drawable._i50);
+            public event EventHandler<int> ItemClick;
+            public static VideoCardSet _videoCardSet;
+            public static View itemView;
+
+            public static FeedViewHolder vh;
+            Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
+            
+            public FeedRecyclerViewAdapter(VideoCardSet videoCardSet)
+            {
+                if (videoCardSet == null)
+                {
+                    videoCardSet = new VideoCardSet();
+                }
+                _videoCardSet = videoCardSet;
+            }
+
+            // Create a new photo CardView (invoked by the layout manager): 
+            public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
+            {
+ 
+                    // Inflate the CardView for the photo:
+                View itemView = LayoutInflater.From(parent.Context).
+                                Inflate(Resource.Layout.FeedCardView, parent, false);
+                
+                CardView cv = itemView.FindViewById<CardView>(Resource.Id.feedCardView);
+
+                cv.SetBackgroundColor(_darkGrey);
+
+
+                // Create a ViewHolder to find and hold these view references, and 
+                // register OnClick with the view holder:
+                vh = new FeedViewHolder(itemView, OnClick);
+
+                return vh;
+            }
+
+            // Fill in the contents of the photo card (invoked by the layout manager):
+            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            {
+                vh = holder as FeedViewHolder;
+
+                    // Set the ImageView and TextView in this ViewHolder's CardView 
+                    // from this position in the photo album:
+                     vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
+
+                    vh.Caption.Text = _videoCardSet[position].Caption;
+                    vh.Caption2.Text = _videoCardSet[position].Caption2;
+
+            }
+
+            // Return the number of photos available in the photo album:
+            public override int ItemCount
+            {
+                get
+                {
+                    if (_videoCardSet != null)
+                        return _videoCardSet.NumPhotos;
+                    else
+                        return 6;
+                }
+            }
+
+            // Raise an event when the item-click takes place:
+            void OnClick(int position)
+            {
+                var pos = position;
+                if (ItemClick != null)
+                    ItemClick(this, position);
+            }
+        }
+
+        public static Drawable UniversalGetDrawable(int id)
+        {
+            Drawable drawable = _main.GetDrawable(id);
             return drawable;
         }
 

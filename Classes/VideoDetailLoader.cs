@@ -12,7 +12,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using BitChute.Fragments;
 using StartServices.Servicesclass;
+using static BitChute.Models.CreatorModel;
 using static BitChute.Models.VideoModel;
 
 namespace BitChute.Classes
@@ -102,6 +104,40 @@ namespace BitChute.Classes
                 }
             }
         }
+
+        public static void LoadVideoFromCreatorCard(View v, CreatorCard cc)
+        {
+            var videoView = v.FindViewById<VideoView>(Resource.Id.videoView);
+            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
+            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
+
+            videoTitle.Text = cc.Caption;
+            videoCreatorName.Text = cc.Creator.Name;
+
+
+                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
+                //imageView.SetImageDrawable(cc.Creator.CreatorThumbnailDrawable);
+            
+
+            switch (MainActivity._viewPager.CurrentItem)
+            {
+                case 0:
+                    break;
+                case 1:
+                    SubscriptionFragment.SwapView(v);
+                    break;
+                case 2:
+                    FeedFragment.SwapView(v);
+                    break;
+                case 3:
+                    break;
+
+                case 4:
+                    break;
+            }
+        }
+
 
         public void Dispose()
         {

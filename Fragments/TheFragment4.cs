@@ -69,7 +69,7 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout4, container, false);
+            var _view = inflater.Inflate(Resource.Layout.Tab4FragmentLayout, container, false);
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView4);
 
             if (AppSettings._fanMode)
@@ -79,11 +79,8 @@ namespace BitChute.Fragments
             }
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new ExtWebViewClient());
-                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                _wv.Settings.DisplayZoomControls = false;
-                
-                _wv.Settings.JavaScriptEnabled = true;
+
+
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
@@ -105,18 +102,15 @@ namespace BitChute.Fragments
         {
             if (landscape)
             {
-                _wv.SetOnTouchListener(new ExtTouchListener());
             }
             else
             {
-                _wv.SetOnTouchListener(null);
             }
         }
 
         public static async void LoadUrlWithDelay(string url, int delay)
         {
-            await Task.Delay(delay);
-            _wv.LoadUrl(url);
+
         }
         
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener

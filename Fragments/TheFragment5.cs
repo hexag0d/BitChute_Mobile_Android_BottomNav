@@ -118,7 +118,7 @@ namespace BitChute.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _fm5 = this;
-            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
+            _view = inflater.Inflate(Resource.Layout.Tab4FragmentLayout, container, false);
             _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
 
             
@@ -131,10 +131,6 @@ namespace BitChute.Fragments
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
-                _wv.SetWebChromeClient(new ExtendedChromeClient(_main));
-                _wv.Settings.JavaScriptEnabled = true;
-                _wv.Settings.DisplayZoomControls = false;
-                _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
                 //_wv.Settings.AllowFileAccess = true;
 
@@ -216,8 +212,7 @@ namespace BitChute.Fragments
 
         public static async void LoadUrlWithDelay(string url, int delay)
         {
-            await Task.Delay(delay);
-            _wv.LoadUrl(url);
+
         }
 
         private static bool _systemCheckingRb = false;

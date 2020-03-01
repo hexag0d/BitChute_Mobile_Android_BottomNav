@@ -31,13 +31,13 @@ namespace BitChute.Fragments
         public static Android.Support.V7.Widget.RecyclerView.LayoutManager _layoutManager;
 
         //video cards for the root view
-        public static VideoCardSet _creatorCardSetRoot;
+        public static VideoCardSet _feedVideoCardSetRoot;
         //video cards for the channel view
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
         
-        public static ImageRecyclerViewAdapter _rootAdapter;
+        public static FeedRecyclerViewAdapter _rootAdapter;
 
         public static View _videoDetailView;
         public static LinearLayout _subscriptionRecyclerView;
@@ -58,10 +58,16 @@ namespace BitChute.Fragments
             return fragment;
         }
 
+        public static void GetFeedList()
+        {
+
+        }
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
+            _feedVideoCardSetRoot = new VideoCardSet();
             if (Arguments != null)
             {
                 if (Arguments.ContainsKey("title"))
@@ -74,18 +80,17 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
-            
+            var _view = inflater.Inflate(Resource.Layout.Tab2FragmentLayout, container, false);
             _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
-            _videoDetailView = inflater.Inflate(Resource.Layout.FeedVideoDetail, container, false);
+            _recycleView.NestedScrollingEnabled = false;
             _layoutManager = new LinearLayoutManager(container.Context);
             _recycleView.SetLayoutManager(_layoutManager);
-            _rootAdapter = new ImageRecyclerViewAdapter(_creatorCardSetRoot);
+            _rootAdapter = new FeedRecyclerViewAdapter(_feedVideoCardSetRoot);
             _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
             // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             _recycleView.SetAdapter(_rootAdapter);
             _tab2ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab2ParentFragmentLayout);
-            _videoDetailView = LayoutInflater.Inflate(Resource.Layout.VideoDetail, container, false);
+            _videoDetailView = LayoutInflater.Inflate(Resource.Layout.Tab2VideoDetail, container, false);
 
             _viewGroup = container;
             _inflater = inflater;
@@ -108,7 +113,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            NavigateToNewPageFromVideoCard(_videoDetailView, _creatorCardSetRoot[e]);
+            NavigateToNewPageFromVideoCard(_videoDetailView, _feedVideoCardSetRoot[e]);
         }
 
         /// <summary>

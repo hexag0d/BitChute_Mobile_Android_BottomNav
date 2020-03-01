@@ -56,7 +56,7 @@ namespace BitChute.Models
             VideoDetail vi = new VideoDetail();
             vi.CreatorName = "Creator Name Here";
             vi.VideoTitle = "Video Title";
-            vi.ThumbnailDrawable = MainActivity.UniversalGetDrawable("nothing");
+            //vi.ThumbnailDrawable = MainActivity.UniversalGetDrawable();
 
             return vi;
         }
@@ -109,12 +109,12 @@ namespace BitChute.Models
         {
             public List<VideoCard> GetVideoCardSet(List<VideoDetail> videoInfoSet)
             {
-                return mBuiltInPhotos;
+                return RealThumbSample;
             }
             // Built-in photo collection - this could be replaced with
             // a photo database:
 
-            static List<VideoCard> mBuiltInPhotos = new List<VideoCard>{
+            static List<VideoCard> BigList = new List<VideoCard>{
 new VideoCard (Resource.Drawable._i50, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago50", "postedvideoNAMEdBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago50","videoID", GetSampleCreator()),
 new VideoCard (Resource.Drawable._i51, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new VideoCard (Resource.Drawable._i52, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago52", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
@@ -166,17 +166,57 @@ new VideoCard (Resource.Drawable._i97, "postedvideotitledBITCHUTEGETSTHEAPIxxxxx
 new VideoCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago98", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
             };
 
+            static List<VideoCard> mBuiltInPhotos = new List<VideoCard>{
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb3, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb4, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 6", "Creator 6","videoID6", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb3, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb4, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 6", "Creator 6","videoID6", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb3, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb4, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._sampleVideoThumb2, "Video 6", "Creator 6","videoID6", GetSampleCreator()),
+  };
 
-            private List<VideoCard> mPhotos;
-
-            Random mRandom;
-
+            static List<VideoCard> RealThumbSample = new List<VideoCard>{
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", GetSampleCreator()),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", GetSampleCreator()),
+  };
+            
+            private List<VideoCard> mPhotos = new List<VideoCard>();
+            
             public VideoCardSet()
             {
-                mPhotos = mBuiltInPhotos;
-                mRandom = new Random();
+                mPhotos = RealThumbSample;
             }
-
+            
             public int NumPhotos
             {
                 get { return mPhotos.Count; }
@@ -188,14 +228,12 @@ new VideoCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxxxx
                 get { return mPhotos[i]; }
             }
         }
-        
-        //----------------------------------------------------------------------
-        // VIEW HOLDER
+
 
         // Implement the ViewHolder pattern: each ViewHolder holds references
         // to the UI components (ImageView and TextView) within the CardView 
         // that is displayed in a row of the RecyclerView:
-        public class PhotoViewHolder : RecyclerView.ViewHolder
+        public class FeedViewHolder : RecyclerView.ViewHolder
         {
             public ImageView Image { get; private set; }
             public TextView Caption { get; private set; }
@@ -207,12 +245,12 @@ new VideoCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxxxx
             }
 
             // Get references to the views defined in the CardView layout.
-            public PhotoViewHolder(View itemView, Action<int> listener) : base(itemView)
+            public FeedViewHolder(View itemView, Action<int> listener) : base(itemView)
             {
                 // Locate and cache view references:
-                Image = itemView.FindViewById<ImageView>(Resource.Id.imageView);
-                Caption = itemView.FindViewById<TextView>(Resource.Id.titleCaptionTextView);
-                Caption2 = itemView.FindViewById<TextView>(Resource.Id.descriptionCaptionTextView);
+                Image = itemView.FindViewById<ImageView>(Resource.Id.feedImageView);
+                Caption = itemView.FindViewById<TextView>(Resource.Id.feedTitleCaptionTextView);
+                Caption2 = itemView.FindViewById<TextView>(Resource.Id.feedNameCaptionTextView);
 
                 // Detect user clicks on the item view and report which item
                 // was clicked (by layout position) to the listener:

@@ -40,10 +40,6 @@ namespace BitChute.Classes
             private void SendStopVideoCommand()
             {
                 try {
-                    TheFragment1._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-
-                    TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment5._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                 }
                 catch ( Exception ex)
                 {
