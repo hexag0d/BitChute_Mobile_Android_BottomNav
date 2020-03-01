@@ -21,7 +21,7 @@ using static BitChute.Models.VideoModel;
 using static BitChute.Models.SubscriptionModel;
 using static BitChute.Models.CreatorModel;
 
-namespace BitChute.Fragments
+namespace BitChute.Fragments 
 {
     public class SubscriptionFragment : Fragment
     {
@@ -49,6 +49,7 @@ namespace BitChute.Fragments
         public static LinearLayoutManager _layoutMan;
 
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
+        
 
         public static SubscriptionFragment NewInstance(string title, string icon) {
             var fragment = new SubscriptionFragment();
@@ -111,14 +112,9 @@ namespace BitChute.Fragments
         /// <param name=""></param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, CreatorCard creatorCard)
         {
-            if (videoCard != null)
-            {
-                _vidLoader.LoadVideoFromVideoCard(view, videoCard);
-            }
-            else
-            {
-                _vidLoader.LoadVideoFromCreatorCard(view, creatorCard);
-            }
+
+                _vidLoader.LoadVideoFromCard(view, creatorCard, videoCard);
+
         }
 
         /// <summary>

@@ -52,6 +52,11 @@ namespace BitChute.Models
 
             }
 
+            public CreatorCard(Creator creator)
+            {
+
+            } 
+
             public CreatorCard(int id, string caption, string caption2, string link, Creator creator)
             {
                 PhotoID = id;

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+	android:id="@+id/videoDetailView1"
+	android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView
+			android:text="Title"
+			android:layout_width="match_parent"
+			android:textSize="90px"
+			android:textColor="#ffffff"
+			android:layout_height="90px"
+			android:id="@+id/videoDetailTitleTextView" />
+			<android.support.constraint.ConstraintLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/videoLayout" >
+				<VideoView
+				android:id="@+id/videoView"
+				android:layout_width="fill_parent"
+				android:layout_height="400px"
+				android:visibility="visible"/>
+			
+			</android.support.constraint.ConstraintLayout>
+			<LinearLayout
+				android:orientation="vertical"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/linearLayout1">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout2">
+					<ImageView
+					android:src="@android:drawable/ic_menu_gallery"
+					android:layout_width="100dp"
+					android:layout_height="100dp"
+					android:id="@+id/creatorAvatarImageView" />
+						<LinearLayout
+							android:orientation="vertical"
+							android:minWidth="25px"
+							android:minHeight="25px"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:id="@+id/linearLayout3" >
+							<LinearLayout
+								android:orientation="horizontal"
+								android:minWidth="25px"
+								android:minHeight="25px"
+								android:layout_width="match_parent"
+								android:layout_height="wrap_content"
+								android:id="@+id/linearLayout4">
+								<TextView
+								android:text="[creator name]"
+								android:textAppearance="?android:attr/textAppearanceLarge"
+								android:layout_width="wrap_content"
+								android:textColor="#ffffff"
+								android:layout_height="match_parent"
+								android:id="@+id/videoDetailCreatorName" />
+								<Button
+								android:text="Subscribe"
+								android:backgroundTint="@android:color/holo_red_dark"
+								android:layout_width="wrap_content"
+								android:textColor="#ffffff"
+								android:layout_height="match_parent"
+								android:id="@+id/creatorSubscribeButton" />
+								<TextView
+								android:text="[subcount]"
+								android:textAppearance="?android:attr/textAppearanceMedium"
+								android:layout_width="wrap_content"
+								android:textColor="#ffffff"
+								android:layout_height="match_parent"
+								android:id="@+id/creatorSubscriberCount" />
+							</LinearLayout>
+						</LinearLayout>
+				</LinearLayout>
+			</LinearLayout>
+	</LinearLayout>
+</android.support.percent.PercentFrameLayout>

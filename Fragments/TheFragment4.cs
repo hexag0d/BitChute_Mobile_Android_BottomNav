@@ -260,29 +260,18 @@ namespace BitChute.Fragments
 
                 if (AppState._t4Is == "Feed")
                 {
-                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(JavascriptCommands._jsHideTrending);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
 
                 if (!AppSettings._tab1FeaturedOn)
                 {
-                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
 
                 if (AppState.Display._horizontal)
                 {
-                    HidePageTitle(5000);
                 }
                 
-                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 HideLinkOverflow();
                 SetReload();
-                _wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                _wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 base.OnPageFinished(view, url);
             }
         }

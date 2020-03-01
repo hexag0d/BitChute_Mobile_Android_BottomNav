@@ -87,6 +87,11 @@ namespace BitChute
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager.DefaultDisplay.GetMetrics(metrics);
+
+            AppState.Display.ScreenHeight = metrics.HeightPixels;
+            AppState.Display.ScreenWidth = metrics.WidthPixels;
 
             _assets = Resources.Assets;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
@@ -704,10 +709,14 @@ namespace BitChute
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
+            var tempHeight = AppState.Display.ScreenHeight;
+            AppState.Display.ScreenHeight = AppState.Display.ScreenWidth;
+            AppState.Display.ScreenWidth = tempHeight;
             if (newConfig.Orientation == Orientation.Landscape)
             {
+                AppState.Display._horizontal = true;
+                VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
                 _navigationView.Visibility = ViewStates.Gone;
-
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
@@ -717,46 +726,30 @@ namespace BitChute
                     case 2:
                         break;
                     case 3:
-                        TheFragment4.ExpandVideoCards(false);
                         break;
                     case 4:
-                        _fm5.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                        _fm5.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                         break;
                 }
-                AppState.Display._horizontal = true;
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
             if (newConfig.Orientation == Orientation.Portrait)
             {
+                AppState.Display._horizontal = false;
+                VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        _fm1.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm1.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        _fm1.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
-
                         break;
                     case 2:
-                        _fm3.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        _fm3.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm4.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        _fm4.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
-                        _fm5.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm5.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        _fm5.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                 }
-                AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();

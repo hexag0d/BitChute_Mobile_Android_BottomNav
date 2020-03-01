@@ -1,4 +1,6 @@
-﻿namespace BitChute.Classes
+﻿using Android.Util;
+
+namespace BitChute.Classes
 {
     class AppState
     {
@@ -9,6 +11,41 @@
             /// has been rotated horizontally
             /// </summary>
             public static bool _horizontal = false;
+
+            public static void OrientationChanged(bool horizontal)
+            {
+                _horizontal = horizontal;
+                
+            }
+
+            /// <summary>
+            /// returns the screen height in pixels
+            /// </summary>
+            public static int ScreenHeight;
+
+            /// <summary>
+            /// returns the screen width in pixels
+            /// </summary>
+            public static int ScreenWidth;
+
+            public static Android.Widget.LinearLayout.LayoutParams GetCurrentVideoContainerLayout()
+            {
+                Android.Widget.LinearLayout.LayoutParams vidParams =
+                         new Android.Widget.LinearLayout.LayoutParams(AppState.Display.ScreenWidth,
+                                 (int)(AppState.Display.ScreenWidth * (.5625)));
+
+                return vidParams;
+            }
+
+            /// <summary>
+            /// use this LinearLayout.LayoutParams to scale videos to the screen
+            /// </summary>
+            Android.Widget.LinearLayout.LayoutParams videoContainerLinearParams =
+               new Android.Widget.LinearLayout.LayoutParams(AppState.Display.ScreenWidth,
+               (int)(AppState.Display.ScreenWidth * (.5625)));
+
+
+
         }
 
         /// <summary>

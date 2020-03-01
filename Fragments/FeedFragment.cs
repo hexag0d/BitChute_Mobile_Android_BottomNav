@@ -126,7 +126,7 @@ namespace BitChute.Fragments
         /// <param name=""></param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard)
         {
-            _vidLoader.LoadVideoFromVideoCard(view, videoCard);
+            _vidLoader.LoadVideoFromCard(view, null, videoCard);
             SwapView(view);
         }
 

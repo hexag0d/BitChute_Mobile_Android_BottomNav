@@ -10,6 +10,7 @@ using Android.Graphics;
 using Android.Media;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
@@ -22,10 +23,37 @@ namespace BitChute.Classes
     /// <summary>
     /// class that loads the videos into the detail view and media player
     /// </summary>
-    public class VideoDetailLoader : Activity, ISurfaceHolderCallback
+    public class VideoDetailLoader : Activity, ISurfaceHolderCallback, MediaPlayer.IOnPreparedListener
     {
+        public static Dictionary<int, VideoView> videoViewDictionary = new Dictionary<int, VideoView>();
+        public static Dictionary<int, TextView> titleTextViewDictionary = new Dictionary<int, TextView>();
+        public static Dictionary<int, MediaController> mediaControllerDictionary = new Dictionary<int, MediaController>();
+
         public VideoDetailLoader()
         {
+
+        }
+
+        public static void OnRotation(LinearLayout.LayoutParams layoutParams)
+        {
+            foreach (var vv in videoViewDictionary)
+            {
+                vv.Value.LayoutParameters = layoutParams;
+            }
+            if (AppState.Display._horizontal)
+            {
+                foreach (var tv in titleTextViewDictionary)
+                {
+                    tv.Value.Visibility = ViewStates.Gone;
+                }
+            }
+            else
+            {
+                foreach (var tv in titleTextViewDictionary)
+                {
+                    tv.Value.Visibility = ViewStates.Visible;
+                }
+            }
         }
 
         //public IntPtr Handle => throw new NotImplementedException();
@@ -49,117 +77,83 @@ namespace BitChute.Classes
         
         public void LoadVideoFromDetail(View v, VideoDetail vi)
         {
-            var videoView = (VideoView)v.FindViewById<VideoView>(Resource.Id.videoView);
-            
-            ISurfaceHolder holder = videoView.Holder;
 
-            //holder.SetType(SurfaceType.PushBuffers);
-            holder.AddCallback(this);
-
-            var descriptor = MainActivity._assets.OpenFd("sample.mp4");
-            var mediaPlayer = ExtStickyService._player;
-            mediaPlayer.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
-            mediaPlayer.Prepare();
-            mediaPlayer.Start();
-            
-            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
-            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
-
-            videoTitle.Text = vi.VideoTitle;
-            videoCreatorName.Text = vi.CreatorName;
-
-            //if the drawable resource isn't null then set 
-            if (vi.ThumbnailDrawable != null)
-            {
-                imageView.SetImageDrawable(vi.ThumbnailDrawable);
-            }
-            else
-            {
-                if (vi.ThumbnailBitmap != null)
-                {
-                    imageView.SetImageBitmap(vi.ThumbnailBitmap);
-                }
-            }
             //var videoCreator = v.FindViewById<TextView>(Resource.Id.)
             //var videoDescription = v.FindViewById<VideoView>(Resource.Id.videoDetailDescription)
         }
 
-        public void LoadVideoFromVideoCard(View v, VideoCard vc)
+
+        public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc)
         {
-            var videoView = v.FindViewById<VideoView>(Resource.Id.videoView);
-
-            ISurfaceHolder holder = videoView.Holder;
-
-            //holder.SetType(SurfaceType.PushBuffers);
-            holder.AddCallback(this);
-
-            var descriptor = MainActivity._assets.OpenFd("sample.mp4");
-            var mediaPlayer = ExtStickyService._player;
-            mediaPlayer.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
-            mediaPlayer.Prepare();
-            mediaPlayer.Start();
-
-            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
-            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
-
-            videoTitle.Text = vc.Caption;
-            videoCreatorName.Text = vc.Creator.Name;
-
-            //if the drawable resource isn't null then set 
-            if (vc.ThumbnailDrawable != null)
+            if (!videoViewDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
             {
-                imageView.SetImageDrawable(vc.ThumbnailDrawable);
+                videoViewDictionary.Add(MainActivity._viewPager.CurrentItem, (VideoView)v.FindViewById<VideoView>(Resource.Id.videoView));
             }
-            else
+            if (!titleTextViewDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
             {
-                if (vc.ThumbnailBitmap != null)
-                {
-                    imageView.SetImageBitmap(vc.ThumbnailBitmap);
-                }
+                titleTextViewDictionary.Add(MainActivity._viewPager.CurrentItem, (TextView)v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView));
             }
-        }
-
-        public void LoadVideoFromCreatorCard(View v, CreatorCard cc)
-        {
-            var videoView = v.FindViewById<VideoView>(Resource.Id.subsVideoView);
-
-
-            ISurfaceHolder holder = videoView.Holder;
+            if (!mediaControllerDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
+            {
+                mediaControllerDictionary.Add(MainActivity._viewPager.CurrentItem, new MediaController(Application.Context));
+            }
+            ISurfaceHolder holder = videoViewDictionary[MainActivity._viewPager.CurrentItem].Holder;
 
             ////holder.SetType(SurfaceType.PushBuffers);
             holder.AddCallback(this);
 
             var descriptor = MainActivity._assets.OpenFd("sample.mp4");
+            Android.Net.Uri uri = null;
 
-            MediaController mc = new MediaController(Android.App.Application.Context);
+            if (MainActivity._viewPager.CurrentItem == 2)
+            {
+                //  854 x 480 .mp4 h264 file but I can't put it on github
+                //  put a similar file in your resources folder to test
+                string path = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
 
-            
-            mc.SetAnchorView(videoView);
-            mc.SetMediaPlayer(videoView);
+                uri = Android.Net.Uri.Parse(path);
+            }
+
+
+            ExtStickyService._player.SetOnPreparedListener(this);
+
+            mediaControllerDictionary[MainActivity._viewPager.CurrentItem].SetAnchorView(videoViewDictionary[MainActivity._viewPager.CurrentItem]);
+            mediaControllerDictionary[MainActivity._viewPager.CurrentItem].SetMediaPlayer(videoViewDictionary[MainActivity._viewPager.CurrentItem]);
 
             ExtStickyService._player.Looping = true;
 
-            ExtStickyService._player.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+            if (MainActivity._viewPager.CurrentItem == 1)
+            {
+                ExtStickyService._player.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+            }
+            if (MainActivity._viewPager.CurrentItem == 2)
+            {
+                ExtStickyService._player.SetDataSource(Android.App.Application.Context, uri);
+            }
             ExtStickyService._player.Prepare();
 
             ExtStickyService._player.Start();
 
-            videoView.Start();
+            videoViewDictionary[MainActivity._viewPager.CurrentItem].Start();
 
 
             var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
             var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
             var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
 
-            videoTitle.Text = cc.Caption;
-            videoCreatorName.Text = cc.Creator.Name;
-
-
+            if (cc != null)
+            {
+                videoTitle.Text = cc.Caption;
+                videoCreatorName.Text = cc.Creator.Name;
                 imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
-                //imageView.SetImageDrawable(cc.Creator.CreatorThumbnailDrawable);
-            
+            }
+            else
+            {
+                videoTitle.Text = vc.Caption;
+                videoCreatorName.Text = vc.Creator.Name;
+                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
+            }
+            videoViewDictionary[MainActivity._viewPager.CurrentItem].LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
 
             switch (MainActivity._viewPager.CurrentItem)
             {
@@ -178,7 +172,7 @@ namespace BitChute.Classes
                     break;
             }
 
-            bool playing = videoView.IsPlaying;
+            bool playing = videoViewDictionary[MainActivity._viewPager.CurrentItem].IsPlaying;
         }
 
 
@@ -188,15 +182,25 @@ namespace BitChute.Classes
 
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {
+
+            var aspect = (float)width / (float)height;
         }
 
         public void SurfaceCreated(ISurfaceHolder holder)
         {
             ExtStickyService._player.SetDisplay(holder);
+            videoViewDictionary[MainActivity._viewPager.CurrentItem].SetMediaController(mediaControllerDictionary[MainActivity._viewPager.CurrentItem]);
+            mediaControllerDictionary[MainActivity._viewPager.CurrentItem].SetMediaPlayer(videoViewDictionary[MainActivity._viewPager.CurrentItem]);
+            //mediaControllerDictionary[MainActivity._viewPager.CurrentItem].Show();
         }
 
         public void SurfaceDestroyed(ISurfaceHolder holder)
         {
+        }
+
+        public void OnPrepared(MediaPlayer mp)
+        {
+
         }
     }
 }

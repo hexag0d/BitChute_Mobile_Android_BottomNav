@@ -4,7 +4,7 @@
     <SelectedDevice>Samsung SM-G930P</SelectedDevice>
     <DefaultDevice>Android_Accelerated_x86_Oreo</DefaultDevice>
     <AndroidDesignerPreferredTheme>Theme.DeviceDefault</AndroidDesignerPreferredTheme>
-    <AndroidDesignerPreferredDevice>Nexus 7 2013</AndroidDesignerPreferredDevice>
+    <AndroidDesignerPreferredDevice>pixel_xl</AndroidDesignerPreferredDevice>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
 </Project>
