@@ -47,6 +47,8 @@ namespace BitChute.Fragments
         public static LayoutInflater _inflater;
         public static LinearLayoutManager _layoutMan;
 
+        public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
+
         bool tabLoaded = false;
 
         public static FeedFragment NewInstance(string title, string icon)
@@ -124,7 +126,7 @@ namespace BitChute.Fragments
         /// <param name=""></param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard)
         {
-            VideoDetailLoader.LoadVideoFromVideoCard(view, videoCard);
+            _vidLoader.LoadVideoFromVideoCard(view, videoCard);
             SwapView(view);
         }
 

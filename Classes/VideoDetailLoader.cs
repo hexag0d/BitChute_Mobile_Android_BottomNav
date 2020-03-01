@@ -24,7 +24,11 @@ namespace BitChute.Classes
     /// </summary>
     public class VideoDetailLoader : Activity, ISurfaceHolderCallback
     {
-        public IntPtr Handle => throw new NotImplementedException();
+        public VideoDetailLoader()
+        {
+        }
+
+        //public IntPtr Handle => throw new NotImplementedException();
 
         public static void InitializeVideo(int tab)
         {
@@ -81,9 +85,21 @@ namespace BitChute.Classes
             //var videoDescription = v.FindViewById<VideoView>(Resource.Id.videoDetailDescription)
         }
 
-        public static void LoadVideoFromVideoCard(View v, VideoCard vc)
+        public void LoadVideoFromVideoCard(View v, VideoCard vc)
         {
             var videoView = v.FindViewById<VideoView>(Resource.Id.videoView);
+
+            ISurfaceHolder holder = videoView.Holder;
+
+            //holder.SetType(SurfaceType.PushBuffers);
+            holder.AddCallback(this);
+
+            var descriptor = MainActivity._assets.OpenFd("sample.mp4");
+            var mediaPlayer = ExtStickyService._player;
+            mediaPlayer.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+            mediaPlayer.Prepare();
+            mediaPlayer.Start();
+
             var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
             var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
             var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
@@ -105,9 +121,34 @@ namespace BitChute.Classes
             }
         }
 
-        public static void LoadVideoFromCreatorCard(View v, CreatorCard cc)
+        public void LoadVideoFromCreatorCard(View v, CreatorCard cc)
         {
-            var videoView = v.FindViewById<VideoView>(Resource.Id.videoView);
+            var videoView = v.FindViewById<VideoView>(Resource.Id.subsVideoView);
+
+
+            ISurfaceHolder holder = videoView.Holder;
+
+            ////holder.SetType(SurfaceType.PushBuffers);
+            holder.AddCallback(this);
+
+            var descriptor = MainActivity._assets.OpenFd("sample.mp4");
+
+            MediaController mc = new MediaController(Android.App.Application.Context);
+
+            
+            mc.SetAnchorView(videoView);
+            mc.SetMediaPlayer(videoView);
+
+            ExtStickyService._player.Looping = true;
+
+            ExtStickyService._player.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+            ExtStickyService._player.Prepare();
+
+            ExtStickyService._player.Start();
+
+            videoView.Start();
+
+
             var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
             var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
             var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
@@ -136,27 +177,26 @@ namespace BitChute.Classes
                 case 4:
                     break;
             }
+
+            bool playing = videoView.IsPlaying;
         }
 
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {
-            throw new NotImplementedException();
         }
 
         public void SurfaceCreated(ISurfaceHolder holder)
         {
-            throw new NotImplementedException();
+            ExtStickyService._player.SetDisplay(holder);
         }
 
         public void SurfaceDestroyed(ISurfaceHolder holder)
         {
-            throw new NotImplementedException();
         }
     }
 }

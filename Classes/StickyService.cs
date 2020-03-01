@@ -66,7 +66,7 @@ namespace StartServices.Servicesclass
 
         #endregion
 
-        private void IntializePlayer()
+        public void InitializePlayer()
         {
             _player = new MediaPlayer();
 
@@ -83,7 +83,7 @@ namespace StartServices.Servicesclass
             {
                 //playback error
                 Console.WriteLine("Error in playback resetting: " + args.What);
-                Stop();//this will clean up and reset properly.
+                this.Stop();//this will clean up and reset properly.
             };
         }
 
@@ -101,7 +101,7 @@ namespace StartServices.Servicesclass
 
             if (_player == null)
             {
-                IntializePlayer();
+                InitializePlayer();
             }
 
             if (_player.IsPlaying)
@@ -142,7 +142,7 @@ namespace StartServices.Servicesclass
             _paused = true;
         }
 
-        private void Stop()
+        public void Stop()
         {
             if (_player == null)
                 return;
@@ -161,7 +161,7 @@ namespace StartServices.Servicesclass
         /// <summary>
         /// This will release the wifi lock if it is no longer needed
         /// </summary>
-        private void ReleaseWifiLock()
+        private static void ReleaseWifiLock()
         {
             if (wifiLock == null)
                 return;
@@ -174,7 +174,7 @@ namespace StartServices.Servicesclass
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
         /// </summary>
-        private void StartForeground()
+        public void StartForeground()
         {
 
             var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
@@ -206,6 +206,7 @@ namespace StartServices.Servicesclass
         {
             base.OnCreate();
             //Find our audio and notificaton managers
+            InitializePlayer();
             _audioManager = (AudioManager)GetSystemService(AudioService);
             wifiManager = (WifiManager)GetSystemService(WifiService);
             _service = this;
@@ -247,7 +248,7 @@ namespace StartServices.Servicesclass
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
         /// </summary>
-        public void AquireWifiLock()
+        public static void AquireWifiLock()
         {
             if (wifiLock == null)
             {

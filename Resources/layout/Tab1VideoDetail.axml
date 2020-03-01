@@ -20,11 +20,12 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/videoDetailTitleTextView" />
 		<VideoView
-		android:layout_width="match_parent"
+		android:layout_width="854px"
 		android:layout_height="480px"
 			
+			android:visibility="visible"
 			
-		android:id="@+id/videoView" />
+		android:id="@+id/subsVideoView" />
 
 	</LinearLayout>
 	<LinearLayout

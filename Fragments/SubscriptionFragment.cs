@@ -48,6 +48,8 @@ namespace BitChute.Fragments
         public static LayoutInflater _inflater;
         public static LinearLayoutManager _layoutMan;
 
+        public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
+
         public static SubscriptionFragment NewInstance(string title, string icon) {
             var fragment = new SubscriptionFragment();
             fragment.Arguments = new Bundle();
@@ -111,11 +113,11 @@ namespace BitChute.Fragments
         {
             if (videoCard != null)
             {
-                VideoDetailLoader.LoadVideoFromVideoCard(view, videoCard);
+                _vidLoader.LoadVideoFromVideoCard(view, videoCard);
             }
             else
             {
-                VideoDetailLoader.LoadVideoFromCreatorCard(view, creatorCard);
+                _vidLoader.LoadVideoFromCreatorCard(view, creatorCard);
             }
         }
 
