@@ -23,23 +23,83 @@ namespace BitChute.Models
         /// </summary>
         public class Creator
         {
+            public Creator()
+            {
+
+            }
+
+            public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
+                List<VideoCardNoCreator> recentVideoCardList, int thumbnail)
+            {
+                Name = name;
+                LinkToChannel = linkToChannel;
+                MostRecentVideoLink = recentVideoCardList.First().Link;
+                MostRecentVideoTitle = recentVideoCardList.First().Title;
+                RecentVideoCards = recentVideoCardList;
+                creatorAvatar = MainActivity.UniversalGetDrawable(thumbnail);
+                CreatorThumbnailBitmap = creatorAvatarBitmap;
+            }
+
+            public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
+                List<VideoCardNoCreator> recentVideoCardList)
+            {
+                Name = name;
+                LinkToChannel = linkToChannel;
+                MostRecentVideoLink = recentVideoCardList.First().Link;
+                MostRecentVideoTitle = recentVideoCardList.First().Title;
+                RecentVideoCards = recentVideoCardList;
+                CreatorThumbnailDrawable = creatorAvatar;
+                CreatorThumbnailBitmap = creatorAvatarBitmap;
+            }
+
             public string Name { get; set; }
             public string LinkToChannel { get; set; }
             public string MostRecentVideoLink { get; set; }
+            public string MostRecentVideoTitle { get; set; }
 
             public Drawable CreatorThumbnailDrawable { get; set; }
             public Bitmap CreatorThumbnailBitmap { get; set; }
 
-            public class CreatorDetail
-            {
-                string CreatorDescription { get; set; }
-                //VideoCardSet RecentVideos { get; set; }
+            public string CreatorDescription { get; set; }
 
-                public class CreatorVideos
-                {
+            public List<VideoCardNoCreator> RecentVideoCards;
+            
+        }
+        
+        public static List<VideoCardNoCreator> CacheVideoCards = VideoCardNoCreator.GetVideoCardNoCreatorList();
 
-                }
-            }
+        public static List<VideoCardNoCreator> Get3RandomCards()
+        {
+            Random rnd = new Random();
+            rnd.Next(19);
+
+            var lis = new List<VideoCardNoCreator>();
+            lis.Add(CacheVideoCards[rnd.Next(19)]);
+            lis.Add(CacheVideoCards[rnd.Next(19)]);
+            lis.Add(CacheVideoCards[rnd.Next(19)]);
+            return lis;
+        }
+
+        /// <summary>
+        /// just testing this out... obviously this isn't how we do it lol
+        /// eventually something similar to this model will be populated from JSON parsed returns
+        /// so we can use this to build out the app until the API goes live
+        /// </summary>
+        /// <returns></returns>
+        public static List<Creator> GetCreatorList()
+        {
+            List<Creator> creatorList = new List<Creator>();
+            creatorList.Add(new Creator(null, null, "warski", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i50));
+            creatorList.Add(new Creator(null, null, "styx", @"\channel\styx", Get3RandomCards(), Resource.Drawable._i51));
+            creatorList.Add(new Creator(null, null, "burmas", @"\channel\burmas", Get3RandomCards(), Resource.Drawable._i52));
+            creatorList.Add(new Creator(null, null, "hotep", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i53));
+            creatorList.Add(new Creator(null, null, "hotep", @"\channel\hotep", Get3RandomCards(), Resource.Drawable._i54));
+            creatorList.Add(new Creator(null, null, "jchan", @"\channel\jchan", Get3RandomCards(), Resource.Drawable._i55));
+            creatorList.Add(new Creator(null, null, "goodman", @"\channel\goodman", Get3RandomCards(), Resource.Drawable._i56));
+            creatorList.Add(new Creator(null, null, "ralph", @"\channel\ralph", Get3RandomCards(), Resource.Drawable._i57));
+            creatorList.Add(new Creator(null, null, "duck", @"\channel\duck", Get3RandomCards(), Resource.Drawable._i58));
+            creatorList.Add(new Creator(null, null, "hb", @"\channel\hb", Get3RandomCards(), Resource.Drawable._i59));
+            return creatorList;
         }
 
         /// <summary>
@@ -84,8 +144,7 @@ namespace BitChute.Models
 
             public int Index { get; }
         }
-
-
+        
         public static Creator GetSampleCreator()
         {
             Creator sample = new Creator();

@@ -45,7 +45,7 @@ namespace BitChute.Classes
 
                         using (HttpClient _client = new HttpClient(handler))
                         {
-                            _client.DefaultRequestHeaders.Add("Cookie", TheFragment5.GetCookieHeader());
+                            _client.DefaultRequestHeaders.Add("Cookie", SettingsFragment.GetCookieHeader());
                             var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
                             var resultContent = getRequest.Content.ReadAsStringAsync().Result;
                             _htmlCode = resultContent;

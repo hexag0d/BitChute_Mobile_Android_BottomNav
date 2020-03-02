@@ -16,6 +16,10 @@ using static BitChute.Models.CreatorModel;
 
 namespace BitChute.Models
 {
+    /// <summary>
+    /// contains the VideoModel which is really more of metadata
+    /// since we're probably parsing links and then streaming p2p or https
+    /// </summary>
     public class VideoModel 
     {
         public static Context context;
@@ -86,23 +90,129 @@ namespace BitChute.Models
                 Link = link;
             }
             public Creator Creator {get;}
-            
             public int PhotoID { get; }
-
             //Title of Video
             public string Caption { get; }
-
             //Description
             public string Caption2 { get; }
-
             public string Link { get; }
-
             public int Index { get; }
+            public Drawable ThumbnailDrawable { get; set; }
+            public Bitmap ThumbnailBitmap { get; set; }
+        }
 
+        /// <summary>
+        /// class that contains video information for the user to select
+        /// should not contain video data, this class is for the metadata of the video
+        /// </summary>
+        public class VideoCardNoCreator
+        {
+            public static List<VideoCardNoCreator> GetVideoCardNoCreatorList()
+            {
+                return VideoCardNoCreatorList;
+            }
+
+            static List<VideoCardNoCreator> VideoCardNoCreatorList = new List<VideoCardNoCreator>{
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "Creator 1","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "Creator 2","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "Creator 3","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+  };
+
+            public VideoCardNoCreator()
+            {
+
+            }
+
+            /// <summary>
+            /// this type of VideoCard contains no Creator object
+            /// so it's used for situations where a Creator
+            /// is the container
+            /// 
+            /// Feel free to clean up these classes or redo them
+            /// I'm still trying to work out the most efficient way to do this
+            /// 
+            /// I could use one class for all of them, maybe will eventually
+            /// </summary>
+            /// <param name="id"></param>
+            /// <param name="title"></param>
+            /// <param name="caption2"></param>
+            /// <param name="link"></param>
+            /// <param name="drawableID"></param>
+            /// <param name="thumbbmp"></param>
+            public VideoCardNoCreator(int id, string title, string caption2, 
+                string link, int drawableID , Bitmap thumbbmp, string creatorName )
+            {
+                //int for the drawable but I don't know if this is going to work when the app is on an API
+                PhotoID = id;
+                //title
+                Title = title;
+                //description
+                Caption2 = caption2;
+
+                Link = link;
+
+                if (drawableID != 0)
+                {
+                    ThumbnailDrawable = MainActivity.UniversalGetDrawable(drawableID);
+                }
+                if (thumbbmp != null)
+                {
+                    ThumbnailBitmap = thumbbmp;
+                }
+            }
+            public int PhotoID { get; set; }
+
+            //Title of Video
+            public string Title { get; set; }
+
+            //Description
+            public string Caption2 { get; set; }
+
+            public string Link { get; set; }
+
+            public int Index { get; set; }
+
+            public string CreatorName { get; set; }
+
+            //I've added these two members because I don't know exactly how the JSON caching is going to work
             public Drawable ThumbnailDrawable { get; set; }
 
             public Bitmap ThumbnailBitmap { get; set; }
+
+            public bool Equals(VideoCardNoCreator other)
+            {
+                if (this.PhotoID == other.PhotoID && this.Title == other.Title
+                    && this.Caption2 == other.Caption2 && this.CreatorName == other.CreatorName 
+                    && this.ThumbnailBitmap == other.ThumbnailBitmap 
+                    && this.ThumbnailDrawable == other.ThumbnailDrawable)
+                {
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
+
 
 
         public class VideoCardSet

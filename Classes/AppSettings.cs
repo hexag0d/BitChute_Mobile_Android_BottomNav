@@ -13,19 +13,14 @@ namespace BitChute.Classes
         public static bool _tab3Hide { get; set; }
         public static bool _settingsTabOverride { get; set; }
         
+        public static string _tab3OverridePreference { get; set; }
         public static string _tab4OverridePreference { get; set; }
-        public static string _tab5OverridePreference { get; set; }
         
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
         /// </summary>
         public static int _tabDelay = 800;
-
-        /// <summary>
-        /// the ms delay for fixing link overflow on mobile
-        /// </summary>
-        public static int _linkOverflowFixDelay = 6000;
-
+        
         /// <summary>
         /// this int controls the delay in ms of notifications being 
         /// parsed and then sent out.  It should be set to a high int
@@ -53,12 +48,16 @@ namespace BitChute.Classes
             return _prefs;
         }
 
+        /// <summary>
+        /// Gets the android stored prefs for the app and 
+        /// stores them as local variables in the AppSettings class
+        /// </summary>
         public static void LoadAllPrefsFromSettings()
         {
             GetAppSharedPrefs();
             _notifying = _prefs.GetBoolean("notificationson", true);
             _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
-            _tab5OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
+            _tab4OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
             _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             _fanMode = _prefs.GetBoolean("fanmode", false);
             _tab3Hide = _prefs.GetBoolean("tab3hide", true);

@@ -86,14 +86,13 @@
     <Compile Include="Classes\ExtNotifications.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
-    <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\VideoDetailLoader.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\SubscriptionFragment.cs" />
-    <Compile Include="Fragments\TheFragment5.cs" />
-    <Compile Include="Fragments\TheFragment4.cs" />
+    <Compile Include="Fragments\SettingsFragment.cs" />
+    <Compile Include="Fragments\MyChannelFragment.cs" />
     <Compile Include="Fragments\FeedFragment.cs" />
-    <Compile Include="Fragments\TheFragment1.cs" />
+    <Compile Include="Fragments\HomeFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\HomepageModel.cs" />
@@ -408,10 +407,6 @@
     <AndroidResource Include="Resources\drawable\_testThumb360_2.jpg" />
     <AndroidResource Include="Resources\drawable\_testThumb360_3.jpg" />
     <AndroidResource Include="Resources\drawable\_testThumb360_4.jpg" />
-    <AndroidResource Include="Resources\layout\Tab1VideoDetail_broken.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\raw\mylastvidd.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

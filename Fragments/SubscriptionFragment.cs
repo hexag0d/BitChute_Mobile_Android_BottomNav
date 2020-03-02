@@ -108,13 +108,11 @@ namespace BitChute.Fragments
         /// Navigates the selected tab to a new page
         /// </summary>
         /// <param name="view">the view you want to swap</param>
-        /// <param name="type"></param>
-        /// <param name=""></param>
+        /// <param name="videoCard">the videocard you want to load</param>
+        /// <param name="creatorCard">optionally use a creatorcard for more detail</param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, CreatorCard creatorCard)
         {
-
-                _vidLoader.LoadVideoFromCard(view, creatorCard, videoCard);
-
+            _vidLoader.LoadVideoFromCard(view, creatorCard, videoCard, null);
         }
 
         /// <summary>

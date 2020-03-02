@@ -16,7 +16,7 @@ namespace BitChute.Classes
 {
     public class ExtNotifications
     {
-        public static TheFragment5 _fm5 = new TheFragment5();
+        public static SettingsFragment _fm5 = new SettingsFragment();
 
         public static List<string> _notificationTextList = new List<string>();
         public static List<string> _notificationTypes = new List<string>();
@@ -53,7 +53,7 @@ namespace BitChute.Classes
                 {
                     if (_fm5 == null)
                     {
-                        _fm5 = TheFragment5._fm5;
+                        _fm5 = SettingsFragment._fm5;
                     }
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -129,13 +129,13 @@ namespace BitChute.Classes
                         _customNoteList.Reverse();
 
                     }
-                    _fm5 = TheFragment5._fm5;
+                    _fm5 = SettingsFragment._fm5;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                TheFragment5._notificationHttpRequestInProgress = false;
+                SettingsFragment._notificationHttpRequestInProgress = false;
 
                 //_fm5.SendNotifications();
             });

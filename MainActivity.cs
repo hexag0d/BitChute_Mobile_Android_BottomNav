@@ -10,26 +10,22 @@ using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Internal;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
-using Android.Support.V7.App;
-using Android.Support.V7.View;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using BitChute.Adapters;
 using BitChute.Classes;
 using BitChute.Fragments;
-using BitChute;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BitChute.Fragments.TheFragment5;
+using static BitChute.Fragments.SettingsFragment;
 using static BitChute.Models.VideoModel;
 using static BitChute.Models.SubscriptionModel;
 
@@ -84,6 +80,8 @@ namespace BitChute
         // Underlying data set (a photo album):
         public static VideoCardSet _photoAlbum;
 
+        public static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
@@ -119,7 +117,8 @@ namespace BitChute
                     //var _tempUrl = _sentIntent.Extras.GetString("URL");
                     var _tempUrl = "";
                     if (_tempUrl != "" && _tempUrl != null)
-                        TheFragment1._url = _tempUrl;
+                    {
+                    }
                 }
                 catch
                 {
@@ -162,11 +161,11 @@ namespace BitChute
             _viewPager.CurrentItem = 1;
         }
 
-        public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
+        public static HomeFragment _fm1 = HomeFragment.NewInstance("Home", "tab_home");
         public static SubscriptionFragment _fm2 = SubscriptionFragment.NewInstance("Subs", "tab_subs");
         public static FeedFragment _fm3 = FeedFragment.NewInstance("Feed", "tab_playlist");
-        public static TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
-        public static TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
+        public static MyChannelFragment _fm4 = MyChannelFragment.NewInstance("MyChannel", "tab_mychannel");
+        public static SettingsFragment _fm5 = SettingsFragment.NewInstance("Settings", "tab_home");
 
         void InitializeTabs()
         {
@@ -278,7 +277,6 @@ namespace BitChute
                         _fm3.WebViewGoBack();
                         break;
                     case 3:
-                        _fm4.WebViewGoBack();
                         break;
                     case 4:
                         _fm5.WebViewGoBack();
@@ -339,9 +337,9 @@ namespace BitChute
             }
             if (AppSettings._settingsTabOverride)
             {
-                if (AppSettings._tab5OverridePreference != null && _tab5Icon != null)
+                if (AppSettings._tab4OverridePreference != null && _tab5Icon != null)
                 {
-                    _navViewItemList[4].SetTitle(AppSettings._tab5OverridePreference);
+                    _navViewItemList[4].SetTitle(AppSettings._tab4OverridePreference);
                     _navViewItemList[4].SetIcon(_tab5Icon);
                 }
             }
@@ -411,9 +409,9 @@ namespace BitChute
                 }
                 else
                 {
-                    _navViewItemList[4].SetTitle(AppSettings._tab5OverridePreference);
-                    _navViewItemList[4].SetIcon(GetTabIconFromString(AppSettings._tab5OverridePreference));
-                    _tab5Icon = GetTabIconFromString(AppSettings._tab5OverridePreference);
+                    _navViewItemList[4].SetTitle(AppSettings._tab4OverridePreference);
+                    _navViewItemList[4].SetIcon(GetTabIconFromString(AppSettings._tab4OverridePreference));
+                    _tab5Icon = GetTabIconFromString(AppSettings._tab4OverridePreference);
                 }
             }
             catch
@@ -458,58 +456,53 @@ namespace BitChute
                             _navViewItemList[tab].SetTitle("MyChannel");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment4._url = Https.URLs._myChannel;
+
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_home);
-                            TheFragment4._url = Https.URLs._homepage;
+
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Https.URLs._subspage;
+
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
-                            TheFragment4._url = Https.URLs._homepage;
+ 
                         }
                         if (changeDetails == "MyChannel")
                         {
                             _navViewItemList[tab].SetTitle("MyChannel");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment4._url = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment4._url = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
                             _navViewItemList[tab].SetTitle("WatchL8r");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment4._url = Https.URLs._watchLater;
                         }
-                        TheFragment4.LoadUrlWithDelay(TheFragment4._url, 0);
                     
                     break;
                 case 4:
@@ -519,51 +512,51 @@ namespace BitChute
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment5._url = Https.URLs._settings;
+                            SettingsFragment._url = Https.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_home);
-                            TheFragment5._url = Https.URLs._homepage;
+                            SettingsFragment._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Https.URLs._subspage;
+                            SettingsFragment._url = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
-                            TheFragment5._url = Https.URLs._homepage;
+                            SettingsFragment._url = Https.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Https.URLs._explore;
+                            SettingsFragment._url = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment5._url = Https.URLs._settings;
+                            SettingsFragment._url = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
                             _navViewItemList[tab].SetTitle("WatchL8r");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            TheFragment5._url = Https.URLs._watchLater;
+                            SettingsFragment._url = Https.URLs._watchLater;
                         }
-                        TheFragment5.LoadUrlWithDelay(TheFragment5._url, 0);
+                        SettingsFragment.LoadUrlWithDelay(SettingsFragment._url, 0);
                     
                     break;
             }
@@ -683,18 +676,14 @@ namespace BitChute
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        _fm1.LoadCustomUrl(url);
                         break;
                     case 1:
                         break;
                     case 2:
-                        _fm3.LoadCustomUrl(url);
                         break;
                     case 3:
-                        _fm4.LoadCustomUrl(url);
                         break;
                     case 4:
-                        _fm5.LoadCustomUrl(url);
                         break;
                 }
             }
@@ -884,16 +873,15 @@ namespace BitChute
                     ItemClick(this, position);
             }
         }
-
-
+        
         public class FeedRecyclerViewAdapter : RecyclerView.Adapter
         {
             public event EventHandler<int> ItemClick;
             public static VideoCardSet _videoCardSet;
+            public static List<VideoCardNoCreator> _videoCardNoCreators = new List<VideoCardNoCreator>();
             public static View itemView;
 
             public static FeedViewHolder vh;
-            Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
             
             public FeedRecyclerViewAdapter(VideoCardSet videoCardSet)
             {
@@ -902,6 +890,23 @@ namespace BitChute
                     videoCardSet = new VideoCardSet();
                 }
                 _videoCardSet = videoCardSet;
+            }
+
+            public FeedRecyclerViewAdapter(List<VideoCardNoCreator> videoCardNoCreators)
+            {
+                _videoCardNoCreators = videoCardNoCreators;
+            }
+
+            public FeedRecyclerViewAdapter(List<Models.CreatorModel.Creator> creatorSet)
+            {
+                foreach (var creator in creatorSet)
+                {
+                    foreach (var vidcard in creator.RecentVideoCards)
+                    {
+                        vidcard.CreatorName = creator.Name;
+                        _videoCardNoCreators.Add(vidcard);
+                    }
+                }
             }
 
             // Create a new photo CardView (invoked by the layout manager): 
@@ -929,13 +934,21 @@ namespace BitChute
             {
                 vh = holder as FeedViewHolder;
 
-                    // Set the ImageView and TextView in this ViewHolder's CardView 
-                    // from this position in the photo album:
-                     vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
-
+                // Set the ImageView and TextView in this ViewHolder's CardView 
+                // from this position in the photo album:
+                if (_videoCardSet != null)
+                {
+                    vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
                     vh.Caption.Text = _videoCardSet[position].Caption;
                     vh.Caption2.Text = _videoCardSet[position].Caption2;
-
+                }
+                else
+                {
+                    
+                    vh.Image.SetImageResource(_videoCardNoCreators[position].PhotoID);
+                    vh.Caption.Text = _videoCardNoCreators[position].Title;
+                    vh.Caption2.Text = _videoCardNoCreators[position].CreatorName;
+                }
             }
 
             // Return the number of photos available in the photo album:

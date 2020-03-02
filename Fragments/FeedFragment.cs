@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
+using BitChute.Models;
 using Java.IO;
 using StartServices.Servicesclass;
 using static Android.Views.View;
@@ -31,7 +32,9 @@ namespace BitChute.Fragments
         public static Android.Support.V7.Widget.RecyclerView.LayoutManager _layoutManager;
 
         //video cards for the root view
-        public static VideoCardSet _feedVideoCardSetRoot;
+        public static List<CreatorModel.Creator> _recentPosterList = new List<CreatorModel.Creator>();
+
+        public static List<VideoCardNoCreator> _videoCardList = new List<VideoCardNoCreator>();
         //video cards for the channel view
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
@@ -40,7 +43,7 @@ namespace BitChute.Fragments
         public static FeedRecyclerViewAdapter _rootAdapter;
 
         public static View _videoDetailView;
-        public static LinearLayout _subscriptionRecyclerView;
+        public static LinearLayout _feedRecyclerdViewLayout;
         public static LinearLayout _tab2ParentLayout;
 
         public static ViewGroup _viewGroup;
@@ -48,9 +51,7 @@ namespace BitChute.Fragments
         public static LinearLayoutManager _layoutMan;
 
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
-
-        bool tabLoaded = false;
-
+        
         public static FeedFragment NewInstance(string title, string icon)
         {
             var fragment = new FeedFragment();
@@ -60,16 +61,24 @@ namespace BitChute.Fragments
             return fragment;
         }
 
-        public static void GetFeedList()
+        public static FeedRecyclerViewAdapter GetFeedAdapter()
         {
-
+            foreach (var c in CreatorModel.GetCreatorList())
+            {
+                foreach (var vidc in c.RecentVideoCards)
+                {
+                    vidc.CreatorName = c.Name;
+                    _videoCardList.Add(vidc);
+                }
+            }
+            _recentPosterList = CreatorModel.GetCreatorList();
+            _rootAdapter = new FeedRecyclerViewAdapter(_videoCardList);
+            return _rootAdapter;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            _feedVideoCardSetRoot = new VideoCardSet();
             if (Arguments != null)
             {
                 if (Arguments.ContainsKey("title"))
@@ -86,25 +95,21 @@ namespace BitChute.Fragments
             _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
             _recycleView.NestedScrollingEnabled = false;
             _layoutManager = new LinearLayoutManager(container.Context);
+
             _recycleView.SetLayoutManager(_layoutManager);
-            _rootAdapter = new FeedRecyclerViewAdapter(_feedVideoCardSetRoot);
+            _rootAdapter = GetFeedAdapter();
             _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
-            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             _recycleView.SetAdapter(_rootAdapter);
+
             _tab2ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab2ParentFragmentLayout);
             _videoDetailView = LayoutInflater.Inflate(Resource.Layout.Tab2VideoDetail, container, false);
 
             _viewGroup = container;
             _inflater = inflater;
-
-            if (!tabLoaded)
-            {
-                tabLoaded = true;
-            }
-            if (AppSettings._zoomControl)
-            {
-            }
-            CustomSetTouchListener(AppState.Display._horizontal);
+            
+            //if (AppSettings._zoomControl)
+            //{
+            //}
             return _view;
         }
 
@@ -115,7 +120,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            NavigateToNewPageFromVideoCard(_videoDetailView, _feedVideoCardSetRoot[e]);
+            NavigateToNewPageFromVideoCard(_videoDetailView, _videoCardList[e]);
         }
 
         /// <summary>
@@ -124,9 +129,21 @@ namespace BitChute.Fragments
         /// <param name="view">the view you want to swap</param>
         /// <param name="type"></param>
         /// <param name=""></param>
-        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard)
+        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, VideoCardNoCreator videoCardNoC)
         {
-            _vidLoader.LoadVideoFromCard(view, null, videoCard);
+            _vidLoader.LoadVideoFromCard(view, null,null, videoCardNoC);
+            SwapView(view);
+        }
+
+        /// <summary>
+        /// Navigates the selected tab to a new page
+        /// </summary>
+        /// <param name="view">the view you want to swap</param>
+        /// <param name="type"></param>
+        /// <param name=""></param>
+        public static void NavigateToNewPageFromVideoCard(View view, VideoCardNoCreator videoCard)
+        {
+            _vidLoader.LoadVideoFromCard(view, null, null, videoCard);
             SwapView(view);
         }
 
@@ -160,7 +177,6 @@ namespace BitChute.Fragments
             else
             {
             }
-
         }
 
         public void CustomSetTouchListener(bool landscape)
@@ -184,11 +200,7 @@ namespace BitChute.Fragments
                 return false;
             }
         }
-
-        private static int _scrollY = 0;
-
-
-
+        
         private static async void CustomOnTouch()
         {
             if (AppState.Display._horizontal)
@@ -215,21 +227,6 @@ namespace BitChute.Fragments
         public static async void SetReload()
         {
 
-        }
-
-
-        public void LoadCustomUrl(string url)
-        {
-        }
-
-        public static async void HidePageTitle(int delay)
-        {
-
-        }
-
-        private static async void HideWatchLabel(int delay)
-        {
-            await Task.Delay(delay);
         }
     }
 }

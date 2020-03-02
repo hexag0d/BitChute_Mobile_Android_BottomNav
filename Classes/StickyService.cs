@@ -37,8 +37,8 @@ namespace StartServices.Servicesclass
         public static MainActivity _main;
         public static ExtNotifications _extNotes = MainActivity.notifications;
 
-        public static BitChute.Fragments.TheFragment5.ExtWebInterface _extWebInterface =
-            BitChute.Fragments.TheFragment5._extWebInterface;
+        public static BitChute.Fragments.SettingsFragment.ExtWebInterface _extWebInterface =
+            BitChute.Fragments.SettingsFragment._extWebInterface;
 
         public static Java.Util.Timer _timer = new Java.Util.Timer();
         public static ExtTimerTask _timerTask = new ExtTimerTask();
@@ -54,106 +54,123 @@ namespace StartServices.Servicesclass
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
         public static ExtNotifications _extNotifications = new ExtNotifications();
-        public static TheFragment5 _fm5;
+        public static SettingsFragment _fm5;
         private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
         public static int _startForegroundNotificationId = 6666;
 
         private static bool _notificationStackExecutionInProgress = false;
         public static bool _notificationLongTimerSet = false;
 
-        public static MediaPlayer _player;
+        public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
+        public static int PlayerNumberHasFocus = 0;
+
         public static bool _paused;
 
         #endregion
 
-        public void InitializePlayer()
-        {
-            _player = new MediaPlayer();
+        
+        /// <summary>
+        /// </summary>
+        /// <param name="mp"></param>
+        /// <returns></returns>
+        public static MediaPlayer InitializePlayer(int tab)
+        {           
+            if (tab == null)
+            {
+                tab = MainActivity._viewPager.CurrentItem;
+            }
+            // we might be able to eventually just use one media player but I think the buffering will be better
+            // with a few of them, plus this way you can queue up videos and instantly switch
+            if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(tab))
+            {
+                ExtStickyService.MediaPlayerDictionary.Add(tab, new MediaPlayer());
+            }
 
             //Wake mode will be partial to keep the CPU still running under lock screen
-            _player.SetWakeMode(ApplicationContext, WakeLockFlags.Partial);
+            MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
 
             //When we have prepared the song start playback
-            _player.Prepared += (sender, args) => _player.Start();
+            MediaPlayerDictionary[tab].Prepared += (sender, args) => MediaPlayerDictionary[tab].Start();
 
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            _player.Completion += (sender, args) => Stop();
+            MediaPlayerDictionary[tab].Completion += (sender, args) => Stop();
 
-            _player.Error += (sender, args) =>
+            MediaPlayerDictionary[tab].Error += (sender, args) =>
             {
                 //playback error
                 Console.WriteLine("Error in playback resetting: " + args.What);
-                this.Stop();//this will clean up and reset properly.
+                Stop();//this will clean up and reset properly.
             };
+
+            return MediaPlayerDictionary[tab];
         }
 
         private async void Play()
         {
-
-            if (_paused && _player != null)
+            await Task.Run(() =>
             {
-                _paused = false;
-                //We are simply paused so just start again
-                _player.Start();
-                StartForeground();
-                return;
-            }
+               if (_paused && MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] != null)
+               {
+                   _paused = false;
+                    //We are simply paused so just start again
+                    MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Start();
+                   StartForeground();
+                   return;
+               }
 
-            if (_player == null)
-            {
-                InitializePlayer();
-            }
+               if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
+               {
+                   InitializePlayer(MainActivity._viewPager.CurrentItem);
+               }
 
-            if (_player.IsPlaying)
-                return;
+               if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+                   return;
 
-            try
-            {
-                // await _player.SetDataSourceAsync(ApplicationContext, Android.Net.Uri.Parse(Mp3));
+               try
+               {
 
-                //var focusResult = _audioManager.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
-                //var focusResult = _audioManager.RequestAudioFocus(Stream.Music, AudioFocus.Gain);
-                //if (focusResult != AudioFocusRequest.Granted)
-                //{
-                //    //could not get audio focus
-                //    Console.WriteLine("Could not get audio focus");
-                //}
+                   MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].PrepareAsync();
+                   AquireWifiLock();
+                   StartForeground();
+               }
+               catch (Exception ex)
+               {
+                    //unable to start playback log error
+                    Console.WriteLine("Unable to start playback: " + ex);
+               }
 
-                _player.PrepareAsync();
-                AquireWifiLock();
-                StartForeground();
-            }
-            catch (Exception ex)
-            {
-                //unable to start playback log error
-                Console.WriteLine("Unable to start playback: " + ex);
-            }
+                if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+                {
+                    AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity._viewPager.CurrentItem;
+                }
+            });
         }
 
         private void Pause()
         {
-            if (_player == null)
+            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
                 return;
 
-            if (_player.IsPlaying)
-                _player.Pause();
+            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Pause();
 
             StopForeground(true);
             _paused = true;
         }
 
-        public void Stop()
+        public static void Stop()
         {
-            if (_player == null)
+            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
                 return;
 
-            if (_player.IsPlaying)
-                _player.Stop();
+            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Stop();
 
-            _player.Reset();
+            MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Reset();
             _paused = false;
-            StopForeground(true);
+            _service.StopForeground(true);
             ReleaseWifiLock();
+            AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
         }
 
 
@@ -181,10 +198,13 @@ namespace StartServices.Servicesclass
                             new Intent(ApplicationContext, typeof(MainActivity)),
                             PendingIntentFlags.UpdateCurrent);
 
-            var notification = new Notification();
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                            .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                            .SetContentTitle("BitChute streaming in background") // Set the title
+                            .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                            .SetPriority(NotificationCompat.PriorityLow);
 
-
-            StartForeground(6666, notification);
+            StartForeground(-6666, builder.Build());
         }
 
         #region StickyServiceMethods
@@ -206,7 +226,6 @@ namespace StartServices.Servicesclass
         {
             base.OnCreate();
             //Find our audio and notificaton managers
-            InitializePlayer();
             _audioManager = (AudioManager)GetSystemService(AudioService);
             wifiManager = (WifiManager)GetSystemService(WifiService);
             _service = this;
@@ -290,11 +309,11 @@ namespace StartServices.Servicesclass
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings._notifying)
             {
-                if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                if (!SettingsFragment._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
                     _notificationStackExecutionInProgress = true;
                     await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                    await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                    await _extNotifications.DecodeHtmlNotifications(SettingsFragment.ExtWebInterface._htmlCode);
                     _fm5.SendNotifications(ExtNotifications._customNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
@@ -351,11 +370,11 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                        if (!SettingsFragment._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                         {
                             _notificationStackExecutionInProgress = true;
                             await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                            await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                            await _extNotifications.DecodeHtmlNotifications(SettingsFragment.ExtWebInterface._htmlCode);
                             _fm5.SendNotifications(ExtNotifications._customNoteList);
                             _notificationStackExecutionInProgress = false;
                         }
@@ -469,7 +488,7 @@ namespace StartServices.Servicesclass
 
         public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

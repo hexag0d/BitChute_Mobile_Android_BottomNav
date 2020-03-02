@@ -15,22 +15,17 @@
 		<TextView
 			android:text="Title"
 			android:layout_width="match_parent"
-			android:textSize="60px"
+			android:textSize="90px"
 			android:textColor="#ffffff"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:id="@+id/videoDetailTitleTextView" />
-		<LinearLayout
-			android:orientation="vertical"
-			android:minWidth="25px"
-			android:minHeight="25px"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/videoLayoutSlim" >
-			<VideoView
-			android:layout_width="match_parent"
-			android:layout_height="200dp"
-			android:id="@+id/videoView" />
-		</LinearLayout>
+		<VideoView
+		android:layout_width="match_parent"
+		android:layout_height="480px"
+			
+			
+		android:id="@+id/videoView" />
+
 	</LinearLayout>
 	<LinearLayout
 		android:orientation="vertical"
@@ -48,10 +43,8 @@
 			android:id="@+id/linearLayout2">
 			<ImageView
 				android:src="@android:drawable/ic_menu_gallery"
-				android:layout_width="250px"
-				android:layout_height="250px"
-				android:maxWidth="250px"
-				android:maxHeight="250px"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
 				android:id="@+id/creatorAvatarImageView" />
 			<LinearLayout
 				android:orientation="vertical"
@@ -106,7 +99,7 @@
 		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/commentsCardViewLayout">
+		android:id="@+id/linearLayout6" />
 
-	</LinearLayout>
+
 </LinearLayout>
