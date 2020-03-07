@@ -114,19 +114,16 @@ namespace BitChute.Models
 
             public CreatorCard(Creator creator)
             {
-
             } 
 
-            public CreatorCard(int id, string caption, string caption2, string link, Creator creator)
+            public CreatorCard(int id, string title, string creatorName, string link, Creator creator)
             {
                 PhotoID = id;
                 //title
-                Caption = caption;
+                Title = title;
                 //description
-                Caption2 = caption2;
-
+                CreatorName = creatorName;
                 Creator = creator;
-
                 Link = link;
             }
 
@@ -135,10 +132,10 @@ namespace BitChute.Models
             public int PhotoID { get; }
 
             //Title of Video
-            public string Caption { get; }
+            public string Title { get; }
 
             //Description
-            public string Caption2 { get; }
+            public string CreatorName { get; }
 
             public string Link { get; }
 

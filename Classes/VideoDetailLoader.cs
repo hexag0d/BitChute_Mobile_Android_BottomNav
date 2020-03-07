@@ -156,13 +156,13 @@ namespace BitChute.Classes
 
             if (cc != null)
             {
-                videoTitle.Text = cc.Caption;
+                videoTitle.Text = cc.Title;
                 videoCreatorName.Text = cc.Creator.Name;
                 imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
             }
             else if (vc != null)
             {
-                videoTitle.Text = vc.Caption;
+                videoTitle.Text = vc.Title;
                 videoCreatorName.Text = vc.Creator.Name;
                 imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
             }

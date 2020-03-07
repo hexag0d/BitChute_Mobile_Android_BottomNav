@@ -118,10 +118,5 @@ namespace BitChute.Fragments
             {
             }
         }
-
-
-        public void SetWebViewVis()
-        {
-        }
     }
 }

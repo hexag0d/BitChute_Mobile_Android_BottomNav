@@ -74,16 +74,15 @@ namespace BitChute.Models
         {
             public VideoCard()
             {
-
             }
 
-            public VideoCard(int id, string caption, string caption2, string link, Creator creator)
+            public VideoCard(int id, string title, string creatorName, string link, Creator creator)
             {
                 PhotoID = id;
                 //title
-                Caption = caption;
+                Title = title;
                 //description
-                Caption2 = caption2;
+                CreatorName = creatorName;
 
                 Creator = creator;
 
@@ -92,9 +91,9 @@ namespace BitChute.Models
             public Creator Creator {get;}
             public int PhotoID { get; }
             //Title of Video
-            public string Caption { get; }
+            public string Title { get; }
             //Description
-            public string Caption2 { get; }
+            public string CreatorName { get; }
             public string Link { get; }
             public int Index { get; }
             public Drawable ThumbnailDrawable { get; set; }
@@ -137,7 +136,6 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5
 
             public VideoCardNoCreator()
             {
-
             }
 
             /// <summary>
@@ -164,8 +162,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5
                 //title
                 Title = title;
                 //description
-                Caption2 = caption2;
-
+                CreatorName = creatorName;
                 Link = link;
 
                 if (drawableID != 0)

@@ -14,31 +14,23 @@ namespace BitChute.Models
 {
     public class NavigationModel
     {
-
-
         public class MainNavigationBackStack
         {
-
         }
         public class Tab0NavigationStack
         {
-
         }
         public class Tab1NavigationStack
         {
-
         }
         public class Tab2NavigationStack
         {
-
         }
         public class Tab3NavigationStack
         {
-
         }
         public class Tab4NavigationStack
         {
-
         }
     }
 }

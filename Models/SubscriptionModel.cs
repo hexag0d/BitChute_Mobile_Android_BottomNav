@@ -37,22 +37,16 @@ namespace BitChute.Models
         {
 
         }
-
-
-
+        
         public class SubscriptionCardSet
         {
-
-            // Built-in photo collection - this could be replaced with
-            // a photo database:
-
             static List<CreatorCard> SubscriptionCreatorCardList = new List<CreatorCard>{
-new CreatorCard (Resource.Drawable._i50, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago50", "postedvideoNAMEdBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago50","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i51, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i52, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago52", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i53, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago53", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i54, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago54", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i55, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago55", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i50, "Video Title Here", "postedvideoNAMEdBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago50","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i51, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i52, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i53, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i54, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i55, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i56, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago56", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i57, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago57", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i58, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago58", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
@@ -124,8 +118,8 @@ new CreatorCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxx
         public class SubscriptionViewHolder : RecyclerView.ViewHolder
         {
             public ImageView Image { get; private set; }
-            public TextView Caption { get; private set; }
-            public TextView Caption2 { get; private set; }
+            public TextView Title { get; private set; }
+            public TextView CreatorName { get; private set; }
 
             public void GetControls()
             {
@@ -137,8 +131,8 @@ new CreatorCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxx
             {
                 // Locate and cache view references:
                 Image = itemView.FindViewById<ImageView>(Resource.Id.imageView);
-                Caption = itemView.FindViewById<TextView>(Resource.Id.titleCaptionTextView);
-                Caption2 = itemView.FindViewById<TextView>(Resource.Id.descriptionCaptionTextView);
+                Title = itemView.FindViewById<TextView>(Resource.Id.titleCaptionTextView);
+                CreatorName = itemView.FindViewById<TextView>(Resource.Id.descriptionCaptionTextView);
 
                 // Detect user clicks on the item view and report which item
                 // was clicked (by layout position) to the listener:

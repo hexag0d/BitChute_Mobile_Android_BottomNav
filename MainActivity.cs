@@ -56,7 +56,6 @@ namespace BitChute
         public static Drawable _tab5Icon;
         public static AssetManager _assets;
         Android.Support.V4.App.Fragment[] _fragments;
-        
 
         public static MainActivity _main;
         public static Bundle _bundle;
@@ -122,7 +121,6 @@ namespace BitChute
                 }
                 catch
                 {
-
                 }
             }
             try
@@ -131,7 +129,6 @@ namespace BitChute
             }
             catch
             {
-                
             }
             
             base.OnCreate(savedInstanceState);
@@ -150,11 +147,8 @@ namespace BitChute
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
             _viewPager.OffscreenPageLimit = 4;
-
             CreateNotificationChannel();
-
             ExtStickyService.StartNotificationLoop(90000);
-
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
             
             //debug subs
@@ -285,8 +279,7 @@ namespace BitChute
             }
             return false;
         }
-
-
+        
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             _navTimer = 0;
@@ -321,10 +314,8 @@ namespace BitChute
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
             _navTimer = 0;
-
             _menu = _navigationView.Menu.GetItem(e.Position);
             _navigationView.SelectedItemId = _menu.ItemId;
-
             _tabSelected = _viewPager.CurrentItem;
 
             if (AppSettings._fanMode)
@@ -343,7 +334,6 @@ namespace BitChute
                     _navViewItemList[4].SetIcon(_tab5Icon);
                 }
             }
-
             CustomOnSwipe();
         }
 
@@ -355,7 +345,6 @@ namespace BitChute
             
             try
             {
-                
                 for (int i = 0; i < menuView.ChildCount; i++)
                 {
                     var item = (BottomNavigationItemView)menuView.GetChildAt(i);
@@ -370,7 +359,6 @@ namespace BitChute
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
 
-
                     if (i == 2)
                     {
                         item.LongClick += FeedTabLongClickListener;
@@ -384,8 +372,6 @@ namespace BitChute
                         _navViewItemList.Add(item);
                     }
                 }
-
-
             }
             catch (System.Exception ex)
             {
@@ -416,7 +402,6 @@ namespace BitChute
             }
             catch
             {
-
             }
         }
 
@@ -431,7 +416,6 @@ namespace BitChute
             _fm4.OnSettingsChanged();
             _fm5.OnSettingsChanged();
         }
-
 
         /// <summary>
         /// changes tabs 4 and 5
@@ -503,10 +487,8 @@ namespace BitChute
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
                         }
-                    
                     break;
                 case 4:
-
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Settings");
@@ -652,8 +634,7 @@ namespace BitChute
                 this.resultCallbackvalue = null;
             }
         }
-
-
+        
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
@@ -667,7 +648,6 @@ namespace BitChute
                 }
                 catch
                 {
-
                 }
             }
             
@@ -694,7 +674,6 @@ namespace BitChute
 
         readonly WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
         readonly WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
-        
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
@@ -757,7 +736,6 @@ namespace BitChute
             _fm5.CustomSetTouchListener(AppState.Display._horizontal);
 
             base.OnConfigurationChanged(newConfig);
-
         }
 
         /// <summary>
@@ -844,12 +822,11 @@ namespace BitChute
 
                 try
                 {
-                    vh.Caption.Text = _subscriptionCardSet[position].Caption;
-                    vh.Caption2.Text = _subscriptionCardSet[position].Caption2;
+                    vh.Title.Text = _subscriptionCardSet[position].Title;
+                    vh.CreatorName.Text = _subscriptionCardSet[position].CreatorName;
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
 
@@ -912,15 +889,13 @@ namespace BitChute
             // Create a new photo CardView (invoked by the layout manager): 
             public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
             {
- 
-                    // Inflate the CardView for the photo:
+                // Inflate the CardView for the photo:
                 View itemView = LayoutInflater.From(parent.Context).
                                 Inflate(Resource.Layout.FeedCardView, parent, false);
                 
                 CardView cv = itemView.FindViewById<CardView>(Resource.Id.feedCardView);
 
                 cv.SetBackgroundColor(_darkGrey);
-
 
                 // Create a ViewHolder to find and hold these view references, and 
                 // register OnClick with the view holder:
@@ -939,12 +914,11 @@ namespace BitChute
                 if (_videoCardSet != null)
                 {
                     vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
-                    vh.Caption.Text = _videoCardSet[position].Caption;
-                    vh.Caption2.Text = _videoCardSet[position].Caption2;
+                    vh.Caption.Text = _videoCardSet[position].Title;
+                    vh.Caption2.Text = _videoCardSet[position].CreatorName;
                 }
                 else
                 {
-                    
                     vh.Image.SetImageResource(_videoCardNoCreators[position].PhotoID);
                     vh.Caption.Text = _videoCardNoCreators[position].Title;
                     vh.Caption2.Text = _videoCardNoCreators[position].CreatorName;

@@ -15,7 +15,6 @@ namespace BitChute.Classes
             public static void OrientationChanged(bool horizontal)
             {
                 _horizontal = horizontal;
-                
             }
 
             /// <summary>
@@ -43,9 +42,6 @@ namespace BitChute.Classes
             Android.Widget.LinearLayout.LayoutParams videoContainerLinearParams =
                new Android.Widget.LinearLayout.LayoutParams(AppState.Display.ScreenWidth,
                (int)(AppState.Display.ScreenWidth * (.5625)));
-
-
-
         }
 
         public class MediaPlayback

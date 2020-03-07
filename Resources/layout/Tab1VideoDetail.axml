@@ -37,8 +37,88 @@
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:id="@+id/linearLayout1">
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_height="50dp"
+			android:layout_width="match_parent"
+			android:id="@+id/linearLayout8">
+			<RelativeLayout
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="fill_parent"
+				android:layout_height="50dp"
+				android:id="@+id/relativeLayout1">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="wrap_content"
+					android:layout_height="50dp"
+					android:layout_alignParentLeft="true"
+					android:id="@+id/likeDislikeLayout" >
+					<ImageView
+						android:src="@drawable/view"
+						android:layout_width="50px"
+						android:layout_height="match_parent"
+						android:id="@+id/imageView1" />
+					<TextView
+						android:text="[viewcount]"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView1" />
+					<ImageButton
+						android:src="@drawable/like"
+						android:layout_width="50px"
+						android:layout_height="match_parent"
+						android:scaleType="fitXY"
+						android:id="@+id/imageButton6" />
+					<ImageButton
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/imageButton7" />
+				</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:id="@+id/extendedVideoControlLayout">
+					<ImageButton
+						android:layout_width="wrap_content"
+						android:src="@drawable/star"
+						android:layout_height="match_parent"
+						android:id="@+id/imageButton5" />
+					<ImageButton
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:src="@drawable/addtoplaylist"
+						android:id="@+id/imageButton4" />
+					<ImageButton
+						android:src="@android:drawable/ic_menu_gallery"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/imageButton3" />
+					<ImageButton
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:src="@drawable/p2pstats"
+						android:id="@+id/imageButton2" />
+					<ImageButton
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:src="@drawable/share"
+						android:id="@+id/imageButton1"
+						android:scaleType="fitXY" />
+				</LinearLayout>
+			</RelativeLayout>
+		</LinearLayout>
 		<LinearLayout
 			android:orientation="horizontal"
 			android:minWidth="25px"
@@ -59,7 +139,7 @@
 				android:minHeight="25px"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:id="@+id/linearLayout3" >
+				android:id="@+id/linearLayout3">
 				<LinearLayout
 					android:orientation="horizontal"
 					android:minWidth="25px"
@@ -74,6 +154,14 @@
 						android:textColor="#ffffff"
 						android:layout_height="match_parent"
 						android:id="@+id/videoDetailCreatorName" />
+				</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout6">
 					<Button
 						android:text="Subscribe"
 						android:backgroundTint="@android:color/holo_red_dark"
@@ -89,24 +177,77 @@
 						android:layout_height="match_parent"
 						android:id="@+id/creatorSubscriberCount" />
 				</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout7">
+					<TextView
+						android:text="Small Text"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/descriptionTextView" />
+				</LinearLayout>
 			</LinearLayout>
 			<LinearLayout
-				android:orientation="horizontal"
+				android:orientation="vertical"
 				android:minWidth="25px"
 				android:minHeight="25px"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:id="@+id/linearLayout5" />
+				android:id="@+id/socialMediaContainer" />
 		</LinearLayout>
-	
-	</LinearLayout>
-	<LinearLayout
-		android:orientation="vertical"
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/commentsCardViewLayout">
-
+		<LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/linearLayout10">
+				<RelativeLayout
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/lowerRelativeLayout1">
+					<LinearLayout
+					android:orientation="vertical"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_alignParentTop="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/commentsCardViewLayout">
+						<TextView
+						android:text="comment"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:id="@+id/textView2" />
+					</LinearLayout>
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="200px"
+					android:layout_alignParentBottom="true"
+					android:id="@+id/relatedVideoLayout">
+					<ImageView
+						android:src="@android:drawable/ic_menu_gallery"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/relatedVideoImageView" />
+					<ImageView
+						android:src="@android:drawable/ic_menu_gallery"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/relatedVideoImageView2" />
+				</LinearLayout>
+			</RelativeLayout>
+		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

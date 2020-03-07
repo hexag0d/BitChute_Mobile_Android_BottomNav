@@ -166,11 +166,6 @@ namespace BitChute.Fragments
             }
         }
 
-        private static async void CustomOnTouch()
-        {
-
-        }
-
         public void OnSettingsChanged()
         {
             if (AppSettings._zoomControl)

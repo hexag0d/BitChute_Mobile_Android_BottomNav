@@ -94,6 +94,7 @@
     <Compile Include="Fragments\FeedFragment.cs" />
     <Compile Include="Fragments\HomeFragment.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\HomepageModel.cs" />
     <Compile Include="Models\NavigationModel.cs" />
@@ -408,6 +409,17 @@
     <AndroidResource Include="Resources\drawable\_testThumb360_3.jpg" />
     <AndroidResource Include="Resources\drawable\_testThumb360_4.jpg" />
     <AndroidResource Include="Resources\raw\mylastvidd.mp4" />
+    <AndroidResource Include="Resources\drawable\like.png" />
+    <AndroidResource Include="Resources\drawable\p2pstats.png" />
+    <AndroidResource Include="Resources\drawable\share.png" />
+    <AndroidResource Include="Resources\drawable\star.png" />
+    <AndroidResource Include="Resources\drawable\flagme.png" />
+    <AndroidResource Include="Resources\drawable\dislike.png" />
+    <AndroidResource Include="Resources\drawable\bitchute_notification2_old.png" />
+    <AndroidResource Include="Resources\drawable\addtoplaylist.png" />
+    <AndroidResource Include="Resources\drawable\watchl8r.png" />
+    <AndroidResource Include="Resources\drawable\view.png" />
+    <AndroidResource Include="Resources\drawable\dislikewhite.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
