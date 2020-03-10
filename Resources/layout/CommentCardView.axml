@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+	android:id="@+id/commentSystemLinearLayout"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+		android:layout_height="200dp"
+		android:id="@+id/commentSystemCardView"
+		android:layout_weight=".3">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/commenterImageView"
+				android:scaleType="fitStart"
+                />
+			<LinearLayout
+            android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="2dp">
+				<TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:text="Caption"
+                android:id="@+id/commentContentsTextView"
+				android:layout_gravity="right"
+                android:layout_marginLeft="4dp" />
+				<TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:text="Caption"
+                android:id="@+id/commenterNameTextView"
+				android:layout_gravity="right"
+                android:layout_marginLeft="4dp" />
+			</LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

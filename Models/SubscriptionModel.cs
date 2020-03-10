@@ -35,7 +35,6 @@ namespace BitChute.Models
         //
         public class PostedContent
         {
-
         }
         
         public class SubscriptionCardSet
@@ -47,9 +46,9 @@ new CreatorCard (Resource.Drawable._i52, "Video Title Here", "postedvideotitledB
 new CreatorCard (Resource.Drawable._i53, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i54, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i55, "Video Title Here", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i56, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago56", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i57, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago57", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
-new CreatorCard (Resource.Drawable._i58, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago58", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i56, "pos", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i57, "d", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
+new CreatorCard (Resource.Drawable._i58, "d", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i59, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago59", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i60, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago60", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
 new CreatorCard (Resource.Drawable._i61, "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago61", "postedvideotitledBITCHUTEGETSTHEAPIxxxxxxxxxxminutesago51","videoID", GetSampleCreator()),
@@ -109,34 +108,6 @@ new CreatorCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxx
             public CreatorCard this[int i]
             {
                 get { return mPhotos[i]; }
-            }
-        }
-
-        // Implement the ViewHolder pattern: each ViewHolder holds references
-        // to the UI components (ImageView and TextView) within the CardView 
-        // that is displayed in a row of the RecyclerView:
-        public class SubscriptionViewHolder : RecyclerView.ViewHolder
-        {
-            public ImageView Image { get; private set; }
-            public TextView Title { get; private set; }
-            public TextView CreatorName { get; private set; }
-
-            public void GetControls()
-            {
-
-            }
-
-            // Get references to the views defined in the CardView layout.
-            public SubscriptionViewHolder(View itemView, Action<int> listener) : base(itemView)
-            {
-                // Locate and cache view references:
-                Image = itemView.FindViewById<ImageView>(Resource.Id.imageView);
-                Title = itemView.FindViewById<TextView>(Resource.Id.titleCaptionTextView);
-                CreatorName = itemView.FindViewById<TextView>(Resource.Id.descriptionCaptionTextView);
-
-                // Detect user clicks on the item view and report which item
-                // was clicked (by layout position) to the listener:
-                itemView.Click += (sender, e) => listener(base.LayoutPosition);
             }
         }
 

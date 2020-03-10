@@ -139,9 +139,7 @@ namespace BitChute.Classes
 
                 //_fm5.SendNotifications();
             });
-
             return _customNoteList;
-
         }
         
         public async Task<string> GetBitChuteChannelLinkFromDiscus(string html)

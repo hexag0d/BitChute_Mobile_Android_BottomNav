@@ -28,6 +28,8 @@ using static Android.Views.View;
 using static BitChute.Fragments.SettingsFragment;
 using static BitChute.Models.VideoModel;
 using static BitChute.Models.SubscriptionModel;
+using static BitChute.Models.CommentModel;
+using BitChute.ViewHolders;
 
 namespace BitChute
 {
@@ -945,12 +947,15 @@ namespace BitChute
                     ItemClick(this, position);
             }
         }
+        
 
-        public static Drawable UniversalGetDrawable(int id)
+        public static Android.Graphics.Drawables.Drawable UniversalGetDrawable(int id)
         {
             Drawable drawable = _main.GetDrawable(id);
             return drawable;
         }
+
+        
 
         protected override void OnResume()
         {

@@ -43,41 +43,42 @@
 			android:orientation="horizontal"
 			android:minWidth="25px"
 			android:minHeight="25px"
-			android:layout_height="50dp"
+			android:layout_height="30dp"
 			android:layout_width="match_parent"
 			android:id="@+id/linearLayout8">
 			<RelativeLayout
 				android:minWidth="25px"
 				android:minHeight="25px"
 				android:layout_width="fill_parent"
-				android:layout_height="50dp"
+				android:layout_height="30dp"
 				android:id="@+id/relativeLayout1">
 				<LinearLayout
 					android:orientation="horizontal"
 					android:minWidth="25px"
 					android:minHeight="25px"
 					android:layout_width="wrap_content"
-					android:layout_height="50dp"
+					android:layout_height="30dp"
 					android:layout_alignParentLeft="true"
 					android:id="@+id/likeDislikeLayout" >
 					<ImageView
-						android:src="@drawable/view"
-						android:layout_width="50px"
-						android:layout_height="match_parent"
-						android:id="@+id/imageView1" />
+						android:src="@drawable/view"						
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:id="@+id/imageView1"/>
 					<TextView
 						android:text="[viewcount]"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
 						android:id="@+id/textView1" />
-					<ImageButton
+					<ImageView
 						android:src="@drawable/like"
-						android:layout_width="50px"
-						android:layout_height="match_parent"
-						android:scaleType="fitXY"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:id="@+id/imageButton6" />
-					<ImageButton
+					<ImageView
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
 						android:id="@+id/imageButton7" />
@@ -87,35 +88,40 @@
 					android:minWidth="25px"
 					android:minHeight="25px"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_height="30dp"
 					android:layout_alignParentRight="true"
 					android:id="@+id/extendedVideoControlLayout">
-					<ImageButton
-						android:layout_width="wrap_content"
+					<ImageView
+						android:layout_width="30dp"
 						android:src="@drawable/star"
-						android:layout_height="match_parent"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:id="@+id/imageButton5" />
-					<ImageButton
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
+					<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:src="@drawable/addtoplaylist"
 						android:id="@+id/imageButton4" />
-					<ImageButton
+					<ImageView
 						android:src="@android:drawable/ic_menu_gallery"
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:id="@+id/imageButton3" />
-					<ImageButton
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
+					<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:src="@drawable/p2pstats"
 						android:id="@+id/imageButton2" />
-					<ImageButton
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
+					<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
 						android:src="@drawable/share"
 						android:id="@+id/imageButton1"
-						android:scaleType="fitXY" />
+					/>
 				</LinearLayout>
 			</RelativeLayout>
 		</LinearLayout>
@@ -126,20 +132,18 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/linearLayout2">
-			<ImageView
-				android:src="@android:drawable/ic_menu_gallery"
-				android:layout_width="250px"
-				android:layout_height="250px"
-				android:maxWidth="250px"
-				android:maxHeight="250px"
-				android:id="@+id/creatorAvatarImageView" />
 			<LinearLayout
 				android:orientation="vertical"
 				android:minWidth="25px"
 				android:minHeight="25px"
-				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:id="@+id/linearLayout3">
+				android:id="@+id/linearLayout3"
+				android:layout_width="150dp">
+				<ImageView
+					android:src="@android:drawable/ic_menu_gallery"
+					android:layout_width="100dp"
+					android:layout_height="100dp"
+					android:id="@+id/creatorAvatarImageView" />
 				<LinearLayout
 					android:orientation="horizontal"
 					android:minWidth="25px"
@@ -149,33 +153,11 @@
 					android:id="@+id/linearLayout4">
 					<TextView
 						android:text="[creator name]"
-						android:textAppearance="?android:attr/textAppearanceLarge"
-						android:layout_width="wrap_content"
-						android:textColor="#ffffff"
-						android:layout_height="match_parent"
-						android:id="@+id/videoDetailCreatorName" />
-				</LinearLayout>
-				<LinearLayout
-					android:orientation="horizontal"
-					android:minWidth="25px"
-					android:minHeight="25px"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/linearLayout6">
-					<Button
-						android:text="Subscribe"
-						android:backgroundTint="@android:color/holo_red_dark"
-						android:layout_width="wrap_content"
-						android:textColor="#ffffff"
-						android:layout_height="match_parent"
-						android:id="@+id/creatorSubscribeButton" />
-					<TextView
-						android:text="[subcount]"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:textColor="#ffffff"
 						android:layout_height="match_parent"
-						android:id="@+id/creatorSubscriberCount" />
+						android:id="@+id/videoDetailCreatorName" />
 				</LinearLayout>
 				<LinearLayout
 					android:orientation="horizontal"
@@ -197,8 +179,31 @@
 				android:minWidth="25px"
 				android:minHeight="25px"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:id="@+id/socialMediaContainer" />
+				android:layout_height="fill_parent"
+				android:id="@+id/socialMediaContainer">
+				<Button
+					android:text="Subscribe"
+					android:backgroundTint="@android:color/holo_red_dark"
+					android:layout_width="120dp"
+					android:textColor="#ffffff"
+					android:layout_height="wrap_content"
+					android:id="@+id/creatorSubscribeButton" />
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout6">
+					<TextView
+						android:text="[subcount]"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:textColor="#ffffff"
+						android:layout_height="match_parent"
+						android:id="@+id/creatorSubscriberCount" />
+				</LinearLayout>
+			</LinearLayout>
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="vertical"
@@ -221,12 +226,11 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:id="@+id/commentsCardViewLayout">
-						<TextView
-						android:text="comment"
-						android:textAppearance="?android:attr/textAppearanceLarge"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:id="@+id/textView2" />
+					    <android.support.v7.widget.RecyclerView
+						android:id="@+id/commentRecyclerView"
+						   android:scrollbars="vertical"
+						  android:layout_width="fill_parent"
+					    android:layout_height="fill_parent" />
 					</LinearLayout>
 				<LinearLayout
 					android:orientation="horizontal"
@@ -244,7 +248,7 @@
 					<ImageView
 						android:src="@android:drawable/ic_menu_gallery"
 						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
+						android:layout_height="wrap_content"
 						android:id="@+id/relatedVideoImageView2" />
 				</LinearLayout>
 			</RelativeLayout>
