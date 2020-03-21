@@ -116,5 +116,73 @@ namespace BitChute.Classes
                 }
             }
         }
+
+        public class FormattingHelpers
+        {
+
+        }
+
+        public class Inbound
+        {
+
+        }
+
+        public class Outbound
+        {
+            public static async void SendVideoLike(string videoId, bool liked)
+            {
+                await Task.Run(() =>
+                {
+                    if (liked)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                });
+            }
+
+            public static async void SendVideoDislike (string videoId, bool disliked)
+            {
+                await Task.Run(() =>
+                {
+                    if (disliked)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                });
+            }
+
+            /// <summary>
+            /// sends video comment to the video id
+            /// </summary>
+            /// <param name="videoId">the id of video to post comment</param>
+            /// <param name="commentId">the id of comment, if it's a reply</param>
+            /// <param name="commentContents">object list representing multimedia replies such as youtube videos, images, other
+            /// potential replies.  I'd like to make it so that bitchute videos can also be embedded as replies</param>
+            public static async void SendVideoComment (string videoId, string commentId,
+                List<object> commentContents)
+            {
+                await Task.Run(() =>
+                {
+                    //if commentId is null then this isn't a reply to a comment
+                    if (commentId == null)
+                    {
+
+                    }
+                    //commentId was passed as param so this is a reply to a comment
+                    else
+                    {
+
+                    }
+                });
+            }
+        }
     }
 }

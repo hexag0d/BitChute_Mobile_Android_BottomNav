@@ -198,9 +198,21 @@ namespace BitChute.Classes
         /// for example, gets the comments, like counts, and related videos
         /// we can call this async so that the video loads first and then the externals
         /// </summary>
-        public async void GetVideoDetailViewComplete(View v, string contentId)
+        public async void GetVideoDetailViewComplete(int tab, string videoLink)
         {
-
+            switch (tab)
+            {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
         }
         
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)

@@ -3794,6 +3794,9 @@ namespace BitChute
 			// aapt resource value: 0x7f0a0115
 			public const int fanModeGroup = 2131362069;
 			
+			// aapt resource value: 0x7f0a00ed
+			public const int favoriteImageView = 2131362029;
+			
 			// aapt resource value: 0x7f0a00bc
 			public const int feedCardView = 2131361980;
 			
@@ -3880,9 +3883,6 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0a00ee
 			public const int imageButton4 = 2131362030;
-			
-			// aapt resource value: 0x7f0a00ed
-			public const int imageButton5 = 2131362029;
 			
 			// aapt resource value: 0x7f0a00eb
 			public const int imageButton7 = 2131362027;
@@ -4073,9 +4073,6 @@ namespace BitChute
 			// aapt resource value: 0x7f0a0129
 			public const int radioGroup2 = 2131362089;
 			
-			// aapt resource value: 0x7f0a00d9
-			public const int recyclerView = 2131362009;
-			
 			// aapt resource value: 0x7f0a00e1
 			public const int relativeLayout1 = 2131362017;
 			
@@ -4225,6 +4222,9 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0a00d2
 			public const int subsLinearLayout = 2131362002;
+			
+			// aapt resource value: 0x7f0a00d9
+			public const int subscriptionRootRecyclerView = 2131362009;
 			
 			// aapt resource value: 0x7f0a0111
 			public const int tab1FeaturedCreators = 2131362065;

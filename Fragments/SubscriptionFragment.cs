@@ -29,9 +29,6 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         
-        public static Android.Support.V7.Widget.RecyclerView _recycleView;
-        public static Android.Support.V7.Widget.RecyclerView.LayoutManager _layoutManager;
-
         //video cards for the root view
         public static SubscriptionCardSet _creatorCardSetRoot;
         //video cards for the channel view
@@ -40,15 +37,7 @@ namespace BitChute.Fragments
         public static VideoCardSet _videoCardSetRelatedVideos;
         
         public static SubscriptionRecyclerViewAdapter _rootAdapter;
-
-        public static View _videoDetailView;
-        public static LinearLayout _subscriptionRecyclerView;
-        public static LinearLayout _tab1ParentLayout;
-
-        public static ViewGroup _viewGroup;
-        public static LayoutInflater _inflater;
-        public static LinearLayoutManager _layoutMan;
-
+        
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
 
         public static SubscriptionFragment NewInstance(string title, string icon) {
@@ -78,23 +67,30 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
-            _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            _videoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
+            CustomViewHelpers.Tab1.Tab1FragmentLayout = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
+            CustomViewHelpers.Tab1.RootRecyclerView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<RecyclerView>(Resource.Id.subscriptionRootRecyclerView);
+            CustomViewHelpers.Tab1.VideoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
             CustomViewHelpers.Tab1.LayoutManager = new LinearLayoutManager(container.Context);
-            _recycleView.SetLayoutManager(_layoutManager);
-            _rootAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
+            CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.LayoutManager);
+            CustomViewHelpers.Tab1.SubscriptionViewAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
+            CustomViewHelpers.Tab1.RootRecyclerView.SetAdapter(CustomViewHelpers.Tab1.SubscriptionViewAdapter);
             CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = new Adapters.CommentRecyclerViewAdapter(SampleCommentList.GetSampleCommentList());
-            _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
-           // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
-            _recycleView.SetAdapter(_rootAdapter);
-
-            CustomViewHelpers.Tab1.Tab1ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
+            CustomViewHelpers.Tab1.SubscriptionViewAdapter.ItemClick += RootVideoAdapter_ItemClick;
+            CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
-            return _view;
+            CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
+            CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
+            CustomViewHelpers.Tab1.SubscribeButton = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<Button>(Resource.Id.creatorSubscribeButton);
+            CustomViewHelpers.Tab1.FavoriteImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.favoriteImageView);
+
+            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
+            return CustomViewHelpers.Tab1.Tab1FragmentLayout;
         }
         
+
+
         /// <summary>
         /// click event for the adapter
         /// </summary>
@@ -102,7 +98,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            NavigateToNewPageFromVideoCard(_videoDetailView, null, _creatorCardSetRoot[e]);
+            NavigateToNewPageFromVideoCard(CustomViewHelpers.Tab1.VideoDetailView, null, _creatorCardSetRoot[e]);
         }
 
         private void CommentSystemViewAdapter_ItemClick(object sender, int e)
@@ -127,8 +123,8 @@ namespace BitChute.Fragments
         /// <param name="view"></param>
         public static void SwapView(View view)
         {
-            _tab1ParentLayout.RemoveAllViews();
-            _tab1ParentLayout.AddView(view);
+            CustomViewHelpers.Tab1.Tab1ParentLayout.RemoveAllViews();
+            CustomViewHelpers.Tab1.Tab1ParentLayout.AddView(view);
         }
 
         /// <summary>
@@ -140,7 +136,7 @@ namespace BitChute.Fragments
         public static void NavigateToNewPage(View view, string linkId)
         {
             // VideoDetailLoader.LoadVideoFromDetail()
-            SwapView(_videoDetailView);
+            SwapView(CustomViewHelpers.Tab1.VideoDetailView);
 
 
             //// the link will most likely be tagged with an identifier

@@ -23,6 +23,7 @@ namespace BitChute.Models
     {
         public class Tab1
         {
+            public static View Tab1FragmentLayout { get; set; }
             public static View VideoDetailView { get; set; }
             public static ViewGroup Container { get; set; }
             public static SubscriptionRecyclerViewAdapter SubscriptionViewAdapter { get; set; }
@@ -30,8 +31,23 @@ namespace BitChute.Models
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
             public static LinearLayout Tab1ParentLayout { get; set; }
-            public static Android.Support.V7.Widget.RecyclerView RecyclerView { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView RootRecyclerView { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView CommentRecyclerView { get; set; }
+
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager LayoutManager { get; set; }
+
+            public static TextView VideoTitle { get; set; }
+            public static ImageView LikeButtonImageView { get; set; }
+            public static ImageView DislikeButtonImageView { get; set; }
+            public static Button SubscribeButton { get; set; }
+            public static ImageView FavoriteImageView { get; set; }
+            public static ImageView AddVideoToPlaylist { get; set; }
+            public static ImageView P2pStatsImageView { get; set; }
+            public static ImageView ShareVideoImageView { get; set; }
+            public static ImageView CreatorAvatarImageView { get; set; }
+            public static List<object> VideoDescription { get; set; }
+            public static TextView CreatorNameTextView { get; set; }
+            public static TextView SubCountTextView { get; set; }
         }
     }
 }
