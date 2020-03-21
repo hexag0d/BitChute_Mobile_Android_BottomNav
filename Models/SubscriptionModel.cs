@@ -31,7 +31,6 @@ namespace BitChute.Models
         /// </summary>
         public List<CreatorPackage> subscriptionListFullPackage;
 
-        
         //
         public class PostedContent
         {

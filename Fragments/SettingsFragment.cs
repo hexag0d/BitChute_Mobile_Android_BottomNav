@@ -17,7 +17,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static BitChute.Classes.ExtendedWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
 
@@ -192,7 +191,7 @@ namespace BitChute.Fragments
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display._horizontal);
+            CustomSetTouchListener(AppState.Display.Horizontal);
             _appSettingsLayout.Visibility = ViewStates.Gone;
             LoadUrlWithDelay(_url, 5000);
             return _view;
@@ -878,7 +877,7 @@ namespace BitChute.Fragments
 
                 }
 
-                //if (AppState.Display._horizontal)
+                //if (AppState.Display.Horizontal)
                 //{
                 //    _wv.LoadUrl(JavascriptCommands._jsHideTitle);
                 //    _wv.LoadUrl(JavascriptCommands._jsHidePageBar);

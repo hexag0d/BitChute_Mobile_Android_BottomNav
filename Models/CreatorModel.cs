@@ -25,7 +25,6 @@ namespace BitChute.Models
         {
             public Creator()
             {
-
             }
 
             public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,

@@ -95,11 +95,11 @@ namespace BitChute
             _assets = Resources.Assets;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
-                AppState.Display._horizontal = true;
+                AppState.Display.Horizontal = true;
             }
             else
             {
-                AppState.Display._horizontal = false;
+                AppState.Display.Horizontal = false;
             }
             _main = this;
             _window = this.Window;
@@ -187,7 +187,7 @@ namespace BitChute
             if (_navTimer != 0)
                 _navTimer = 0;
 
-            if (!_navTimeout || AppState.Display._horizontal)
+            if (!_navTimeout || AppState.Display.Horizontal)
             {
                 _navigationView.Visibility = ViewStates.Visible;
                 _navHidden = false;
@@ -208,7 +208,7 @@ namespace BitChute
                 if (_navTimer != 0)
                     _navTimer = 0;
 
-            if (AppState.Display._horizontal && !AppSettings._hideHorizontalNavbar)
+            if (AppState.Display.Horizontal && !AppSettings._hideHorizontalNavbar)
             {
                 if (!_navTimeout)
                 {
@@ -218,7 +218,7 @@ namespace BitChute
                     _navTimeout = true;
                 }
             }
-            else if (!AppState.Display._horizontal)
+            else if (!AppState.Display.Horizontal)
             {
                 if (_navigationView.Visibility == ViewStates.Gone)
                 {
@@ -240,7 +240,7 @@ namespace BitChute
 
                 if (_navTimer >= 8)
                 {
-                    if (AppState.Display._horizontal)
+                    if (AppState.Display.Horizontal)
                     {
                         _navigationView.Visibility = ViewStates.Gone;
                     }
@@ -496,49 +496,49 @@ namespace BitChute
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            SettingsFragment._url = Https.URLs._settings;
+                            SettingsFragment._url = Https.Urls._settings;
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_home);
-                            SettingsFragment._url = Https.URLs._homepage;
+                            SettingsFragment._url = Https.Urls._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            SettingsFragment._url = Https.URLs._subspage;
+                            SettingsFragment._url = Https.Urls._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
-                            SettingsFragment._url = Https.URLs._homepage;
+                            SettingsFragment._url = Https.Urls._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            SettingsFragment._url = Https.URLs._explore;
+                            SettingsFragment._url = Https.Urls._explore;
                         }
                         if (changeDetails == "Settings")
                         {
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            SettingsFragment._url = Https.URLs._settings;
+                            SettingsFragment._url = Https.Urls._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
                             _navViewItemList[tab].SetTitle("WatchL8r");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            SettingsFragment._url = Https.URLs._watchLater;
+                            SettingsFragment._url = Https.Urls._watchLater;
                         }
                         SettingsFragment.LoadUrlWithDelay(SettingsFragment._url, 0);
                     
@@ -684,7 +684,7 @@ namespace BitChute
             AppState.Display.ScreenWidth = tempHeight;
             if (newConfig.Orientation == Orientation.Landscape)
             {
-                AppState.Display._horizontal = true;
+                AppState.Display.Horizontal = true;
                 VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
                 _navigationView.Visibility = ViewStates.Gone;
                 switch (_viewPager.CurrentItem)
@@ -705,7 +705,7 @@ namespace BitChute
             }
             if (newConfig.Orientation == Orientation.Portrait)
             {
-                AppState.Display._horizontal = false;
+                AppState.Display.Horizontal = false;
                 VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
                 switch (_viewPager.CurrentItem)
                 {
@@ -731,11 +731,11 @@ namespace BitChute
             }
 
             //app seems to be lagging ontouch so removing the touch listener when app is portrait
-            _fm1.CustomSetTouchListener(AppState.Display._horizontal);
-            _fm2.CustomSetTouchListener(AppState.Display._horizontal);
-            _fm3.CustomSetTouchListener(AppState.Display._horizontal);
-            _fm4.CustomSetTouchListener(AppState.Display._horizontal);
-            _fm5.CustomSetTouchListener(AppState.Display._horizontal);
+            _fm1.CustomSetTouchListener(AppState.Display.Horizontal);
+            _fm2.CustomSetTouchListener(AppState.Display.Horizontal);
+            _fm3.CustomSetTouchListener(AppState.Display.Horizontal);
+            _fm4.CustomSetTouchListener(AppState.Display.Horizontal);
+            _fm5.CustomSetTouchListener(AppState.Display.Horizontal);
 
             base.OnConfigurationChanged(newConfig);
         }

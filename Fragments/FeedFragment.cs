@@ -203,7 +203,7 @@ namespace BitChute.Fragments
         
         private static async void CustomOnTouch()
         {
-            if (AppState.Display._horizontal)
+            if (AppState.Display.Horizontal)
             {
             }
         }

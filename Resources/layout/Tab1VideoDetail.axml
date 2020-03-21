@@ -59,9 +59,9 @@
 					android:layout_width="wrap_content"
 					android:layout_height="30dp"
 					android:layout_alignParentLeft="true"
-					android:id="@+id/likeDislikeLayout" >
+					android:id="@+id/likeDislikeLayout">
 					<ImageView
-						android:src="@drawable/view"						
+						android:src="@drawable/view"
 						android:layout_width="30dp"
 						android:layout_height="30dp"
 						android:scaleType="fitStart"
@@ -71,13 +71,44 @@
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:id="@+id/textView1" />
+						android:id="@+id/viewCountTextView" />
+					<TextView
+						android:text="|"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView4" />
+					<TextView
+						android:text="0"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView3" />
 					<ImageView
 						android:src="@drawable/like"
 						android:layout_width="30dp"
 						android:layout_height="30dp"
 						android:scaleType="fitStart"
-						android:id="@+id/imageButton6" />
+						android:id="@+id/likeButtonImageView" />
+					<TextView
+						android:text="|"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView5" />
+					<TextView
+						android:text="0"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView6" />
+					<ImageView
+						android:src="@drawable/like"
+						android:layout_width="28.7dp"
+						android:layout_height="match_parent"
+						android:scaleType="fitStart"
+						android:id="@+id/dislikeButtonImageView"
+						android:rotation="180" />
 					<ImageView
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
@@ -181,6 +212,20 @@
 				android:layout_width="match_parent"
 				android:layout_height="fill_parent"
 				android:id="@+id/socialMediaContainer">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearLayout11" >
+					<TextView
+						android:text="    "
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/textView2" />
+				</LinearLayout>
 				<Button
 					android:text="Subscribe"
 					android:backgroundTint="@android:color/holo_red_dark"
@@ -212,13 +257,13 @@
 			android:layout_width="match_parent"
 			android:layout_height="fill_parent"
 			android:id="@+id/linearLayout10">
-				<RelativeLayout
+			<RelativeLayout
 				android:minWidth="25px"
 				android:minHeight="25px"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/lowerRelativeLayout1">
-					<LinearLayout
+				<LinearLayout
 					android:orientation="vertical"
 					android:minWidth="25px"
 					android:minHeight="25px"
@@ -226,30 +271,11 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:id="@+id/commentsCardViewLayout">
-					    <android.support.v7.widget.RecyclerView
+					<android.support.v7.widget.RecyclerView
 						android:id="@+id/commentRecyclerView"
-						   android:scrollbars="vertical"
-						  android:layout_width="fill_parent"
-					    android:layout_height="fill_parent" />
-					</LinearLayout>
-				<LinearLayout
-					android:orientation="horizontal"
-					android:minWidth="25px"
-					android:minHeight="25px"
-					android:layout_width="match_parent"
-					android:layout_height="200px"
-					android:layout_alignParentBottom="true"
-					android:id="@+id/relatedVideoLayout">
-					<ImageView
-						android:src="@android:drawable/ic_menu_gallery"
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:id="@+id/relatedVideoImageView" />
-					<ImageView
-						android:src="@android:drawable/ic_menu_gallery"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/relatedVideoImageView2" />
+						android:scrollbars="vertical"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent" />
 				</LinearLayout>
 			</RelativeLayout>
 		</LinearLayout>

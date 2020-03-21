@@ -20,6 +20,7 @@ using static BitChute.Models.VideoModel;
 
 using static BitChute.Models.SubscriptionModel;
 using static BitChute.Models.CreatorModel;
+using static BitChute.Models.CommentModel;
 
 namespace BitChute.Fragments 
 {
@@ -49,7 +50,6 @@ namespace BitChute.Fragments
         public static LinearLayoutManager _layoutMan;
 
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
-        
 
         public static SubscriptionFragment NewInstance(string title, string icon) {
             var fragment = new SubscriptionFragment();
@@ -81,16 +81,17 @@ namespace BitChute.Fragments
             var _view = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
             _recycleView = _view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
             _videoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
-            _layoutManager = new LinearLayoutManager(container.Context);
+            CustomViewHelpers.Tab1.LayoutManager = new LinearLayoutManager(container.Context);
             _recycleView.SetLayoutManager(_layoutManager);
             _rootAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
+            CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = new Adapters.CommentRecyclerViewAdapter(SampleCommentList.GetSampleCommentList());
             _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             _recycleView.SetAdapter(_rootAdapter);
-            _tab1ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
-            
-            _viewGroup = container;
-            _inflater = inflater;
+
+            CustomViewHelpers.Tab1.Tab1ParentLayout = _view.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
+            CustomViewHelpers.Tab1.Container = container;
+            CustomViewHelpers.Tab1.LayoutInflater = inflater;
             return _view;
         }
         
@@ -102,6 +103,11 @@ namespace BitChute.Fragments
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
             NavigateToNewPageFromVideoCard(_videoDetailView, null, _creatorCardSetRoot[e]);
+        }
+
+        private void CommentSystemViewAdapter_ItemClick(object sender, int e)
+        {
+
         }
         
         /// <summary>

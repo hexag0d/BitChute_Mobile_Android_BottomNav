@@ -40,7 +40,7 @@ namespace BitChute.Classes
             {
                 vv.Value.LayoutParameters = layoutParams;
             }
-            if (AppState.Display._horizontal)
+            if (AppState.Display.Horizontal)
             {
                 foreach (var tv in titleTextViewDictionary)
                 {
@@ -74,7 +74,7 @@ namespace BitChute.Classes
                     break;
             }
         }
-        
+
         public void LoadVideoFromDetail(View v, VideoDetail vi)
         {
 
@@ -192,8 +192,17 @@ namespace BitChute.Classes
             }
             bool playing = videoViewDictionary[MainActivity._viewPager.CurrentItem].IsPlaying;
         }
-        
 
+        /// <summary>
+        /// this method will set the controls on the video detail page 
+        /// for example, gets the comments, like counts, and related videos
+        /// we can call this async so that the video loads first and then the externals
+        /// </summary>
+        public async void GetVideoDetailViewComplete(View v, string contentId)
+        {
+
+        }
+        
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {
 

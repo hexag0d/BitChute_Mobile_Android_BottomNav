@@ -79,14 +79,15 @@
   <ItemGroup>
     <Compile Include="Adapters\CommentRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
-    <Compile Include="Classes\AppSettings.cs" />
-    <Compile Include="Classes\AppState.cs" />
+    <Compile Include="Classes\CommentListLoader.cs" />
+    <Compile Include="Models\AppSettings.cs" />
+    <Compile Include="Models\AppState.cs" />
     <Compile Include="Classes\BitChuteAPI.cs" />
-    <Compile Include="Classes\ExtendedChromeClient.cs" />
     <Compile Include="Classes\ExtendedWebInterface.cs" />
-    <Compile Include="Classes\ExtNotifications.cs" />
+    <Compile Include="Models\CustomViewHelpers.cs" />
+    <Compile Include="Models\ExtNotifications.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
-    <Compile Include="Classes\Https.cs" />
+    <Compile Include="Models\Https.cs" />
     <Compile Include="Classes\VideoDetailLoader.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Fragments\SubscriptionFragment.cs" />
@@ -107,8 +108,6 @@
     <Compile Include="ViewHolders\SubscriptionViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\articlesExample.json" />
-    <None Include="DeveloperItems\articlesExample.json" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
@@ -390,7 +389,6 @@
   <ItemGroup>
     <AndroidAsset Include="Resources\raw\sample.mp4" />
     <AndroidAsset Include="Assets\sample.mp4" />
-    <Content Include="DeveloperItems\APIMapping.txt" />
     <AndroidResource Include="Resources\layout\Tab1VideoDetail.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -429,6 +427,9 @@
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\noavatar.png" />
     <AndroidResource Include="Resources\drawable\hex.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DeveloperItems\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

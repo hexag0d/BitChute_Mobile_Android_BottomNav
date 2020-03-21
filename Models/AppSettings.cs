@@ -81,13 +81,13 @@ namespace BitChute.Classes
             switch (tabPref)
             {
                 case "tab4overridestring":
-                    string t4url = Https.URLs.GetUrlStringFromPref(_prefs.GetString("tab4overridestring", "MyChannel"));
+                    string t4url = Https.Urls.GetUrlStringFromPref(_prefs.GetString("tab4overridestring", "MyChannel"));
                     return t4url;
                 case "tab5overridestring":
-                    string t5url = Https.URLs.GetUrlStringFromPref(_prefs.GetString("tab5overridestring", "Settings"));
+                    string t5url = Https.Urls.GetUrlStringFromPref(_prefs.GetString("tab5overridestring", "Settings"));
                     return t5url;
             }
-            return Https.URLs._homepage;
+            return Https.Urls._homepage;
         }
     }
 }

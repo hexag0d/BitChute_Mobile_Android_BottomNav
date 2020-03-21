@@ -29,9 +29,9 @@ namespace BitChute.ViewHolders
         public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             // Locate and cache view references:
-            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.imageView);
-            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.titleCaptionTextView);
-            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.descriptionCaptionTextView);
+            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commenterImageView);
+            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView);
+            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextView);
 
             // Detect user clicks on the item view and report which item
             // was clicked (by layout position) to the listener:

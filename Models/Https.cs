@@ -13,7 +13,7 @@
         /// <summary>
         /// contains url strings
         /// </summary>
-        public class URLs
+        public class Urls
         {
             public static string _homepage = "https://www.bitchute.com/";
             public static string _subspage = "https://www.bitchute.com/subscriptions/";

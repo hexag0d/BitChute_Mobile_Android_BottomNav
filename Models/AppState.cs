@@ -7,23 +7,23 @@ namespace BitChute.Classes
         public class Display
         {
             /// <summary>
-            /// returns true when the app detects that device
+            ///  true when the app detects that device
             /// has been rotated horizontally
             /// </summary>
-            public static bool _horizontal = false;
+            public static bool Horizontal = false;
 
             public static void OrientationChanged(bool horizontal)
             {
-                _horizontal = horizontal;
+                Horizontal = horizontal;
             }
 
             /// <summary>
-            /// returns the screen height in pixels
+            ///  the screen height in pixels
             /// </summary>
             public static int ScreenHeight;
 
             /// <summary>
-            /// returns the screen width in pixels
+            ///  the screen width in pixels
             /// </summary>
             public static int ScreenWidth;
 
