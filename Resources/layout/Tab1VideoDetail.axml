@@ -32,6 +32,12 @@
 			android:id="@+id/videoView" />
 		</LinearLayout>
 	</LinearLayout>
+  <ScrollView
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 	<LinearLayout
 		android:orientation="vertical"
 		android:minWidth="25px"
@@ -280,9 +286,11 @@
 						android:id="@+id/commentRecyclerView"
 						android:scrollbars="vertical"
 						android:layout_width="fill_parent"
+						android:nestedScrollingEnabled="false"
 						android:layout_height="fill_parent" />
 				</LinearLayout>
 			</RelativeLayout>
 		</LinearLayout>
 	</LinearLayout>
+</ScrollView>
 </LinearLayout>

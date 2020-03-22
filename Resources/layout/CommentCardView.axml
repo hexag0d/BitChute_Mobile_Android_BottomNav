@@ -6,15 +6,23 @@
     android:layout_height="wrap_content">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-		android:layout_height="200dp"
+        android:layout_height="100dp"
 		android:id="@+id/commentSystemCardView"
-		android:layout_weight=".3">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+		android:layout_weight=".1"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardCornerRadius="5dp">
+        <LinearLayout
+            android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:padding="0dp">
+				<ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/commenterImageView"
 				android:scaleType="fitStart"
-                />
+				android:layout_gravity="fill"/>
 			<LinearLayout
             android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
@@ -23,7 +31,7 @@
 				<TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#ffffff"
                 android:text="Caption"
                 android:id="@+id/commentContentsTextView"
@@ -32,12 +40,13 @@
 				<TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#ffffff"
                 android:text="Caption"
                 android:id="@+id/commenterNameTextView"
 				android:layout_gravity="right"
                 android:layout_marginLeft="4dp" />
 			</LinearLayout>
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
