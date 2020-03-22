@@ -28,26 +28,29 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        
+
         //video cards for the root view
         public static SubscriptionCardSet _creatorCardSetRoot;
         //video cards for the channel view
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
-        
+
         public static SubscriptionRecyclerViewAdapter _rootAdapter;
-        
+
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
 
-        public static SubscriptionFragment NewInstance(string title, string icon) {
+        public static Handler Tab1Handler = new Handler();
+
+        public static SubscriptionFragment NewInstance(string title, string icon)
+        {
             var fragment = new SubscriptionFragment();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
             return fragment;
         }
-        
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -57,7 +60,7 @@ namespace BitChute.Fragments
 
             if (Arguments != null)
             {
-                if(Arguments.ContainsKey("title"))
+                if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
 
                 if (Arguments.ContainsKey("icon"))
@@ -70,8 +73,11 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Tab1FragmentLayout = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
             CustomViewHelpers.Tab1.RootRecyclerView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<RecyclerView>(Resource.Id.subscriptionRootRecyclerView);
             CustomViewHelpers.Tab1.VideoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
-            CustomViewHelpers.Tab1.LayoutManager = new LinearLayoutManager(container.Context);
-            CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.LayoutManager);
+            CustomViewHelpers.Tab1.RootLayoutManager = new LinearLayoutManager(container.Context);
+            CustomViewHelpers.Tab1.VideoLayoutManager = new LinearLayoutManager(CustomViewHelpers.Tab1.VideoDetailView.Context);
+            CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.RootLayoutManager);
+            CustomViewHelpers.Tab1.CommentRecyclerView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<RecyclerView>(Resource.Id.commentRecyclerView);
+            CustomViewHelpers.Tab1.CommentRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.VideoLayoutManager);
             CustomViewHelpers.Tab1.SubscriptionViewAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
             CustomViewHelpers.Tab1.RootRecyclerView.SetAdapter(CustomViewHelpers.Tab1.SubscriptionViewAdapter);
             CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = new Adapters.CommentRecyclerViewAdapter(SampleCommentList.GetSampleCommentList());
@@ -79,17 +85,60 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
-            CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
-            CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
-            CustomViewHelpers.Tab1.SubscribeButton = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<Button>(Resource.Id.creatorSubscribeButton);
-            CustomViewHelpers.Tab1.FavoriteImageView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<ImageView>(Resource.Id.favoriteImageView);
+            CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
+            CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
+            CustomViewHelpers.Tab1.SubscribeButton = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<Button>(Resource.Id.creatorSubscribeButton);
+            CustomViewHelpers.Tab1.FavoriteImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.favoriteImageView);
+            CustomViewHelpers.Tab1.LikeCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.likeCountTextView);
+            CustomViewHelpers.Tab1.DislikeCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.dislikeCountTextView);
 
             // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             return CustomViewHelpers.Tab1.Tab1FragmentLayout;
         }
-        
 
+        public static Task<bool> ReceiveVideoComments(List<Comment> commentList)
+        {
+            Tab1Handler.Post(() =>
+            {
+                CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter =
+                             new Adapters.CommentRecyclerViewAdapter(commentList);
+               
+                CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(
+                    CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
+            });
+            return Task.FromResult<bool>(true);
+        }
+
+        public static Task<bool> ReceiveVideoLikeDislikeCount(int likes, int dislikes)
+        {
+            Tab1Handler.Post(() =>
+            {
+                CustomViewHelpers.Tab1.LikeCountTextView.Text = likes.ToString();
+                CustomViewHelpers.Tab1.DislikeCountTextView.Text = dislikes.ToString();
+            });
+            return Task.FromResult<bool>(true);
+        }
+        
+        public static bool VideoDetailChanged (List<Comment> comments, int likes, int dislikes)
+        {
+            if (likes != 0)
+            {
+                CustomViewHelpers.Tab1.LikeCountTextView.Text = likes.ToString();
+            }
+            if (dislikes != 0)
+            {
+                CustomViewHelpers.Tab1.LikeCountTextView.Text = likes.ToString();
+            }
+            if (comments != null)
+            {
+                CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter =
+                    new Adapters.CommentRecyclerViewAdapter(comments);
+                CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(
+                    CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
+            }
+            return false;
+        }
 
         /// <summary>
         /// click event for the adapter
@@ -157,6 +206,7 @@ namespace BitChute.Fragments
         {
 
         }
+
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {

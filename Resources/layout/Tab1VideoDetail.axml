@@ -71,19 +71,22 @@
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
+						android:textColor="@android:color/white"
 						android:id="@+id/viewCountTextView" />
 					<TextView
 						android:text="|"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
+						android:textColor="@android:color/white"
 						android:id="@+id/textView4" />
 					<TextView
 						android:text="0"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:id="@+id/textView3" />
+						android:textColor="@android:color/white"
+						android:id="@+id/likeCountTextView" />
 					<ImageView
 						android:src="@drawable/like"
 						android:layout_width="30dp"
@@ -95,13 +98,15 @@
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
+						android:textColor="@android:color/white"
 						android:id="@+id/textView5" />
 					<TextView
 						android:text="0"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:id="@+id/textView6" />
+						android:textColor="@android:color/white"
+						android:id="@+id/dislikeCountTextView" />
 					<ImageView
 						android:src="@drawable/like"
 						android:layout_width="28.7dp"

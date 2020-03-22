@@ -3767,6 +3767,9 @@ namespace BitChute
 			// aapt resource value: 0x7f0a00ea
 			public const int dislikeButtonImageView = 2131362026;
 			
+			// aapt resource value: 0x7f0a00e9
+			public const int dislikeCountTextView = 2131362025;
+			
 			// aapt resource value: 0x7f0a009c
 			public const int edit_query = 2131361948;
 			
@@ -3916,6 +3919,9 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0a00e7
 			public const int likeButtonImageView = 2131362023;
+			
+			// aapt resource value: 0x7f0a00e6
+			public const int likeCountTextView = 2131362022;
 			
 			// aapt resource value: 0x7f0a00e2
 			public const int likeDislikeLayout = 2131362018;
@@ -4271,17 +4277,11 @@ namespace BitChute
 			// aapt resource value: 0x7f0a00fb
 			public const int textView2 = 2131362043;
 			
-			// aapt resource value: 0x7f0a00e6
-			public const int textView3 = 2131362022;
-			
 			// aapt resource value: 0x7f0a00e5
 			public const int textView4 = 2131362021;
 			
 			// aapt resource value: 0x7f0a00e8
 			public const int textView5 = 2131362024;
-			
-			// aapt resource value: 0x7f0a00e9
-			public const int textView6 = 2131362025;
 			
 			// aapt resource value: 0x7f0a00ba
 			public const int text_input_password_toggle = 2131361978;

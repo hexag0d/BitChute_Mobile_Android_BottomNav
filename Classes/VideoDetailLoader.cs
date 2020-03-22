@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.Res;
@@ -92,6 +92,36 @@ namespace BitChute.Classes
         /// <param name="vc"></param>
         public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, VideoCardNoCreator vcnc)
         {
+            //first we set the view members we already have metadata for
+            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
+            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
+
+            if (cc != null)
+            {
+                videoTitle.Text = cc.Title;
+                videoCreatorName.Text = cc.Creator.Name;
+                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
+            }
+            else if (vc != null)
+            {
+                videoTitle.Text = vc.Title;
+                videoCreatorName.Text = vc.Creator.Name;
+                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
+            }
+            else if (vcnc != null)
+            {
+                videoTitle.Text = vcnc.Title;
+                videoCreatorName.Text = vcnc.CreatorName;
+                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vcnc.PhotoID));
+            }
+            //the rest of the video metadata should be set async as the video is loading
+            //this will give a snappy UI while also allowing for data to be
+            //loaded as the video loads
+            //we want the video loading to be next, however, get the data source stream set asap
+            
+            //next we initialize the media player
+
             if (!videoViewDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
             {
                 videoViewDictionary.Add(MainActivity._viewPager.CurrentItem, (VideoView)v.FindViewById<VideoView>(Resource.Id.videoView));
@@ -121,9 +151,6 @@ namespace BitChute.Classes
 
             if (MainActivity._viewPager.CurrentItem == 2)
             {
-                //  854 x 480 .mp4 h264 file but I can't commit it on github
-                //  put a similar file in your resources/raw/ folder to test
-                //  if it's too big the apk will fail to deploy but this is just for testing
                 string path = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
 
                 uri = Android.Net.Uri.Parse(path);
@@ -138,7 +165,8 @@ namespace BitChute.Classes
 
             if (MainActivity._viewPager.CurrentItem == 1)
             {
-                ExtStickyService.MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+                //ExtStickyService.MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+                ExtStickyService.MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].SetDataSource(Android.App.Application.Context, SampleUri);
             }
             if (MainActivity._viewPager.CurrentItem == 2)
             {
@@ -150,28 +178,6 @@ namespace BitChute.Classes
 
             videoViewDictionary[MainActivity._viewPager.CurrentItem].Start();
 
-            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
-            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
-
-            if (cc != null)
-            {
-                videoTitle.Text = cc.Title;
-                videoCreatorName.Text = cc.Creator.Name;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
-            }
-            else if (vc != null)
-            {
-                videoTitle.Text = vc.Title;
-                videoCreatorName.Text = vc.Creator.Name;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
-            }
-            else if (vcnc != null)
-            {
-                videoTitle.Text = vcnc.Title;
-                videoCreatorName.Text = vcnc.CreatorName;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vcnc.PhotoID));
-            }
             videoViewDictionary[MainActivity._viewPager.CurrentItem].LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
 
             switch (MainActivity._viewPager.CurrentItem)
@@ -191,6 +197,15 @@ namespace BitChute.Classes
                     break;
             }
             bool playing = videoViewDictionary[MainActivity._viewPager.CurrentItem].IsPlaying;
+
+            if (vc != null)
+            {
+                GetSetVideoDetailViewComplete(MainActivity._viewPager.CurrentItem, vc.VideoId);
+            }
+            else
+            {
+                GetSetVideoDetailViewComplete(MainActivity._viewPager.CurrentItem, "aVideoId");
+            }
         }
 
         /// <summary>
@@ -198,13 +213,19 @@ namespace BitChute.Classes
         /// for example, gets the comments, like counts, and related videos
         /// we can call this async so that the video loads first and then the externals
         /// </summary>
-        public async void GetVideoDetailViewComplete(int tab, string videoLink)
+        public async void GetSetVideoDetailViewComplete(int tab, string videoLink)
         {
             switch (tab)
             {
                 case 0:
                     break;
                 case 1:
+                    await Task.Run(() =>
+                    {
+                        var likeCount = BitChuteAPI.Inbound.GetVideoLikeCount(videoLink).Result;
+                        SubscriptionFragment.ReceiveVideoLikeDislikeCount(likeCount.Item1, likeCount.Item2);
+                        SubscriptionFragment.ReceiveVideoComments(BitChuteAPI.Inbound.GetVideoComments(videoLink).Result);
+                    });
                     break;
                 case 2:
                     break;
@@ -214,6 +235,8 @@ namespace BitChute.Classes
                     break;
             }
         }
+
+        
         
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {

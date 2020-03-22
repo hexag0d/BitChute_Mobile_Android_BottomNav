@@ -50,8 +50,10 @@ namespace BitChute.Adapters
             // Fill in the contents of the photo card (invoked by the layout manager):
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
-                vh = holder as CommentSystemRecyclerViewHolder;
+               vh = holder as CommentSystemRecyclerViewHolder;
 
+
+                vh.CreatorAvatar.SetImageResource(Resource.Drawable.hex);
                 // Set the ImageView and TextView in this ViewHolder's CardView 
                 // from this position in the photo album:
                 if (_commentList != null)

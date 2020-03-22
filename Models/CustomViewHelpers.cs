@@ -19,7 +19,7 @@ namespace BitChute.Models
     /// This class is an easier way to access static view resources. 
     /// It essentially acts as a link within the app to easily get and set views
     /// </summary>
-    public class CustomViewHelpers
+    public class CustomViewHelpers 
     {
         public class Tab1
         {
@@ -34,11 +34,14 @@ namespace BitChute.Models
             public static Android.Support.V7.Widget.RecyclerView RootRecyclerView { get; set; }
             public static Android.Support.V7.Widget.RecyclerView CommentRecyclerView { get; set; }
 
-            public static Android.Support.V7.Widget.RecyclerView.LayoutManager LayoutManager { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView.LayoutManager RootLayoutManager { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView.LayoutManager VideoLayoutManager { get; set; }
 
             public static TextView VideoTitle { get; set; }
             public static ImageView LikeButtonImageView { get; set; }
+            public static TextView LikeCountTextView { get; set; }
             public static ImageView DislikeButtonImageView { get; set; }
+            public static TextView DislikeCountTextView { get; set; }
             public static Button SubscribeButton { get; set; }
             public static ImageView FavoriteImageView { get; set; }
             public static ImageView AddVideoToPlaylist { get; set; }

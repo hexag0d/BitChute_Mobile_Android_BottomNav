@@ -12,12 +12,14 @@ using Android.Views;
 using Android.Widget;
 using BitChute;
 using Newtonsoft.Json.Linq;
+using static BitChute.Models.CommentModel;
 using static BitChute.Models.SubscriptionModel;
 
 namespace BitChute.Classes
 {
     public class BitChuteAPI
     {
+
         /// <summary>
         /// returns a Task<string> response
         /// </summary>
@@ -122,9 +124,26 @@ namespace BitChute.Classes
 
         }
 
+        public class DispatchToUi
+        {
+            public static Handler APIHandler = new Handler();
+            
+
+        }
+
         public class Inbound
         {
-
+            public static async Task<Tuple<int, int>> GetVideoLikeCount(string videoId)
+            {
+                await Task.Delay(3000);
+                Tuple<int, int> tuple = new Tuple<int, int>(6,6);
+                return tuple;
+            }
+            public async static Task<List<Comment>> GetVideoComments (string videoId)
+            {
+                await Task.Delay(3000);
+                return SampleCommentList.GetSampleCommentList();
+            }
         }
 
         public class Outbound

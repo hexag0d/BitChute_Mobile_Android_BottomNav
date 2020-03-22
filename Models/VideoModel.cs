@@ -27,6 +27,8 @@ namespace BitChute.Models
         {
             context = contextt;
         }
+        
+        public static Android.Net.Uri SampleUri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
 
         public class VideoDetail 
         {
@@ -76,7 +78,7 @@ namespace BitChute.Models
             {
             }
 
-            public VideoCard(int id, string title, string creatorName, string link, Creator creator)
+            public VideoCard(int id, string title, string creatorName, string videoId, Creator creator)
             {
                 PhotoID = id;
                 //title
@@ -86,7 +88,19 @@ namespace BitChute.Models
 
                 Creator = creator;
 
-                Link = link;
+                //  854 x 480 .mp4 h264 file but I can't commit it on github
+                //  put a similar file in your resources/raw/ folder to test
+                //  if it's too big the apk will fail to deploy but this is just for testing
+
+                // TODO: need to make this more dynamic
+                // essentially, we need to take the linkId from
+                // bitchute JSON return and convert into URI for each video
+                string vidpath = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
+
+                VideoUri = Android.Net.Uri.Parse(vidpath);
+                //Link = link;
+
+                VideoId = videoId;
             }
             public Creator Creator {get;}
             public int PhotoID { get; }
@@ -95,6 +109,10 @@ namespace BitChute.Models
             //Description
             public string CreatorName { get; }
             public string Link { get; }
+            public string VideoId { get; set; }
+
+            public Android.Net.Uri VideoUri { get; set; }
+
             public int Index { get; }
             public Drawable ThumbnailDrawable { get; set; }
             public Bitmap ThumbnailBitmap { get; set; }
