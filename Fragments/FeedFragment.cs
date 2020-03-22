@@ -169,6 +169,7 @@ namespace BitChute.Fragments
             SwapView(_videoDetailView);
         }
 
+
         public void OnSettingsChanged()
         {
             if (AppSettings._zoomControl)

@@ -11,9 +11,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using BitChute;
+using BitChute.Models;
 using Newtonsoft.Json.Linq;
 using static BitChute.Models.CommentModel;
+using static BitChute.Models.CreatorModel;
 using static BitChute.Models.SubscriptionModel;
+using static BitChute.Models.VideoModel;
 
 namespace BitChute.Classes
 {
@@ -133,6 +136,16 @@ namespace BitChute.Classes
 
         public class Inbound
         {
+            public async static Task<SubscriptionCardSet> GetSubscriptionList()
+            {
+                await Task.Delay(3000);
+                return new SubscriptionCardSet();
+            }
+            public async static Task<List<VideoCardNoCreator>> GetCreatorRecentVideos(Creator c)
+            {
+                await Task.Delay(2000);
+                return VideoModel.VideoCardNoCreator.GetVideoCardNoCreatorListSamePerson(c);
+            }
             public static async Task<Tuple<int, int>> GetVideoLikeCount(string videoId)
             {
                 await Task.Delay(3000);

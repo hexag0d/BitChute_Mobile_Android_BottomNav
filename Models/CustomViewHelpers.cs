@@ -24,19 +24,28 @@ namespace BitChute.Models
         public class Tab1
         {
             public static View Tab1FragmentLayout { get; set; }
+            public static View CreatorDetailView { get; set; }
             public static View VideoDetailView { get; set; }
+            
             public static ViewGroup Container { get; set; }
+
             public static SubscriptionRecyclerViewAdapter SubscriptionViewAdapter { get; set; }
+            public static CreatorDetailRecyclerViewAdapter CreatorDetailRecyclerViewAdapter { get; set; }
             public static CommentRecyclerViewAdapter CommentSystemRecyclerViewAdapter { get; set; }
+
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
             public static LinearLayout Tab1ParentLayout { get; set; }
+
             public static Android.Support.V7.Widget.RecyclerView RootRecyclerView { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView CreatorDetailRecyclerView { get; set; }
             public static Android.Support.V7.Widget.RecyclerView CommentRecyclerView { get; set; }
 
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager RootLayoutManager { get; set; }
+            public static Android.Support.V7.Widget.RecyclerView.LayoutManager CreatorDetailLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager VideoLayoutManager { get; set; }
 
+            public static ImageView CreatorDetailAvatarImageView { get; set; }
             public static TextView VideoTitle { get; set; }
             public static ImageView LikeButtonImageView { get; set; }
             public static TextView LikeCountTextView { get; set; }

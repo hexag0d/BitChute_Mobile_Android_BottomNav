@@ -30,14 +30,15 @@ namespace BitChute.Fragments
         string _icon;
 
         //video cards for the root view
-        public static SubscriptionCardSet _creatorCardSetRoot;
+        public static SubscriptionCardSet CreatorCardRootSet;
         //video cards for the channel view
-        public static VideoCardSet _videoCardSetChannel;
+        public static List<VideoModel.VideoCardNoCreator> CreatorDetailVideoCardSet;
+            
+
+
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
-
-        public static SubscriptionRecyclerViewAdapter _rootAdapter;
-
+        
         public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
 
         public static Handler Tab1Handler = new Handler();
@@ -55,7 +56,6 @@ namespace BitChute.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            _creatorCardSetRoot = new SubscriptionCardSet();
             // Set our view from the "main" layout resource  
 
             if (Arguments != null)
@@ -66,22 +66,37 @@ namespace BitChute.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
+            GetSubscriptionList();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             CustomViewHelpers.Tab1.Tab1FragmentLayout = inflater.Inflate(Resource.Layout.Tab1FragmentLayout, container, false);
             CustomViewHelpers.Tab1.RootRecyclerView = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<RecyclerView>(Resource.Id.subscriptionRootRecyclerView);
+
+            CustomViewHelpers.Tab1.CreatorDetailView = inflater.Inflate(Resource.Layout.Tab1CreatorDetail, container, false);
+            CustomViewHelpers.Tab1.CreatorDetailRecyclerView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<RecyclerView>(Resource.Id.creatorDetailRecyclerView);
+            CustomViewHelpers.Tab1.CreatorDetailLayoutManager = new LinearLayoutManager(CustomViewHelpers.Tab1.CreatorDetailView.Context);
+
+            CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter);
             CustomViewHelpers.Tab1.VideoDetailView = inflater.Inflate(Resource.Layout.Tab1VideoDetail, container, false);
             CustomViewHelpers.Tab1.RootLayoutManager = new LinearLayoutManager(container.Context);
+            CustomViewHelpers.Tab1.CreatorDetailLayoutManager = new LinearLayoutManager(CustomViewHelpers.Tab1.CreatorDetailView.Context);
             CustomViewHelpers.Tab1.VideoLayoutManager = new LinearLayoutManager(CustomViewHelpers.Tab1.VideoDetailView.Context);
             CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.RootLayoutManager);
+            CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.CreatorDetailLayoutManager);
+
+            CustomViewHelpers.Tab1.CreatorDetailAvatarImageView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ImageView>(Resource.Id.creatorDetailAvatarImageView);
+            CustomViewHelpers.Tab1.CreatorNameTextView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<TextView>(Resource.Id.creatorDetailNameTextView);
+
             CustomViewHelpers.Tab1.CommentRecyclerView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<RecyclerView>(Resource.Id.commentRecyclerView);
             CustomViewHelpers.Tab1.CommentRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.VideoLayoutManager);
-            CustomViewHelpers.Tab1.SubscriptionViewAdapter = new SubscriptionRecyclerViewAdapter(_creatorCardSetRoot);
+            CustomViewHelpers.Tab1.SubscriptionViewAdapter = new SubscriptionRecyclerViewAdapter(CreatorCardRootSet);
             CustomViewHelpers.Tab1.RootRecyclerView.SetAdapter(CustomViewHelpers.Tab1.SubscriptionViewAdapter);
             CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = new Adapters.CommentRecyclerViewAdapter(SampleCommentList.GetSampleCommentList());
             CustomViewHelpers.Tab1.SubscriptionViewAdapter.ItemClick += RootVideoAdapter_ItemClick;
+            //CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter.ItemClick += CreatorDetailAdapter_ItemClickInt;
+
             CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
@@ -97,13 +112,34 @@ namespace BitChute.Fragments
             return CustomViewHelpers.Tab1.Tab1FragmentLayout;
         }
 
+        public static async Task<SubscriptionCardSet> GetSubscriptionList()
+        {
+            await Task.Run(() => {
+                CreatorCardRootSet = BitChuteAPI.Inbound.GetSubscriptionList().Result;
+                });
+            return CreatorCardRootSet;
+        }
+        
+        public static Task<bool> ReceiveVideoList(List<VideoCardNoCreator> vcl)
+        {
+            Tab1Handler.Post(() =>
+            {
+                CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter =
+                             new Adapters.CreatorDetailRecyclerViewAdapter(vcl);
+
+                CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(
+                    CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter);
+            });
+            return Task.FromResult<bool>(true);
+        }
+
         public static Task<bool> ReceiveVideoComments(List<Comment> commentList)
         {
             Tab1Handler.Post(() =>
             {
                 CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter =
                              new Adapters.CommentRecyclerViewAdapter(commentList);
-               
+
                 CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(
                     CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
             });
@@ -119,8 +155,8 @@ namespace BitChute.Fragments
             });
             return Task.FromResult<bool>(true);
         }
-        
-        public static bool VideoDetailChanged (List<Comment> comments, int likes, int dislikes)
+
+        public static bool VideoDetailChanged(List<Comment> comments, int likes, int dislikes)
         {
             if (likes != 0)
             {
@@ -128,7 +164,7 @@ namespace BitChute.Fragments
             }
             if (dislikes != 0)
             {
-                CustomViewHelpers.Tab1.LikeCountTextView.Text = likes.ToString();
+                CustomViewHelpers.Tab1.DislikeCountTextView.Text = dislikes.ToString();
             }
             if (comments != null)
             {
@@ -147,12 +183,37 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         private void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            NavigateToNewPageFromVideoCard(CustomViewHelpers.Tab1.VideoDetailView, null, _creatorCardSetRoot[e]);
+            NavigateToCreatorPage(CreatorCardRootSet[e]);
+        }
+
+        /// <summary>
+        /// click event for the adapter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void CreatorDetailAdapter_ItemClick(object sender, int i)
+        {
+            NavigateToNewPageFromVideoCard(null, CreatorDetailVideoCardSet[i], null);
+        }
+
+        /// <summary>
+        /// click event for the adapter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CreatorDetailAdapter_ItemClickInt(object sender, int pos)
+        {
+            NavigateToNewPageFromVideoCard(null, CreatorDetailVideoCardSet[pos], null);
+        }
+
+        public static void NavigateToCreatorPage(CreatorCard cc)
+        {
+            CreatorDetailLoader.LoadCreatorPage(CustomViewHelpers.Tab1.Tab1FragmentLayout, cc);
+            //CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter = new Adapters.CreatorDetailRecyclerViewAdapter()
         }
 
         private void CommentSystemViewAdapter_ItemClick(object sender, int e)
         {
-
         }
         
         /// <summary>
@@ -161,9 +222,9 @@ namespace BitChute.Fragments
         /// <param name="view">the view you want to swap</param>
         /// <param name="videoCard">the videocard you want to load</param>
         /// <param name="creatorCard">optionally use a creatorcard for more detail</param>
-        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, CreatorCard creatorCard)
+        public static void NavigateToNewPageFromVideoCard(VideoCard vc, VideoCardNoCreator vcnc, CreatorCard cc)
         {
-            _vidLoader.LoadVideoFromCard(view, creatorCard, videoCard, null);
+            _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, vcnc);
         }
 
         /// <summary>
@@ -201,13 +262,10 @@ namespace BitChute.Fragments
             //}
         }
 
-
         public void CustomSetTouchListener(bool landscape)
         {
-
         }
-
-
+        
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
@@ -229,8 +287,7 @@ namespace BitChute.Fragments
 
             }
         }
-
-
+        
         public void SubsTabGoBack()
         {
         }

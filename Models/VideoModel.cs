@@ -152,6 +152,34 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "Creator 4
 new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoID5", Resource.Drawable._testThumb360_4, null, null ),
   };
 
+
+            public static List<VideoCardNoCreator> GetVideoCardNoCreatorListSamePerson(Creator creator)
+            {
+                var list = new List<VideoCardNoCreator>{
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+  };
+                return list;
+            }
+
             public VideoCardNoCreator()
             {
             }
@@ -355,32 +383,5 @@ new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoI
         }
 
 
-        // Implement the ViewHolder pattern: each ViewHolder holds references
-        // to the UI components (ImageView and TextView) within the CardView 
-        // that is displayed in a row of the RecyclerView:
-        public class FeedViewHolder : RecyclerView.ViewHolder
-        {
-            public ImageView Image { get; private set; }
-            public TextView Caption { get; private set; }
-            public TextView Caption2 { get; private set; }
-
-            public void GetControls()
-            {
-
-            }
-
-            // Get references to the views defined in the CardView layout.
-            public FeedViewHolder(View itemView, Action<int> listener) : base(itemView)
-            {
-                // Locate and cache view references:
-                Image = itemView.FindViewById<ImageView>(Resource.Id.feedImageView);
-                Caption = itemView.FindViewById<TextView>(Resource.Id.feedTitleCaptionTextView);
-                Caption2 = itemView.FindViewById<TextView>(Resource.Id.feedNameCaptionTextView);
-
-                // Detect user clicks on the item view and report which item
-                // was clicked (by layout position) to the listener:
-                itemView.Click += (sender, e) => listener(base.LayoutPosition);
-            }
-        }
     }
 }

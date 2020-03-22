@@ -78,12 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\CommentRecyclerViewAdapter.cs" />
+    <Compile Include="Adapters\CreatorDetailRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\CommentListLoader.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\AppState.cs" />
     <Compile Include="Classes\BitChuteAPI.cs" />
     <Compile Include="Classes\ExtendedWebInterface.cs" />
+    <Compile Include="Classes\CreatorDetailLoader.cs" />
     <Compile Include="Models\CustomViewHelpers.cs" />
     <Compile Include="Models\ExtNotifications.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
@@ -105,6 +107,8 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewHolders\CommentSystemViewHolder.cs" />
+    <Compile Include="ViewHolders\CreatorDetailViewHolder.cs" />
+    <Compile Include="ViewHolders\FeedViewHolder.cs" />
     <Compile Include="ViewHolders\SubscriptionViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -430,6 +434,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DeveloperItems\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Tab1CreatorDetail.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\CreatorDetailCardView.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -803,7 +803,7 @@ namespace BitChute
                             Inflate(Resource.Layout.SubscriptionsCardView, parent, false);
 
                 Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
-                CardView cv = itemView.FindViewById<CardView>(Resource.Id.cardView);
+                CardView cv = itemView.FindViewById<CardView>(Resource.Id.subscriptionCardView);
                 cv.SetBackgroundColor(_darkGrey);
 
                 // Create a ViewHolder to find and hold these view references, and 

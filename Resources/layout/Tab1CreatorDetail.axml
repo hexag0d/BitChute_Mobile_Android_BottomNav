@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+		<ImageView
+			android:src="@android:drawable/ic_menu_gallery"
+			android:layout_width="100dp"
+			android:layout_height="100dp"
+			android:id="@+id/creatorDetailAvatarImageView" />
+
+	<TextView
+		android:text="[creator name]"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/white"
+		android:id="@+id/creatorDetailNameTextView" />
+		<android.support.v7.widget.RecyclerView
+						android:id="@+id/creatorDetailRecyclerView"
+						android:scrollbars="vertical"
+						android:layout_width="fill_parent"
+						android:nestedScrollingEnabled="true"
+						android:layout_height="fill_parent" />
+</LinearLayout>

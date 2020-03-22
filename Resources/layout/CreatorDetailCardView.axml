@@ -2,28 +2,19 @@
 <LinearLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-	android:id="@+id/subsLinearLayout"
+	android:id="@+id/creatorDetailLinearLayout"
     android:layout_height="wrap_content">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-
-		android:id="@+id/subscriptionCardView"
-		android:layout_weight=".1"
-        card_view:cardElevation="4dp"
-        card_view:cardUseCompatPadding="true"
-        card_view:cardCornerRadius="5dp">
-        <LinearLayout
-            android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-            android:orientation="horizontal"
-            android:padding="0dp">
-				<ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:id="@+id/imageView"
+		android:layout_height="200dp"
+		android:id="@+id/creatorDetailVideoCardView"
+		android:layout_weight=".3">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/creatorDetailVideoImageView"
 				android:scaleType="fitStart"
-				android:layout_gravity="fill"/>
+                />
 			<LinearLayout
             android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
@@ -35,7 +26,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ffffff"
                 android:text="Caption"
-                android:id="@+id/titleCaptionTextView"
+                android:id="@+id/creatorDetailVideoTitleTextView"
 				android:layout_gravity="right"
                 android:layout_marginLeft="4dp" />
 				<TextView
@@ -44,10 +35,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#ffffff"
                 android:text="Caption"
-                android:id="@+id/descriptionCaptionTextView"
+                android:id="@+id/creatorDetailVideoDateTextView"
 				android:layout_gravity="right"
                 android:layout_marginLeft="4dp" />
 			</LinearLayout>
-        </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

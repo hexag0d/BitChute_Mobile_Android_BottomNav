@@ -146,6 +146,16 @@ namespace BitChute.Models
             Creator sample = new Creator();
             sample.Name = "A Random Creator";
             sample.LinkToChannel = "/channel/aRandomNameHere";
+            sample.CreatorThumbnailDrawable = MainActivity.UniversalGetDrawable(Resource.Drawable.hex);
+            return sample;
+        }
+
+        public static Creator GetSampleCreator(int avatar)
+        {
+            Creator sample = new Creator();
+            sample.Name = "A Random Creator";
+            sample.LinkToChannel = "/channel/aRandomNameHere";
+            sample.CreatorThumbnailDrawable = MainActivity.UniversalGetDrawable(avatar);
             return sample;
         }
     }
