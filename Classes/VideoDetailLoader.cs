@@ -14,6 +14,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
+using BitChute.Models;
 using StartServices.Servicesclass;
 using static BitChute.Models.CreatorModel;
 using static BitChute.Models.VideoModel;
@@ -75,6 +76,7 @@ namespace BitChute.Classes
             }
         }
 
+
         public void LoadVideoFromDetail(View v, VideoDetail vi)
         {
 
@@ -92,29 +94,29 @@ namespace BitChute.Classes
         /// <param name="vc"></param>
         public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, VideoCardNoCreator vcnc)
         {
-            //first we set the view members we already have metadata for
-            var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
-            var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
+            ////first we set the view members we already have metadata for
+            //var videoTitle = v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            //var videoCreatorName = v.FindViewById<TextView>(Resource.Id.videoDetailCreatorName);
+            //var imageView = v.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
 
-            if (cc != null)
-            {
-                videoTitle.Text = cc.Title;
-                videoCreatorName.Text = cc.Creator.Name;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
-            }
-            else if (vc != null)
-            {
-                videoTitle.Text = vc.Title;
-                videoCreatorName.Text = vc.Creator.Name;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
-            }
-            else if (vcnc != null)
-            {
-                videoTitle.Text = vcnc.Title;
-                videoCreatorName.Text = vcnc.CreatorName;
-                imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vcnc.PhotoID));
-            }
+            //if (cc != null)
+            //{
+            //    videoTitle.Text = cc.Title;
+            //    videoCreatorName.Text = cc.Creator.Name;
+            //    imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(cc.PhotoID));
+            //}
+            //else if (vc != null)
+            //{
+            //    videoTitle.Text = vc.Title;
+            //    videoCreatorName.Text = vc.Creator.Name;
+            //    imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vc.PhotoID));
+            //}
+            //else if (vcnc != null)
+            //{
+            //    videoTitle.Text = vcnc.Title;
+            //    videoCreatorName.Text = vcnc.CreatorName;
+            //    imageView.SetImageDrawable(MainActivity.UniversalGetDrawable(vcnc.PhotoID));
+            //}
             //the rest of the video metadata should be set async as the video is loading
             //this will give a snappy UI while also allowing for data to be
             //loaded as the video loads
@@ -126,10 +128,10 @@ namespace BitChute.Classes
             {
                 videoViewDictionary.Add(MainActivity._viewPager.CurrentItem, (VideoView)v.FindViewById<VideoView>(Resource.Id.videoView));
             }
-            if (!titleTextViewDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
-            {
-                titleTextViewDictionary.Add(MainActivity._viewPager.CurrentItem, (TextView)v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView));
-            }
+            //if (!titleTextViewDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
+            //{
+            //    titleTextViewDictionary.Add(MainActivity._viewPager.CurrentItem, (TextView)v.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView));
+            //}
             if (!mediaControllerDictionary.ContainsKey(MainActivity._viewPager.CurrentItem))
             {
                 mediaControllerDictionary.Add(MainActivity._viewPager.CurrentItem, new MediaController(Application.Context));
@@ -180,22 +182,6 @@ namespace BitChute.Classes
 
             videoViewDictionary[MainActivity._viewPager.CurrentItem].LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
 
-            switch (MainActivity._viewPager.CurrentItem)
-            {
-                case 0:
-                    break;
-                case 1:
-                    SubscriptionFragment.SwapView(v);
-                    break;
-                case 2:
-                    FeedFragment.SwapView(v);
-                    break;
-                case 3:
-                    break;
-
-                case 4:
-                    break;
-            }
             bool playing = videoViewDictionary[MainActivity._viewPager.CurrentItem].IsPlaying;
 
             if (vc != null)
@@ -208,6 +194,8 @@ namespace BitChute.Classes
             }
         }
 
+      
+
         /// <summary>
         /// this method will set the controls on the video detail page 
         /// for example, gets the comments, like counts, and related videos
@@ -215,25 +203,23 @@ namespace BitChute.Classes
         /// </summary>
         public async void GetSetVideoDetailViewComplete(int tab, string videoLink)
         {
-            switch (tab)
+            await Task.Run(() =>
             {
-                case 0:
-                    break;
-                case 1:
-                    await Task.Run(() =>
-                    {
-                        var likeCount = BitChuteAPI.Inbound.GetVideoLikeCount(videoLink).Result;
-                        SubscriptionFragment.ReceiveVideoLikeDislikeCount(likeCount.Item1, likeCount.Item2);
-                        SubscriptionFragment.ReceiveVideoComments(BitChuteAPI.Inbound.GetVideoComments(videoLink).Result);
-                    });
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
+               switch (tab)
+               {
+                   case 0:
+                       break;
+                   case 1:
+                       TabStates.Tab1.MainVideoDetail = BitChuteAPI.Inbound.GetFullVideoDetail(videoLink).Result;
+                       break;
+                   case 2:
+                       break;
+                   case 3:
+                       break;
+                   case 4:
+                       break;
+               }
+            });
         }
 
         

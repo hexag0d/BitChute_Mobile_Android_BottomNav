@@ -29,9 +29,9 @@ namespace BitChute.Models
             
             public static ViewGroup Container { get; set; }
 
-            public static SubscriptionRecyclerViewAdapter SubscriptionViewAdapter { get; set; }
-            public static CreatorDetailRecyclerViewAdapter CreatorDetailRecyclerViewAdapter { get; set; }
-            public static CommentRecyclerViewAdapter CommentSystemRecyclerViewAdapter { get; set; }
+            //public static SubscriptionRecyclerViewAdapter SubscriptionViewAdapter { get; set; }
+            //public static CreatorDetailRecyclerViewAdapter CreatorDetailRecyclerViewAdapter { get; set; }
+            //public static CommentRecyclerViewAdapter CommentSystemRecyclerViewAdapter { get; set; }
 
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
@@ -47,6 +47,7 @@ namespace BitChute.Models
 
             public static ImageView CreatorDetailAvatarImageView { get; set; }
             public static TextView VideoTitle { get; set; }
+            public static TextView VideoViewCountTextView { get; set; }
             public static ImageView LikeButtonImageView { get; set; }
             public static TextView LikeCountTextView { get; set; }
             public static ImageView DislikeButtonImageView { get; set; }
@@ -57,9 +58,10 @@ namespace BitChute.Models
             public static ImageView P2pStatsImageView { get; set; }
             public static ImageView ShareVideoImageView { get; set; }
             public static ImageView CreatorAvatarImageView { get; set; }
-            public static List<object> VideoDescription { get; set; }
+            public static TextView VideoDescription { get; set; }
             public static TextView CreatorNameTextView { get; set; }
             public static TextView SubCountTextView { get; set; }
+            public static ImageView FlagMeImageView { get; set; }
         }
     }
 }

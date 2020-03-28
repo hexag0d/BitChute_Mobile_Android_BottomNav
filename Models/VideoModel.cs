@@ -12,6 +12,7 @@ using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using static BitChute.Models.CommentModel;
 using static BitChute.Models.CreatorModel;
 
 namespace BitChute.Models
@@ -30,9 +31,17 @@ namespace BitChute.Models
         
         public static Android.Net.Uri SampleUri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
 
+        /// <summary>
+        /// VideoDetail class contains the details for videos that would not be efficient to get all at once
+        /// </summary>
         public class VideoDetail 
         {
             public VideoDetail videoInfo;
+
+            public VideoDetail()
+            {
+
+            }
 
             public VideoDetail BuildVideoInfo(Drawable thumbnail, string creatorName, string videoTitle, 
                 string videoLocation, string videoDescription)
@@ -45,14 +54,21 @@ namespace BitChute.Models
                 videoInfo.VideoLocation = videoLocation;
                 videoInfo.VideoDescription = videoDescription;
 
+
                 return newVid;
             }
 
             public string CreatorName { get; set; }
             public string VideoTitle { get; set; }
             public string VideoLocation { get; set; }
-            public string VideoDescription { get; set; }
-            
+            public string VideoDescription { get; set; } //TODO: switch this to an object array
+            public string VideoId { get; set; }
+            public int ViewCount { get; set; }
+            public int LikeCount { get; set; }
+            public int DislikeCount { get; set; }
+            public List<Comment> Comments { get; set; }
+
+            public Uri VideoUri { get; set; }
             public Drawable ThumbnailDrawable { get; set; }
             public Bitmap ThumbnailBitmap { get; set; }
         }
@@ -62,6 +78,11 @@ namespace BitChute.Models
             VideoDetail vi = new VideoDetail();
             vi.CreatorName = "Creator Name Here";
             vi.VideoTitle = "Video Title";
+            vi.ViewCount = 777;
+            vi.LikeCount = 6;
+            vi.DislikeCount = 6;
+            vi.VideoDescription = @"This is a sample description.  Waddap dough!  
+                                    Thanks 4 watching from https://soundcloud.com/vybemasterz";
             //vi.ThumbnailDrawable = MainActivity.UniversalGetDrawable();
 
             return vi;

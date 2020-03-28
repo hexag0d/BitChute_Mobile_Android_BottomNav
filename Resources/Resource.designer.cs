@@ -3614,6 +3614,9 @@ namespace BitChute
 			// aapt resource value: 0x7f0a002e
 			public const int add = 2131361838;
 			
+			// aapt resource value: 0x7f0a00f6
+			public const int addToPlaylistImageView = 2131362038;
+			
 			// aapt resource value: 0x7f0a008c
 			public const int alertTitle = 2131361932;
 			
@@ -3857,6 +3860,9 @@ namespace BitChute
 			// aapt resource value: 0x7f0a005c
 			public const int @fixed = 2131361884;
 			
+			// aapt resource value: 0x7f0a00f7
+			public const int flagMeImageView = 2131362039;
+			
 			// aapt resource value: 0x7f0a0074
 			public const int forever = 2131361908;
 			
@@ -3895,18 +3901,6 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0a007b
 			public const int image = 2131361915;
-			
-			// aapt resource value: 0x7f0a00f9
-			public const int imageButton1 = 2131362041;
-			
-			// aapt resource value: 0x7f0a00f8
-			public const int imageButton2 = 2131362040;
-			
-			// aapt resource value: 0x7f0a00f7
-			public const int imageButton3 = 2131362039;
-			
-			// aapt resource value: 0x7f0a00f6
-			public const int imageButton4 = 2131362038;
 			
 			// aapt resource value: 0x7f0a00f3
 			public const int imageButton7 = 2131362035;
@@ -4064,6 +4058,9 @@ namespace BitChute
 			// aapt resource value: 0x7f0a0060
 			public const int outline = 2131361888;
 			
+			// aapt resource value: 0x7f0a00f8
+			public const int p2pStatsImageView = 2131362040;
+			
 			// aapt resource value: 0x7f0a006b
 			public const int packed = 2131361899;
 			
@@ -4180,6 +4177,9 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0a0121
 			public const int settingsTabOverrideGroup = 2131362081;
+			
+			// aapt resource value: 0x7f0a00f9
+			public const int shareImageView = 2131362041;
 			
 			// aapt resource value: 0x7f0a0090
 			public const int shortcut = 2131361936;

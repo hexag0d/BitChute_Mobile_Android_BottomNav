@@ -26,16 +26,16 @@ namespace BitChute.Models
                     CustomViewHelpers.Tab1.CreatorNameTextView.Text = cc.CreatorName;
                     await Task.Run(() =>
                     {
-                        //set the fragment video card set
-                        SubscriptionFragment.CreatorDetailVideoCardSet = new List<VideoModel.VideoCardNoCreator>(BitChuteAPI.Inbound.GetCreatorRecentVideos(cc.Creator).Result);
-                        //make new adapter
-                        CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter = 
-                            new CreatorDetailRecyclerViewAdapter(SubscriptionFragment.CreatorDetailVideoCardSet);
-                        //set the new adapter
-                        CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(
-                            CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter);
-                        CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter.ItemClick 
-                            += SubscriptionFragment.CreatorDetailAdapter_ItemClick;
+                        ////set the fragment video card set
+                        //SubscriptionFragment.CreatorDetailVideoCardSet = new List<VideoModel.VideoCardNoCreator>(BitChuteAPI.Inbound.GetCreatorRecentVideos(cc.Creator).Result);
+                        ////make new adapter
+                        //CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter = 
+                        //    new CreatorDetailRecyclerViewAdapter(SubscriptionFragment.CreatorDetailVideoCardSet);
+                        ////set the new adapter
+                        //CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(
+                        //    CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter);
+                        //CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter.ItemClick 
+                        //    += SubscriptionFragment.CreatorDetailAdapter_ItemClick;
                     });
                     SubscriptionFragment.SwapView(CustomViewHelpers.Tab1.CreatorDetailView);
                     break;

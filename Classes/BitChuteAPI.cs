@@ -22,49 +22,6 @@ namespace BitChute.Classes
 {
     public class BitChuteAPI
     {
-
-        /// <summary>
-        /// returns a Task<string> response
-        /// </summary>
-        /// <param name="apiFormattedString">use BitChute API formatted string</param>
-        /// <returns></returns>
-        public async Task<string> MakeAPICall(string apiFormattedString)
-        {
-            string response = "";
-            
-            //if the API request string isn't using https then return
-            //we don't want to expose the cookie header to snooper attacks
-            if (apiFormattedString.Substring(0,5) != "https" || apiFormattedString.Substring(0, 5) != "HTTPS" ||
-                apiFormattedString.Substring(0, 5) != "Https")
-            {
-                response = "cannot make non https requests, use https";
-                return response;
-            }
-
-            await Task.Run(() =>
-            {
-                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
-
-                try
-                {
-                    Uri _URI = new Uri("https://bitchute.com/");
-                    
-                    using (HttpClient _client = new HttpClient(handler))
-                    {
-                        _client.DefaultRequestHeaders.Add("Cookie", Https._cookieString);
-                        var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                        var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                        response = resultContent;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            });
-            return response;
-        }
-
         /// <summary>
         /// Gets the currently logged in user's subscription list
         /// This should return a formatted list of creators who have recently posted
@@ -80,15 +37,14 @@ namespace BitChute.Classes
         {
             List<CreatorPackage> creatorPackageList = new List<CreatorPackage>();
 
-            //string json = "{'results':[{'SwiftCode':'','City':'','BankName':'Deutsche    Bank','Bankkey':'10020030','Bankcountry':'DE'},{'SwiftCode':'','City':'10891    Berlin','BankName':'Commerzbank Berlin (West)','Bankkey':'10040000','Bankcountry':'DE'}]}";
             string jsonReturn;
             if (getPackages)
             {
-                jsonReturn = MakeAPICall("apiFormattedStringHere").Result;
+                jsonReturn = Outbound.MakeAPICall("apiFormattedStringHere").Result;
             }
             else
             {
-                jsonReturn = MakeAPICall("getEntireSubscribedList").Result;
+                jsonReturn = Outbound.MakeAPICall("getEntireSubscribedList").Result;
             }
             var resultObjects = AllChildren(JObject.Parse(jsonReturn))
                 .First(c => c.Type == JTokenType.Array && c.Path.Contains("results"))
@@ -136,7 +92,35 @@ namespace BitChute.Classes
 
         public class Inbound
         {
-            public async static Task<SubscriptionCardSet> GetSubscriptionList()
+            /// <summary>
+            /// gets everything other than the comments
+            /// 
+            /// The comments may take longer to return, so I'm keeping them separate for now
+            /// </summary>
+            /// <param name="videoId"></param>
+            /// <returns></returns>
+            public static async Task<VideoDetail> GetFullVideoDetail(string videoId)
+            {
+                int viewCount = 6;
+                int likeCount = 6;
+                int dislikeCount = 6;
+                int subscriberCount = 6666;
+                string videoDescription = "This is a sample video description.  I'm sure it's a very good video";//TODO: turn this into an object array
+
+                VideoDetail vd = new VideoDetail()
+                {
+                    ViewCount = viewCount,
+                    LikeCount = likeCount,
+                    DislikeCount = dislikeCount,
+                    VideoDescription = videoDescription
+                };
+                
+                await Task.Delay(3000);
+
+                return vd;
+            }
+
+            public static async  Task<SubscriptionCardSet> GetSubscriptionList()
             {
                 await Task.Delay(3000);
                 return new SubscriptionCardSet();
@@ -146,10 +130,17 @@ namespace BitChute.Classes
                 await Task.Delay(2000);
                 return VideoModel.VideoCardNoCreator.GetVideoCardNoCreatorListSamePerson(c);
             }
-            public static async Task<Tuple<int, int>> GetVideoLikeCount(string videoId)
+
+            /// <summary>
+            /// Gets the video like, dislike and view counts
+            /// </summary>
+            /// <param name="videoId">the video id string</param>
+            /// <returns> int like, int dislike, int view</returns>
+            public static async Task<Tuple<int, int, int>> GetVideoLikeAndViewCount(string videoId)
             {
                 await Task.Delay(3000);
-                Tuple<int, int> tuple = new Tuple<int, int>(6,6);
+                
+                Tuple<int, int, int> tuple = new Tuple<int, int, int>(6,6,6);
                 return tuple;
             }
             public async static Task<List<Comment>> GetVideoComments (string videoId)
@@ -157,10 +148,24 @@ namespace BitChute.Classes
                 await Task.Delay(3000);
                 return SampleCommentList.GetSampleCommentList();
             }
+
+            public static async Task<int> GetCreatorCurrentSubCount(string creatorId)
+            {
+                await Task.Delay(3000);
+                return 6666;
+            }
         }
 
         public class Outbound
         {
+            public static async void SendVideoView(string videoId)
+            {
+                await Task.Run(() =>
+                {
+
+                });
+            }
+
             public static async void SendVideoLike(string videoId, bool liked)
             {
                 await Task.Run(() =>
@@ -182,11 +187,9 @@ namespace BitChute.Classes
                 {
                     if (disliked)
                     {
-
                     }
                     else
                     {
-
                     }
                 });
             }
@@ -215,6 +218,49 @@ namespace BitChute.Classes
                     }
                 });
             }
+
+            /// <summary>
+            /// returns a Task<string> response
+            /// </summary>
+            /// <param name="apiFormattedString">use BitChute API formatted string</param>
+            /// <returns></returns>
+            public static async Task<string> MakeAPICall(string apiFormattedString)
+            {
+                string response = "";
+
+                //if the API request string isn't using https then return
+                //we don't want to expose the cookie header to snooper attacks
+                if (apiFormattedString.Substring(0, 5) != "https" || apiFormattedString.Substring(0, 5) != "HTTPS" ||
+                    apiFormattedString.Substring(0, 5) != "Https")
+                {
+                    response = "cannot make non https requests, use https";
+                    return response;
+                }
+
+                await Task.Run(() =>
+                {
+                    HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+
+                    try
+                    {
+                        Uri _URI = new Uri("https://bitchute.com/");
+
+                        using (HttpClient _client = new HttpClient(handler))
+                        {
+                            _client.DefaultRequestHeaders.Add("Cookie", Https._cookieString);
+                            var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                            var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                            response = resultContent;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                });
+                return response;
+            }
+
         }
     }
 }

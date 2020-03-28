@@ -30,6 +30,7 @@ using static BitChute.Models.VideoModel;
 using static BitChute.Models.SubscriptionModel;
 using static BitChute.Models.CommentModel;
 using BitChute.ViewHolders;
+using BitChute.Models;
 
 namespace BitChute
 {
@@ -155,6 +156,7 @@ namespace BitChute
             
             //debug subs
             _viewPager.CurrentItem = 1;
+            
         }
 
         public static HomeFragment _fm1 = HomeFragment.NewInstance("Home", "tab_home");
@@ -955,6 +957,10 @@ namespace BitChute
             return drawable;
         }
 
+        public void UpdateViewsFromAdapter(RecyclerView.Adapter a)
+        {
+            RunOnUiThread(() => a.NotifyDataSetChanged());
+        }
         
 
         protected override void OnResume()

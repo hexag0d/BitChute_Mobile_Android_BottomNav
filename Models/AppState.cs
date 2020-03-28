@@ -1,4 +1,5 @@
 ﻿using Android.Util;
+using static BitChute.Models.VideoModel;
 
 namespace BitChute.Classes
 {
@@ -53,6 +54,7 @@ namespace BitChute.Classes
             /// </summary>
             public static int MediaPlayerNumberIsStreaming;
         }
+
 
         /// <summary>
         /// global bool state: 

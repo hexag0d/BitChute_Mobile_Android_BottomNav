@@ -20,9 +20,9 @@ namespace BitChute.Classes
             switch (tabId)
             {
                 case 1:
-                    CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = 
-                        new Adapters.CommentRecyclerViewAdapter(CommentModel.SampleCommentList.GetSampleCommentList());
-                    CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
+                    //CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = 
+                    //    new Adapters.CommentRecyclerViewAdapter(CommentModel.SampleCommentList.GetSampleCommentList());
+                    //CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
                     break;
             }
             return true;
