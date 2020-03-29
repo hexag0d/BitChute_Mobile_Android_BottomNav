@@ -123,6 +123,33 @@ namespace BitChute.Models
 
                 VideoId = videoId;
             }
+
+            public VideoCard(int id, string title, string creatorName, string videoId, Creator creator, Android.Net.Uri vidUri)
+            {
+                PhotoID = id;
+                //title
+                Title = title;
+                //description
+                CreatorName = creatorName;
+
+                Creator = creator;
+
+                VideoUri = vidUri;
+                //  854 x 480 .mp4 h264 file but I can't commit it on github
+                //  put a similar file in your resources/raw/ folder to test
+                //  if it's too big the apk will fail to deploy but this is just for testing
+
+                // TODO: need to make this more dynamic
+                // essentially, we need to take the linkId from
+                // bitchute JSON return and convert into URI for each video
+                string vidpath = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
+
+                VideoUri = Android.Net.Uri.Parse(vidpath);
+                //Link = link;
+
+                VideoId = videoId;
+            }
+
             public Creator Creator {get;}
             public int PhotoID { get; }
             //Title of Video
@@ -176,27 +203,28 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5
 
             public static List<VideoCardNoCreator> GetVideoCardNoCreatorListSamePerson(Creator creator)
             {
+                
                 var list = new List<VideoCardNoCreator>{
-new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "creator.Name","videoID1", Resource.Drawable._testThumb360_0, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "creator.Name","videoID2", Resource.Drawable._testThumb360_1, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "creator.Name","videoID3", Resource.Drawable._testThumb360_2, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "creator.Name","videoID4", Resource.Drawable._testThumb360_3, null, null ),
-new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.Name","videoID5", Resource.Drawable._testThumb360_4, null, null ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "","videoID1", Resource.Drawable._testThumb360_0, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "","videoID2", Resource.Drawable._testThumb360_1, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "","videoID3", Resource.Drawable._testThumb360_2, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "","videoID4", Resource.Drawable._testThumb360_3, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoID5", Resource.Drawable._testThumb360_4, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "","videoID1", Resource.Drawable._testThumb360_0, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "","videoID2", Resource.Drawable._testThumb360_1, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "","videoID3", Resource.Drawable._testThumb360_2, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "","videoID4", Resource.Drawable._testThumb360_3, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoID5", Resource.Drawable._testThumb360_4, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "","videoID1", Resource.Drawable._testThumb360_0, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "","videoID2", Resource.Drawable._testThumb360_1, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "","videoID3", Resource.Drawable._testThumb360_2, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "","videoID4", Resource.Drawable._testThumb360_3, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoID5", Resource.Drawable._testThumb360_4, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "","videoID1", Resource.Drawable._testThumb360_0, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "","videoID2", Resource.Drawable._testThumb360_1, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_2, "Video 3", "","videoID3", Resource.Drawable._testThumb360_2, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_3, "Video 4", "","videoID4", Resource.Drawable._testThumb360_3, null, creator.Name ),
+new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoID5", Resource.Drawable._testThumb360_4, null, creator.Name ),
   };
                 return list;
             }
@@ -232,6 +260,8 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.N
                 CreatorName = creatorName;
                 Link = link;
 
+                Uri = SampleUri;
+
                 if (drawableID != 0)
                 {
                     ThumbnailDrawable = MainActivity.UniversalGetDrawable(drawableID);
@@ -241,19 +271,40 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "creator.N
                     ThumbnailBitmap = thumbbmp;
                 }
             }
-            public int PhotoID { get; set; }
 
+            public VideoCardNoCreator(int id, string title, string caption2,
+    string link, int drawableID, Bitmap thumbbmp, string creatorName, Android.Net.Uri uri)
+            {
+                //int for the drawable but I don't know if this is going to work when the app is on an API
+                PhotoID = id;
+                //title
+                Title = title;
+                //description
+                CreatorName = creatorName;
+                Link = link;
+                uri = SampleUri; //TODO : remove the sample
+                Uri = uri;
+
+                if (drawableID != 0)
+                {
+                    ThumbnailDrawable = MainActivity.UniversalGetDrawable(drawableID);
+                }
+                if (thumbbmp != null)
+                {
+                    ThumbnailBitmap = thumbbmp;
+                }
+            }
+            //video thumbnail resource int
+            public int PhotoID { get; set; }
             //Title of Video
             public string Title { get; set; }
-
             //Description
             public string Caption2 { get; set; }
-
             public string Link { get; set; }
-
             public int Index { get; set; }
-
             public string CreatorName { get; set; }
+
+            public Android.Net.Uri Uri { get; set; }
 
             //I've added these two members because I don't know exactly how the JSON caching is going to work
             public Drawable ThumbnailDrawable { get; set; }

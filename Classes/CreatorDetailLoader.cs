@@ -19,7 +19,7 @@ namespace BitChute.Models
     {
         public async static Task<bool> LoadCreatorPage(View v, CreatorModel.CreatorCard cc)
         {
-            switch (MainActivity._viewPager.CurrentItem)
+            switch (MainActivity.ViewPager.CurrentItem)
             {
                 case 1:
                     CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(cc.Creator.CreatorThumbnailDrawable);

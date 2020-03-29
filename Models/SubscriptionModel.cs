@@ -91,22 +91,22 @@ new CreatorCard (Resource.Drawable._i98, "postedvideotitledBITCHUTEGETSTHEAPIxxx
             };
 
 
-            private List<CreatorCard> mPhotos = new List<CreatorCard>();
+            private List<CreatorCard> _creatorCardList = new List<CreatorCard>();
 
             public SubscriptionCardSet()
             {
-                mPhotos = SubscriptionCreatorCardList;
+                _creatorCardList = SubscriptionCreatorCardList;
             }
 
             public int NumPhotos
             {
-                get { return mPhotos.Count; }
+                get { return _creatorCardList.Count; }
             }
 
             // Indexer (read only) for accessing a photo:
             public CreatorCard this[int i]
             {
-                get { return mPhotos[i]; }
+                get { return _creatorCardList[i]; }
             }
         }
 

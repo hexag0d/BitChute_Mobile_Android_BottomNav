@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BitChute.Adapters;
 using BitChute.Classes;
 using BitChute.Fragments;
@@ -51,7 +52,7 @@ namespace BitChute.Models
                 set
                 {
                     _videoDetail = value;
-                    CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageDrawable(_mainCreator.CreatorThumbnailDrawable);
+                    //CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageDrawable(_mainCreator.CreatorThumbnailDrawable);
                     //get the full video details first from BitChute
                     SubscriptionFragment.ReceiveFullVideoDetails(_videoDetail);
                 }
@@ -63,10 +64,16 @@ namespace BitChute.Models
                 set
                 {
                     _videoSlimLoader = value;
-                    CustomViewHelpers.Tab1.VideoTitle.Text = _videoSlimLoader.Title;
-                    CustomViewHelpers.Tab1.CreatorNameTextView.Text = _videoSlimLoader.CreatorName;
- 
-                    CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(UniversalGetDrawable(_videoSlimLoader.PhotoID));
+                    SubscriptionFragment.UpdateVideoDetailPageFromVideoCard(null, _videoSlimLoader);
+                }
+            }
+
+            public static VideoCard VideoCardSlimLoader
+            {
+                get { return _videoSlimLoaderFull; }
+                set
+                {
+
                 }
             }
 
@@ -76,7 +83,17 @@ namespace BitChute.Models
                 set { _subscriptionViewAdapter = value; }
             }
 
-            public static CreatorDetailRecyclerViewAdapter CreatorDetailRecyclerViewAdapter { get; set; }
+            public static CreatorDetailRecyclerViewAdapter CreatorDetailRecyclerViewAdapter
+            {
+                get { return _creatorDetailRecyclerViewAdapter; }
+                set { _creatorDetailRecyclerViewAdapter = value; }
+            }
+
+            public static CommentRecyclerViewAdapter CommentRecyclerViewAdapter
+            {
+                get { return _commentSystemRecyclerViewAdapter; }
+                set { _commentSystemRecyclerViewAdapter = value; }
+            }
 
             public static SubscriptionCardSet RootVideoCards
             {
@@ -107,10 +124,8 @@ namespace BitChute.Models
                 set
                 {
                     _mainCreator = value;
-                    CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(_mainCreator.CreatorThumbnailDrawable);
-                    CustomViewHelpers.Tab1.CreatorNameTextView.Text = _mainCreator.Name;
-                    SubscriptionFragment.SwapView(CustomViewHelpers.Tab1.CreatorDetailView);
-                    CreatorDetailVideoCardSet = BitChuteAPI.Inbound.GetCreatorRecentVideos(_mainCreator).Result;
+                    SubscriptionFragment.UpdateCreatorPage(_mainCreator);
+                    Task.Factory.StartNew(() => CreatorDetailVideoCardSet = BitChuteAPI.Inbound.GetCreatorRecentVideos(_mainCreator).Result);
                 }
             }
 
@@ -143,12 +158,9 @@ namespace BitChute.Models
                             _commentSystemRecyclerViewAdapter = 
                                 new Adapters.CommentRecyclerViewAdapter(_mainVideoDetailCommentList);
                             _commentSystemRecyclerViewAdapter.ItemClick += SubscriptionFragment.CommentSystemViewAdapter_ItemClick;
-                            CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(_commentSystemRecyclerViewAdapter);
+
                         }
-                        else
-                        {
-                            _commentSystemRecyclerViewAdapter.NotifyDataSetChanged();
-                        }
+                        SubscriptionFragment.UpdateVideoDetailCommentList();
                     }
                 }
             }

@@ -77,7 +77,7 @@ namespace StartServices.Servicesclass
         {           
             if (tab == null)
             {
-                tab = MainActivity._viewPager.CurrentItem;
+                tab = MainActivity.ViewPager.CurrentItem;
             }
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
@@ -109,27 +109,27 @@ namespace StartServices.Servicesclass
         {
             await Task.Run(() =>
             {
-               if (_paused && MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] != null)
+               if (_paused && MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
                {
                    _paused = false;
                     //We are simply paused so just start again
-                    MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Start();
+                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
                    StartForeground();
                    return;
                }
 
-               if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
+               if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
                {
-                   InitializePlayer(MainActivity._viewPager.CurrentItem);
+                   InitializePlayer(MainActivity.ViewPager.CurrentItem);
                }
 
-               if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+               if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                    return;
 
                try
                {
 
-                   MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].PrepareAsync();
+                   MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].PrepareAsync();
                    AquireWifiLock();
                    StartForeground();
                }
@@ -139,20 +139,20 @@ namespace StartServices.Servicesclass
                     Console.WriteLine("Unable to start playback: " + ex);
                }
 
-                if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                 {
-                    AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity._viewPager.CurrentItem;
+                    AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
                 }
             });
         }
 
         private void Pause()
         {
-            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
                 return;
 
-            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
-                MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Pause();
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
 
             StopForeground(true);
             _paused = true;
@@ -160,13 +160,13 @@ namespace StartServices.Servicesclass
 
         public static void Stop()
         {
-            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem] == null)
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
                 return;
 
-            if (MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].IsPlaying)
-                MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Stop();
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Stop();
 
-            MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].Reset();
+            MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
             _paused = false;
             _service.StopForeground(true);
             ReleaseWifiLock();

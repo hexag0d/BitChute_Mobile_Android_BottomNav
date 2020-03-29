@@ -33,14 +33,10 @@ namespace BitChute.Fragments
         public static SubscriptionCardSet CreatorCardRootSet;
         //video cards for the channel view
         public static List<VideoModel.VideoCardNoCreator> CreatorDetailVideoCardSet;
-            
-
 
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
-        
-        public static VideoDetailLoader _vidLoader = new VideoDetailLoader();
-
+        private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
         public static Handler Tab1Handler = new Handler();
 
         public static SubscriptionFragment NewInstance(string title, string icon)
@@ -90,19 +86,16 @@ namespace BitChute.Fragments
 
             CustomViewHelpers.Tab1.CommentRecyclerView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<RecyclerView>(Resource.Id.commentRecyclerView);
             CustomViewHelpers.Tab1.CommentRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.VideoLayoutManager);
-            //CustomViewHelpers.Tab1.SubscriptionViewAdapter = new SubscriptionRecyclerViewAdapter(CreatorCardRootSet);
-            //CustomViewHelpers.Tab1.RootRecyclerView.SetAdapter(CustomViewHelpers.Tab1.SubscriptionViewAdapter);
-            //CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter = new Adapters.CommentRecyclerViewAdapter(SampleCommentList.GetSampleCommentList());
-            //CustomViewHelpers.Tab1.SubscriptionViewAdapter.ItemClick += RootVideoAdapter_ItemClick;
-            //CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter.ItemClick += CreatorDetailAdapter_ItemClickInt;
 
             CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
             CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Tab1.CreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
             CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
             CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
             CustomViewHelpers.Tab1.SubscribeButton = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<Button>(Resource.Id.creatorSubscribeButton);
+            CustomViewHelpers.Tab1.VideoViewCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.viewCountTextView);
 
             CustomViewHelpers.Tab1.FavoriteImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.favoriteImageView);
             CustomViewHelpers.Tab1.AddVideoToPlaylist = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.addToPlaylistImageView);
@@ -114,7 +107,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.DislikeCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.dislikeCountTextView);
             CustomViewHelpers.Tab1.SubCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.creatorSubscriberCount);
             CustomViewHelpers.Tab1.VideoDescription = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.descriptionTextView);
-
+            
             CustomViewHelpers.Tab1.LikeButtonImageView.Click += VideoLikeImageView_OnClick;
             CustomViewHelpers.Tab1.DislikeButtonImageView.Click += VideoDislikeImageView_OnClick;
             CustomViewHelpers.Tab1.FavoriteImageView.Click += FavoriteImageView_OnClick;
@@ -151,27 +144,69 @@ namespace BitChute.Fragments
             }
         }
 
+        public static void UpdateCreatorPage (Creator c)
+        {
+            CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(c.CreatorThumbnailDrawable);
+            CustomViewHelpers.Tab1.CreatorNameTextView.Text = c.Name;
+            SwapView(CustomViewHelpers.Tab1.CreatorDetailView);
+        }
+
         public static bool CreatorDetailAdapterSet;
 
         public static void UpdateCreatorDetailAdapter()
         {
-            if (!RootAdapterSet)
+            Tab1Handler.Post(() =>
+            {
+                if (!CreatorDetailAdapterSet)
+                {
+                    CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(TabStates.Tab1.CreatorDetailRecyclerViewAdapter);
+                    CreatorDetailAdapterSet = true;
+                }
+                TabStates.Tab1.CreatorDetailRecyclerViewAdapter.NotifyDataSetChanged();
+            });
+        }
+
+        public static void UpdateVideoDetailPageFromVideoCard(VideoCard vc, VideoCardNoCreator vcnc)
+        {
+            if (vc != null)
             {
                 Tab1Handler.Post(() =>
                 {
-                    CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(TabStates.Tab1.CreatorDetailRecyclerViewAdapter);
+                    CustomViewHelpers.Tab1.VideoTitle.Text = vc.Title;
+                    CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageDrawable(vc.Creator?.CreatorThumbnailDrawable);
+                    CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
+                    SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
-                RootAdapterSet = true;
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, null);
             }
             else
             {
                 Tab1Handler.Post(() =>
                 {
-                    TabStates.Tab1.CreatorDetailRecyclerViewAdapter.NotifyDataSetChanged();
+                    CustomViewHelpers.Tab1.VideoTitle.Text = vcnc.Title;
+                    CustomViewHelpers.Tab1.CreatorNameTextView.Text = vcnc.CreatorName;
+                    CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(UniversalGetDrawable(vcnc.PhotoID));
+                    SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, null, vcnc);
             }
         }
 
+        public static bool MainViewCommentAdapterSet;
+
+        public static void UpdateVideoDetailCommentList()
+        {
+            Tab1Handler.Post(() => 
+            {
+                if (!MainViewCommentAdapterSet)
+                {
+                    CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(TabStates.Tab1.CreatorDetailRecyclerViewAdapter);
+                    MainViewCommentAdapterSet = true;
+                }
+                TabStates.Tab1.CreatorDetailRecyclerViewAdapter.NotifyDataSetChanged();
+            });
+        }
+    
         public static void ReceiveCreatorDetailAdapterResult()
         {
 
@@ -202,30 +237,17 @@ namespace BitChute.Fragments
             return Task.FromResult<bool>(true);
         }
         
-        //public static Task<bool> ReceiveVideoList(List<VideoCardNoCreator> vcl)
-        //{
-        //    Tab1Handler.Post(() =>
-        //    {
-        //        CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(
-        //            CustomViewHelpers.Tab1.CreatorDetailRecyclerViewAdapter);
-        //    });
-        //    return Task.FromResult<bool>(true);
-        //}
 
-        /*
         public static Task<bool> ReceiveVideoComments(List<Comment> commentList)
         {
             Tab1Handler.Post(() =>
             {
-                CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter =
-                             new Adapters.CommentRecyclerViewAdapter(commentList);
-
                 CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(
-                    CustomViewHelpers.Tab1.CommentSystemRecyclerViewAdapter);
+                    TabStates.Tab1.CommentRecyclerViewAdapter);
             });
             return Task.FromResult<bool>(true);
         }
-        */
+        
         //public static Task<bool> ReceieveUpdatedVideoComments(List<Comment> updatedCommentList)
         //{
         //    Tab1Handler.Post(() =>
@@ -285,7 +307,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         public static void RootVideoAdapter_ItemClick(object sender, int e)
         {
-            TabStates.Tab1.Creator = CreatorCardRootSet[e].Creator;
+            TabStates.Tab1.Creator = TabStates.Tab1.RootVideoCards[e].Creator;
         }
 
         /// <summary>
@@ -305,7 +327,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         public static void CreatorDetailAdapter_ItemClickInt(object sender, int pos)
         {
-            NavigateToNewPageFromVideoCard(null, CreatorDetailVideoCardSet[pos], null);
+            TabStates.Tab1.VideoCardNoCreatorSlimLoader = TabStates.Tab1.CreatorDetailVideoCardSet[pos];
         }
 
         public void VideoLikeImageView_OnClick (object sender, EventArgs e)

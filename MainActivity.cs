@@ -49,7 +49,7 @@ namespace BitChute
     {
         int _tabSelected;
 
-        public static ViewPager _viewPager;
+        public static ViewPager ViewPager;
         public static BottomNavigationView _navigationView;
         public static List<BottomNavigationItemView> _navViewItemList
             = new List<BottomNavigationItemView>();
@@ -141,21 +141,21 @@ namespace BitChute
 
             InitializeTabs();
             
-            _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            _viewPager.PageSelected += ViewPager_PageSelected;
-            _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
+            ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+            ViewPager.PageSelected += ViewPager_PageSelected;
+            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
 
             _navigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
-            _viewPager.OffscreenPageLimit = 4;
+            ViewPager.OffscreenPageLimit = 4;
             CreateNotificationChannel();
             ExtStickyService.StartNotificationLoop(90000);
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
             
             //debug subs
-            _viewPager.CurrentItem = 1;
+            ViewPager.CurrentItem = 1;
             
         }
 
@@ -263,7 +263,7 @@ namespace BitChute
         {
             if (e.KeyCode == Android.Views.Keycode.Back)
             {
-                switch (_viewPager.CurrentItem)
+                switch (ViewPager.CurrentItem)
                 {
                     case 0:
                         _fm1.WebViewGoBack();
@@ -290,7 +290,7 @@ namespace BitChute
 
             if (_tabSelected == e.Item.Order)
             {
-                switch (_viewPager.CurrentItem)
+                switch (ViewPager.CurrentItem)
                 {
                     case 0:
                         _fm1.Pop2Root();
@@ -311,7 +311,7 @@ namespace BitChute
             }
             else
             {
-                _viewPager.SetCurrentItem(e.Item.Order, true);
+                ViewPager.SetCurrentItem(e.Item.Order, true);
             }
         }
 
@@ -320,7 +320,7 @@ namespace BitChute
             _navTimer = 0;
             _menu = _navigationView.Menu.GetItem(e.Position);
             _navigationView.SelectedItemId = _menu.ItemId;
-            _tabSelected = _viewPager.CurrentItem;
+            _tabSelected = ViewPager.CurrentItem;
 
             if (AppSettings._fanMode)
             {
@@ -555,9 +555,9 @@ namespace BitChute
         /// <param name="e"></param>
         public void SettingsTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            if (_viewPager.CurrentItem != 4)
+            if (ViewPager.CurrentItem != 4)
             {
-                _viewPager.CurrentItem = 4;
+                ViewPager.CurrentItem = 4;
             }
             _fm5.ShowAppSettingsMenu();
         }
@@ -657,7 +657,7 @@ namespace BitChute
             
             try
             {
-                switch (_viewPager.CurrentItem)
+                switch (ViewPager.CurrentItem)
                 {
                     case 0:
                         break;
@@ -689,7 +689,7 @@ namespace BitChute
                 AppState.Display.Horizontal = true;
                 VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
                 _navigationView.Visibility = ViewStates.Gone;
-                switch (_viewPager.CurrentItem)
+                switch (ViewPager.CurrentItem)
                 {
                     case 0:
                         break;
@@ -709,7 +709,7 @@ namespace BitChute
             {
                 AppState.Display.Horizontal = false;
                 VideoDetailLoader.OnRotation(AppState.Display.GetCurrentVideoContainerLayout());
-                switch (_viewPager.CurrentItem)
+                switch (ViewPager.CurrentItem)
                 {
                     case 0:
                         break;
@@ -979,7 +979,7 @@ namespace BitChute
         
         protected override void OnDestroy()
         {
-            _viewPager.PageSelected -= ViewPager_PageSelected;
+            ViewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             
             base.OnDestroy();

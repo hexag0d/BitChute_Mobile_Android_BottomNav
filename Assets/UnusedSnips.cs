@@ -1,4 +1,16 @@
-﻿//public bool OnTouch(View v, MotionEvent e)
+﻿//            if (MainActivity._viewPager.CurrentItem == 2)
+//            {
+//                
+
+
+//     string path = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
+
+//                    uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
+//            }
+
+
+
+//public bool OnTouch(View v, MotionEvent e)
 //{
 //    return false;
 //}

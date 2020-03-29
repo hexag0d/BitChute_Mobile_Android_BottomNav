@@ -49,12 +49,15 @@ namespace BitChute.Models
                 RecentVideoCards = recentVideoCardList;
                 CreatorThumbnailDrawable = creatorAvatar;
                 CreatorThumbnailBitmap = creatorAvatarBitmap;
+                MostRecentVideoUri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
+                //MostRecentVideoUri = Android.Net.Uri.Parse(MostRecentVideoLink); //TODO uncomment
             }
 
             public string Name { get; set; }
             public string LinkToChannel { get; set; }
             public string MostRecentVideoLink { get; set; }
             public string MostRecentVideoTitle { get; set; }
+            public Android.Net.Uri MostRecentVideoUri { get; set; } 
 
             public Drawable CreatorThumbnailDrawable { get; set; }
             public Bitmap CreatorThumbnailBitmap { get; set; }
@@ -113,7 +116,7 @@ namespace BitChute.Models
 
             public CreatorCard(Creator creator)
             {
-            } 
+            }
 
             public CreatorCard(int id, string title, string creatorName, string link, Creator creator)
             {
@@ -124,29 +127,56 @@ namespace BitChute.Models
                 CreatorName = creatorName;
                 Creator = creator;
                 Link = link;
+                string path = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
+                LatestVideoUri = Android.Net.Uri.Parse(path);
+            }
+
+            public CreatorCard(int id, string title, string creatorName, string link, Creator creator, Android.Net.Uri latestVideoLink)
+            {
+                PhotoID = id;
+                //title
+                Title = title;
+                //description
+                CreatorName = creatorName;
+                Creator = creator;
+                Link = link;
+                LatestVideoUri = latestVideoLink;
+            }
+
+            public CreatorCard(int id, string title, string creatorName, string link, Creator creator, Android.Net.Uri latestVideoLink, string latestVidLinkString)
+            {
+                PhotoID = id;
+                //title
+                Title = title;
+                //description
+                CreatorName = creatorName;
+                Creator = creator;
+                Link = link;
+                LatestVideoUri = latestVideoLink;
+                LatestVidLinkString = latestVidLinkString;
             }
 
             public Creator Creator { get; }
-
             public int PhotoID { get; }
-
             //Title of Video
             public string Title { get; }
-
             //Description
             public string CreatorName { get; }
-
             public string Link { get; }
-
+            public Android.Net.Uri LatestVideoUri { get; set; }
+            public string LatestVidLinkString { get; set; }
             public int Index { get; }
         }
-        
+
         public static Creator GetSampleCreator()
         {
-            Creator sample = new Creator();
-            sample.Name = "A Random Creator";
-            sample.LinkToChannel = "/channel/aRandomNameHere";
-            sample.CreatorThumbnailDrawable = MainActivity.UniversalGetDrawable(Resource.Drawable.hex);
+            Creator sample = new Creator
+            {
+                Name = "A Random Creator",
+                LinkToChannel = "channel/hexagod",
+                CreatorThumbnailDrawable = MainActivity.UniversalGetDrawable(Resource.Drawable.hex),
+                MostRecentVideoLink = "video/5OKt6KsCPE4/"
+            };
             return sample;
         }
 
