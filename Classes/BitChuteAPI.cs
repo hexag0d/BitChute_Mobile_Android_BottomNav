@@ -115,19 +115,19 @@ namespace BitChute.Classes
                     VideoDescription = videoDescription
                 };
                 
-                await Task.Delay(3000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
 
                 return vd;
             }
 
             public static async  Task<SubscriptionCardSet> GetSubscriptionList()
             {
-                await Task.Delay(3000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
                 return new SubscriptionCardSet();
             }
             public async static Task<List<VideoCardNoCreator>> GetCreatorRecentVideos(Creator c)
             {
-                await Task.Delay(2000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
                 return VideoModel.VideoCardNoCreator.GetVideoCardNoCreatorListSamePerson(c);
             }
 
@@ -138,20 +138,20 @@ namespace BitChute.Classes
             /// <returns> int like, int dislike, int view</returns>
             public static async Task<Tuple<int, int, int>> GetVideoLikeAndViewCount(string videoId)
             {
-                await Task.Delay(3000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
                 
                 Tuple<int, int, int> tuple = new Tuple<int, int, int>(6,6,6);
                 return tuple;
             }
             public async static Task<List<Comment>> GetVideoComments (string videoId)
             {
-                await Task.Delay(3000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
                 return SampleCommentList.GetSampleCommentList();
             }
 
             public static async Task<int> GetCreatorCurrentSubCount(string creatorId)
             {
-                await Task.Delay(3000);
+                await Task.Delay(AppSettings.Debug.DummyDelay);
                 return 6666;
             }
         }

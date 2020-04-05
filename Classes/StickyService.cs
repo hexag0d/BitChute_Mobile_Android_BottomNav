@@ -85,6 +85,10 @@ namespace StartServices.Servicesclass
             {
                 ExtStickyService.MediaPlayerDictionary.Add(tab, new MediaPlayer());
             }
+            else if (MediaPlayerDictionary[tab] == null)
+            {
+                MediaPlayerDictionary[tab] = new MediaPlayer();
+            }
 
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);

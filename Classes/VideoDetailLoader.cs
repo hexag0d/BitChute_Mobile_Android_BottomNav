@@ -76,27 +76,44 @@ namespace BitChute.Classes
             }
         }
 
+        public static bool _vidLoadTest;
+
 
         public void LoadVideoFromDetail(View v, VideoDetail vi)
         {
-
             //var videoCreator = v.FindViewById<TextView>(Resource.Id.)
             //var videoDescription = v.FindViewById<VideoView>(Resource.Id.videoDetailDescription)
         }
 
         /// <summary>
-        /// Loads a video into the media player and changes the view
-        /// CreatorCard, VideoCardNoCreator or VideoCard can be null but not all at the same time
-        /// If all args are provided the VideoCard will be used for metadata
+        /// 
         /// </summary>
         /// <param name="v"></param>
         /// <param name="cc"></param>
         /// <param name="vc"></param>
-        public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, VideoCardNoCreator vcnc)
+        /// <param name="vcnc"></param>
+        /// <param name="tab">this is the tab to load the video on; set to -1 for default selected tab</param>
+        public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, VideoCardNoCreator vcnc, int tab)
         {
+            //IF the tab is -1 then use current tab
+            //eventually we want to be able to dynamically load videos on any tab from any tab
+            if (tab == -1)
+            {
+                tab = MainActivity.ViewPager.CurrentItem;
+            }
+
+
             if (cc == null && vc == null && vcnc == null)
             {
                 return; //nothing to load....
+            }
+
+            if (_vidLoadTest)
+            {
+                ExtStickyService.MediaPlayerDictionary[tab].Reset();
+                ExtStickyService.MediaPlayerDictionary[tab].Release();
+                ExtStickyService.MediaPlayerDictionary[tab] = null;
+                ExtStickyService.InitializePlayer(tab);
             }
             //next we initialize the media player
             if (!videoViewDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
@@ -107,13 +124,14 @@ namespace BitChute.Classes
             {
                 mediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, new MediaController(Application.Context));
             }
+            
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
-            if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
+            if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(tab))
             {
-                ExtStickyService.MediaPlayerDictionary.Add(MainActivity.ViewPager.CurrentItem, new MediaPlayer());
+                ExtStickyService.InitializePlayer(tab);
             }
-
+            
             ISurfaceHolder holder = videoViewDictionary[MainActivity.ViewPager.CurrentItem].Holder;
 
             ////holder.SetType(SurfaceType.PushBuffers);
@@ -132,15 +150,22 @@ namespace BitChute.Classes
             else
             {
                 uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
+                //uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.test2);
             }
-            ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetOnPreparedListener(this);
+
+            if (_vidLoadTest)
+            {
+                uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.test2);
+            }
+
+            //ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetOnPreparedListener(this);
 
             mediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(videoViewDictionary[MainActivity.ViewPager.CurrentItem]);
             mediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetMediaPlayer(videoViewDictionary[MainActivity.ViewPager.CurrentItem]);
 
-            ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Looping = true;
+            //ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Looping = true;
 
-            if (MainActivity.ViewPager.CurrentItem == 1)
+            if (tab == 1)
             {
                 //ExtStickyService.MediaPlayerDictionary[MainActivity._viewPager.CurrentItem].SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
                 ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetDataSource(Android.App.Application.Context, uri);
@@ -149,8 +174,9 @@ namespace BitChute.Classes
             {
                 ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetDataSource(Android.App.Application.Context, uri);
             }
+            
             ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Prepare();
-            ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
+            //ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
 
             videoViewDictionary[MainActivity.ViewPager.CurrentItem].Start();
             videoViewDictionary[MainActivity.ViewPager.CurrentItem].LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
@@ -175,6 +201,8 @@ namespace BitChute.Classes
                     }
                 }
             }
+
+            _vidLoadTest = true;
         }
         
         /// <summary>
@@ -203,12 +231,9 @@ namespace BitChute.Classes
                }
             });
         }
-
-        
         
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {
-
             var aspect = (float)width / (float)height;
         }
 
@@ -217,6 +242,7 @@ namespace BitChute.Classes
             ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetDisplay(holder);
             videoViewDictionary[MainActivity.ViewPager.CurrentItem].SetMediaController(mediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
             mediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetMediaPlayer(videoViewDictionary[MainActivity.ViewPager.CurrentItem]);
+            videoViewDictionary[MainActivity.ViewPager.CurrentItem].Start();
             //mediaControllerDictionary[MainActivity._viewPager.CurrentItem].Show();
         }
 
@@ -226,7 +252,6 @@ namespace BitChute.Classes
 
         public void OnPrepared(MediaPlayer mp)
         {
-
         }
     }
 }

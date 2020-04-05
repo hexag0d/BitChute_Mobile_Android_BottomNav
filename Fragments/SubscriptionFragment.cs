@@ -177,7 +177,7 @@ namespace BitChute.Fragments
                     CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
-                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, null);
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, null, -1);
             }
             else
             {
@@ -188,7 +188,7 @@ namespace BitChute.Fragments
                     CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(UniversalGetDrawable(vcnc.PhotoID));
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
-                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, null, vcnc);
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, null, vcnc, -1);
             }
         }
 
@@ -200,7 +200,7 @@ namespace BitChute.Fragments
             {
                 if (!MainViewCommentAdapterSet)
                 {
-                    CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetAdapter(TabStates.Tab1.CreatorDetailRecyclerViewAdapter);
+                    CustomViewHelpers.Tab1.CommentRecyclerView.SetAdapter(TabStates.Tab1.CommentRecyclerViewAdapter);
                     MainViewCommentAdapterSet = true;
                 }
                 TabStates.Tab1.CreatorDetailRecyclerViewAdapter.NotifyDataSetChanged();
@@ -380,6 +380,8 @@ namespace BitChute.Fragments
         {
         }
         
+
+        
         /// <summary>
         /// Navigates the selected tab to a new page
         /// </summary>
@@ -388,7 +390,7 @@ namespace BitChute.Fragments
         /// <param name="creatorCard">optionally use a creatorcard for more detail</param>
         public static void NavigateToNewPageFromVideoCard(VideoCard vc, VideoCardNoCreator vcnc, CreatorCard cc)
         {
-            _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, vcnc);
+            _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, vcnc, -1);
         }
 
         /// <summary>

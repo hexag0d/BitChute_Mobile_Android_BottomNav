@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using static BitChute.Models.CreatorModel;
 
 namespace BitChute.ViewHolders
 {    // Implement the ViewHolder pattern: each ViewHolder holds references
@@ -26,7 +27,7 @@ namespace BitChute.ViewHolders
         }
 
         // Get references to the views defined in the CardView layout.
-        public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener) : base(itemView)
+        public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener, Action<int> avatarListener) : base(itemView)
         {
             // Locate and cache view references:
             CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commenterImageView);
@@ -36,6 +37,7 @@ namespace BitChute.ViewHolders
             // Detect user clicks on the item view and report which item
             // was clicked (by layout position) to the listener:
             itemView.Click += (sender, e) => listener(base.LayoutPosition);
+            CreatorAvatar.Click += (sender, e) => avatarListener(base.LayoutPosition);
         }
     }
 }

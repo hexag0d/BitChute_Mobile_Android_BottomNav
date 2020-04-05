@@ -54,7 +54,6 @@ namespace BitChute.Models
                 videoInfo.VideoLocation = videoLocation;
                 videoInfo.VideoDescription = videoDescription;
 
-
                 return newVid;
             }
 
@@ -203,7 +202,6 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5
 
             public static List<VideoCardNoCreator> GetVideoCardNoCreatorListSamePerson(Creator creator)
             {
-                
                 var list = new List<VideoCardNoCreator>{
 new VideoCardNoCreator (Resource.Drawable._testThumb360_0, "Video 1", "","videoID1", Resource.Drawable._testThumb360_0, null, creator.Name ),
 new VideoCardNoCreator (Resource.Drawable._testThumb360_1, "Video 2", "","videoID2", Resource.Drawable._testThumb360_1, null, creator.Name ),

@@ -156,7 +156,6 @@ namespace BitChute
             
             //debug subs
             ViewPager.CurrentItem = 1;
-            
         }
 
         public static HomeFragment _fm1 = HomeFragment.NewInstance("Home", "tab_home");

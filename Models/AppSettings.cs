@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 
 namespace BitChute.Classes
@@ -88,6 +89,46 @@ namespace BitChute.Classes
                     return t5url;
             }
             return Https.Urls._homepage;
+        }
+
+        public class Debug
+        {
+            /// <summary>
+            /// for testing without connecting to internet, timer for
+            /// </summary>
+            public static int DummyDelay1ms = 1;
+            public static int DummyDelay3000ms = 3000;
+
+            /// <summary>
+            /// set this to simulate a delayed response from server
+            /// </summary>
+            public static int DummyDelay = 1;
+        }
+
+        public class Themes
+        {
+            public static void InitializeTheme(string theme)
+            {
+                if (theme == "dark")
+                {
+                    SelectedTheme.CommentBackground = Colors.DarkGrey;
+                }
+            }
+
+            public class SelectedTheme
+            {
+                public static Android.Graphics.Color CommentBackground { get; set; }
+            }
+
+            public static Color GetCommentBackground()
+            {
+                return Colors.DarkGrey;
+            }
+
+            public class Colors
+            {
+                public static Android.Graphics.Color DarkGrey = new Android.Graphics.Color(20, 20, 20);
+            }
         }
     }
 }

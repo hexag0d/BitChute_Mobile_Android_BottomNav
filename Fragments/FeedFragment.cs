@@ -131,7 +131,7 @@ namespace BitChute.Fragments
         /// <param name=""></param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, VideoCardNoCreator videoCardNoC)
         {
-            _vidLoader.LoadVideoFromCard(view, null,null, videoCardNoC);
+            _vidLoader.LoadVideoFromCard(view, null,null, videoCardNoC, -1);
             SwapView(view);
         }
 
@@ -143,7 +143,7 @@ namespace BitChute.Fragments
         /// <param name=""></param>
         public static void NavigateToNewPageFromVideoCard(View view, VideoCardNoCreator videoCard)
         {
-            _vidLoader.LoadVideoFromCard(view, null, null, videoCard);
+            _vidLoader.LoadVideoFromCard(view, null, null, videoCard, -1);
             SwapView(view);
         }
 

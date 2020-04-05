@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using BitChute.Classes;
 using BitChute.ViewHolders;
 using static BitChute.Models.CreatorModel;
 using static BitChute.Models.VideoModel;
@@ -27,8 +28,6 @@ namespace BitChute.Adapters
 
         public static CreatorDetailViewHolder vh;
 
-        public static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
-        
         public CreatorDetailRecyclerViewAdapter(VideoCardSet videoCardSet)
         {
             if (videoCardSet == null)
@@ -63,7 +62,7 @@ namespace BitChute.Adapters
                             Inflate(Resource.Layout.CreatorDetailCardView, parent, false);
 
             CardView cv = itemView.FindViewById<CardView>(Resource.Id.creatorDetailVideoCardView);
-            cv.SetBackgroundColor(_darkGrey);
+            cv.SetBackgroundColor(AppSettings.Themes.Colors.DarkGrey);
 
             // Create a ViewHolder to find and hold these view references, and 
             // register OnClick with the view holder:
