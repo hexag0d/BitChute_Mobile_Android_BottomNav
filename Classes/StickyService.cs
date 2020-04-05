@@ -33,43 +33,43 @@ namespace StartServices.Servicesclass
         public const string ActionPause = "com.xamarin.action.PAUSE";
         public const string ActionStop = "com.xamarin.action.STOP";
 
-        public static bool _serviceIsLooping = false;
-        public static MainActivity _main;
-        public static ExtNotifications _extNotes = MainActivity.notifications;
+        private static bool _serviceIsLooping = false;
+        public static MainActivity Main;
 
-        public static BitChute.Fragments.SettingsFragment.ExtWebInterface _extWebInterface =
+        private static BitChute.Fragments.SettingsFragment.ExtWebInterface _extWebInterface =
             BitChute.Fragments.SettingsFragment._extWebInterface;
 
-        public static Java.Util.Timer _timer = new Java.Util.Timer();
-        public static ExtTimerTask _timerTask = new ExtTimerTask();
+        private static Java.Util.Timer _timer = new Java.Util.Timer();
+        private static ExtTimerTask _timerTask = new ExtTimerTask();
 
-        public static ExtStickyService _service;
+        public static ExtStickyService ExtStickyServ;
         private static PowerManager _pm;
-        public int counter = 0;
 
         private static WifiManager wifiManager;
         private static WifiManager.WifiLock wifiLock;
-        public static AudioManager _audioManager;
+        private static AudioManager _audioManager;
 
-        public static bool _backgroundTimeout = false;
-        public static bool _notificationsHaveBeenSent = false;
-        public static ExtNotifications _extNotifications = new ExtNotifications();
-        public static SettingsFragment _fm5;
-        private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
-        public static int _startForegroundNotificationId = 6666;
+        private static bool _backgroundTimeout = false;
+        public static bool NotificationsHaveBeenSent = false;
+        private static ExtNotifications _extNotifications = new ExtNotifications();
+        private static SettingsFragment _fm5;
+        private static ActivityManager.RunningAppProcessInfo _myProcess = new ActivityManager.RunningAppProcessInfo();
+        private static int _startForegroundNotificationId = 6666;
 
         private static bool _notificationStackExecutionInProgress = false;
-        public static bool _notificationLongTimerSet = false;
+        private static bool _notificationLongTimerSet = false;
 
         public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
         public static int PlayerNumberHasFocus = 0;
 
-        public static bool _paused;
+        private static bool _paused;
 
         #endregion
 
         
         /// <summary>
+        /// initializes the mediaplayer object on tab of your choice.  
+        /// if the mediaplayer is already instantiated then it gets reset for new playback
         /// </summary>
         /// <param name="mp"></param>
         /// <returns></returns>
@@ -87,6 +87,17 @@ namespace StartServices.Servicesclass
             }
             else if (MediaPlayerDictionary[tab] == null)
             {
+                MediaPlayerDictionary[tab] = new MediaPlayer();
+            }
+            //I tried to figure out how to switch the data source on an existing media player and eventually gave up lol
+            else
+            {
+                MediaPlayerDictionary[tab].Reset();
+                MediaPlayerDictionary[tab].Release();
+
+                //this is odd, have to set the media player back to null and re-instantiate every time the video loads
+                //I couldn't get it working without doing this
+                MediaPlayerDictionary[tab] = null;
                 MediaPlayerDictionary[tab] = new MediaPlayer();
             }
 
@@ -132,7 +143,6 @@ namespace StartServices.Servicesclass
 
                try
                {
-
                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].PrepareAsync();
                    AquireWifiLock();
                    StartForeground();
@@ -172,7 +182,7 @@ namespace StartServices.Servicesclass
 
             MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
             _paused = false;
-            _service.StopForeground(true);
+            ExtStickyServ.StopForeground(true);
             ReleaseWifiLock();
             AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
         }
@@ -232,7 +242,7 @@ namespace StartServices.Servicesclass
             //Find our audio and notificaton managers
             _audioManager = (AudioManager)GetSystemService(AudioService);
             wifiManager = (WifiManager)GetSystemService(WifiService);
-            _service = this;
+            ExtStickyServ = this;
         }
         public override IBinder OnBind(Intent intent)
         {
@@ -248,8 +258,8 @@ namespace StartServices.Servicesclass
             }
 
             wifiManager = (WifiManager)GetSystemService(Context.WifiService);
-            _main = MainActivity._main;
-            _service = this;
+            Main = MainActivity.Main;
+            ExtStickyServ = this;
 
             try
             {
@@ -321,7 +331,7 @@ namespace StartServices.Servicesclass
                     _fm5.SendNotifications(ExtNotifications._customNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
-                if (ExtStickyService._notificationsHaveBeenSent)
+                if (ExtStickyService.NotificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
                     if (!ExtStickyService._notificationLongTimerSet)
@@ -408,7 +418,7 @@ namespace StartServices.Servicesclass
                 {
                     try
                     {
-                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
                         PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                         _wl.Acquire();
                     }
@@ -435,7 +445,7 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
+                        _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
                         PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                         _wl.Release();
                     }
@@ -476,9 +486,9 @@ namespace StartServices.Servicesclass
         /// <returns>bool</returns>
         public static bool IsInBkGrd()
         {
-            ActivityManager.GetMyMemoryState(myProcess);
+            ActivityManager.GetMyMemoryState(_myProcess);
 
-            if (myProcess.Importance == Importance.Foreground)
+            if (_myProcess.Importance == Importance.Foreground)
             {
                 AppState._bkgrd = false;
                 return false;

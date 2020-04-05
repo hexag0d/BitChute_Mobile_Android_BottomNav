@@ -258,7 +258,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
                 CreatorName = creatorName;
                 Link = link;
 
-                Uri = SampleUri;
+                VideoUri = SampleUri;
 
                 if (drawableID != 0)
                 {
@@ -281,7 +281,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
                 CreatorName = creatorName;
                 Link = link;
                 uri = SampleUri; //TODO : remove the sample
-                Uri = uri;
+                VideoUri = uri;
 
                 if (drawableID != 0)
                 {
@@ -302,7 +302,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
             public int Index { get; set; }
             public string CreatorName { get; set; }
 
-            public Android.Net.Uri Uri { get; set; }
+            public Android.Net.Uri VideoUri { get; set; }
 
             //I've added these two members because I don't know exactly how the JSON caching is going to work
             public Drawable ThumbnailDrawable { get; set; }

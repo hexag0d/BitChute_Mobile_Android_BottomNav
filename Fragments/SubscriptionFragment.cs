@@ -91,6 +91,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
             CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Tab1.VideoDetailScrollView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ScrollView>(Resource.Id.videoDetailScrollView);
             CustomViewHelpers.Tab1.CreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
             CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
             CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);

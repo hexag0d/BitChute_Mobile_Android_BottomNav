@@ -190,7 +190,7 @@ namespace BitChute.Fragments
             }
         }
 
-        public static MainActivity _main = MainActivity._main;
+        public static MainActivity _main = MainActivity.Main;
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {

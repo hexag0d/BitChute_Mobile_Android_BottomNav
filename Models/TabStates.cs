@@ -17,12 +17,57 @@ namespace BitChute.Models
     /// </summary>
     public class TabStates
     {
-        public static MainActivity _main;
+        private static MainActivity _main;
+        private static int _mediaPlayerHasFocus = -1;
+        private static List<bool> _initializedPlayers = new List<bool> { false, false, false, false, false };
 
         public static void SetMainActivity()
         {
-            _main = MainActivity._main;
+            _main = MainActivity.Main;
         }
+
+        /// <summary>
+        /// Keeps track of which media player is currently playing media
+        /// </summary>
+        /// <param name="tab">use -1 to get the currently playing media player without setting a new one</param>
+        /// <returns></returns>
+        public static int MediaTabHasFocus (int tab)
+        {
+            // tab out of range, do nothing
+            if (tab > 4 || tab < -1)
+            {
+                return _mediaPlayerHasFocus;
+            }
+            //app requested current media player
+            if (tab != -1)
+            {
+                _mediaPlayerHasFocus = tab;
+            }
+            else
+            {
+                _mediaPlayerHasFocus = tab;
+            }
+            return _mediaPlayerHasFocus;
+        }
+
+        /// <summary>
+        /// keeps track of which media players have been initialized
+        /// </summary>
+        /// <param name="tab"></param>
+        /// <returns></returns>
+        public static List<bool> InitializedPlayers(int tab)
+        {
+            if (tab == -1)
+            {
+                return _initializedPlayers;
+            }
+            else
+            {
+                _initializedPlayers[tab] = true;
+            }
+            return _initializedPlayers;
+        } 
+        
 
         public class Tab1
         {
@@ -39,6 +84,9 @@ namespace BitChute.Models
             private static CommentRecyclerViewAdapter _commentSystemRecyclerViewAdapter;
             private static SubscriptionRecyclerViewAdapter _subscriptionViewAdapter;
             private static CreatorDetailRecyclerViewAdapter _creatorDetailRecyclerViewAdapter;
+
+            public static bool MediaPlayerInitialized;
+            public static bool VideoIsPlaying;
 
             private static Uri _mainVideoDataSource;
 

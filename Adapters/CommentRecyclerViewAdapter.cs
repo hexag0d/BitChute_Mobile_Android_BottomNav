@@ -57,14 +57,17 @@ namespace BitChute.Adapters
         {
             vh = holder as CommentSystemRecyclerViewHolder;
 
-            vh.CreatorAvatar.SetImageResource(Resource.Drawable.hex);
-            // Set the ImageView and TextView in this ViewHolder's CardView 
-            // from this position in the photo album:
-            if (_commentList != null)
+            vh.CreatorNameTextView.Text = _commentList[position].CommenterName;
+            vh.CommentTextView.Text = _commentList[position].CommentText;
+
+            if (_commentList[position].CommenterAvatarDrawable != null)
             {
-                vh.CreatorAvatar.SetImageResource(CommentModel.GetBlankAvatarInt());
-                vh.CreatorNameTextView.Text = _commentList[position].CommenterName;
-                vh.CommentTextView.Text = _commentList[position].CommentText;
+                vh.CreatorAvatar.SetImageDrawable(_commentList[position].CommenterAvatarDrawable);
+            }
+            else if (_commentList[position].Creator != null)
+            {
+                if (_commentList[position].Creator.CreatorThumbnailDrawable != null)
+                vh.CreatorAvatar.SetImageDrawable(_commentList[position].Creator.CreatorThumbnailDrawable);
             }
         }
 
@@ -95,24 +98,28 @@ namespace BitChute.Adapters
         void AvatarOnClick(int position)
         {
             if (AvatarClick != null)
-            {
                 AvatarClick(this, position);
-            }
 
-            switch (MainActivity.ViewPager.CurrentItem)
+            if (_commentList[position].Creator != null)
             {
-                case 0:
-                    break;
-                case 1:
-                    TabStates.Tab1.Creator = TabStates.Tab1.CommentSystem.MainCommentList[position]?.Creator;
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
+
+                switch (MainActivity.ViewPager.CurrentItem)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        TabStates.Tab1.Creator = TabStates.Tab1.CommentSystem.MainCommentList[position].Creator;
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+                return;
             }
+            Toast.MakeText(Android.App.Application.Context, "User has no channel; ask them to upload something!", ToastLength.Short).Show(); //do toast saying commenter has no channel ... maybe they should join BitChute
         }
     }
 }

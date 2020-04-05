@@ -32,9 +32,9 @@ namespace BitChute.Fragments
         public static LinearLayout _appSettingsLayout;
         public static View _view;
 
-        public static List<object> _settingsList = new List<object>();
-        public static Spinner _tab4OverrideSpinner;
-        public static Spinner _tab5OverrideSpinner;
+        private  static List<object> _settingsList = new List<object>();
+        private static Spinner _tab4OverrideSpinner;
+        private static Spinner _tab5OverrideSpinner;
 
         bool tabLoaded = false;
 
@@ -500,7 +500,7 @@ namespace BitChute.Fragments
                 _settingsList.Add(AppSettings._tab1FeaturedOn);
                 _settingsList.Add(AppSettings._settingsTabOverride);
 
-                _main.OnSettingsChanged();
+                MainActivity.OnSettingsChanged();
             }
         }
 
@@ -800,7 +800,7 @@ namespace BitChute.Fragments
                             notePos++;
                         }
 
-                        ExtStickyService._notificationsHaveBeenSent = true;
+                        ExtStickyService.NotificationsHaveBeenSent = true;
                     }
                 }
                 catch

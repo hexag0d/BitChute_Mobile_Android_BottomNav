@@ -36,6 +36,7 @@ namespace BitChute.Models
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
             public static LinearLayout Tab1ParentLayout { get; set; }
+            public static Android.Widget.ScrollView VideoDetailScrollView { get; set; }
 
             public static Android.Support.V7.Widget.RecyclerView RootRecyclerView { get; set; }
             public static Android.Support.V7.Widget.RecyclerView CreatorDetailRecyclerView { get; set; }
