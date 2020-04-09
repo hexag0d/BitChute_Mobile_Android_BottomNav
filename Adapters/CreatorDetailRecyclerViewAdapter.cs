@@ -23,7 +23,7 @@ namespace BitChute.Adapters
 
         public event EventHandler<int> ItemClick;
         public static VideoCardSet _videoCardSet;
-        public static List<VideoCardNoCreator> VideoCardNoCreators = new List<VideoCardNoCreator>();
+        public static List<VideoCard> VideoCardList;
         public static View itemView;
 
         public static CreatorDetailViewHolder vh;
@@ -37,9 +37,9 @@ namespace BitChute.Adapters
             _videoCardSet = videoCardSet;
         }
 
-        public CreatorDetailRecyclerViewAdapter(List<VideoCardNoCreator> videoCardNoCreators)
+        public CreatorDetailRecyclerViewAdapter(List<VideoCard> videoCardNoCreators)
         {
-            VideoCardNoCreators = videoCardNoCreators;
+            VideoCardList = videoCardNoCreators;
         }
 
         public CreatorDetailRecyclerViewAdapter(List<Models.CreatorModel.Creator> creatorSet)
@@ -48,8 +48,8 @@ namespace BitChute.Adapters
             {
                 foreach (var vidcard in creator.RecentVideoCards)
                 {
-                    vidcard.CreatorName = creator.Name;
-                    VideoCardNoCreators.Add(vidcard);
+                    vidcard.Creator.Name = creator.Name;
+                    VideoCardList.Add(vidcard);
                 }
             }
         }
@@ -78,17 +78,11 @@ namespace BitChute.Adapters
 
             // Set the ImageView and TextView in this ViewHolder's CardView 
             // from this position in the photo album:
-            if (_videoCardSet != null)
+            if (VideoCardList != null)
             {
-                vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
-                vh.Caption.Text = _videoCardSet[position].Title;
-                vh.Caption2.Text = _videoCardSet[position].CreatorName;
-            }
-            else
-            {
-                vh.Image.SetImageResource(VideoCardNoCreators[position].VideoThumbnail);
-                vh.Caption.Text = VideoCardNoCreators[position].Title;
-                vh.Caption2.Text = VideoCardNoCreators[position].CreatorName;
+                vh.Image.SetImageResource(VideoCardList[position].Thumbnail);
+                vh.Caption.Text = VideoCardList[position].Title;
+                vh.Caption2.Text = VideoCardList[position].Creator.Name;
             }
         }
 

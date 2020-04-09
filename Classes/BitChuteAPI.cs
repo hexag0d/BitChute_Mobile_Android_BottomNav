@@ -125,10 +125,10 @@ namespace BitChute.Classes
                 await Task.Delay(AppSettings.Debug.DummyDelay);
                 return new SubscriptionCardSet();
             }
-            public async static Task<List<VideoCardNoCreator>> GetCreatorRecentVideos(Creator c)
+            public async static Task<List<VideoCard>> GetCreatorRecentVideos(Creator c)
             {
                 await Task.Delay(AppSettings.Debug.DummyDelay);
-                return VideoModel.VideoCardNoCreator.GetVideoCardNoCreatorListSamePerson(c);
+                return VideoCardSet.GetSampleVideoCardListOneCreator(c);
             }
 
             /// <summary>

@@ -72,13 +72,13 @@ namespace BitChute.Models
         public class Tab1
         {
             private static VideoDetail _videoDetail;
-            private static VideoCardNoCreator _videoSlimLoader;
+            private static VideoCard _videoSlimLoader;
             private static VideoCard _videoSlimLoaderFull;
             private static List<Comment> _mainVideoDetailCommentList;
             private static List<VideoCard> _rootVideoCardList;
             private static SubscriptionCardSet _rootSubCardSet;
             private static List<Models.CreatorModel.Creator> _creatorDetailSet;
-            private static List<VideoModel.VideoCardNoCreator> _creatorDetailVideoCardSet;
+            private static List<VideoModel.VideoCard> _creatorDetailVideoCardSet;
             private static List<VideoCard> _secondaryVidCardList;
             private static Creator _mainCreator;
             private static CommentRecyclerViewAdapter _commentSystemRecyclerViewAdapter;
@@ -106,22 +106,13 @@ namespace BitChute.Models
                 }
             }
 
-            public static VideoCardNoCreator VideoCardNoCreatorSlimLoader
+            public static VideoCard VideoCardSlimLoader
             {
                 get { return _videoSlimLoader; }
                 set
                 {
                     _videoSlimLoader = value;
-                    SubscriptionFragment.UpdateVideoDetailPageFromVideoCard(null, _videoSlimLoader);
-                }
-            }
-
-            public static VideoCard VideoCardSlimLoader
-            {
-                get { return _videoSlimLoaderFull; }
-                set
-                {
-
+                    SubscriptionFragment.UpdateVideoDetailPageFromVideoCard(_videoSlimLoader);
                 }
             }
 
@@ -177,7 +168,7 @@ namespace BitChute.Models
                 }
             }
 
-            public static List<VideoModel.VideoCardNoCreator> CreatorDetailVideoCardSet
+            public static List<VideoModel.VideoCard> CreatorDetailVideoCardSet
             {
                 get { return _creatorDetailVideoCardSet; }
                 set

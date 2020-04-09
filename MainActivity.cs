@@ -858,7 +858,7 @@ namespace BitChute
         {
             public event EventHandler<int> ItemClick;
             public static VideoCardSet _videoCardSet;
-            public static List<VideoCardNoCreator> _videoCardNoCreators = new List<VideoCardNoCreator>();
+            public static List<VideoCard> _videoCardNoCreators = new List<VideoCard>();
             public static View itemView;
 
             public static FeedViewHolder vh;
@@ -872,7 +872,7 @@ namespace BitChute
                 _videoCardSet = videoCardSet;
             }
 
-            public FeedRecyclerViewAdapter(List<VideoCardNoCreator> videoCardNoCreators)
+            public FeedRecyclerViewAdapter(List<VideoCard> videoCardNoCreators)
             {
                 _videoCardNoCreators = videoCardNoCreators;
             }
@@ -883,7 +883,7 @@ namespace BitChute
                 {
                     foreach (var vidcard in creator.RecentVideoCards)
                     {
-                        vidcard.CreatorName = creator.Name;
+                        vidcard.Creator.Name = creator.Name;
                         _videoCardNoCreators.Add(vidcard);
                     }
                 }
@@ -916,15 +916,9 @@ namespace BitChute
                 // from this position in the photo album:
                 if (_videoCardSet != null)
                 {
-                    vh.Image.SetImageResource(_videoCardSet[position].PhotoID);
+                    vh.Image.SetImageResource(_videoCardSet[position].Thumbnail);
                     vh.Caption.Text = _videoCardSet[position].Title;
-                    vh.Caption2.Text = _videoCardSet[position].CreatorName;
-                }
-                else
-                {
-                    vh.Image.SetImageResource(_videoCardNoCreators[position].VideoThumbnail);
-                    vh.Caption.Text = _videoCardNoCreators[position].Title;
-                    vh.Caption2.Text = _videoCardNoCreators[position].CreatorName;
+                    vh.Caption2.Text = _videoCardSet[position].Creator.Name;
                 }
             }
 

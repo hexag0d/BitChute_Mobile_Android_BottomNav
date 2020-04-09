@@ -28,7 +28,7 @@ namespace BitChute.Models
             }
 
             public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
-                List<VideoCardNoCreator> recentVideoCardList, int thumbnail)
+                List<VideoCard> recentVideoCardList, int thumbnail)
             {
                 Name = name;
                 LinkToChannel = linkToChannel;
@@ -40,7 +40,7 @@ namespace BitChute.Models
             }
 
             public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
-                List<VideoCardNoCreator> recentVideoCardList)
+                List<VideoCard> recentVideoCardList)
             {
                 Name = name;
                 LinkToChannel = linkToChannel;
@@ -64,18 +64,18 @@ namespace BitChute.Models
 
             public string CreatorDescription { get; set; }
 
-            public List<VideoCardNoCreator> RecentVideoCards;
+            public List<VideoCard> RecentVideoCards;
             
         }
-        
-        public static List<VideoCardNoCreator> CacheVideoCards = VideoCardNoCreator.GetVideoCardNoCreatorList();
 
-        public static List<VideoCardNoCreator> Get3RandomCards()
+        public static List<VideoCard> CacheVideoCards = VideoCardSet.GetSampleVideoCardListOneCreator(GetSampleCreator());
+
+        public static List<VideoCard> Get3RandomCards()
         {
             Random rnd = new Random();
             rnd.Next(19);
 
-            var lis = new List<VideoCardNoCreator>();
+            var lis = new List<VideoCard>();
             lis.Add(CacheVideoCards[rnd.Next(19)]);
             lis.Add(CacheVideoCards[rnd.Next(19)]);
             lis.Add(CacheVideoCards[rnd.Next(19)]);

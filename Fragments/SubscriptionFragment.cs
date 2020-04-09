@@ -32,7 +32,7 @@ namespace BitChute.Fragments
         //video cards for the root view
         public static SubscriptionCardSet CreatorCardRootSet;
         //video cards for the channel view
-        public static List<VideoModel.VideoCardNoCreator> CreatorDetailVideoCardSet;
+        public static List<VideoModel.VideoCard> CreatorDetailVideoCardSet;
 
         //video cards for the related videos
         public static VideoCardSet _videoCardSetRelatedVideos;
@@ -167,7 +167,7 @@ namespace BitChute.Fragments
             });
         }
 
-        public static void UpdateVideoDetailPageFromVideoCard(VideoCard vc, VideoCardNoCreator vcnc)
+        public static void UpdateVideoDetailPageFromVideoCard(VideoCard vc)
         {
             if (vc != null)
             {
@@ -178,18 +178,7 @@ namespace BitChute.Fragments
                     CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
-                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, null, -1);
-            }
-            else
-            {
-                Tab1Handler.Post(() =>
-                {
-                    CustomViewHelpers.Tab1.VideoDetailTitle.Text = vcnc.Title;
-                    CustomViewHelpers.Tab1.CreatorNameTextView.Text = vcnc.CreatorName;
-                    CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageDrawable(UniversalGetDrawable(vcnc.VideoThumbnail));
-                    SwapView(CustomViewHelpers.Tab1.VideoDetailView);
-                });
-                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, null, vcnc, -1);
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, -1);
             }
         }
 
@@ -318,7 +307,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         public static void CreatorDetailAdapter_ItemClick(object sender, int i)
         {
-            NavigateToNewPageFromVideoCard(null, CreatorDetailVideoCardSet[i], null);
+            NavigateToNewPageFromVideoCard(CreatorDetailVideoCardSet[i], null);
         }
 
         /// <summary>
@@ -328,7 +317,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         public static void CreatorDetailAdapter_ItemClickInt(object sender, int pos)
         {
-            TabStates.Tab1.VideoCardNoCreatorSlimLoader = TabStates.Tab1.CreatorDetailVideoCardSet[pos];
+            TabStates.Tab1.VideoCardSlimLoader = TabStates.Tab1.CreatorDetailVideoCardSet[pos];
         }
 
         public void VideoLikeImageView_OnClick (object sender, EventArgs e)
@@ -389,9 +378,9 @@ namespace BitChute.Fragments
         /// <param name="view">the view you want to swap</param>
         /// <param name="videoCard">the videocard you want to load</param>
         /// <param name="creatorCard">optionally use a creatorcard for more detail</param>
-        public static void NavigateToNewPageFromVideoCard(VideoCard vc, VideoCardNoCreator vcnc, CreatorCard cc)
+        public static void NavigateToNewPageFromVideoCard(VideoCard vc, CreatorCard cc)
         {
-            _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, vcnc, -1);
+            _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, -1);
         }
 
         /// <summary>
