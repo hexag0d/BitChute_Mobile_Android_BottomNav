@@ -47,7 +47,7 @@ namespace BitChute.Models
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager VideoLayoutManager { get; set; }
 
             public static ImageView CreatorDetailAvatarImageView { get; set; }
-            public static TextView VideoTitle { get; set; }
+            public static TextView VideoDetailTitle { get; set; }
             public static TextView VideoViewCountTextView { get; set; }
             public static ImageView LikeButtonImageView { get; set; }
             public static TextView LikeCountTextView { get; set; }
@@ -58,7 +58,7 @@ namespace BitChute.Models
             public static ImageView AddVideoToPlaylist { get; set; }
             public static ImageView P2pStatsImageView { get; set; }
             public static ImageView ShareVideoImageView { get; set; }
-            public static ImageView CreatorAvatarImageView { get; set; }
+            public static ImageView VideoDetailCreatorAvatarImageView { get; set; }
             public static TextView VideoDescription { get; set; }
             public static TextView CreatorNameTextView { get; set; }
             public static TextView SubCountTextView { get; set; }

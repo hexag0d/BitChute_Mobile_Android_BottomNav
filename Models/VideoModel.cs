@@ -251,7 +251,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
                 string link, int drawableID , Bitmap thumbbmp, string creatorName )
             {
                 //int for the drawable but I don't know if this is going to work when the app is on an API
-                PhotoID = id;
+                VideoThumbnail = id;
                 //title
                 Title = title;
                 //description
@@ -274,7 +274,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
     string link, int drawableID, Bitmap thumbbmp, string creatorName, Android.Net.Uri uri)
             {
                 //int for the drawable but I don't know if this is going to work when the app is on an API
-                PhotoID = id;
+                VideoThumbnail = id;
                 //title
                 Title = title;
                 //description
@@ -293,7 +293,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
                 }
             }
             //video thumbnail resource int
-            public int PhotoID { get; set; }
+            public int VideoThumbnail { get; set; }
             //Title of Video
             public string Title { get; set; }
             //Description
@@ -311,7 +311,7 @@ new VideoCardNoCreator (Resource.Drawable._testThumb360_4, "Video 5", "","videoI
 
             public bool Equals(VideoCardNoCreator other)
             {
-                if (this.PhotoID == other.PhotoID && this.Title == other.Title
+                if (this.VideoThumbnail == other.VideoThumbnail && this.Title == other.Title
                     && this.Caption2 == other.Caption2 && this.CreatorName == other.CreatorName 
                     && this.ThumbnailBitmap == other.ThumbnailBitmap 
                     && this.ThumbnailDrawable == other.ThumbnailDrawable)

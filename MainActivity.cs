@@ -922,7 +922,7 @@ namespace BitChute
                 }
                 else
                 {
-                    vh.Image.SetImageResource(_videoCardNoCreators[position].PhotoID);
+                    vh.Image.SetImageResource(_videoCardNoCreators[position].VideoThumbnail);
                     vh.Caption.Text = _videoCardNoCreators[position].Title;
                     vh.Caption2.Text = _videoCardNoCreators[position].CreatorName;
                 }

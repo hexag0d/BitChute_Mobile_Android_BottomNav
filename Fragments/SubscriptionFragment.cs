@@ -90,9 +90,9 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
-            CustomViewHelpers.Tab1.VideoTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Tab1.VideoDetailTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
             CustomViewHelpers.Tab1.VideoDetailScrollView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ScrollView>(Resource.Id.videoDetailScrollView);
-            CustomViewHelpers.Tab1.CreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
+            CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
             CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
             CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
             CustomViewHelpers.Tab1.SubscribeButton = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<Button>(Resource.Id.creatorSubscribeButton);
@@ -173,9 +173,9 @@ namespace BitChute.Fragments
             {
                 Tab1Handler.Post(() =>
                 {
-                    CustomViewHelpers.Tab1.VideoTitle.Text = vc.Title;
-                    CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageDrawable(vc.Creator?.CreatorThumbnailDrawable);
-                    CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
+                    CustomViewHelpers.Tab1.VideoDetailTitle.Text = vc.Title;
+                    CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageDrawable(vc.Creator?.CreatorThumbnailDrawable);
+                    CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
                 _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, null, -1);
@@ -184,9 +184,9 @@ namespace BitChute.Fragments
             {
                 Tab1Handler.Post(() =>
                 {
-                    CustomViewHelpers.Tab1.VideoTitle.Text = vcnc.Title;
+                    CustomViewHelpers.Tab1.VideoDetailTitle.Text = vcnc.Title;
                     CustomViewHelpers.Tab1.CreatorNameTextView.Text = vcnc.CreatorName;
-                    CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(UniversalGetDrawable(vcnc.PhotoID));
+                    CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageDrawable(UniversalGetDrawable(vcnc.VideoThumbnail));
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
                 _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, null, vcnc, -1);

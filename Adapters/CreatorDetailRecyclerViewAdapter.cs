@@ -86,7 +86,7 @@ namespace BitChute.Adapters
             }
             else
             {
-                vh.Image.SetImageResource(VideoCardNoCreators[position].PhotoID);
+                vh.Image.SetImageResource(VideoCardNoCreators[position].VideoThumbnail);
                 vh.Caption.Text = VideoCardNoCreators[position].Title;
                 vh.Caption2.Text = VideoCardNoCreators[position].CreatorName;
             }
