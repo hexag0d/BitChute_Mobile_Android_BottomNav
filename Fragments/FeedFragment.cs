@@ -34,7 +34,7 @@ namespace BitChute.Fragments
         //video cards for the root view
         public static List<CreatorModel.Creator> _recentPosterList = new List<CreatorModel.Creator>();
 
-        public static List<VideoCardNoCreator> _videoCardList = new List<VideoCardNoCreator>();
+        public static List<VideoCard> _videoCardList = new List<VideoCard>();
         //video cards for the channel view
         public static VideoCardSet _videoCardSetChannel;
         //video cards for the related videos
@@ -67,7 +67,7 @@ namespace BitChute.Fragments
             {
                 foreach (var vidc in c.RecentVideoCards)
                 {
-                    vidc.CreatorName = c.Name;
+                    vidc.Creator.Name = c.Name;
                     _videoCardList.Add(vidc);
                 }
             }
@@ -123,17 +123,6 @@ namespace BitChute.Fragments
             NavigateToNewPageFromVideoCard(_videoDetailView, _videoCardList[e]);
         }
 
-        /// <summary>
-        /// Navigates the selected tab to a new page
-        /// </summary>
-        /// <param name="view">the view you want to swap</param>
-        /// <param name="type"></param>
-        /// <param name=""></param>
-        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard, VideoCardNoCreator videoCardNoC)
-        {
-            _vidLoader.LoadVideoFromCard(view, null,null, videoCardNoC, -1);
-            SwapView(view);
-        }
 
         /// <summary>
         /// Navigates the selected tab to a new page
@@ -141,9 +130,9 @@ namespace BitChute.Fragments
         /// <param name="view">the view you want to swap</param>
         /// <param name="type"></param>
         /// <param name=""></param>
-        public static void NavigateToNewPageFromVideoCard(View view, VideoCardNoCreator videoCard)
+        public static void NavigateToNewPageFromVideoCard(View view, VideoCard videoCard)
         {
-            _vidLoader.LoadVideoFromCard(view, null, null, videoCard, -1);
+            _vidLoader.LoadVideoFromCard(view, null, videoCard, -1);
             SwapView(view);
         }
 

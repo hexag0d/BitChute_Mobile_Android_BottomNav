@@ -92,9 +92,9 @@ namespace BitChute.Classes
         /// <param name="vc"></param>
         /// <param name="vcnc"></param>
         /// <param name="tab">this is the tab to load the video on; set to -1 for selected tab</param>
-        public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, VideoCardNoCreator vcnc, int tab)
+        public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, int tab)
         {
-            if (cc == null && vc == null && vcnc == null)
+            if (cc == null && vc == null)
             {
                 return; //nothing to load....
             }
@@ -131,8 +131,6 @@ namespace BitChute.Classes
 
             if (cc != null)
             uri = cc.LatestVideoUri;
-            else if (vcnc != null)
-            uri = vcnc.VideoUri;
             else if (vc != null)
             uri = vc.VideoUri;
             else
@@ -168,10 +166,6 @@ namespace BitChute.Classes
             if (vc != null)
             {
                 GetSetVideoDetailViewComplete(tab, vc.VideoId);
-            }
-            else if (vcnc != null)
-            {
-                GetSetVideoDetailViewComplete(tab, vcnc.Link);
             }
             else if (cc != null)
             {
