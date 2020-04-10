@@ -27,6 +27,8 @@ namespace BitChute.Models
                 if (replies != null)
                 Replies = replies;
 
+                CommentId = "dummyID123456";
+
                 if (commentContents != null)
                 {
 
@@ -58,6 +60,7 @@ namespace BitChute.Models
             public string CommentText { get; set; }
             public Android.Graphics.Drawables.Drawable CommenterAvatarDrawable { get; set; }
             public Android.Graphics.Bitmap CommenterAvatarBitmap { get; set; }
+            public string CommentId { get; set; }
 
             public int Likes { get; set; }
             public int Dislikes { get; set; }

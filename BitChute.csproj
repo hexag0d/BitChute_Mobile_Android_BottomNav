@@ -82,7 +82,7 @@
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\CommentListLoader.cs" />
     <Compile Include="Classes\CustomNavigation.cs" />
-    <Compile Include="Classes\DiscusAPI.cs" />
+    <Compile Include="Classes\DisqusAPI.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\AppState.cs" />

@@ -158,6 +158,15 @@ namespace BitChute.Classes
 
         public class Outbound
         {
+            public static async Task<bool> SendComment (string videoId, string commentId, string comment)
+            {
+                await Task.Run(() =>
+                {
+
+                });
+                return true;
+            }
+
             public static async void SendVideoView(string videoId)
             {
                 await Task.Run(() =>

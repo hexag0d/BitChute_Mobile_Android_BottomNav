@@ -21,6 +21,11 @@ namespace BitChute.Models
     /// </summary>
     public class CustomViewHelpers 
     {
+        public class Comment
+        {
+
+        }
+
         public class Tab1
         {
             public static View Tab1FragmentLayout { get; set; }
@@ -64,6 +69,7 @@ namespace BitChute.Models
             public static TextView CreatorNameTextView { get; set; }
             public static TextView SubCountTextView { get; set; }
             public static ImageView FlagMeImageView { get; set; }
+            public static bool ReplyBoxVisible = false;
         }
     }
 }

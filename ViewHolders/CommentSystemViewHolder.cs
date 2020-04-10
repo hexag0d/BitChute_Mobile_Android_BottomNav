@@ -21,18 +21,21 @@ namespace BitChute.ViewHolders
         public ImageView CreatorAvatar { get; private set; }
         public TextView CommentTextView { get; private set; }
         public TextView CreatorNameTextView { get; private set; }
+        public Button ReplyButton { get; set; }
 
         public void GetControls()
         {
         }
 
         // Get references to the views defined in the CardView layout.
-        public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener, Action<int> avatarListener) : base(itemView)
+        public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener,
+            Action<int> avatarListener, Action<int> replyListener) : base(itemView)
         {
             // Locate and cache view references:
-            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commentAvatarImageView2);
-            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView2);
-            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextView2);
+            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commentAvatarImageViewRe);
+            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView23);
+            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextViewRe);
+            ReplyButton = itemView.FindViewById<Button>(Resource.Id.replyButton2);
 
             // Detect user clicks on the item view and report which item
             // was clicked (by layout position) to the listener:

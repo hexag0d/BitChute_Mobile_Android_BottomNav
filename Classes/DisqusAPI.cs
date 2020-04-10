@@ -14,7 +14,7 @@ using static BitChute.Models.CommentModel;
 
 namespace BitChute.Classes
 {
-    class CustomDiscusAPI
+    class CustomDisqusAPI
     {
         public class Inbound
         {

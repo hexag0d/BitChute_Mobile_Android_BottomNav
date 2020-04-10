@@ -28,7 +28,7 @@
 				<ImageView
 					android:layout_width="70dp"
 					android:layout_height="70dp"
-					android:id="@+id/commentAvatarImageView2"
+					android:id="@+id/commentAvatarImageViewRe"
 					android:scaleType="fitStart"/>
 				<TextView
 					android:layout_width="match_parent"
@@ -36,7 +36,7 @@
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="#ffffff"
 					android:text="Commenter"
-					android:id="@+id/commenterNameTextView2"
+					android:id="@+id/commenterNameTextViewRe"
 					android:layout_gravity="right"
 					android:layout_marginLeft="4dp" />
 			</LinearLayout>
@@ -88,9 +88,9 @@
 					android:minHeight="25px"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:id="@+id/linearLayout2">
+					android:id="@+id/linearLayout">
 					<android.support.v7.widget.RecyclerView
-				android:id="@+id/recyclerView2"
+				android:id="@+id/recyclerView22"
 				android:scrollbars="vertical"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent" />

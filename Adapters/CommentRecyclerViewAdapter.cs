@@ -22,6 +22,7 @@ namespace BitChute.Adapters
     {
         public event EventHandler<int> ItemClick;
         public event EventHandler<int> AvatarClick;
+        public event EventHandler<int> ReplyClick;
 
         public List<Comment> _commentList = SampleCommentList.GetSampleCommentList();
         public static View itemView;
@@ -47,7 +48,7 @@ namespace BitChute.Adapters
             CardView cv = itemView.FindViewById<CardView>(Resource.Id.commentCardViewWithReply);
 
             cv.SetBackgroundColor(AppSettings.Themes.SelectedTheme.CommentBackground);
-            vh = new CommentSystemRecyclerViewHolder(itemView, OnClick, AvatarOnClick);
+            vh = new CommentSystemRecyclerViewHolder(itemView, OnClick, AvatarOnClick, ReplyButtonOnClick);
 
             return vh;
         }
@@ -67,7 +68,7 @@ namespace BitChute.Adapters
             else if (_commentList[position].Creator != null)
             {
                 if (_commentList[position].Creator.CreatorThumbnailDrawable != null)
-                vh.CreatorAvatar.SetImageDrawable(_commentList[position].Creator.CreatorThumbnailDrawable);
+                    vh.CreatorAvatar.SetImageDrawable(_commentList[position].Creator.CreatorThumbnailDrawable);
             }
         }
 
@@ -90,6 +91,25 @@ namespace BitChute.Adapters
                 ItemClick(this, position);
         }
 
+        async void ReplyButtonOnClick(int position)
+        {
+            switch (MainActivity.ViewPager.CurrentItem)
+            {
+                case 1:
+                    if (CustomViewHelpers.Tab1.ReplyBoxVisible)
+                    {
+                        await BitChuteAPI.Outbound.SendComment(TabStates.Tab1.MainVideoDetail.VideoId,
+                            _commentList[position].CommentId, "comment");
+                    }
+                    else
+                    {
+                        //show the reply box
+                    }
+                    break;
+
+            }
+        }
+
         /// <summary>
         /// if the user clicks on an avatar then we'll take them to that creator's channel.  
         /// if the commentor doesn't have a channel then we'll display a message saying that
@@ -102,7 +122,6 @@ namespace BitChute.Adapters
 
             if (_commentList[position].Creator != null)
             {
-
                 switch (MainActivity.ViewPager.CurrentItem)
                 {
                     case 0:
