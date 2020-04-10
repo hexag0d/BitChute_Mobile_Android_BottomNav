@@ -30,9 +30,9 @@ namespace BitChute.ViewHolders
         public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener, Action<int> avatarListener) : base(itemView)
         {
             // Locate and cache view references:
-            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commenterImageView);
-            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView);
-            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextView);
+            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commentAvatarImageView2);
+            CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView2);
+            CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextView2);
 
             // Detect user clicks on the item view and report which item
             // was clicked (by layout position) to the listener:
@@ -41,3 +41,17 @@ namespace BitChute.ViewHolders
         }
     }
 }
+
+//// Get references to the views defined in the CardView layout.
+//public CommentSystemRecyclerViewHolder(View itemView, Action<int> listener, Action<int> avatarListener) : base(itemView)
+//{
+//    // Locate and cache view references:
+//    CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.commenterImageView);
+//    CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView);
+//    CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextView);
+
+//    // Detect user clicks on the item view and report which item
+//    // was clicked (by layout position) to the listener:
+//    itemView.Click += (sender, e) => listener(base.LayoutPosition);
+//    CreatorAvatar.Click += (sender, e) => avatarListener(base.LayoutPosition);
+//}

@@ -42,9 +42,9 @@ namespace BitChute.Adapters
         {
             // Inflate the CardView for the photo:
             View itemView = LayoutInflater.From(parent.Context).
-                            Inflate(Resource.Layout.CommentCardView, parent, false);
+                            Inflate(Resource.Layout.CommentCardViewReplies, parent, false);
 
-            CardView cv = itemView.FindViewById<CardView>(Resource.Id.commentSystemCardView);
+            CardView cv = itemView.FindViewById<CardView>(Resource.Id.commentCardViewWithReply);
 
             cv.SetBackgroundColor(AppSettings.Themes.SelectedTheme.CommentBackground);
             vh = new CommentSystemRecyclerViewHolder(itemView, OnClick, AvatarOnClick);
