@@ -132,7 +132,7 @@ namespace BitChute.Fragments
         {
             if (!VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
             {
-                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, _service.InitializeMediaController(this.Context));
+                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, MainActivity.StickyService.InitializeMediaController(this.Context));
             }
             CustomViewHelpers.Tab1.VideoView.SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
             VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.Tab1FragmentLayout);
@@ -212,7 +212,7 @@ namespace BitChute.Fragments
                 });
                 _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, -1);
                 NavigationStack.Tab1.AddToBackStack(vc);
-                MainActivity._fm2.InitializeMediaController();
+                MainActivity.Fm1.InitializeMediaController();
             }
         }
 
@@ -359,7 +359,7 @@ namespace BitChute.Fragments
         {
             if (!VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
             {
-                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, _service.InitializeMediaController(this.Context));
+                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, MainActivity.StickyService.InitializeMediaController(this.Context));
             }
             CustomViewHelpers.Tab1.VideoView.SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
             VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.Tab1FragmentLayout);

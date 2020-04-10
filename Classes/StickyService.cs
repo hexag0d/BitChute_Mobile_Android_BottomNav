@@ -328,7 +328,7 @@ namespace StartServices.Servicesclass
 
             if (_fm5 == null)
             {
-                await Task.Run(() => _fm5 = MainActivity._fm5);
+                await Task.Run(() => _fm5 = MainActivity.Fm4);
             }
 
             //use a while loop to start the notifications
@@ -390,7 +390,7 @@ namespace StartServices.Servicesclass
                 {
                     if (_fm5 == null)
                     {
-                        await Task.Run(() => _fm5 = MainActivity._fm5);
+                        await Task.Run(() => _fm5 = MainActivity.Fm4);
                     }
                     try
                     {
