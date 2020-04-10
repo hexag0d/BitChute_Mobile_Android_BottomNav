@@ -81,6 +81,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.RootLayoutManager);
             CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.CreatorDetailLayoutManager);
 
+            CustomViewHelpers.Tab1.VideoView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<VideoView>(Resource.Id.videoView);
             CustomViewHelpers.Tab1.CreatorDetailAvatarImageView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ImageView>(Resource.Id.creatorDetailAvatarImageView);
             CustomViewHelpers.Tab1.CreatorNameTextView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<TextView>(Resource.Id.creatorDetailNameTextView);
 
@@ -91,7 +92,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
             CustomViewHelpers.Tab1.VideoDetailTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
-            CustomViewHelpers.Tab1.VideoDetailScrollView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ScrollView>(Resource.Id.videoDetailScrollView);
+            CustomViewHelpers.Tab1.VideoDetailScrollView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ScrollView>(Resource.Id.videoDetailScrollView);
             CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
             CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
             CustomViewHelpers.Tab1.DislikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.dislikeButtonImageView);
@@ -108,7 +109,8 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.DislikeCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.dislikeCountTextView);
             CustomViewHelpers.Tab1.SubCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.creatorSubscriberCount);
             CustomViewHelpers.Tab1.VideoDescription = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.descriptionTextView);
-            
+
+            CustomViewHelpers.Tab1.VideoView.Click += VideoView_OnClick;
             CustomViewHelpers.Tab1.LikeButtonImageView.Click += VideoLikeImageView_OnClick;
             CustomViewHelpers.Tab1.DislikeButtonImageView.Click += VideoDislikeImageView_OnClick;
             CustomViewHelpers.Tab1.FavoriteImageView.Click += FavoriteImageView_OnClick;
@@ -119,9 +121,38 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.SubscribeButton.Click += SubscribeButton_OnClick;
 
             GetSubscriptionList();
-
+            
             // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             return CustomViewHelpers.Tab1.Tab1FragmentLayout;
+        }
+
+        public static bool MediaControllerInitialized;
+
+        public void InitializeMediaController()
+        {
+            if (!VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
+            {
+                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, _service.InitializeMediaController(this.Context));
+            }
+            CustomViewHelpers.Tab1.VideoView.SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
+            VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.Tab1FragmentLayout);
+
+            //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.VideoDetailView);
+            //VideoDetailLoader.VideoViewDictionary[MainActivity.ViewPager.CurrentItem].SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
+
+            // VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetMediaPlayer(VideoDetailLoader.VideoViewDictionary[MainActivity.ViewPager.CurrentItem]);
+            //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Enabled = true;
+            try
+            {
+                VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Enabled = true;
+                VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show(6000);
+                //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show();
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+            }
+            MediaControllerInitialized = true;
         }
 
         public static bool RootAdapterSet;
@@ -150,6 +181,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.CreatorDetailAvatarImageView.SetImageDrawable(c.CreatorThumbnailDrawable);
             CustomViewHelpers.Tab1.CreatorNameTextView.Text = c.Name;
             SwapView(CustomViewHelpers.Tab1.CreatorDetailView);
+            NavigationStack.Tab1.AddToBackStack(c);
         }
 
         public static bool CreatorDetailAdapterSet;
@@ -175,10 +207,12 @@ namespace BitChute.Fragments
                 {
                     CustomViewHelpers.Tab1.VideoDetailTitle.Text = vc.Title;
                     CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageDrawable(vc.Creator?.CreatorThumbnailDrawable);
-                    CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
+                    //CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
                 _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, vc, -1);
+                NavigationStack.Tab1.AddToBackStack(vc);
+                MainActivity._fm2.InitializeMediaController();
             }
         }
 
@@ -298,6 +332,7 @@ namespace BitChute.Fragments
         public static void RootVideoAdapter_ItemClick(object sender, int e)
         {
             TabStates.Tab1.Creator = TabStates.Tab1.RootVideoCards[e].Creator;
+            NavigationStack.Tab1.AddToBackStack(TabStates.Tab1.RootVideoCards[e].Creator);
         }
 
         /// <summary>
@@ -318,6 +353,32 @@ namespace BitChute.Fragments
         public static void CreatorDetailAdapter_ItemClickInt(object sender, int pos)
         {
             TabStates.Tab1.VideoCardSlimLoader = TabStates.Tab1.CreatorDetailVideoCardSet[pos];
+        }
+
+        public void VideoView_OnClick(object sender, EventArgs e)
+        {
+            if (!VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
+            {
+                VideoDetailLoader.MediaControllerDictionary.Add(MainActivity.ViewPager.CurrentItem, _service.InitializeMediaController(this.Context));
+            }
+            CustomViewHelpers.Tab1.VideoView.SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
+            VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.Tab1FragmentLayout);
+
+            //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetAnchorView(CustomViewHelpers.Tab1.VideoDetailView);
+            //VideoDetailLoader.VideoViewDictionary[MainActivity.ViewPager.CurrentItem].SetMediaController(VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem]);
+
+            // VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].SetMediaPlayer(VideoDetailLoader.VideoViewDictionary[MainActivity.ViewPager.CurrentItem]);
+            //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Enabled = true;
+            try
+            {
+                VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Enabled = true;
+                VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show(6000);
+                //VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show();
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+            }
         }
 
         public void VideoLikeImageView_OnClick (object sender, EventArgs e)
@@ -369,9 +430,7 @@ namespace BitChute.Fragments
         public static void CommentSystemViewAdapter_ItemClick(object sender, int e)
         {
         }
-        
-
-        
+ 
         /// <summary>
         /// Navigates the selected tab to a new page
         /// </summary>
@@ -381,6 +440,11 @@ namespace BitChute.Fragments
         public static void NavigateToNewPageFromVideoCard(VideoCard vc, CreatorCard cc)
         {
             _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, cc, vc, -1);
+            if (vc != null)
+                NavigationStack.Tab1.AddToBackStack(vc);
+            else if (cc != null)
+                NavigationStack.Tab1.AddToBackStack(cc);
+            
         }
 
         /// <summary>
@@ -390,7 +454,29 @@ namespace BitChute.Fragments
         public static void SwapView(View view)
         {
             CustomViewHelpers.Tab1.Tab1ParentLayout.RemoveAllViews();
+            ScrollToTop();
             CustomViewHelpers.Tab1.Tab1ParentLayout.AddView(view);
+            if (VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
+            {
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying && view != CustomViewHelpers.Tab1.VideoDetailView)
+                {
+                    VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show(99999999);
+                }
+                else if (view == CustomViewHelpers.Tab1.VideoDetailView)
+                {
+                    VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Hide();
+                    ScrollToTop();
+                }
+            }
+        }
+
+        public static void ScrollToTop()
+        {
+            Tab1Handler.Post(() =>
+            {
+                CustomViewHelpers.Tab1.CreatorDetailRecyclerView.ScrollTo(0, 0);
+                CustomViewHelpers.Tab1.VideoDetailScrollView.ScrollTo(0, 0);
+            });
         }
 
         /// <summary>
@@ -446,14 +532,17 @@ namespace BitChute.Fragments
         
         public void SubsTabGoBack()
         {
+            NavigationStack.Tab1.NavigateBackFromStack();
         }
         
         /// <summary>
         /// pops back to the root of the subscription tab
         /// </summary>
-        public void Pop2Root()
+        public static void Pop2Root()
         {
-
+            GetSubscriptionList();
+            SwapView(CustomViewHelpers.Tab1.RootRecyclerView);
+            NavigationStack.Tab1.AddToBackStack(true);
         }
     }
 }

@@ -46,6 +46,7 @@ namespace BitChute.Models
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager CreatorDetailLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager VideoLayoutManager { get; set; }
 
+            public static VideoView VideoView { get; set; }
             public static ImageView CreatorDetailAvatarImageView { get; set; }
             public static TextView VideoDetailTitle { get; set; }
             public static TextView VideoViewCountTextView { get; set; }

@@ -295,7 +295,7 @@ namespace BitChute
                         _fm1.Pop2Root();
                         break;
                     case 1:
-                        _fm2.Pop2Root();
+                        SubscriptionFragment.Pop2Root();
                         break;
                     case 2:
                         _fm3.Pop2Root();

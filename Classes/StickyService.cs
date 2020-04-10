@@ -20,11 +20,12 @@ using Android.Net.Wifi;
 using Android.Media;
 using Android.Support.V4.App;
 
+
 namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
-    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener
+    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener, MediaController.IMediaPlayerControl
     {
         #region members
 
@@ -66,7 +67,7 @@ namespace StartServices.Servicesclass
 
         #endregion
 
-        
+
         /// <summary>
         /// initializes the mediaplayer object on tab of your choice.  
         /// if the mediaplayer is already instantiated then it gets reset for new playback
@@ -74,7 +75,7 @@ namespace StartServices.Servicesclass
         /// <param name="mp"></param>
         /// <returns></returns>
         public static MediaPlayer InitializePlayer(int tab)
-        {           
+        {
             if (tab == null)
             {
                 tab = MainActivity.ViewPager.CurrentItem;
@@ -107,6 +108,8 @@ namespace StartServices.Servicesclass
             //When we have prepared the song start playback
             MediaPlayerDictionary[tab].Prepared += (sender, args) => MediaPlayerDictionary[tab].Start();
 
+            AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
+
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
             MediaPlayerDictionary[tab].Completion += (sender, args) => Stop();
 
@@ -120,38 +123,45 @@ namespace StartServices.Servicesclass
             return MediaPlayerDictionary[tab];
         }
 
+        public ExtMediaController InitializeMediaController(Context ctx)
+        {
+            var mc = new ExtMediaController(ctx);
+            mc.SetMediaPlayer(this);
+            return mc;
+        }
+
+
         private async void Play()
         {
             await Task.Run(() =>
             {
-               if (_paused && MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
-               {
-                   _paused = false;
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
+                {
                     //We are simply paused so just start again
                     MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
-                   StartForeground();
-                   return;
-               }
+                    StartForeground();
+                    return;
+                }
 
-               if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
-               {
-                   InitializePlayer(MainActivity.ViewPager.CurrentItem);
-               }
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
+                {
+                    InitializePlayer(MainActivity.ViewPager.CurrentItem);
+                }
 
-               if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                   return;
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                    return;
 
-               try
-               {
-                   MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].PrepareAsync();
-                   AquireWifiLock();
-                   StartForeground();
-               }
-               catch (Exception ex)
-               {
+                try
+                {
+                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].PrepareAsync();
+                    AquireWifiLock();
+                    StartForeground();
+                }
+                catch (Exception ex)
+                {
                     //unable to start playback log error
                     Console.WriteLine("Unable to start playback: " + ex);
-               }
+                }
 
                 if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                 {
@@ -168,7 +178,7 @@ namespace StartServices.Servicesclass
             if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                 MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
 
-            StopForeground(true);
+            //StopForeground(false);
             _paused = true;
         }
 
@@ -278,6 +288,8 @@ namespace StartServices.Servicesclass
         //private TimerTask timerTask;
         public static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
 
+
+
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
         /// </summary>
@@ -344,7 +356,7 @@ namespace StartServices.Servicesclass
                 }
                 else if (!AppState._userIsLoggedIn)
                 {
-                    await Task.Delay(380000); 
+                    await Task.Delay(380000);
                 }
                 //user is logged in but has not yet received a notification
                 else
@@ -353,8 +365,6 @@ namespace StartServices.Servicesclass
                 }
             }
         }
-
-
 
         public override void OnDestroy()
         {
@@ -367,7 +377,7 @@ namespace StartServices.Servicesclass
                 Console.WriteLine(ex.Message);
             }
         }
-        
+
         /// <summary>
         /// Timer task for background notifications
         /// has to be within the service so that it's more persistent
@@ -406,6 +416,103 @@ namespace StartServices.Servicesclass
 
             var dummyVar = true;
             return dummyVar;
+        }
+
+
+        /// <summary>
+        /// returns true when the app detects that it's running
+        /// in background
+        /// </summary>
+        /// <returns>bool</returns>
+        public static bool IsInBkGrd()
+        {
+            ActivityManager.GetMyMemoryState(_myProcess);
+
+            if (_myProcess.Importance == Importance.Foreground)
+            {
+                AppState._bkgrd = false;
+                return false;
+            }
+            else
+            {
+                AppState._bkgrd = true;
+                return true;
+            }
+        }
+
+        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
+        {
+
+        }
+
+        public int AudioSessionId { get { return 6; } }
+
+        public int BufferPercentage
+        {
+            get
+            {
+                return 100;
+            }
+        }
+
+        public int CurrentPosition
+        {
+            get
+            {
+                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].CurrentPosition;
+            }
+            set
+            {
+
+            }
+        }
+
+        public int Duration { get { return 6; } }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+            }
+        }
+
+        public bool CanPause()
+        {
+            return true;
+            //try
+            //{
+            //    return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+            //}
+            //catch
+            //{
+            //    return true;
+            //}
+        }
+
+        public bool CanSeekBackward()
+        {
+            return true;
+        }
+
+        public bool CanSeekForward()
+        {
+            return true;
+        }
+
+        void MediaController.IMediaPlayerControl.Pause()
+        {
+            Pause();
+        }
+
+        public void SeekTo(int pos)
+        {
+            CurrentPosition = pos;
+        }
+
+        void MediaController.IMediaPlayerControl.Start()
+        {
+            Play();
         }
 
         public class ServiceWebView : Android.Webkit.WebView
@@ -477,32 +584,6 @@ namespace StartServices.Servicesclass
             protected ServiceWebView(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
             {
             }
-        }
-        
-        /// <summary>
-        /// returns true when the app detects that it's running
-        /// in background
-        /// </summary>
-        /// <returns>bool</returns>
-        public static bool IsInBkGrd()
-        {
-            ActivityManager.GetMyMemoryState(_myProcess);
-
-            if (_myProcess.Importance == Importance.Foreground)
-            {
-                AppState._bkgrd = false;
-                return false;
-            }
-            else
-            {
-                AppState._bkgrd = true;
-                return true;
-            }
-        }
-
-        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
-        {
-
         }
     }
 }

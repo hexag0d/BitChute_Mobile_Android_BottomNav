@@ -81,7 +81,9 @@
     <Compile Include="Adapters\CreatorDetailRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\CommentListLoader.cs" />
+    <Compile Include="Classes\CustomNavigation.cs" />
     <Compile Include="Classes\DiscusAPI.cs" />
+    <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\AppState.cs" />
     <Compile Include="Classes\BitChuteAPI.cs" />
@@ -102,7 +104,6 @@
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\HomepageModel.cs" />
-    <Compile Include="Models\NavigationModel.cs" />
     <Compile Include="Models\SubscriptionModel.cs" />
     <Compile Include="Models\TabStates.cs" />
     <Compile Include="Models\VideoModel.cs" />
