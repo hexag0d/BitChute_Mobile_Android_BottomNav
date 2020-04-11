@@ -25,7 +25,8 @@ namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
-    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener, MediaController.IMediaPlayerControl
+    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener,
+        MediaController.IMediaPlayerControl
     {
         #region members
 

@@ -26,36 +26,12 @@ namespace BitChute.Classes
     /// </summary>
     public class VideoDetailLoader : Activity, ISurfaceHolderCallback, MediaPlayer.IOnPreparedListener
     {
-        public static Dictionary<int, VideoView> VideoViewDictionary = new Dictionary<int, VideoView>();
-        public static Dictionary<int, TextView> TitleTextViewDictionary = new Dictionary<int, TextView>();
-        public static Dictionary<int, ExtMediaController> MediaControllerDictionary = new Dictionary<int, ExtMediaController>();
+        public static Dictionary<int, ExtMediaController> MediaControllerDictionary 
+            = new Dictionary<int, ExtMediaController>();
 
         public VideoDetailLoader()
         {
         }
-
-        public static void OnRotation(LinearLayout.LayoutParams layoutParams)
-        {
-            foreach (var vv in VideoViewDictionary)
-            {
-                vv.Value.LayoutParameters = layoutParams;
-            }
-            if (AppState.Display.Horizontal)
-            {
-                foreach (var tv in TitleTextViewDictionary)
-                {
-                    tv.Value.Visibility = ViewStates.Gone;
-                }
-            }
-            else
-            {
-                foreach (var tv in TitleTextViewDictionary)
-                {
-                    tv.Value.Visibility = ViewStates.Visible;
-                }
-            }
-        }
-
         //public IntPtr Handle => throw new NotImplementedException();
 
         public static void InitializeVideo(int tab)
@@ -81,9 +57,7 @@ namespace BitChute.Classes
             //var videoDescription = v.FindViewById<VideoView>(Resource.Id.videoDetailDescription)
         }
 
-
         private static bool _vidBack;
-        
 
         /// <summary>
         /// 
@@ -95,7 +69,6 @@ namespace BitChute.Classes
         /// <param name="tab">this is the tab to load the video on; set to -1 for selected tab</param>
         public void LoadVideoFromCard(View v, CreatorCard cc, VideoCard vc, int tab)
         {
-
             if (cc == null && vc == null)
             {
                 return; //nothing to load....
@@ -108,18 +81,16 @@ namespace BitChute.Classes
                 tab = MainActivity.ViewPager.CurrentItem;
             }
 
-
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
             ExtStickyService.InitializePlayer(tab);
 
+            //ISurfaceHolder holder = CustomViewHelpers.Common.Video.GetVideoView(tab).Holder;
             ISurfaceHolder holder = CustomViewHelpers.Tab1.VideoView.Holder;
 
             ////holder.SetType(SurfaceType.PushBuffers);
             holder.AddCallback(this);
-
             //var descriptor = MainActivity._assets.OpenFd("sample.mp4");
-
             Android.Net.Uri uri;
 
             if (cc != null)
@@ -142,16 +113,7 @@ namespace BitChute.Classes
                 uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.test2);
                 _vidBack = true;
             }
-
-            if (tab == 1)
-            {
-                ExtStickyService.MediaPlayerDictionary[tab].SetDataSource(Android.App.Application.Context, uri);
-            }
-            if (tab == 2)
-            {
-                ExtStickyService.MediaPlayerDictionary[tab].SetDataSource(Android.App.Application.Context, uri);
-            }
-            
+            ExtStickyService.MediaPlayerDictionary[tab].SetDataSource(Android.App.Application.Context, uri);
             ExtStickyService.MediaPlayerDictionary[tab].PrepareAsync();
             
            CustomViewHelpers.Tab1.VideoView.LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
@@ -198,7 +160,6 @@ namespace BitChute.Classes
         {
             //var aspect = (float)width / (float)height;
             ExtStickyService.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].SetDisplay(holder);
-
             //mediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show();
         }
 

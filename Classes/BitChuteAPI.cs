@@ -246,8 +246,7 @@ namespace BitChute.Classes
                     return response;
                 }
 
-                await Task.Run(() =>
-                {
+
                     HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
 
                     try
@@ -266,7 +265,7 @@ namespace BitChute.Classes
                     {
                         Console.WriteLine(ex.Message);
                     }
-                });
+
                 return response;
             }
 

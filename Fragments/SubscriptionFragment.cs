@@ -29,6 +29,8 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
 
+        private static int _tabNo = 2;
+
         //video cards for the root view
         public static SubscriptionCardSet CreatorCardRootSet;
         //video cards for the channel view
@@ -82,6 +84,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.CreatorDetailLayoutManager);
 
             CustomViewHelpers.Tab1.VideoView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<VideoView>(Resource.Id.videoView);
+            
             CustomViewHelpers.Tab1.CreatorDetailAvatarImageView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ImageView>(Resource.Id.creatorDetailAvatarImageView);
             CustomViewHelpers.Tab1.CreatorNameTextView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<TextView>(Resource.Id.creatorDetailNameTextView);
 
@@ -92,6 +95,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
             CustomViewHelpers.Tab1.VideoDetailTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
+            CustomViewHelpers.Common.SetVideoTitles(_tabNo, CustomViewHelpers.Tab1.VideoDetailTitle);
             CustomViewHelpers.Tab1.VideoDetailScrollView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ScrollView>(Resource.Id.videoDetailScrollView);
             CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView);
             CustomViewHelpers.Tab1.LikeButtonImageView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<ImageView>(Resource.Id.likeButtonImageView);
