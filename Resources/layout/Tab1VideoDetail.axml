@@ -18,6 +18,7 @@
 			android:textSize="60px"
 			android:textColor="#ffffff"
 			android:layout_height="match_parent"
+
 			android:id="@+id/videoDetailTitleTextView" />
 		<LinearLayout
 			android:orientation="vertical"
@@ -35,8 +36,6 @@
   <ScrollView
 		android:orientation="vertical"
 		android:id="@+id/videoDetailScrollView"
-		android:minWidth="25px"
-		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 	<LinearLayout
@@ -241,8 +240,9 @@
 							android:backgroundTint="@android:color/holo_red_dark"
 							android:layout_width="wrap_content"
 							android:textColor="#ffffff"
-							android:layout_height="match_parent"
-							android:id="@+id/creatorSubscribeButton" />
+							android:layout_height="50dp"
+							android:id="@+id/creatorSubscribeButton"
+							 />
 						<ImageView
 							android:src="@drawable/bell"
 							android:layout_width="30dp"
