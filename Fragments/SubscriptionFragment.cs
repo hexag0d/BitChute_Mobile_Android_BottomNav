@@ -41,6 +41,8 @@ namespace BitChute.Fragments
         private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
         public static Handler Tab1Handler = new Handler();
 
+        public static Comment SelectedComment { get; set; }
+
         public static SubscriptionFragment NewInstance(string title, string icon)
         {
             var fragment = new SubscriptionFragment();
@@ -83,7 +85,10 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.RootRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.RootLayoutManager);
             CustomViewHelpers.Tab1.CreatorDetailRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.CreatorDetailLayoutManager);
 
+            CustomViewHelpers.Tab1.VideoLayout = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<LinearLayout>(Resource.Id.videoLayout);
             CustomViewHelpers.Tab1.VideoView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<VideoView>(Resource.Id.videoView);
+            CustomViewHelpers.Tab1.VideoMetaLayout = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<LinearLayout>(Resource.Id.videoMetaLayout);
+            CustomViewHelpers.Tab1.VideoMetaLayoutLower = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<LinearLayout>(Resource.Id.videoMetaLowerLayout);
             
             CustomViewHelpers.Tab1.CreatorDetailAvatarImageView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<ImageView>(Resource.Id.creatorDetailAvatarImageView);
             CustomViewHelpers.Tab1.CreatorNameTextView = CustomViewHelpers.Tab1.CreatorDetailView.FindViewById<TextView>(Resource.Id.creatorDetailNameTextView);
@@ -114,6 +119,10 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.SubCountTextView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.creatorSubscriberCount);
             CustomViewHelpers.Tab1.VideoDescription = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.descriptionTextView);
 
+            CustomViewHelpers.Tab1.LeaveACommentLayout = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<LinearLayout>(Resource.Id.commentLeaverLayout);
+            CustomViewHelpers.Tab1.LeaveACommentTextBox = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<MultiAutoCompleteTextView>(Resource.Id.commentEntryText);
+            CustomViewHelpers.Tab1.SendCommentButton = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<Button>(Resource.Id.sendCommentButton);
+
             CustomViewHelpers.Tab1.VideoView.Click += VideoView_OnClick;
             CustomViewHelpers.Tab1.LikeButtonImageView.Click += VideoLikeImageView_OnClick;
             CustomViewHelpers.Tab1.DislikeButtonImageView.Click += VideoDislikeImageView_OnClick;
@@ -123,6 +132,8 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.P2pStatsImageView.Click += P2PStatsImageView_OnClick;
             CustomViewHelpers.Tab1.ShareVideoImageView.Click += ShareVideoImageView_OnClick;
             CustomViewHelpers.Tab1.SubscribeButton.Click += SubscribeButton_OnClick;
+            CustomViewHelpers.Tab1.SendCommentButton.Click += SendCommentButton_OnClick;
+            CustomViewHelpers.Tab1.LeaveACommentTextBox.Click += MainActivity.OnTextFocus;
 
             GetSubscriptionList();
             
@@ -211,6 +222,8 @@ namespace BitChute.Fragments
                 {
                     CustomViewHelpers.Tab1.VideoDetailTitle.Text = vc.Title;
                     CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageDrawable(vc.Creator?.CreatorThumbnailDrawable);
+                    CustomViewHelpers.Tab1.CreatorNameTextView.Text = vc.Creator.Name;
+                    CustomViewHelpers.Tab1.SubCountTextView.Text = vc.Creator?.SubCount.ToString();
                     //CustomViewHelpers.Tab1.VideoDetailCreatorAvatarImageView.SetImageBitmap(vc.Creator?.CreatorThumbnailBitmap);
                     SwapView(CustomViewHelpers.Tab1.VideoDetailView);
                 });
@@ -433,6 +446,12 @@ namespace BitChute.Fragments
 
         public static void CommentSystemViewAdapter_ItemClick(object sender, int e)
         {
+        }
+
+        public async static void SendCommentButton_OnClick(object sender, EventArgs e)
+        {
+            await BitChuteAPI.Outbound.SendComment(TabStates.Tab1.MainVideoDetail.VideoId,
+                 SelectedComment.CommentId, "comment");
         }
  
         /// <summary>

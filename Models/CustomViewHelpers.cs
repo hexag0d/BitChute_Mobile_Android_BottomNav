@@ -120,6 +120,10 @@ namespace BitChute.Models
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
             public static LinearLayout Tab1ParentLayout { get; set; }
+            public static LinearLayout VideoLayout { get; set; }
+            public static LinearLayout VideoMetaLayout { get; set; }
+            public static LinearLayout VideoMetaLayoutLower { get; set; }
+            
             public static Android.Widget.ScrollView VideoDetailScrollView { get; set; }
 
             public static Android.Support.V7.Widget.RecyclerView RootRecyclerView { get; set; }
@@ -129,22 +133,23 @@ namespace BitChute.Models
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager RootLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager CreatorDetailLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager VideoLayoutManager { get; set; }
-            public static VideoView VideoView { get; set; }
+            //public static VideoView VideoView { get; set; }
 
-            //public static VideoView VideoView
-            //{
-            //    get {return Common.VideoViewDictionary[TabNo]; }
-            //    set {
-            //            if (Common.VideoViewDictionary.ContainsKey(TabNo))
-            //            {
-            //                Common.VideoViewDictionary[TabNo] = value;
-            //            }
-            //            else
-            //            {
-            //                Common.VideoViewDictionary.Add(TabNo, value);
-            //            }
-            //        }
-            //}
+            public static VideoView VideoView
+            {
+                get { return Common.VideoViewDictionary[TabNo]; }
+                set
+                {
+                    if (Common.VideoViewDictionary.ContainsKey(TabNo))
+                    {
+                        Common.VideoViewDictionary[TabNo] = value;
+                    }
+                    else
+                    {
+                        Common.VideoViewDictionary.Add(TabNo, value);
+                    }
+                }
+            }
             public static ImageView CreatorDetailAvatarImageView { get; set; }
             public static TextView VideoDetailTitle { get; set; }
             //public static TextView VideoDetailTitle
@@ -173,7 +178,9 @@ namespace BitChute.Models
             public static TextView CreatorNameTextView { get; set; }
             public static TextView SubCountTextView { get; set; }
             public static ImageView FlagMeImageView { get; set; }
-            public static bool ReplyBoxVisible = false;
+            public static LinearLayout LeaveACommentLayout { get; set; }
+            public static MultiAutoCompleteTextView LeaveACommentTextBox { get; set; }
+            public static Button SendCommentButton { get; set; }
 
             private static int TabNo = 1;
         }

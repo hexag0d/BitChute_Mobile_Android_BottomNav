@@ -93,17 +93,17 @@ namespace BitChute.Models
                 List<Comment> sampleComments = new List<Comment>{
                     new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null), 
                     new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.hex), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable._i51), null),
+                    new Comment("cynical soapbox", "This is a sample comment; This video rocks!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable._i51), null),
                     new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i57), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i62), null),
+                    new Comment("idream", ReallyLongSamplePlainText , null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i62), null),
                     new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable._i52), null),
                     new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i70), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i74), null),
+                    new Comment("Jeebus", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i74), null),
                     new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null),
+                    new Comment("hexagod", ReallyLongSamplePlainText , null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null),
                     new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.hex), null),
-                    new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i85), null),
+                    new Comment("canis cortex", "This is a sample comment; This video rocks!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.hex), null),
+                    new Comment("Commenter Name", ReallyLongSamplePlainText , null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable._i85), null),
                     new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, null, MainActivity.UniversalGetDrawable(Resource.Drawable.hex), null),
                     new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(), MainActivity.UniversalGetDrawable(Resource.Drawable.noavatar), null),
                     new Comment("Commenter Name", "This is a sample comment; This video blows!", null, 6, 3, null, GetSampleCreator(),  MainActivity.UniversalGetDrawable(Resource.Drawable._i77), null)
@@ -112,7 +112,7 @@ namespace BitChute.Models
                 return sampleComments;
             }
 
-            public string ReallyLongSamplePlainText = 
+            public static string ReallyLongSamplePlainText = 
                 "Some initial thought goes into the persons mind which decides his choice, " + "\r\n" +
                 "it can be favorite color , lucky color and so on. In other words some" + "\r\n" +
                 " initial trigger which we term in RANDOM as SEED.This SEED is the " + "\r\n" +

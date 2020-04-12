@@ -298,6 +298,18 @@ namespace BitChute
             }
         }
 
+        public static void OnTextFocus(object sender, EventArgs e)
+        {
+            if (CustomViewHelpers.Tab1.LeaveACommentTextBox.HasFocus)
+            {
+                NavigationView.Visibility = ViewStates.Gone;
+            }
+            else
+            {
+                NavigationView.Visibility = ViewStates.Visible;
+            }
+        }
+
         public override bool OnKeyDown(Android.Views.Keycode keyCode, KeyEvent e)
         {
             if (e.KeyCode == Android.Views.Keycode.Back)

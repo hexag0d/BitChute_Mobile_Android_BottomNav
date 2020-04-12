@@ -11,6 +11,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using BitChute.Classes;
+using BitChute.Fragments;
 using BitChute.Models;
 using BitChute.ViewHolders;
 using static BitChute.Models.CommentModel;
@@ -58,7 +59,15 @@ namespace BitChute.Adapters
         {
             vh = holder as CommentSystemRecyclerViewHolder;
 
-            vh.CreatorNameTextView.Text = _commentList[position].CommenterName;
+
+            if (_commentList[position].Creator != null)
+            {
+                vh.CreatorNameTextView.Text = _commentList[position].Creator.Name;
+            }
+            else
+            {
+                vh.CreatorNameTextView.Text = _commentList[position].CommenterName;
+            }
             vh.CommentTextView.Text = _commentList[position].CommentText;
 
             if (_commentList[position].CommenterAvatarDrawable != null)
@@ -91,22 +100,30 @@ namespace BitChute.Adapters
                 ItemClick(this, position);
         }
 
-        async void ReplyButtonOnClick(int position)
+        void ReplyButtonOnClick(int position)
         {
+            if (ReplyClick != null)
+            ReplyClick(this, position);
             switch (MainActivity.ViewPager.CurrentItem)
             {
                 case 1:
-                    if (CustomViewHelpers.Tab1.ReplyBoxVisible)
+                    if (CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility == ViewStates.Gone)
                     {
-                        await BitChuteAPI.Outbound.SendComment(TabStates.Tab1.MainVideoDetail.VideoId,
-                            _commentList[position].CommentId, "comment");
+                        CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Visible;
+                        CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Gone;
+                        CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Gone;
+                        CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Gone;
+                        SubscriptionFragment.SelectedComment = _commentList[position];
                     }
                     else
                     {
-                        //show the reply box
+                        CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Gone;
+                        CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Visible;
+                        CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Visible;
+                        CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Visible;
+                        SubscriptionFragment.SelectedComment = null;
                     }
                     break;
-
             }
         }
 

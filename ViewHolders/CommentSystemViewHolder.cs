@@ -41,6 +41,7 @@ namespace BitChute.ViewHolders
             // was clicked (by layout position) to the listener:
             itemView.Click += (sender, e) => listener(base.LayoutPosition);
             CreatorAvatar.Click += (sender, e) => avatarListener(base.LayoutPosition);
+            ReplyButton.Click += (sender, e) => replyListener(base.LayoutPosition);
         }
     }
 }

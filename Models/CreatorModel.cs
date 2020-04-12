@@ -39,6 +39,19 @@ namespace BitChute.Models
                 CreatorThumbnailBitmap = creatorAvatarBitmap;
             }
 
+
+            public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
+                List<VideoCard> recentVideoCardList, int thumbnail, int subcount)
+            {
+                Name = name;
+                LinkToChannel = linkToChannel;
+                MostRecentVideoLink = recentVideoCardList.First().Link;
+                MostRecentVideoTitle = recentVideoCardList.First().Title;
+                RecentVideoCards = recentVideoCardList;
+                creatorAvatar = MainActivity.UniversalGetDrawable(thumbnail);
+                CreatorThumbnailBitmap = creatorAvatarBitmap;
+            }
+
             public Creator(Drawable creatorAvatar, Bitmap creatorAvatarBitmap, string name, string linkToChannel,
                 List<VideoCard> recentVideoCardList)
             {
@@ -58,6 +71,7 @@ namespace BitChute.Models
             public string MostRecentVideoLink { get; set; }
             public string MostRecentVideoTitle { get; set; }
             public Android.Net.Uri MostRecentVideoUri { get; set; } 
+            public int SubCount { get; set; }
 
             public Drawable CreatorThumbnailDrawable { get; set; }
             public Bitmap CreatorThumbnailBitmap { get; set; }
@@ -91,16 +105,16 @@ namespace BitChute.Models
         public static List<Creator> GetCreatorList()
         {
             List<Creator> creatorList = new List<Creator>();
-            creatorList.Add(new Creator(null, null, "warski", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i50));
-            creatorList.Add(new Creator(null, null, "styx", @"\channel\styx", Get3RandomCards(), Resource.Drawable._i51));
-            creatorList.Add(new Creator(null, null, "burmas", @"\channel\burmas", Get3RandomCards(), Resource.Drawable._i52));
-            creatorList.Add(new Creator(null, null, "hotep", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i53));
-            creatorList.Add(new Creator(null, null, "hotep", @"\channel\hotep", Get3RandomCards(), Resource.Drawable._i54));
-            creatorList.Add(new Creator(null, null, "jchan", @"\channel\jchan", Get3RandomCards(), Resource.Drawable._i55));
-            creatorList.Add(new Creator(null, null, "goodman", @"\channel\goodman", Get3RandomCards(), Resource.Drawable._i56));
-            creatorList.Add(new Creator(null, null, "ralph", @"\channel\ralph", Get3RandomCards(), Resource.Drawable._i57));
-            creatorList.Add(new Creator(null, null, "duck", @"\channel\duck", Get3RandomCards(), Resource.Drawable._i58));
-            creatorList.Add(new Creator(null, null, "hb", @"\channel\hb", Get3RandomCards(), Resource.Drawable._i59));
+            creatorList.Add(new Creator(null, null, "warski", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i50, 777));
+            creatorList.Add(new Creator(null, null, "styx", @"\channel\styx", Get3RandomCards(), Resource.Drawable._i51, 777));
+            creatorList.Add(new Creator(null, null, "burmas", @"\channel\burmas", Get3RandomCards(), Resource.Drawable._i52, 777));
+            creatorList.Add(new Creator(null, null, "hotep", @"\channel\warski", Get3RandomCards(), Resource.Drawable._i53, 777));
+            creatorList.Add(new Creator(null, null, "hotep", @"\channel\hotep", Get3RandomCards(), Resource.Drawable._i54, 777));
+            creatorList.Add(new Creator(null, null, "jchan", @"\channel\jchan", Get3RandomCards(), Resource.Drawable._i55, 777));
+            creatorList.Add(new Creator(null, null, "goodman", @"\channel\goodman", Get3RandomCards(), Resource.Drawable._i56, 777));
+            creatorList.Add(new Creator(null, null, "ralph", @"\channel\ralph", Get3RandomCards(), Resource.Drawable._i57, 777));
+            creatorList.Add(new Creator(null, null, "duck", @"\channel\duck", Get3RandomCards(), Resource.Drawable._i58, 777));
+            creatorList.Add(new Creator(null, null, "hb", @"\channel\hb", Get3RandomCards(), Resource.Drawable._i59, 777));
             return creatorList;
         }
 
