@@ -26,8 +26,6 @@ namespace BitChute.Classes
     /// </summary>
     public class VideoDetailLoader : Activity, ISurfaceHolderCallback, MediaPlayer.IOnPreparedListener
     {
-        public static Dictionary<int, ExtMediaController> MediaControllerDictionary 
-            = new Dictionary<int, ExtMediaController>();
 
         public VideoDetailLoader()
         {
@@ -98,23 +96,24 @@ namespace BitChute.Classes
             {
                 uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
             }
+
+            ExtStickyService.InitializePlayer(tab, uri, Android.App.Application.Context);
+
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
-            ExtStickyService.InitializePlayer(tab, uri, Android.App.Application.Context);
-            
-            ExtStickyService.MediaPlayerDictionary[tab].PrepareAsync();
 
            CustomViewHelpers.Tab1.VideoView.LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
 
             if (vc != null)
             {
-                GetSetVideoDetailViewComplete(tab, vc.VideoId);
+                GetSetVideoDetailViewComplete(tab, vc);
             }
             else if (cc != null)
             {
-                GetSetVideoDetailViewComplete(tab, cc.LatestVidLinkString);
+                GetSetVideoDetailViewComplete(tab, cc.Creator.RecentVideoCards[0]);
             }
             TabStates.MediaTabHasFocus(tab);
+            
         }
         
         /// <summary>
@@ -122,7 +121,7 @@ namespace BitChute.Classes
         /// for example, gets the comments, like counts, and related videos
         /// we can call this async so that the video loads first and then the externals
         /// </summary>
-        public async void GetSetVideoDetailViewComplete(int tab, string videoLink)
+        public async void GetSetVideoDetailViewComplete(int tab, VideoCard vc)
         {
             await Task.Run(() =>
             {
@@ -131,8 +130,8 @@ namespace BitChute.Classes
                    case 0:
                        break;
                    case 1:
-                       TabStates.Tab1.MainVideoDetail = BitChuteAPI.Inbound.GetFullVideoDetail(videoLink).Result;
-                       TabStates.Tab1.CommentSystem.MainCommentList = BitChuteAPI.Inbound.GetVideoComments(videoLink).Result;
+                       TabStates.Tab1.MainVideoDetail = BitChuteAPI.Inbound.GetFullVideoDetail(vc).Result;
+                       TabStates.Tab1.CommentSystem.MainCommentList = BitChuteAPI.Inbound.GetVideoComments(vc.VideoId).Result;
                        break;
                    case 2:
                        break;
@@ -143,6 +142,8 @@ namespace BitChute.Classes
                }
             });
         }
+
+
         
         public void SurfaceChanged(ISurfaceHolder holder, [GeneratedEnum] Format format, int width, int height)
         {

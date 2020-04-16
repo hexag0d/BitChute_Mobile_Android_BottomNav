@@ -99,7 +99,7 @@ namespace BitChute.Classes
             /// </summary>
             /// <param name="videoId"></param>
             /// <returns></returns>
-            public static async Task<VideoDetail> GetFullVideoDetail(string videoId)
+            public static async Task<VideoDetail> GetFullVideoDetail(VideoCard vc)
             {
                 int viewCount = 6;
                 int likeCount = 6;
@@ -112,7 +112,8 @@ namespace BitChute.Classes
                     ViewCount = viewCount,
                     LikeCount = likeCount,
                     DislikeCount = dislikeCount,
-                    VideoDescription = videoDescription
+                    VideoDescription = videoDescription,
+                    RelatedVideos = VideoCardSet.GetSampleRelatedVids(vc.Creator)
                 };
                 
                 await Task.Delay(AppSettings.Debug.DummyDelay);

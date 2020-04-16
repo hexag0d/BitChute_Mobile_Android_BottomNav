@@ -54,21 +54,20 @@ namespace BitChute.Models
                     case 1:
                         if (CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility == ViewStates.Gone)
                         {
-                            MainActivity.NavigationView.Visibility = ViewStates.Gone;
                             CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Visible;
                             CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Gone;
                             CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Gone;
                             CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Gone;
                             CustomViewHelpers.Tab1.LeaveACommentTextBox.RequestFocus();
-                            MainActivity.ShowKeyboard(CustomViewHelpers.Tab1.VideoDetailView);
+                            MainActivity.ShowKeyboard();
                         }
                         else
                         {
-                            MainActivity.NavigationView.Visibility = ViewStates.Visible;
                             CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Gone;
                             CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Visible;
                             CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Visible;
                             CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Visible;
+                            CustomViewHelpers.Tab1.Tab1FragmentLayout.RequestFocus();
                             MainActivity.HideKeyboard();
                         }
                         break;
@@ -96,51 +95,6 @@ namespace BitChute.Models
                     }
                 }
             }
-
-        //    public class Video
-        //    {
-        //        public class PictureInPicture
-        //        {
-        //            private static VideoView _vidView;
-        //            public static VideoView VideoView
-        //            {
-        //                get
-        //                {
-        //                    if (_vidView == null)
-        //                    {
-        //                        return new VideoView(Android.App.Application.Context);
-        //                    }
-        //                    else
-        //                    {
-        //                        return _vidView;
-        //                    }
-        //                }
-        //                set
-        //                {
-        //                    _vidView = value;
-        //                }
-        //            }
-        //        }
-
-        //        public static VideoView GetVideoView(int tab)
-        //        {
-        //            switch (tab)
-        //            {
-        //                case 0:
-        //                    break;
-        //                case 1:
-        //                    if (Tab1.VideoView == null)
-        //                    {
-
-        //                    }
-        //                    return Tab1.VideoView;
-        //                case 2:
-        //                    break;
-
-        //            }
-        //            return Tab1.VideoView;
-        //        }
-        //    }
         }
 
         public class Tab1
@@ -206,7 +160,9 @@ namespace BitChute.Models
             public static TextView LikeCountTextView { get; set; }
             public static ImageView DislikeButtonImageView { get; set; }
             public static TextView DislikeCountTextView { get; set; }
+            public static ImageView DonateImageView { get; set; }
             public static Button SubscribeButton { get; set; }
+            public static ImageView NotificationBell { get; set; }
             public static ImageView FavoriteImageView { get; set; }
             public static ImageView AddVideoToPlaylist { get; set; }
             public static ImageView P2pStatsImageView { get; set; }

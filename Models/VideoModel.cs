@@ -30,7 +30,7 @@ namespace BitChute.Models
         }
         
         public static Android.Net.Uri SampleUri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
-        public static Android.Net.Uri SampleUri2 = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
+        public static Android.Net.Uri SampleUri2 = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.test2);
 
         /// <summary>
         /// VideoDetail class contains the details for videos that would not be efficient to get all at once
@@ -168,9 +168,7 @@ namespace BitChute.Models
                 // TODO: need to make this more dynamic
                 // essentially, we need to take the linkId from
                 // bitchute JSON return and convert into URI for each video
-                string vidpath = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
-
-                VideoUri = Android.Net.Uri.Parse(vidpath);
+                
                 //Link = link;
 
                 VideoId = videoId;
@@ -304,26 +302,26 @@ new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "Creator 5","videoI
             public static List<VideoCard> GetSampleVideoCardListOneCreator(Creator creator)
             {
                 List<VideoCard> sampleList = new List<VideoCard>{
-new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator),
-new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator),
-new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator),
-new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator),
-new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator),
-new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator),
-new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator),
-new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator),
-new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator),
-new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator),
-new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator),
-new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator),
-new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator),
-new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator),
-new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator),
-new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator),
-new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator),
-new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator),
-new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator),
-new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_0, "Video 1", "videoID1", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_1, "Video 2", "videoID2", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_2, "Video 3", "videoID3", creator, SampleUri2),
+new VideoCard (Resource.Drawable._testThumb360_3, "Video 4", "videoID4", creator, SampleUri),
+new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator, SampleUri2),
   };
                 return sampleList;
             }

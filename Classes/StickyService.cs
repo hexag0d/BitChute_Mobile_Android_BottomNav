@@ -20,6 +20,7 @@ using Android.Net.Wifi;
 using Android.Media;
 using Android.Support.V4.App;
 using BitChute.Models;
+using static BitChute.Models.VideoModel;
 
 namespace StartServices.Servicesclass
 {
@@ -62,6 +63,9 @@ namespace StartServices.Servicesclass
         private static bool _notificationLongTimerSet = false;
 
         public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
+        public static Dictionary<int, ExtMediaController> MediaControllerDictionary
+                     = new Dictionary<int, ExtMediaController>();
+
         public static int PlayerNumberHasFocus = 0;
 
         private static bool _paused;
@@ -113,15 +117,15 @@ namespace StartServices.Servicesclass
             {
                 MediaPlayerDictionary[tab].SetDataSource(ctx, uri);
             }
-
+            
+            AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
+            
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
 
             //When we have prepared the song start playback
-            MediaPlayerDictionary[tab].Prepared += (sender, args) => MediaPlayerDictionary[tab].Start();
-
-            AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
-
+            MediaPlayerDictionary[tab].Prepared += (sender, args) => ExtStickyServ.Play();
+            
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
             MediaPlayerDictionary[tab].Completion += (sender, args) => OnVideoFinished(false, tab);
 
@@ -131,6 +135,8 @@ namespace StartServices.Servicesclass
                 Console.WriteLine("Error in playback resetting: " + args.What);
                 Stop();//this will clean up and reset properly.
             };
+
+            ExtStickyService.MediaPlayerDictionary[tab].Prepare();
 
             return MediaPlayerDictionary[tab];
         }
@@ -151,18 +157,13 @@ namespace StartServices.Servicesclass
                 {
                     //We are simply paused so just start again
                     MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
-                    StartForeground();
+                    //StartForeground();
                     return;
                 }
 
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                    return;
-
                 try
                 {
-                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].PrepareAsync();
                     AquireWifiLock();
-                    StartForeground();
                 }
                 catch (Exception ex)
                 {
@@ -175,6 +176,22 @@ namespace StartServices.Servicesclass
                     AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
                 }
             });
+        }
+
+        public static void SkipToPrev()
+        {
+            ExtStickyServ.CurrentPosition = 0;
+        }
+
+        public static void SkipToNext(VideoCard vc)
+        {
+            if (vc == null)
+            {
+                TabStates.Tab1.VideoCardLoader = TabStates.Common.NextUp.NextUpVideoCard;
+            //    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Common.GetDefaultVideoDetailView(
+            //        MainActivity.ViewPager.CurrentItem), null, TabStates.Common.NextUp.NextUpVideoCard, 
+            //        MainActivity.ViewPager.CurrentItem);
+            }
         }
 
         private void Pause()
@@ -201,7 +218,7 @@ namespace StartServices.Servicesclass
             _paused = false;
             ExtStickyServ.StopForeground(true);
             ReleaseWifiLock();
-            AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
+            //AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
         }
 
         public static bool OnVideoFinished(bool overide, int tab)
@@ -234,18 +251,24 @@ namespace StartServices.Servicesclass
         /// </summary>
         public void StartForeground()
         {
+            try
+            {
+                var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
+                                new Intent(ApplicationContext, typeof(MainActivity)),
+                                PendingIntentFlags.UpdateCurrent);
 
-            var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
-                            new Intent(ApplicationContext, typeof(MainActivity)),
-                            PendingIntentFlags.UpdateCurrent);
+                var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                .SetContentTitle("BitChute streaming in background") // Set the title
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetPriority(NotificationCompat.PriorityLow);
 
-            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
-                            .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                            .SetContentTitle("BitChute streaming in background") // Set the title
-                            .SetSmallIcon(Resource.Drawable.bitchute_notification)
-                            .SetPriority(NotificationCompat.PriorityLow);
+                StartForeground(-6666, builder.Build());
+            }catch
+            {
 
-            StartForeground(-6666, builder.Build());
+            }
+            
         }
 
         #region StickyServiceMethods
@@ -524,55 +547,57 @@ namespace StartServices.Servicesclass
             Play();
         }
 
+        
+
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
-            public ExtStickyService _serviceContext;
-            public override void OnWindowFocusChanged(bool hasWindowFocus)
-            {
-                if (MainActivity._backgroundRequested)
-                {
-                    try
-                    {
-                        _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                        _wl.Acquire();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    try
-                    {
-                        if (wifiLock == null)
-                        {
-                            wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
-                        }
-                        wifiLock.Acquire();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    while (ExtStickyService.IsInBkGrd())
-                    {
-                        var dontSleep = DummyLoop();
-                        System.Threading.Thread.Sleep(3600);
-                    }
-                    try
-                    {
-                        _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                        _wl.Release();
-                    }
-                    catch
-                    {
+            //public ExtStickyService _serviceContext;
+            //public override void OnWindowFocusChanged(bool hasWindowFocus)
+            //{
+            ////    if (MainActivity._backgroundRequested)
+            ////    {
+            ////        try
+            ////        {
+            ////            _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+            ////            PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+            ////            _wl.Acquire();
+            ////        }
+            ////        catch (Exception ex)
+            ////        {
+            ////            Console.WriteLine(ex.Message);
+            ////        }
+            ////        try
+            ////        {
+            ////            if (wifiLock == null)
+            ////            {
+            ////                wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+            ////            }
+            ////            wifiLock.Acquire();
+            ////        }
+            ////        catch (Exception ex)
+            ////        {
+            ////            Console.WriteLine(ex.Message);
+            ////        }
+            ////        while (ExtStickyService.IsInBkGrd())
+            ////        {
+            ////            var dontSleep = DummyLoop();
+            ////            System.Threading.Thread.Sleep(3600);
+            ////        }
+            ////        try
+            ////        {
+            ////            _pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+            ////            PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+            ////            _wl.Release();
+            ////        }
+            ////        catch
+            ////        {
 
-                    }
-                }
-                MainActivity._backgroundRequested = false;
-                base.OnWindowFocusChanged(hasWindowFocus);
-            }
+            ////        }
+            ////    }
+            ////    MainActivity._backgroundRequested = false;
+            //    base.OnWindowFocusChanged(hasWindowFocus);
+            //}
 
             public ServiceWebView(Context context) : base(context)
             {

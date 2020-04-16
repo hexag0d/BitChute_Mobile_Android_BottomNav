@@ -14,7 +14,10 @@ namespace BitChute.Classes
         {
             if (e.KeyCode == Keycode.Back && e.Action == KeyEventActions.Down)
             {
-                CustomViewHelpers.Common.FocusCommentTextView();
+                if (CustomViewHelpers.Common.SoftKeyboardIsVisible)
+                {
+                    CustomViewHelpers.Common.FocusCommentTextView();
+                }
             }
             return base.DispatchKeyEventPreIme(e);
         }

@@ -332,6 +332,8 @@
 				android:layout_alignParentTop="true"
 				android:shadowColor="#ffffff"
 					
+					android:background="#202020"
+					
 				android:visibility="visible"
 				android:id="@+id/commentEntryText" />
 				<Button

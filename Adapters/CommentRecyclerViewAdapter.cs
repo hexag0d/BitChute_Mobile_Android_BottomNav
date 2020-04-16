@@ -149,6 +149,7 @@ namespace BitChute.Adapters
                     case 0:
                         break;
                     case 1:
+                        SubscriptionFragment.ScrollToTop_CreatorDetail();
                         TabStates.Tab1.Creator = TabStates.Tab1.CommentSystem.MainCommentList[position].Creator;
                         break;
                     case 2:

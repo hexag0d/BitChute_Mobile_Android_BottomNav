@@ -209,11 +209,11 @@ namespace BitChute
         public static void NavigationView_OnClick(object sender, EventArgs e)
         {
             if (ExtStickyService.MediaPlayerDictionary[TabStates.MediaTabHasFocus(-1)] != null &&
-                VideoDetailLoader.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)] != null)
+                ExtStickyService.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)] != null)
             {
                 if (ExtStickyService.MediaPlayerDictionary[TabStates.MediaTabHasFocus(-1)].IsPlaying)
                 {
-                    VideoDetailLoader.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)].Show(10000);
+                    ExtStickyService.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)].Show(10000);
                 }
             }
         }
@@ -315,18 +315,6 @@ namespace BitChute
                     _navTimeout = false;
                     _navHidden = true;
                 }
-            }
-        }
-
-        public static void OnTextFocus(object sender, EventArgs e)
-        {
-            if (CustomViewHelpers.Tab1.LeaveACommentTextBox.HasFocus)
-            {
-                NavigationView.Visibility = ViewStates.Gone;
-            }
-            else
-            {
-                NavigationView.Visibility = ViewStates.Visible;
             }
         }
 
@@ -854,6 +842,15 @@ namespace BitChute
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
 
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            if (!hasFocus)
+            {
+                _stickyService.StartForeground();
+            }
+            base.OnWindowFocusChanged(hasFocus);
+        }
+
         public class SubscriptionRecyclerViewAdapter : RecyclerView.Adapter
         {
             public event EventHandler<int> ItemClick;
@@ -1016,19 +1013,22 @@ namespace BitChute
             }
         }
 
-        public static void ShowKeyboard(View pView)
+        public static void ShowKeyboard()
         {
             InputMethodManager = _contextWrapper.GetSystemService(Context.InputMethodService) as Android.Views.InputMethods.InputMethodManager;
-            InputMethodManager.ShowSoftInput(pView, ShowFlags.Forced);
+            InputMethodManager.ShowSoftInput(CustomViewHelpers.Tab1.Tab1FragmentLayout, ShowFlags.Forced);
             InputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);
+            NavigationView.Visibility = ViewStates.Gone;
             CustomViewHelpers.Common.SoftKeyboardIsVisible = true;
         }
 
         public static bool HideKeyboard()
         {
+            CustomViewHelpers.Common.SoftKeyboardIsVisible = false;
+            NavigationView.Visibility = ViewStates.Visible;
             return InputMethodManager.HideSoftInputFromWindow(CustomViewHelpers.Tab1.Tab1FragmentLayout.WindowToken, HideSoftInputFlags.None);
         }
-        
+
         public static Android.Graphics.Drawables.Drawable UniversalGetDrawable(int id)
         {
             Drawable drawable = Main.GetDrawable(id);

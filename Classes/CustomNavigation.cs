@@ -32,7 +32,7 @@ namespace BitChute.Classes
                 {
                     if (typeof(VideoModel.VideoCard) == CustomNagivationStack[CustomNagivationStack.Count - 2].GetType())
                     {
-                        TabStates.Tab1.VideoCardSlimLoader = (VideoModel.VideoCard)CustomNagivationStack[CustomNagivationStack.Count - 2];
+                        TabStates.Tab1.VideoCardLoader = (VideoModel.VideoCard)CustomNagivationStack[CustomNagivationStack.Count - 2];
                         CustomNagivationStack.RemoveRange(CustomNagivationStack.Count - 2, 2);
                     }
                     else if (typeof(CreatorModel.Creator) == CustomNagivationStack[CustomNagivationStack.Count - 2].GetType())

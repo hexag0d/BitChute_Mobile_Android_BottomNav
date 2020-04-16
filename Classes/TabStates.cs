@@ -20,7 +20,7 @@ namespace BitChute.Models
         private static MainActivity _main;
         private static int _mediaPlayerHasFocus = -1;
         private static List<bool> _initializedPlayers = new List<bool> { false, false, false, false, false };
-
+        private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
         public static void SetMainActivity()
         {
             _main = MainActivity.Main;
@@ -78,7 +78,7 @@ namespace BitChute.Models
                     case 0:
                         return;
                     case 1:
-                        Tab1.VideoCardSlimLoader = vc;
+                        Tab1.VideoCardLoader = vc;
                         return;
                     case 2:
                         return;
@@ -146,13 +146,15 @@ namespace BitChute.Models
                 }
             }
 
-            public static VideoCard VideoCardSlimLoader
+            public static VideoCard VideoCardLoader
             {
                 get { return _videoSlimLoader; }
                 set
                 {
                     _videoSlimLoader = value;
-                    SubscriptionFragment.UpdateVideoDetailPageFromVideoCard(_videoSlimLoader);
+                    SubscriptionFragment.ScrollToTop_VidDetail();
+                    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Tab1.VideoDetailView, null, value, -1);
+                    SubscriptionFragment.UpdateVideoDetailPageFromVideoCard(value);
                 }
             }
 
@@ -192,6 +194,7 @@ namespace BitChute.Models
                     }
                     else
                     {
+                        SubscriptionFragment.ScrollToTop_Root();
                         SubscriptionFragment.UpdateRootAdapter();
                     }
                 }
@@ -239,6 +242,7 @@ namespace BitChute.Models
                             _commentSystemRecyclerViewAdapter.ItemClick += SubscriptionFragment.CommentSystemViewAdapter_ItemClick;
 
                         }
+                        SubscriptionFragment.ScrollToTop_Comment();
                         SubscriptionFragment.UpdateVideoDetailCommentList();
                     }
                 }

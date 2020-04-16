@@ -28,13 +28,27 @@ namespace BitChute.Classes
             this.Visibility = ViewStates.Gone;
             return true;
         }
-
+        
         public ExtMediaController(Context context) : base(context)
         {
+            this.SetPrevNextListeners(new NextClick(), new PreviousClick());
+            this.SetOnClickListener(new PlayClick());
+        }
+
+        protected override void OnCreateContextMenu(IContextMenu menu)
+        {           // this.GetChildAt(0).Click += Child0_OnClick;
+
+            base.OnCreateContextMenu(menu);
+        }
+
+        public void Child0_OnClick (object sender, EventArgs e)
+        {
+
         }
 
         public ExtMediaController(Context context, IAttributeSet attrs) : base(context, attrs)
         {
+            
         }
 
         public ExtMediaController(Context context, bool useFastForward) : base(context, useFastForward)
@@ -43,6 +57,39 @@ namespace BitChute.Classes
 
         protected ExtMediaController(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
+        }
+    }
+
+    public class PlayClick : Java.Lang.Object, View.IOnClickListener
+    {
+        public void OnClick(View v)
+        {
+        }
+    }
+
+    public class PreviousClick : Java.Lang.Object, View.IOnClickListener, View.IOnLongClickListener
+    {
+        public void OnClick(View v)
+        {
+            ExtStickyService.SkipToPrev();
+        }
+
+        public bool OnLongClick(View v)
+        {
+            return false;
+        }
+    }
+
+    public class NextClick : Java.Lang.Object, View.IOnClickListener, View.IOnLongClickListener
+    {
+        public void OnClick(View v)
+        {
+            ExtStickyService.SkipToNext(null);
+        }
+
+        public bool OnLongClick(View v)
+        {
+            return false;
         }
     }
 }

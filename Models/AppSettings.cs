@@ -38,7 +38,7 @@ namespace BitChute.Classes
 
         public static bool _hideVerticalNavbar = false;
 
-        public static bool _notifying = true;
+        public static bool _notifying = false;
         
         /// <summary>
         /// gets the app preferences object from android
@@ -57,7 +57,7 @@ namespace BitChute.Classes
         public static void LoadAllPrefsFromSettings()
         {
             GetAppSharedPrefs();
-            _notifying = _prefs.GetBoolean("notificationson", true);
+           // _notifying = _prefs.GetBoolean("notificationson", true);
             Tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
             Tab4OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
             ZoomControl = _prefs.GetBoolean("zoomcontrol", false);

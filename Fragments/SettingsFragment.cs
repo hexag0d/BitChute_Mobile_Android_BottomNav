@@ -851,9 +851,9 @@ namespace BitChute.Fragments
                                 _client.DefaultRequestHeaders.Add("Cookie", SettingsFragment._cookieHeader);
                                 _notificationHttpRequestInProgress = true;
 
-                                var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                                var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                                _htmlCode = resultContent;
+                                //var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
+                                //var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                                //_htmlCode = resultContent;
                                 _notificationHttpRequestInProgress = false;
                             }
                         }
