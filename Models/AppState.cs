@@ -52,7 +52,7 @@ namespace BitChute.Classes
             /// 
             /// returns -1 if none are playing otherwise it's 0-4 coinciding with the tab played from
             /// </summary>
-            public static int MediaPlayerNumberIsStreaming;
+            public static int MediaPlayerNumberIsStreaming { get; set; }
         }
 
 
