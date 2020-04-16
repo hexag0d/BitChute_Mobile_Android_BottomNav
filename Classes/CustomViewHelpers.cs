@@ -12,6 +12,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Adapters;
 using BitChute.Classes;
+using BitChute.Fragments;
 using static BitChute.MainActivity;
 
 namespace BitChute.Models
@@ -22,19 +23,56 @@ namespace BitChute.Models
     /// </summary>
     public class CustomViewHelpers 
     {
-        public class Comment
-        {
-
-        }
-
         public class Common
         {
             public static Dictionary<int, VideoView> VideoViewDictionary = new Dictionary<int, VideoView>();
             public static Dictionary<int, TextView> VideoDetailTitles = new Dictionary<int, TextView>();
 
+            public static bool SoftKeyboardIsVisible { get; set; }
+
             public static void SetVideoTitles (int tabNo, TextView tv)
             {
                 VideoDetailTitles.Add(tabNo, tv);
+            }
+
+            public static View GetDefaultVideoDetailView (int tab)
+            {
+                switch (tab)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        return Tab1.VideoDetailView;
+                }
+                return null;
+            }
+
+            public static void FocusCommentTextView()
+            {
+                switch (MainActivity.ViewPager.CurrentItem)
+                {
+                    case 1:
+                        if (CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility == ViewStates.Gone)
+                        {
+                            MainActivity.NavigationView.Visibility = ViewStates.Gone;
+                            CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Visible;
+                            CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Gone;
+                            CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Gone;
+                            CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Gone;
+                            CustomViewHelpers.Tab1.LeaveACommentTextBox.RequestFocus();
+                            MainActivity.ShowKeyboard(CustomViewHelpers.Tab1.VideoDetailView);
+                        }
+                        else
+                        {
+                            MainActivity.NavigationView.Visibility = ViewStates.Visible;
+                            CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Gone;
+                            CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Visible;
+                            CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Visible;
+                            CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Visible;
+                            MainActivity.HideKeyboard();
+                        }
+                        break;
+                }
             }
 
             public static void OnRotation(LinearLayout.LayoutParams layoutParams)
@@ -119,7 +157,7 @@ namespace BitChute.Models
 
             public static LayoutInflater LayoutInflater { get; set; }
             public static LinearLayout SubscriptionRecyclerView { get; set; }
-            public static LinearLayout Tab1ParentLayout { get; set; }
+            public static ExtLinearLayout Tab1ParentLayout { get; set; }
             public static LinearLayout VideoLayout { get; set; }
             public static LinearLayout VideoMetaLayout { get; set; }
             public static LinearLayout VideoMetaLayoutLower { get; set; }

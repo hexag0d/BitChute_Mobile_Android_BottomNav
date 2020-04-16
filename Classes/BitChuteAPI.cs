@@ -120,6 +120,36 @@ namespace BitChute.Classes
                 return vd;
             }
 
+            /// <summary>
+            /// gets everything other than the comments
+            /// 
+            /// The comments may take longer to return, so I'm keeping them separate for now
+            /// </summary>
+            /// <param name="videoId"></param>
+            /// <returns></returns>
+            public static async Task<VideoDetail> GetFullVideoDetail(string videoId, Creator c)
+            {
+                int viewCount = 6;
+                int likeCount = 6;
+                int dislikeCount = 6;
+                int subscriberCount = 6666;
+                string videoDescription = "This is a sample video description.  I'm sure it's a very good video";//TODO: turn this into an object array
+
+                VideoDetail vd = new VideoDetail()
+                {
+                    ViewCount = viewCount,
+                    LikeCount = likeCount,
+                    DislikeCount = dislikeCount,
+                    VideoDescription = videoDescription,
+                    RelatedVideos = VideoModel.VideoCardSet.GetSampleRelatedVids(c)
+                };
+
+                await Task.Delay(AppSettings.Debug.DummyDelay);
+
+                return vd;
+            }
+
+
             public static async  Task<SubscriptionCardSet> GetSubscriptionList()
             {
                 await Task.Delay(AppSettings.Debug.DummyDelay);

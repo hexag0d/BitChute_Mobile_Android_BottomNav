@@ -8,26 +8,27 @@ namespace BitChute.Classes
     {
         public static Android.Content.ISharedPreferences _prefs;
 
-        public static bool _zoomControl { get; set; }
-        public static bool _tab1FeaturedOn { get; set; }
-        public static bool _fanMode { get; set; }
-        public static bool _tab3Hide { get; set; }
-        public static bool _settingsTabOverride { get; set; }
-        
-        public static string _tab3OverridePreference { get; set; }
-        public static string _tab4OverridePreference { get; set; }
+        public static bool ZoomControl { get; set; }
+        public static bool Tab1FeaturedOn { get; set; }
+        public static bool FanMode { get; set; }
+        public static bool Tab3Hide { get; set; }
+        public static bool SettingsTabOverride { get; set; }
+        public static bool AutoPlay = true;
+
+        public static string Tab3OverridePreference { get; set; }
+        public static string Tab4OverridePreference { get; set; }
         
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
         /// </summary>
-        public static int _tabDelay = 800;
+        public static int TabDelay = 800;
         
         /// <summary>
         /// this int controls the delay in ms of notifications being 
         /// parsed and then sent out.  It should be set to a high int
         /// so as to not overload bitchute.com with httprequests
         /// </summary>
-        public static int _notificationDelay = 120000;
+        public static int NotificationDelay = 120000;
 
         /// <summary>
         /// this bool should be set to/returns whether or not the navbar
@@ -57,13 +58,13 @@ namespace BitChute.Classes
         {
             GetAppSharedPrefs();
             _notifying = _prefs.GetBoolean("notificationson", true);
-            _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
-            _tab4OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
-            _zoomControl = _prefs.GetBoolean("zoomcontrol", false);
-            _fanMode = _prefs.GetBoolean("fanmode", false);
-            _tab3Hide = _prefs.GetBoolean("tab3hide", true);
-            _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
-            _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            Tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
+            Tab4OverridePreference = _prefs.GetString("tab5overridestring", "Settings");
+            ZoomControl = _prefs.GetBoolean("zoomcontrol", false);
+            FanMode = _prefs.GetBoolean("fanmode", false);
+            Tab3Hide = _prefs.GetBoolean("tab3hide", true);
+            Tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
+            SettingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
             _hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
             _hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
 

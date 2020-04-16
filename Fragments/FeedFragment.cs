@@ -161,7 +161,7 @@ namespace BitChute.Fragments
 
         public void OnSettingsChanged()
         {
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
             }
             else

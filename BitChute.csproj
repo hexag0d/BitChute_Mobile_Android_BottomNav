@@ -83,13 +83,15 @@
     <Compile Include="Classes\CommentListLoader.cs" />
     <Compile Include="Classes\CustomNavigation.cs" />
     <Compile Include="Classes\DisqusAPI.cs" />
+    <Compile Include="Classes\ExtLinearLayout.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
+    <Compile Include="Classes\ExtViewTreeListener.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\AppState.cs" />
     <Compile Include="Classes\BitChuteAPI.cs" />
     <Compile Include="Classes\ExtendedWebInterface.cs" />
     <Compile Include="Classes\CreatorDetailLoader.cs" />
-    <Compile Include="Models\CustomViewHelpers.cs" />
+    <Compile Include="Classes\CustomViewHelpers.cs" />
     <Compile Include="Models\ExtNotifications.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Models\Https.cs" />
@@ -105,7 +107,7 @@
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\HomepageModel.cs" />
     <Compile Include="Models\SubscriptionModel.cs" />
-    <Compile Include="Models\TabStates.cs" />
+    <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

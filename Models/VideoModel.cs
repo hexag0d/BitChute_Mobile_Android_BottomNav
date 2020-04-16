@@ -30,6 +30,7 @@ namespace BitChute.Models
         }
         
         public static Android.Net.Uri SampleUri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
+        public static Android.Net.Uri SampleUri2 = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
 
         /// <summary>
         /// VideoDetail class contains the details for videos that would not be efficient to get all at once
@@ -66,6 +67,8 @@ namespace BitChute.Models
             public int LikeCount { get; set; }
             public int DislikeCount { get; set; }
             public List<Comment> Comments { get; set; }
+
+            public List<VideoCard> RelatedVideos { get; set; }
 
             public Uri VideoUri { get; set; }
             public Drawable ThumbnailDrawable { get; set; }
@@ -122,9 +125,35 @@ namespace BitChute.Models
                 VideoId = videoId;
             }
 
-            public VideoCard(int id, string title, string creatorName, string videoId, Creator creator, Android.Net.Uri vidUri)
+            public VideoCard(int thumbnail, string title, string creatorName, string videoId, Creator creator, Android.Net.Uri vidUri)
             {
-                Thumbnail = id;
+                Thumbnail = thumbnail;
+                //title
+                Title = title;
+                //description
+
+                Creator = creator;
+
+                VideoUri = vidUri;
+                //  854 x 480 .mp4 h264 file but I can't commit it on github
+                //  put a similar file in your resources/raw/ folder to test
+                //  if it's too big the apk will fail to deploy but this is just for testing
+
+                // TODO: need to make this more dynamic
+                // essentially, we need to take the linkId from
+                // bitchute JSON return and convert into URI for each video
+                string vidpath = "android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd;
+
+                VideoUri = Android.Net.Uri.Parse(vidpath);
+                //Link = link;
+
+                VideoId = videoId;
+            }
+
+
+            public VideoCard(int thumbnail, string title, string videoId, Creator creator, Android.Net.Uri vidUri)
+            {
+                Thumbnail = thumbnail;
                 //title
                 Title = title;
                 //description
@@ -298,6 +327,17 @@ new VideoCard (Resource.Drawable._testThumb360_4, "Video 5", "videoID5", creator
   };
                 return sampleList;
             }
+
+            public static List<VideoCard> GetSampleRelatedVids(Creator c)
+            {
+                List<VideoCard> videoCards = new List<VideoCard>
+                {
+                    new VideoCard(Resource.Drawable._testThumb360_3, "Sample related video 1", "/video/bajsdijasd", c, SampleUri),
+                    new VideoCard(Resource.Drawable._testThumb360_1, "Sample related video 2", "/video/sampleurl", c, SampleUri2),
+                    new VideoCard(Resource.Drawable._testThumb360_2, "Sample related video 3", "/video/youououo", c, SampleUri)
+                };
+                return videoCards;
+            } 
 
             private List<VideoCard> mPhotos = new List<VideoCard>();
             

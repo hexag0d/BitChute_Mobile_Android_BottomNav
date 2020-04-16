@@ -55,7 +55,7 @@ namespace BitChute.Fragments
         {
             var _view = inflater.Inflate(Resource.Layout.Tab3FragmentLayout, container, false);
 
-            if (AppSettings._fanMode)
+            if (AppSettings.FanMode)
             {
             }
             if (!tabLoaded)
@@ -66,7 +66,7 @@ namespace BitChute.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
             }
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
             }
 
@@ -107,11 +107,11 @@ namespace BitChute.Fragments
 
         public void OnSettingsChanged()
         {
-            if (AppSettings._fanMode && AppSettings._tab4OverridePreference == "Feed")
+            if (AppSettings.FanMode && AppSettings.Tab4OverridePreference == "Feed")
             {
             }
 
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
             }
             else

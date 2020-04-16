@@ -29,12 +29,6 @@ namespace BitChute.Classes
             return true;
         }
 
-        public bool ShowForMs(int timer)
-        {
-            base.Show();
-            return true;
-        }
-
         public ExtMediaController(Context context) : base(context)
         {
         }

@@ -19,7 +19,7 @@ using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
 using Android.Support.V4.App;
-
+using BitChute.Models;
 
 namespace StartServices.Servicesclass
 {
@@ -65,6 +65,7 @@ namespace StartServices.Servicesclass
         public static int PlayerNumberHasFocus = 0;
 
         private static bool _paused;
+        private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
 
         #endregion
 
@@ -75,12 +76,17 @@ namespace StartServices.Servicesclass
         /// </summary>
         /// <param name="mp"></param>
         /// <returns></returns>
-        public static MediaPlayer InitializePlayer(int tab)
+        public static MediaPlayer InitializePlayer(int tab, Android.Net.Uri uri, Context ctx)
         {
-            if (tab == null)
+            if (tab == -1)
             {
                 tab = MainActivity.ViewPager.CurrentItem;
             }
+            if (ctx == null)
+            {
+                ctx = Android.App.Application.Context;
+            }
+
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
             if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(tab))
@@ -103,6 +109,11 @@ namespace StartServices.Servicesclass
                 MediaPlayerDictionary[tab] = new MediaPlayer();
             }
 
+            if (uri != null)
+            {
+                MediaPlayerDictionary[tab].SetDataSource(ctx, uri);
+            }
+
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
 
@@ -112,7 +123,7 @@ namespace StartServices.Servicesclass
             AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
 
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            MediaPlayerDictionary[tab].Completion += (sender, args) => Stop();
+            MediaPlayerDictionary[tab].Completion += (sender, args) => OnVideoFinished(false, tab);
 
             MediaPlayerDictionary[tab].Error += (sender, args) =>
             {
@@ -142,11 +153,6 @@ namespace StartServices.Servicesclass
                     MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
                     StartForeground();
                     return;
-                }
-
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
-                {
-                    InitializePlayer(MainActivity.ViewPager.CurrentItem);
                 }
 
                 if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
@@ -198,6 +204,16 @@ namespace StartServices.Servicesclass
             AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
         }
 
+        public static bool OnVideoFinished(bool overide, int tab)
+        {
+            if (AppSettings.AutoPlay && tab != -1)
+            {
+                _vidLoader.LoadVideoFromCard(CustomViewHelpers.Common.GetDefaultVideoDetailView(tab), null, TabStates.Common.NextUp.NextUpVideoCard, tab);
+                    return overide;
+            }
+
+            return overide;
+        }
 
 
         /// <summary>
@@ -464,11 +480,11 @@ namespace StartServices.Servicesclass
             }
             set
             {
-
+                MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].SeekTo(value);
             }
         }
 
-        public int Duration { get { return 6; } }
+        public int Duration { get { return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].Duration; } }
 
         public bool IsPlaying
         {
@@ -480,15 +496,7 @@ namespace StartServices.Servicesclass
 
         public bool CanPause()
         {
-            return true;
-            //try
-            //{
-            //    return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
-            //}
-            //catch
-            //{
-            //    return true;
-            //}
+            return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
         }
 
         public bool CanSeekBackward()

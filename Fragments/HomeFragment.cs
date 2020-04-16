@@ -87,16 +87,16 @@ namespace BitChute.Fragments
 
         public void OnSettingsChanged()
         {
-            _wv.Settings.SetSupportZoom(AppSettings._zoomControl);
+            _wv.Settings.SetSupportZoom(AppSettings.ZoomControl);
 
-            if (!AppSettings._tab1FeaturedOn)
+            if (!AppSettings.Tab1FeaturedOn)
             {
             }
             else
             {
             }
 
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
             }

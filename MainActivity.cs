@@ -8,8 +8,8 @@
 .̤͙̜̥̖̲͗ͤ̎̂ͣͬ_̯̗̠̯̰͑̒̈͆ͩ_͎̬͈̱͉̼͈ͤ̎ͥ̏̊ͪ̓ ̬͉͍̗ ͚ ͙̫͈̪̠̗ ͥ͂̍͐͛̈́ ̂ͭ ͚̰͈̬̜̭͈ͨͫ̈́̇̐̑̂ ͇͇̋̌ ̪̲ ͐ͩ͗̽ͦ ͗̌̓͐ͬ ̊  ̳̝̰ ̠͓̜̠̠͉ͣ͋ͪ̽̆́ ͒̇ͭ̉ ̦̣̫̝͚͈̫̉̂̿́͒̂̉   ̀̈́̅̎ͩ̍ ̩̹̘́̎̏  ̺̙̺͇̆̿́͋ ̜̬̭̰̉̇́̎ ͈̮ ͖̹͓̺ͣ͑ͨͥ͛ͅ ͮ̍  ̹͚ ̀̃̏ͮ̃̈́ ̼̰͕̱ ̬͒  ͖̞͖͋ͬ͂ ̯̦ͬ̾ ͐̓͊ͮ̚ ̽ͦ͒̋̋ ͖͇̈́ͩ ͭ̐͂͆̋́̾    ̺ͦ ̦̱̯͖ͥ͒͐̒ ̼͉͇̠̒̓ͮ̌ ̤̣̩̙̺ͤ͑ͮ͗ͬ.̥̟̦͖̙̠̺͊̓̏̈́͌̈́́_̤͓̱̱̜̫_͕̮̪̝ͅ_͉͙͈̠̣̻̫ͮ̅̓̀ͤ͑̓
 |̼͇̠͓̙͂̏͌ͬ́ ͉̟̭̬̝̎̒́ͥ̚ ͓̼͓̙̟ͤͫ̋̈ͯ|̦̺̞̺͍̄̃̀̓ͧ_̖̰̝̬̘̲_̫̯̫͇̲̗ ̺͕̫͔̍ͧ͒̿ ̲͉̟̰̤̈́ͯͭͯ͋ ̮̯̰͚̭_̼̠͇_͗ͩ̄͛͋̉̚__ ͚̘̈́̓_ͣ̒ͨ̑̚̚_̠̼ͯ̉_  ͙͚̙̱̩͕_̆_͈̯̗̻̙̳͋ͧ̄̿͑͂_͙̠͕_͈̲͒͑_̞̹͋ͫ_̱̞ͬ͊_̻̹̪͚̘̦͋̋̍͊̍ͬ_͗͑̀ͭͯ̑  ͫ̎ ͙͉͚ ̍̄ͫͪ __̱͓̳̬̮ͅ_͉̬̦͉̩̥͈_̯̈ ̋̈̋̇̚  ̱̫ͤ̅_̜̒_̬̯̪̫̓̅ͥͭ_̬͙̟̠̭̋̓͒ͩ͑_͔̏  ̪͕̖̊̍̅̚ͅ ͔͖̼̯̃ͩͫ̓_̻̙̼̟_͔͙͉̗̦͉ͧͯͦ͌̈́̃|̭̞̞̹̙͒̈̑̋ͣ ͈͕̳̟̬̗͚̀ͫ̎ͣͫ͛ͫ_̯̬̠͇ͮ̀ͬ̚/͍̞̦͓̖̘̞̍̒̾̽ͧ̏̅
 |̓͑̆̂ͪ̐̚ ͓̱̱̲̤͇͎̃̑ͣ̾͑ͤ̊ ̹̦̪͒̋͗|̗͙ͬ͌ ͔́ ̼͔͇̮̌̔̈́̓\̾̌ͪͥ̏̚_̹̲̦͎͇͈̜͑̅͑ͫ̇͋̃/̇ͩ __ \̦͔͈͇ͣ̆͌̃͐ͅ\̫͑ ͩ̇ ̗̹\͙͑/ͧ̒̍̚ ̲̤ͯ̐ /̬̳̮̣\̻͕̬̗͖̙̣̋͒̔ͯ͗͑̑_̮͑_͑̈́ ͫͩ͌ ̱̬̒̽\̀ͬͫ̍̆̔ ̓͐͑ ̀͂͗ͪ̽͌ͩ ̜͎̥̱͙ͧ͆͐̔̅/ ͑̎ͫͯ́̿_̎ͤ̐ͣͤ̾__ͥ̉͊ͥͭ\̫̠͉ͤͨ͗ ̯͉͉͍̟͈̙ͧͫ̂ͦ͐̌͛/̳̜̺̤̼̯̝  ̰̪̖͑͒͋_̲̥͈̣ͧ͒͛̌ ̗̩̞̭̖̝ͅ\̣̝̪̒̓̀̓̇ͅͅ ̣̯͎̠͈͔/͊͂ _̣͉̥̺͗̒̏̐_̾ ̹̙̹̳̈̊ͣ̚|͙͉̹̮̾ͭ͊ͫ ͍̪̻̍͆ͭ
-  |̪͈͙ͪͧͬ ̞͓̟̭̻̖̙̅ͨ́ͧ̐͌͒  ̙̠̰̗̥ͣ̂͋ͩ̚Y ͈͍͙͈̺́ͪ̔͑̽ ͧ̔̋ͭͦ̓\  ̮̝̈́̋_̪̯̫̱̳͈_̙͎͙̳͕̺̩̓̓̅͋̃͐ͨ_̳̗̰̘̮̑ͥͧͤ̔/̫̮̙̳̭̭ ̟̖̄͒>̗͇̱̯̫̱ ̠̭̩̘̐̄͗̒ ̲͈͈̀ͥ̋ ̱̻͕͓̮͉͈ͭ̂̈́͛̿ͥͥ ̹̮͕͉͎̝ͬ͊̆̀̈̋͆ͅ<̬̠ͩ͋ ̮̩͙̊ͤ̒ ͦͣ͗̉/ ̞͈̣̤̰͙̟ͩ͒̓͒ͭ̔̚_͗͒͐_̳̘͑̎ ͙̮̤̜̱͙̐̊̐ͨ̋͆\_͍̖̮̜ͩ̽͗̃/ ̙̙̐ͯ/̯̳̠̬̻̯͖_͔̭̫͛͆̋/̘̌ ͇͇̫ ͤ͑̚> ͈̞̼̫̩ ̗͍̞̣̼͔͒͊̒̐̓ͮ<͖̠̪̥͔_̗̪͎̆̆͆> ̳̱̺̟ͨ̄ͣ̚)͉̘̯̋ͧ̈ ͐̌ͮ͗/̮̙͇̾ͪ͐_̣̖͕ͦ̔̀/̱̬̦̻ ͎̟̞̫͔ͦ̒͛̉ͣ|͔̹̲̬͖̬̰̀̏ͣ͐ͫͨ̓ ̬ͥ
- |_̗̰̇̄__̭ͅ|͈ ̼̣ /̳͙̓̊\̣͔̗̱̳_̤͕̻̣͎͓̀̾̆̉ͤ̚_̌_͙̺̗̅̋̿ ̎ͫ̃ ͔̜ͨ̈́>̟̲̫̣͎̝ͯ̀ͭ̾͂͊_̲̱̳_̯̬̙͍ͫ̾̍̎/̖ͭ͑ͅ\͕̱͈̣̟͎̞ͤ̈͐́͌̆̿_͕̩̫̓̔̎ \̤͙͚͇̙͆ͧ̆ͫ̆(͉͖ͭ̒_̤̹̖̖̞̖__͎̹̖̻͋͒ͦ̆_̝̰̖͔͆͛ͦ̀ ̥̻̐̽ ̪̣͙̖/\ͭ͛͂̽̂̋̊_̮͕̥̤̤̈́̽ͫ̓͊_͈̭͔̞͚̔ͥ̀͒̚_͎̜ ̟̭͔̣͋́̈́̿ ̹̰̺͍̙͈̩̔̔̀ͦ͑͛̽/͍̪̲̰̻͚ͅ \͍̺͎̭̞͓̹̒ͩ̔͂̄́̐_̮̻̳_̼̺̄͑_̱̮͍́͌̓_̗̗ͅ/̌̌̇͆\_͉͚͎̺͙̅ͦͤͧ͗_̆ͨ__̼̹̪̱̳̳͔̉̆ͨͦͯ̒͊ |͍̺ͤ̅ ̌ͨ̇
+  |̪͈͙ͪͧͬ ̞͓̟̭̻̖̙̅ͨ́ͧ̐͌͒  ̙̠̰̗̥ͣ̂͋ͩ̚Y ͈͍͙͈̺́ͪ̔͑̽ ͧ̔̋ͭͦ̓\  ̮̝̈́̋_̪̯̫̱̳͈_̙͎͙̳͕̺̩̓̓̅͋̃͐ͨ_̳̗̰̘̮̑ͥͧͤ̔/̫̮̙̳̭̭ ̟̖̄͒>̗͇̱̯̫̱ ̠̭̩̘̐̄͗̒ ̲͈͈̀ͥ̋ ̱̻͕͓̮͉͈ͭ̂̈́͛̿ͥͥ ̹̮͕͉͎ͬ͊̆̀̈̋͆ͅ<̬̠ͩ͋ ̮̩͙̊ͤ̒ ͦͣ͗̉/ ̞͈̣̤̰͙̟ͩ͒̓͒ͭ̔̚_͗͒͐_̳̘͑̎ ͙̮̤̜̱͙̐̊̐ͨ̋͆\_͍̖̮̜ͩ̽͗̃/ ̙̙̐ͯ/̯̳̠̬̻̯͖_͔̭̫͛͆̋/̘̌ ͇͇̫ ͤ͑̚> ͈̞̼̫̩ ̗͍̞̣̼͔͒͊̒̐̓ͮ<͖̠̪̥͔_̗̪͎̆̆͆> ̳̱̺̟ͨ̄ͣ̚)͉̘̯̋ͧ̈ ͐̌ͮ͗/̮̙͇̾ͪ͐_̣̖͕ͦ̔̀/̱̬̦̻ ͎̟̞̫͔ͦ̒͛̉ͣ|͔̹̲̬͖̬̰̀̏ͣ͐ͫͨ̓ ̬ͥ
+ |_̗̰̇̄__̭ͅ|͈ ̼̣ /̳͙̓̊\̣͔̗̱̳_̤͕̻̣͎͓̀̾̆̉ͤ̚_̌_͙̺̗̅̋̿ ̎ͫ̃ ͔̜ͨ̈́>̟̲̫̣͎̝ͯ̀ͭ̾͂͊_̲̱̳_̯̬̙͍ͫ̾̍̎/̖ͭ͑ͅ\͕̱͈̣̟͎̞ͤ̈͐́͌̆̿_͕̩̫̓̔̎ \̤͙͚͇͆ͧ̆ͫ̆(͉ͭ̒_̤̹̖̖̞̖__͎̹̖͋͒ͦ̆_̝̰̖͔͆͛ͦ̀ ̥̻̐̽ ̪̣͙̖/\ͭ͛͂̽̂̋̊_̮͕̥̤̤̈́̽ͫ̓͊_͈̭͔̞͚̔ͥ̀͒̚_͎̜ ̟̭͔̣͋́̈́̿ ̹̰̺͍̙͈̩̔̔̀ͦ͑͛̽/͍̪̲̰̻͚ͅ \͍̺͎̭̞͓̹̒ͩ̔͂̄́̐_̮̻̳_̼̺̄͑_̱̮͍́͌̓_̗̗ͅ/̌̌̇͆\_͉͚͎̺͙̅ͦͤͧ͗_̆ͨ__̼̹̪̱̳̳͔̉̆ͨͦͯ̒͊ |͍̺ͤ̅ ̌ͨ̇
  ̲̺̘̖ͪ̊͐̄ ͔̇ ̭̞͕͓̭̣͎̌̓̿̇̃̅̚ ̮͙̲͓͖̲ͣ̋̏̂͗̒ \̙͚̳̗̝̭́̆͐͗̅ͣ̽ͅ/ͨͣ̅̓̑  ̜͕͈̺̩̺̓ͮ̈́̂ͫ͆ ̤̼̰̖̪̠ ̘̥̩̰̣̗̮͑͒ͩ͗̃͌ͥ ̣͖̐͗\̹̬̖̹̪͕̍̏̈́͊̈ͥ̚ͅ/̝͓͙̜̜͉̿ͭ̉ͩ̽̔ͪͅ ͣ͒̇̽ ̩̳͙̥ͯͧ͗ͪ  ̹̤̗̝͇̄̅͑̿̃  \̰͉ͬ̽/̩̩̻̮ͭ̀̍̒ ͚̼͓̟͍̳ ̭̞  ̞̝̞͉̠̰̾͑̓̎ͦ̂ ̮͇͈͎̫̦̖͌̑͗ͣ̉ͬ̆\//̮̥̤̱̥͚̼̍͗̍̋͑͒ͨ_̺̰̳̲̥̼̀̇͛ͮ̒̑_̼̥̫̼͈ͨ̊̍̀͆̓ͅ__̿ͭ̔_̝/  ̼̗ ͙͓̖͉̯̬̯͋̾͌̍̍͑͐ ͕̺̺̖̖ͬͤ̓̄̀ ̱̻̝̮̩̩ͅ ̭̟̒̎ ̬́ ̪̩̮͓͖̬̣͂̋̐̑̐̽̒ ̖ ̲͉̗̪̗̐ͨͫ̿̇ ̜͔̘̜̫͓̝ ̱̦͓̥͖̼ͧͫ̋̂̓ͫ ̲͕̟͍̱̳ͨͥ̍͌͗ͨ\/ ͍͎̰͙ͩ̓̊͑
 
  b͔͐it̻͔̖̹̭͚͒̓͒̾ͤͩc̘̝͚hut͉͍̮͉̲̃̑̆̑̒e͈̥̠ͅ.̬͖͈͙͎̝̀̇̆ͣ̍̓có̓̏̓ͫm͙͈͚̟̫̝̗ͦ͛̾ͤͤ̅̋/̳̀c͉͎͕̓̂̇ha̞̲̼͕͍͔̫̓̐͋͌̍ͫ͗n͕̦̯ͦ̂ͧne̹͙̙̟̼̼ͯͣͪ̈́́̿l͗ͣ̓̓ͧ͆/͙̬͚̯̍ͩ͌̒h̬̟̼̥e̥̹x̖̖̜̎͂͋a̹̟̟̝̞̰̳̎ͩ͋ͫ̑ͫ̈́g͕̞̻͈ͩ̍ͤͦo͚̮̰̟͓̬̱ͫͦ̾̆ͫ͛̑d͇̐
@@ -38,8 +38,8 @@ b̏͒a̺̲̺s̲ḛͩd ̲͓̘͇̆̊ͨ̂ȍ̭̙̣̝̈́ͣ̅f̫̩̀̚fͮ͋̔̆̃ͮͅ�
 https://github.com/hnabbasi/BottomNavigationViewPager
  ̮̼̤̯͐̅̆̒
 BitChute API by:
--Ray Vahey
 -Rich Jones
+-Ray Vahey
 -?.Hexagod
 
  *̙͓̠̲̼͆ͣ̔̒̂/
@@ -71,6 +71,7 @@ using static BitChute.Models.SubscriptionModel;
 using static BitChute.Models.CommentModel;
 using BitChute.ViewHolders;
 using BitChute.Models;
+using Android.Views.InputMethods;
 
 namespace BitChute
 {
@@ -118,9 +119,12 @@ namespace BitChute
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static HeadphoneIntent.MusicIntentReceiver SoundIntentRec;
+        private static ContextWrapper _contextWrapper;
+
+        public static InputMethodManager InputMethodManager;
 
         // Underlying data set (a photo album):
-       // public static VideoCardSet _photoAlbum;
+        // public static VideoCardSet _photoAlbum;
 
         public static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
 
@@ -188,14 +192,30 @@ namespace BitChute
             NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(NavigationView);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+            NavigationView.Click += NavigationView_OnClick;
 
             ViewPager.OffscreenPageLimit = 4;
             CreateNotificationChannel();
             ExtStickyService.StartNotificationLoop(90000);
             SoundIntentRec = new HeadphoneIntent.MusicIntentReceiver();
+
+            _contextWrapper = (ContextWrapper)this.Application.ApplicationContext;
+            InputMethodManager = _contextWrapper.GetSystemService(Context.InputMethodService) as InputMethodManager;
             
             //debug subs
             ViewPager.CurrentItem = 1;
+        }
+
+        public static void NavigationView_OnClick(object sender, EventArgs e)
+        {
+            if (ExtStickyService.MediaPlayerDictionary[TabStates.MediaTabHasFocus(-1)] != null &&
+                VideoDetailLoader.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)] != null)
+            {
+                if (ExtStickyService.MediaPlayerDictionary[TabStates.MediaTabHasFocus(-1)].IsPlaying)
+                {
+                    VideoDetailLoader.MediaControllerDictionary[TabStates.MediaTabHasFocus(-1)].Show(10000);
+                }
+            }
         }
 
         public static HomeFragment Fm0 = HomeFragment.NewInstance("Home", "tab_home");
@@ -314,24 +334,24 @@ namespace BitChute
         {
             if (e.KeyCode == Android.Views.Keycode.Back)
             {
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0:
-                        Fm0.WebViewGoBack();
-                        break;
-                    case 1:
-                        Fm1.SubsTabGoBack();
-                        break;
-                    case 2:
-                        Fm2.WebViewGoBack();
-                        break;
-                    case 3:
-                        
-                        break;
-                    case 4:
-                        Fm4.WebViewGoBack();
-                        break;
-                }
+
+                    switch (ViewPager.CurrentItem)
+                    {
+                        case 0:
+                            Fm0.WebViewGoBack();
+                            break;
+                        case 1:
+                            Fm1.SubsTabGoBack();
+                            break;
+                        case 2:
+                            Fm2.WebViewGoBack();
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            Fm4.WebViewGoBack();
+                            break;
+                    }
             }
             return false;
         }
@@ -374,19 +394,19 @@ namespace BitChute
             NavigationView.SelectedItemId = _menu.ItemId;
             _tabSelected = ViewPager.CurrentItem;
 
-            if (AppSettings._fanMode)
+            if (AppSettings.FanMode)
             {
-                if (AppSettings._tab4OverridePreference != null && _tab4Icon != null)
+                if (AppSettings.Tab4OverridePreference != null && _tab4Icon != null)
                 {
-                    NavViewItemList[3].SetTitle(AppSettings._tab4OverridePreference);
+                    NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
                     NavViewItemList[3].SetIcon(_tab4Icon);
                 }
             }
-            if (AppSettings._settingsTabOverride)
+            if (AppSettings.SettingsTabOverride)
             {
-                if (AppSettings._tab4OverridePreference != null && _tab5Icon != null)
+                if (AppSettings.Tab4OverridePreference != null && _tab5Icon != null)
                 {
-                    NavViewItemList[4].SetTitle(AppSettings._tab4OverridePreference);
+                    NavViewItemList[4].SetTitle(AppSettings.Tab4OverridePreference);
                     NavViewItemList[4].SetIcon(_tab5Icon);
                 }
             }
@@ -435,25 +455,25 @@ namespace BitChute
             }
             try
             {
-                if (!AppSettings._fanMode)
+                if (!AppSettings.FanMode)
                 {
                     _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
                 }
                 else
                 {
-                    NavViewItemList[3].SetTitle(AppSettings._tab4OverridePreference);
-                    NavViewItemList[3].SetIcon(GetTabIconFromString(AppSettings._tab4OverridePreference));
-                    _tab4Icon = GetTabIconFromString(AppSettings._tab4OverridePreference);
+                    NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
+                    NavViewItemList[3].SetIcon(GetTabIconFromString(AppSettings.Tab4OverridePreference));
+                    _tab4Icon = GetTabIconFromString(AppSettings.Tab4OverridePreference);
                 }
-                if (!AppSettings._settingsTabOverride)
+                if (!AppSettings.SettingsTabOverride)
                 {
                     _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
                 }
                 else
                 {
-                    NavViewItemList[4].SetTitle(AppSettings._tab4OverridePreference);
-                    NavViewItemList[4].SetIcon(GetTabIconFromString(AppSettings._tab4OverridePreference));
-                    _tab5Icon = GetTabIconFromString(AppSettings._tab4OverridePreference);
+                    NavViewItemList[4].SetTitle(AppSettings.Tab4OverridePreference);
+                    NavViewItemList[4].SetIcon(GetTabIconFromString(AppSettings.Tab4OverridePreference));
+                    _tab5Icon = GetTabIconFromString(AppSettings.Tab4OverridePreference);
                 }
             }
             catch
@@ -995,8 +1015,20 @@ namespace BitChute
                     ItemClick(this, position);
             }
         }
-        
 
+        public static void ShowKeyboard(View pView)
+        {
+            InputMethodManager = _contextWrapper.GetSystemService(Context.InputMethodService) as Android.Views.InputMethods.InputMethodManager;
+            InputMethodManager.ShowSoftInput(pView, ShowFlags.Forced);
+            InputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);
+            CustomViewHelpers.Common.SoftKeyboardIsVisible = true;
+        }
+
+        public static bool HideKeyboard()
+        {
+            return InputMethodManager.HideSoftInputFromWindow(CustomViewHelpers.Tab1.Tab1FragmentLayout.WindowToken, HideSoftInputFlags.None);
+        }
+        
         public static Android.Graphics.Drawables.Drawable UniversalGetDrawable(int id)
         {
             Drawable drawable = Main.GetDrawable(id);

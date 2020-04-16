@@ -81,9 +81,6 @@ namespace BitChute.Classes
                 tab = MainActivity.ViewPager.CurrentItem;
             }
 
-            // we might be able to eventually just use one media player but I think the buffering will be better
-            // with a few of them, plus this way you can queue up videos and instantly switch
-            ExtStickyService.InitializePlayer(tab);
 
             //ISurfaceHolder holder = CustomViewHelpers.Common.Video.GetVideoView(tab).Holder;
             ISurfaceHolder holder = CustomViewHelpers.Tab1.VideoView.Holder;
@@ -101,21 +98,12 @@ namespace BitChute.Classes
             {
                 uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
             }
-
-            //DEBUG:
-            if (_vidBack)
-            {
-                uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.mylastvidd);
-                _vidBack = false;
-            }
-            else
-            {
-                uri = Android.Net.Uri.Parse("android.resource://" + "com.xamarin.example.BitChute" + "/" + Resource.Raw.test2);
-                _vidBack = true;
-            }
-            ExtStickyService.MediaPlayerDictionary[tab].SetDataSource(Android.App.Application.Context, uri);
-            ExtStickyService.MediaPlayerDictionary[tab].PrepareAsync();
+            // we might be able to eventually just use one media player but I think the buffering will be better
+            // with a few of them, plus this way you can queue up videos and instantly switch
+            ExtStickyService.InitializePlayer(tab, uri, Android.App.Application.Context);
             
+            ExtStickyService.MediaPlayerDictionary[tab].PrepareAsync();
+
            CustomViewHelpers.Tab1.VideoView.LayoutParameters = new LinearLayout.LayoutParams(AppState.Display.ScreenWidth, (int)(AppState.Display.ScreenWidth * (.5625)));
 
             if (vc != null)

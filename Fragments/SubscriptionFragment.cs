@@ -96,7 +96,7 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.CommentRecyclerView = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<RecyclerView>(Resource.Id.commentRecyclerView);
             CustomViewHelpers.Tab1.CommentRecyclerView.SetLayoutManager(CustomViewHelpers.Tab1.VideoLayoutManager);
 
-            CustomViewHelpers.Tab1.Tab1ParentLayout = CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
+            CustomViewHelpers.Tab1.Tab1ParentLayout = (ExtLinearLayout)CustomViewHelpers.Tab1.Tab1FragmentLayout.FindViewById<LinearLayout>(Resource.Id.tab1ParentFragmentLayout);
             CustomViewHelpers.Tab1.Container = container;
             CustomViewHelpers.Tab1.LayoutInflater = inflater;
             CustomViewHelpers.Tab1.VideoDetailTitle = CustomViewHelpers.Tab1.VideoDetailView.FindViewById<TextView>(Resource.Id.videoDetailTitleTextView);
@@ -133,12 +133,47 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.ShareVideoImageView.Click += ShareVideoImageView_OnClick;
             CustomViewHelpers.Tab1.SubscribeButton.Click += SubscribeButton_OnClick;
             CustomViewHelpers.Tab1.SendCommentButton.Click += SendCommentButton_OnClick;
-            CustomViewHelpers.Tab1.LeaveACommentTextBox.Click += MainActivity.OnTextFocus;
+
+            //CustomViewHelpers.Tab1.LeaveACommentTextBox.Drag += LeaveACommentLayout_OnDrag;
+            //CustomViewHelpers.Tab1.LeaveACommentLayout.Drag += LeaveACommentLayout_OnDrag;
+            //CustomViewHelpers.Tab1.LeaveACommentTextBox.FocusChange += LeaveACommentTextBox_OnFocusChanged;
+            //CustomViewHelpers.Tab1.Tab1ParentLayout.FocusChange += LeaveACommentTextBox_OnFocusChanged;
+            //CustomViewHelpers.Tab1.Tab1FragmentLayout.FocusChange += LeaveACommentTextBox_OnFocusChanged;
+
+            CustomViewHelpers.Tab1.VideoDetailView.ViewTreeObserver.AddOnGlobalLayoutListener(new ExtViewTreeListener());
+            
 
             GetSubscriptionList();
             
-            // _adapter.ItemClick += new EventHandler<int>((sender, e) => MAdapter_ItemClick(sender, e, _videoCard));
             return CustomViewHelpers.Tab1.Tab1FragmentLayout;
+        }
+       
+        public static void LeaveACommentTextBox_OnFocusChanged (object sender, View.FocusChangeEventArgs e)
+        {
+
+        }
+
+        private static bool _commentBoxDragInProg;
+        private static float _commentBoxYPos;
+
+        public static void LeaveACommentLayout_OnDrag(object sender, View.DragEventArgs e)
+        {
+            if (e.Event.Action == DragAction.Location)
+            {
+                if (_commentBoxDragInProg)
+                {
+                    CustomViewHelpers.Tab1.LeaveACommentLayout.SetX(e.Event.GetY());
+                }
+            }
+            if (e.Event.Action == DragAction.Entered)
+            {
+                _commentBoxDragInProg = true;
+            }
+            if (e.Event.Action == DragAction.Exited)
+            {
+                _commentBoxDragInProg = false;
+            }
+            _commentBoxYPos = e.Event.GetY();
         }
 
         public static bool MediaControllerInitialized;
@@ -435,7 +470,7 @@ namespace BitChute.Fragments
 
         public void SubscribeButton_OnClick(object sender, EventArgs e)
         {
-
+            MainActivity.HideKeyboard();
         }
         
         public static void NavigateToCreatorPage(CreatorCard cc)
@@ -469,7 +504,8 @@ namespace BitChute.Fragments
                 NavigationStack.Tab1.AddToBackStack(cc);
             
         }
-
+        
+        
         /// <summary>
         /// removes the child views and swaps for the View arg
         /// </summary>
@@ -479,18 +515,24 @@ namespace BitChute.Fragments
             CustomViewHelpers.Tab1.Tab1ParentLayout.RemoveAllViews();
             ScrollToTop();
             CustomViewHelpers.Tab1.Tab1ParentLayout.AddView(view);
+
+        }
+
+        public static bool ShowMediaController (bool showController)
+        {
             if (VideoDetailLoader.MediaControllerDictionary.ContainsKey(MainActivity.ViewPager.CurrentItem))
             {
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying && view != CustomViewHelpers.Tab1.VideoDetailView)
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying && CustomViewHelpers.Tab1.VideoDetailView.IsShown)
                 {
                     VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show(99999999);
                 }
-                else if (view == CustomViewHelpers.Tab1.VideoDetailView)
+                else if ( CustomViewHelpers.Tab1.VideoDetailView.IsShown)
                 {
                     VideoDetailLoader.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Hide();
                     ScrollToTop();
                 }
             }
+            return true;
         }
 
         public static void ScrollToTop()
@@ -543,7 +585,7 @@ namespace BitChute.Fragments
 
         public void OnSettingsChanged()
         {
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
 
             }
@@ -555,7 +597,14 @@ namespace BitChute.Fragments
         
         public void SubsTabGoBack()
         {
-            NavigationStack.Tab1.NavigateBackFromStack();
+            if (!CustomViewHelpers.Common.SoftKeyboardIsVisible)
+            {
+                NavigationStack.Tab1.NavigateBackFromStack();
+            }
+            else
+            {
+                CustomViewHelpers.Common.FocusCommentTextView();
+            }
         }
         
         /// <summary>

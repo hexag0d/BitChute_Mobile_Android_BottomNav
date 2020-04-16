@@ -123,7 +123,7 @@ namespace BitChute.Fragments
             
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
-            if (AppSettings._settingsTabOverride)
+            if (AppSettings.SettingsTabOverride)
             {
                 _url = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             }
@@ -186,7 +186,7 @@ namespace BitChute.Fragments
                 _versionTextView.Text = AppState._appVersion;
                 tabLoaded = true;
             }
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -270,7 +270,7 @@ namespace BitChute.Fragments
 
         public void OnSettingsChanged()
         {
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -299,7 +299,7 @@ namespace BitChute.Fragments
         {
             _isNowCheckingBoxes = true;
 
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 _zconrb.Checked = true;
             }
@@ -307,7 +307,7 @@ namespace BitChute.Fragments
             {
                 _zcoffrb.Checked = true;
             }
-            if (AppSettings._fanMode)
+            if (AppSettings.FanMode)
             {
                 _fmonrb.Checked = true;
             }
@@ -315,7 +315,7 @@ namespace BitChute.Fragments
             {
                 _fmoffrb.Checked = true;
             }
-            if (AppSettings._tab1FeaturedOn)
+            if (AppSettings.Tab1FeaturedOn)
             {
                 _t1fonrb.Checked = true;
             }
@@ -323,7 +323,7 @@ namespace BitChute.Fragments
             {
                 _t1foffrb.Checked = true;
             }
-            if (AppSettings._tab3Hide)
+            if (AppSettings.Tab3Hide)
             {
                 _t3honrb.Checked = true;
             }
@@ -331,7 +331,7 @@ namespace BitChute.Fragments
             {
                 _t3hoffrb.Checked = true;
             }
-            if (AppSettings._fanMode)
+            if (AppSettings.FanMode)
             {
                 _fmonrb.Checked = true;
             }
@@ -340,7 +340,7 @@ namespace BitChute.Fragments
                 _fmoffrb.Checked = true;
             }
 
-            switch (AppSettings._tab4OverridePreference)
+            switch (AppSettings.Tab4OverridePreference)
             {
                 case "Home":
                     _tab4OverrideSpinner.SetSelection(0);
@@ -362,7 +362,7 @@ namespace BitChute.Fragments
                     break;
             }
 
-            if (AppSettings._settingsTabOverride)
+            if (AppSettings.SettingsTabOverride)
             {
                 _stoverrideonrb.Checked = true;
             }
@@ -371,7 +371,7 @@ namespace BitChute.Fragments
                 _stoverrideoffrb.Checked = true;
             }
 
-            switch (AppSettings._tab4OverridePreference)
+            switch (AppSettings.Tab4OverridePreference)
             {
                 case "Home":
                     _tab5OverrideSpinner.SetSelection(0);
@@ -445,60 +445,60 @@ namespace BitChute.Fragments
                 }
                 if (_zconrb.Checked)
                 {
-                    AppSettings._zoomControl = true;
+                    AppSettings.ZoomControl = true;
                 }
                 else
                 {
-                    AppSettings._zoomControl = false;
+                    AppSettings.ZoomControl = false;
                 }
                 if (_t3honrb.Checked)
                 {
-                    AppSettings._tab3Hide = true;
+                    AppSettings.Tab3Hide = true;
                 }
                 else
                 {
-                    AppSettings._tab3Hide = false;
+                    AppSettings.Tab3Hide = false;
                 }
                 if (!_t1foffrb.Checked)
                 {
-                    AppSettings._tab1FeaturedOn = true;
+                    AppSettings.Tab1FeaturedOn = true;
                 }
                 else
                 {
-                    AppSettings._tab1FeaturedOn = false;
+                    AppSettings.Tab1FeaturedOn = false;
                 }
                 if (_fmonrb.Checked)
                 {
-                    AppSettings._fanMode = true;
+                    AppSettings.FanMode = true;
                 }
                 else
                 {
-                    AppSettings._fanMode = false;
+                    AppSettings.FanMode = false;
                 }
                 if (_stoverrideonrb.Checked)
                 {
-                    AppSettings._settingsTabOverride = true;
+                    AppSettings.SettingsTabOverride = true;
                 }
                 else
                 {
-                    AppSettings._settingsTabOverride = false;
+                    AppSettings.SettingsTabOverride = false;
                 }
                 //write the android prefs
-                _prefEditor.PutBoolean("zoomcontrol", AppSettings._zoomControl);
-                _prefEditor.PutBoolean("fanmode", AppSettings._fanMode);
-                _prefEditor.PutBoolean("tab3hide", AppSettings._tab3Hide);
-                _prefEditor.PutBoolean("t1featured", AppSettings._tab1FeaturedOn);
-                _prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
+                _prefEditor.PutBoolean("zoomcontrol", AppSettings.ZoomControl);
+                _prefEditor.PutBoolean("fanmode", AppSettings.FanMode);
+                _prefEditor.PutBoolean("tab3hide", AppSettings.Tab3Hide);
+                _prefEditor.PutBoolean("t1featured", AppSettings.Tab1FeaturedOn);
+                _prefEditor.PutBoolean("settingstaboverride", AppSettings.SettingsTabOverride);
                 _prefEditor.PutBoolean("notificationson", AppSettings._notifying);
                 _prefEditor.Commit();
 
                 _settingsList.Clear();
                 //then add the settings app settings list
-                _settingsList.Add(AppSettings._zoomControl);
-                _settingsList.Add(AppSettings._fanMode);
-                _settingsList.Add(AppSettings._tab3Hide);
-                _settingsList.Add(AppSettings._tab1FeaturedOn);
-                _settingsList.Add(AppSettings._settingsTabOverride);
+                _settingsList.Add(AppSettings.ZoomControl);
+                _settingsList.Add(AppSettings.FanMode);
+                _settingsList.Add(AppSettings.Tab3Hide);
+                _settingsList.Add(AppSettings.Tab1FeaturedOn);
+                _settingsList.Add(AppSettings.SettingsTabOverride);
 
                 MainActivity.OnSettingsChanged();
             }
@@ -510,7 +510,7 @@ namespace BitChute.Fragments
             {
                 if (_fmonrb.Checked)
                 {
-                    MainActivity.TabDetailChanger(3, AppSettings._tab4OverridePreference);
+                    MainActivity.TabDetailChanger(3, AppSettings.Tab4OverridePreference);
                 }
                 else
                 {
@@ -523,15 +523,15 @@ namespace BitChute.Fragments
         {
             if (!_isNowCheckingBoxes)
             {
-                AppSettings._tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
+                AppSettings.Tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
                 if (_fmonrb.Checked)
                 {
-                    MainActivity.TabDetailChanger(3, AppSettings._tab4OverridePreference);
+                    MainActivity.TabDetailChanger(3, AppSettings.Tab4OverridePreference);
                 }
                 else
                 {
                 }
-                _prefEditor.PutString("tab4overridestring", AppSettings._tab4OverridePreference);
+                _prefEditor.PutString("tab4overridestring", AppSettings.Tab4OverridePreference);
                 _prefEditor.Commit();
             }
         }
@@ -540,7 +540,7 @@ namespace BitChute.Fragments
         {
             if (_stoverrideonrb.Checked)
             {
-                MainActivity. TabDetailChanger(4, AppSettings._tab4OverridePreference);
+                MainActivity. TabDetailChanger(4, AppSettings.Tab4OverridePreference);
             }
             else
             {
@@ -552,16 +552,16 @@ namespace BitChute.Fragments
         {
             if (!_isNowCheckingBoxes)
             {
-                AppSettings._tab4OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
+                AppSettings.Tab4OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
                 if (_fmonrb.Checked)
                 {
-                    MainActivity.TabDetailChanger(4, AppSettings._tab4OverridePreference);
+                    MainActivity.TabDetailChanger(4, AppSettings.Tab4OverridePreference);
                 }
                 else
                 {
 
                 }
-                _prefEditor.PutString("tab5overridestring", AppSettings._tab4OverridePreference);
+                _prefEditor.PutString("tab5overridestring", AppSettings.Tab4OverridePreference);
                 _prefEditor.Commit();
             }
         }
@@ -650,7 +650,7 @@ namespace BitChute.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(AppSettings._tabDelay);
+                await Task.Delay(AppSettings.TabDelay);
                 _wvRl = true;
                 await Task.Delay(1666);
                 mysteryInt = 0;
@@ -673,15 +673,15 @@ namespace BitChute.Fragments
             {
                 if (_fmonrb.Checked)
                 {
-                    AppSettings._fanMode = true;
+                    AppSettings.FanMode = true;
                 }
                 else
                 {
                     MainActivity.TabDetailChanger(3, "MyChannel");
-                    AppSettings._fanMode = false;
+                    AppSettings.FanMode = false;
                 }
                 var prefEditor = _prefs.Edit();
-                _prefEditor.PutBoolean("fanmode", AppSettings._fanMode);
+                _prefEditor.PutBoolean("fanmode", AppSettings.FanMode);
                 _prefEditor.Commit();
             }
         }
@@ -692,15 +692,15 @@ namespace BitChute.Fragments
             {
                 if (_stoverrideonrb.Checked)
                 {
-                    AppSettings._settingsTabOverride = true;
+                    AppSettings.SettingsTabOverride = true;
                 }
                 else
                 {
                     MainActivity.TabDetailChanger(4, "Settings");
-                    AppSettings._settingsTabOverride = false;
+                    AppSettings.SettingsTabOverride = false;
                 }
                 var prefEditor = _prefs.Edit();
-                prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
+                prefEditor.PutBoolean("settingstaboverride", AppSettings.SettingsTabOverride);
                 prefEditor.Commit();
             }
         }
@@ -872,7 +872,7 @@ namespace BitChute.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                if (AppSettings._settingsTabOverride)
+                if (AppSettings.SettingsTabOverride)
                 {
 
                 }

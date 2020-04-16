@@ -28,20 +28,21 @@ namespace BitChute.Models
 
         /// <summary>
         /// Keeps track of which media player is currently playing media
+        /// use -1 to get the currently playing media player without setting a new one
         /// </summary>
-        /// <param name="tab">use -1 to get the currently playing media player without setting a new one</param>
+        /// <param name="tab"></param>
         /// <returns></returns>
-        public static int MediaTabHasFocus (int tab)
+        public static int MediaTabHasFocus(int tab)
         {
             // tab out of range, do nothing
-            if (tab > 4 || tab < -1)
+            if (tab > 4 || tab < 0)
             {
                 return _mediaPlayerHasFocus;
             }
             //app requested current media player
-            if (tab != -1)
+            if (tab == -1)
             {
-                _mediaPlayerHasFocus = tab;
+                return _mediaPlayerHasFocus;
             }
             else
             {
@@ -66,8 +67,46 @@ namespace BitChute.Models
                 _initializedPlayers[tab] = true;
             }
             return _initializedPlayers;
-        } 
-        
+        }
+
+        public class Common
+        {
+            public static void LoadVideoAnyTab (int tab, VideoCard vc)
+            {
+                switch (tab)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        Tab1.VideoCardSlimLoader = vc;
+                        return;
+                    case 2:
+                        return;
+                    case 3:
+                        return;
+                    case 4:
+                        return;
+                }
+            }
+
+            public class NextUp
+            {
+                private static VideoCard _nextUp;
+
+                public static VideoCard NextUpVideoCard
+                {
+                    get
+                    {
+                        return _nextUp;
+                    }
+                    set
+                    {
+                        _nextUp = value;
+                    }
+                }
+            }
+        }
+
 
         public class Tab1
         {
@@ -103,6 +142,7 @@ namespace BitChute.Models
                     //CustomViewHelpers.Tab1.CreatorAvatarImageView.SetImageDrawable(_mainCreator.CreatorThumbnailDrawable);
                     //get the full video details first from BitChute
                     SubscriptionFragment.ReceiveFullVideoDetails(_videoDetail);
+                    Common.NextUp.NextUpVideoCard = value.RelatedVideos?[0];
                 }
             }
 

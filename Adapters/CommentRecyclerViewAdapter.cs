@@ -58,8 +58,7 @@ namespace BitChute.Adapters
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             vh = holder as CommentSystemRecyclerViewHolder;
-
-
+            
             if (_commentList[position].Creator != null)
             {
                 vh.CreatorNameTextView.Text = _commentList[position].Creator.Name;
@@ -109,22 +108,28 @@ namespace BitChute.Adapters
                 case 1:
                     if (CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility == ViewStates.Gone)
                     {
-                        CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Visible;
-                        CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Gone;
-                        CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Gone;
-                        CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Gone;
+                        //MainActivity.NavigationView.Visibility = ViewStates.Gone;
+                        //CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Visible;
+                        //CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Gone;
+                        ////CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Gone;
+                        ////CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Gone;
+                        //CustomViewHelpers.Tab1.LeaveACommentTextBox.RequestFocus();
                         SubscriptionFragment.SelectedComment = _commentList[position];
+                        //MainActivity.ShowKeyboard(CustomViewHelpers.Tab1.VideoDetailView);
                     }
                     else
                     {
-                        CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Gone;
-                        CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Visible;
-                        CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Visible;
-                        CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Visible;
-                        SubscriptionFragment.SelectedComment = null;
+                        //MainActivity.NavigationView.Visibility = ViewStates.Visible;
+                        //CustomViewHelpers.Tab1.LeaveACommentLayout.Visibility = ViewStates.Gone;
+                        //CustomViewHelpers.Tab1.VideoLayout.Visibility = ViewStates.Visible;
+                        ////CustomViewHelpers.Tab1.VideoMetaLayout.Visibility = ViewStates.Visible;
+                        ////CustomViewHelpers.Tab1.VideoMetaLayoutLower.Visibility = ViewStates.Visible;
+                        //SubscriptionFragment.SelectedComment = null;
+                        //MainActivity.HideKeyboard(CustomViewHelpers.Tab1.VideoDetailView);
                     }
                     break;
             }
+            CustomViewHelpers.Common.FocusCommentTextView();
         }
 
         /// <summary>
