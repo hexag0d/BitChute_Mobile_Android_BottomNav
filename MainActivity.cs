@@ -173,15 +173,7 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
 
             ExtStickyService.StartNotificationLoop(90000);
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                ActivityCompat.RequestPermissions(this, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
-            }
 
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                ActivityCompat.RequestPermissions(this, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
-            }
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
         }
         

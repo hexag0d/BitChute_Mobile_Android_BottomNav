@@ -129,13 +129,13 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
                     ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.DownloaderLayout);
-                    DownloadViewEnabled = false;
+                    DownloadViewEnabled = true;
                 }
                 else
                 {
                     ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
                     ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
-                    DownloadViewEnabled = true;
+                    DownloadViewEnabled = false;
                 }
             }
             else

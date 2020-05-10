@@ -19,6 +19,9 @@ namespace BottomNavigationViewPager.Classes
             DownloadVideo(ViewHelpers.Tab3.DownloadLinkEditText.Text);
 
         }
+        
+        public static bool WriteFilePermissionGranted;
+        public static bool ReadFilePermissionGranted;
 
         public static void GetExternalPermissions()
         {
@@ -36,6 +39,15 @@ namespace BottomNavigationViewPager.Classes
         public async static void DownloadVideo(string videoLink)
         {
             GetExternalPermissions();
+            //if (!ReadFilePermissionGranted)
+            //{
+            //    if (!System.Convert.ToBoolean(Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted))
+            //    {
+
+            //    }
+                
+            //}
+            
             VideoDownloader _vd = new VideoDownloader();
             if (videoLink != null && videoLink != "")
             {
