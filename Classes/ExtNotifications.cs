@@ -16,7 +16,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class ExtNotifications
     {
-        public static TheFragment5 _fm5 = new TheFragment5();
+        public static TheFragment4 _fm5 = new TheFragment4();
 
         public static List<string> _notificationTextList = new List<string>();
         public static List<string> _notificationTypes = new List<string>();
@@ -53,7 +53,7 @@ namespace BottomNavigationViewPager.Classes
                 {
                     if (_fm5 == null)
                     {
-                        _fm5 = TheFragment5._fm5;
+                        _fm5 = TheFragment4._fm5;
                     }
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -82,12 +82,14 @@ namespace BottomNavigationViewPager.Classes
 
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                         {
-                            //&#39; <<< '   ... &amp; <<< &
+                            //&#39; <<< '   ... &amp; <<< & "&#x27; '
                             var _tagContents = node.InnerText;
-                            _tagContents = _tagContents.Replace(@"&#39;", @"'").Replace(@"&amp;", @"&").Replace(@"&quot;", "\"");
+                            _tagContents = _tagContents.Replace(@"&#39;", @"'")
+                                .Replace(@"&#x27;", @"'")
+                                .Replace(@"&amp;", @"&")
+                                .Replace(@"&quot;", "\"");
                             _notificationTextList.Add(_tagContents);
                         }
-
 
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
                         {
@@ -129,13 +131,13 @@ namespace BottomNavigationViewPager.Classes
                         _customNoteList.Reverse();
 
                     }
-                    _fm5 = TheFragment5._fm5;
+                    _fm5 = TheFragment4._fm5;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                TheFragment5._notificationHttpRequestInProgress = false;
+                TheFragment4._notificationHttpRequestInProgress = false;
 
                 //_fm5.SendNotifications();
             });

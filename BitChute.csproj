@@ -82,11 +82,14 @@
     <Compile Include="Classes\AppState.cs" />
     <Compile Include="Classes\ExtendedChromeClient.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
+    <Compile Include="Classes\ExtWebInterface.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\StickyService.cs" />
-    <Compile Include="Fragments\TheFragment5.cs" />
+    <Compile Include="Classes\VideoDownloader.cs" />
+    <Compile Include="Classes\ViewHelpers.cs" />
+    <Compile Include="Fragments\TheFragment0.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
     <Compile Include="Fragments\TheFragment3.cs" />
     <Compile Include="Fragments\TheFragment2.cs" />
@@ -198,7 +201,12 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\tab_home.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\DownloaderLayout.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Tab3WebView.axml" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

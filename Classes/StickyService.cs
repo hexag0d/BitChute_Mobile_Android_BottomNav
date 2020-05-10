@@ -29,8 +29,8 @@ namespace StartServices.Servicesclass
         public static MainActivity _main;
         public static ExtNotifications _extNotes = MainActivity.notifications;
 
-        public static BottomNavigationViewPager.Fragments.TheFragment5.ExtWebInterface _extWebInterface =
-            BottomNavigationViewPager.Fragments.TheFragment5._extWebInterface;
+        public static BottomNavigationViewPager.Fragments.TheFragment4.ExtWebInterface _extWebInterface =
+            BottomNavigationViewPager.Fragments.TheFragment4._extWebInterface;
 
         public static Java.Util.Timer _timer = new Java.Util.Timer();
         public static ExtTimerTask _timerTask = new ExtTimerTask();
@@ -68,7 +68,7 @@ namespace StartServices.Servicesclass
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             wifiManager = (WifiManager)GetSystemService(Context.WifiService);
-            _main = MainActivity._main;
+            _main = MainActivity.Main;
             _service = this;
 
             try
@@ -103,7 +103,7 @@ namespace StartServices.Servicesclass
         public static bool _backgroundTimeout = false;
         public static bool _notificationsHaveBeenSent = false;
         public static ExtNotifications _extNotifications = new ExtNotifications();
-        public static TheFragment5 _fm5;
+        public static TheFragment4 _fm5;
 
         private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
 
@@ -159,11 +159,11 @@ namespace StartServices.Servicesclass
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings._notifying)
             {
-                if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                if (!TheFragment4._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
                     _notificationStackExecutionInProgress = true;
                     await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                    await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                    await _extNotifications.DecodeHtmlNotifications(TheFragment4.ExtWebInterface._htmlCode);
                     _fm5.SendNotifications(ExtNotifications._customNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
@@ -216,11 +216,11 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        if (!TheFragment5._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                        if (!TheFragment4._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                         {
                             _notificationStackExecutionInProgress = true;
                             await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                            await _extNotifications.DecodeHtmlNotifications(TheFragment5.ExtWebInterface._htmlCode);
+                            await _extNotifications.DecodeHtmlNotifications(TheFragment4.ExtWebInterface._htmlCode);
                             _fm5.SendNotifications(ExtNotifications._customNoteList);
                             _notificationStackExecutionInProgress = false;
                         }

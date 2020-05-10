@@ -5,7 +5,7 @@
         /// <summary>
         /// this is a string containing cookies for the app.
         /// </summary>
-        public static string _cookieString { get; set; }
+        public static string CookieString { get; set; }
 
         /// <summary>
         /// contains url strings

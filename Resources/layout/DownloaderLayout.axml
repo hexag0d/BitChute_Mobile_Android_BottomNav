@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:id="@+id/linearLayout1">
+		<LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout2" >
+			<ProgressBar
+				android:layout_width="match_parent"
+				android:layout_height="100px"
+				android:progressBackgroundTint="@android:color/holo_purple"
+				android:indeterminate="true"
+				android:indeterminateTintMode="src_atop"
+	            android:indeterminateTint="@android:color/holo_blue_light"
+				android:id="@+id/downloadProgressBar"
+				android:progress="1"
+				style="@android:style/Widget.Holo.ProgressBar.Horizontal" 
+				 />
+			<EditText
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textColor="@android:color/white"
+				android:id="@+id/downloadByUrlEditText"
+				android:hint="url"/>
+			<EditText
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textColor="@android:color/white"
+				android:id="@+id/downloadByUrlFileNameEditText"
+				android:text="TEST45678.mp4"
+				android:hint="filename" />
+			<Button
+				android:text="Download"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/downloadButton" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>
