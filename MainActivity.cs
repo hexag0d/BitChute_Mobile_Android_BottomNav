@@ -373,7 +373,7 @@ namespace BottomNavigationViewPager
             
             try
             {
-                view.ScaleY = (float)1.2;
+                //view.ScaleY = (float)1.1;
                 var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
                 shiftingMode.Accessible = true;
                 shiftingMode.SetBoolean(menuView, false);
@@ -751,7 +751,7 @@ namespace BottomNavigationViewPager
                 switch (_viewPager.CurrentItem)
                 {
                     case 0:
-                        if (TheFragment0._wv.Url != "https://www.bitchute.com/")
+                        if (TheFragment0.Wv.Url != "https://www.bitchute.com/")
                         {
                             _fm1.LoadCustomUrl(JavascriptCommands._jsHideTitle);
                             _fm1.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);

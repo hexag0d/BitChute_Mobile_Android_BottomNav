@@ -16,18 +16,24 @@
 			android:minHeight="25px"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/linearLayout2" >
+			android:id="@+id/linearLayout2">
 			<ProgressBar
 				android:layout_width="match_parent"
 				android:layout_height="100px"
 				android:progressBackgroundTint="@android:color/holo_purple"
 				android:indeterminate="true"
 				android:indeterminateTintMode="src_atop"
-	            android:indeterminateTint="@android:color/holo_blue_light"
+				android:indeterminateTint="@android:color/holo_blue_light"
 				android:id="@+id/downloadProgressBar"
 				android:progress="1"
 				style="@android:style/Widget.Holo.ProgressBar.Horizontal" 
 				 />
+			<TextView
+				android:text=""
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/progressTextView" />
 			<EditText
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

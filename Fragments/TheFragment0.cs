@@ -25,7 +25,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        public static ServiceWebView _wv;
+        public static ServiceWebView Wv;
         protected static View _view;
 
         public static string _url = "https://www.bitchute.com/";
@@ -62,8 +62,17 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout1, container, false);
-            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView1);
+            ViewHelpers.Tab0.FragmentContainerLayout = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
+            ViewHelpers.Tab0.DownloaderLayout = inflater.Inflate(Resource.Layout.DownloaderLayout, container, false);
+            ViewHelpers.Tab0.TabFragmentLinearLayout = (RelativeLayout)ViewHelpers.Tab0.FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);
+
+            ViewHelpers.Tab0.DownloadButton = ViewHelpers.Tab0.DownloaderLayout.FindViewById<Button>(Resource.Id.downloadButton);
+            Wv = (ServiceWebView)ViewHelpers.Tab0.WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView3Swapable);
+            ViewHelpers.Container = container;
+            ViewHelpers.Tab0.TabFragmentLinearLayout.AddView(ViewHelpers.Tab0.WebViewFragmentLayout);
+
+            ViewHelpers.Tab0.DownloadButton.Click += VideoDownloader.VideoDownloadButton_OnClick;
+
 
             if (!tabLoaded)
             {
@@ -85,6 +94,11 @@ namespace BottomNavigationViewPager.Fragments
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             //_wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
+        }
+
+        public static void SwapView(View v)
+        {
+
         }
 
         public override void OnResume()

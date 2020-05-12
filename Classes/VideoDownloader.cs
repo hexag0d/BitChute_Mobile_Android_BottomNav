@@ -94,18 +94,44 @@ namespace BottomNavigationViewPager.Classes
         private static int _progressRed = 50;
         private static int _progressBlue = 50;
         private static int _progressGreen = 20;
+        private static int _progressStep = 0;
+        private static string _progressText;
+        private static Android.Graphics.Color _progressColor;
 
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
+            switch (_progressStep)
+            {
+                case 0:
+                    _progressText = "Downloading   " + e.ProgressPercentage.ToString();
+                    _progressStep++;
+                    break;
+                case 1:
+                    _progressText = "Downloading.  " + e.ProgressPercentage.ToString();
+                    _progressStep++;
+                    break;
+                case 2:
+                    _progressText = "Downloading.. " + e.ProgressPercentage.ToString();
+                    _progressStep++;
+                    break;
+                case 3:
+                    _progressText = "Downloading..." + e.ProgressPercentage.ToString();
+                    _progressStep = 0;
+                    break;
+            }
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = (_progressText);
+            _progressColor = Android.Graphics.Color.Rgb(_progressRed, _progressGreen, _progressBlue);
+            ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progressColor);
             ViewHelpers.Tab3.DownloadProgressBar.Progress = e.ProgressPercentage;
+
             ViewHelpers.Tab3.DownloadProgressBar.ProgressDrawable
-                .SetColorFilter(Android.Graphics.Color.Rgb(_progressRed, _progressGreen, _progressBlue),
-                Android.Graphics.PorterDuff.Mode.Multiply);
-            ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable.SetColorFilter(Android.Graphics.Color.Rgb(
-                _progressRed, _progressGreen, _progressBlue),
+                .SetColorFilter(_progressColor,
                 Android.Graphics.PorterDuff.Mode.Multiply);
 
-            if (_progressBlue == 250)
+            ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable.SetColorFilter(_progressColor,
+                Android.Graphics.PorterDuff.Mode.SrcAtop);
+
+            if (_progressBlue <= 250)
             { 
                 _progressBlue++;
             }
@@ -117,13 +143,13 @@ namespace BottomNavigationViewPager.Classes
 
         public static void OnVideoDownloadFinished(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Invisible;
+            //ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Invisible;
             _progressBlue = 50;
         }
 
         public async Task<bool> DownloadAndSaveVideo(string url)
         {
-            ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Visible;
+            //ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Visible;
             System.Net.WebClient wc = new System.Net.WebClient();
 
             wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
@@ -145,7 +171,16 @@ namespace BottomNavigationViewPager.Classes
             {
                 System.Console.WriteLine(ex);
             }
-            return true;
+            if (System.IO.File.Exists(filePath))
+            {
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.English.IO.FileDownloadSuccess ,ToastLength.Long);
+                return true;
+            }
+            else
+            {
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.English.IO.FileDownloadFailed, ToastLength.Long);
+                return false;
+            }
         }
     }
 }

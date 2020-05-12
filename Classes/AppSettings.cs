@@ -5,6 +5,9 @@ namespace BottomNavigationViewPager.Classes
 {
     class AppSettings
     {
+        //english for now
+        public static string AppLanguage = "en";
+
         public static Android.Content.ISharedPreferences _prefs;
 
         public static bool _zoomControl { get; set; }

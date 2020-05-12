@@ -86,6 +86,7 @@
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
+    <Compile Include="Classes\LanguageSupport.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
@@ -171,7 +172,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout1.axml">
+    <AndroidResource Include="Resources\layout\TheFragmentLayout0.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -206,6 +207,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Tab3WebView.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Login.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -16,6 +16,15 @@ namespace BottomNavigationViewPager.Classes
     {
         public static ViewGroup Container { get; set; }
 
+        public class Tab0
+        {
+            public static View FragmentContainerLayout { get; set; }
+            public static View WebViewFragmentLayout { get; set; }
+            public static View DownloaderLayout { get; set; }
+            public static Button DownloadButton { get; set; }
+            public static RelativeLayout TabFragmentLinearLayout { get; set; }
+        }
+
         public class Tab3
         {
             public static View FragmentContainerLayout { get; set; }
@@ -26,6 +35,7 @@ namespace BottomNavigationViewPager.Classes
             public static EditText DownloadLinkEditText { get; set; }
             public static EditText DownloadFileNameEditText { get; set; }
             public static ProgressBar DownloadProgressBar { get; set; }
+            public static TextView DownloadProgressTextView { get; set; }
             public static LinearLayout TabFragmentLinearLayout { get; set; }
         }
     }
