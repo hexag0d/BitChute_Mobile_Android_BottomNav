@@ -14,10 +14,11 @@ namespace BottomNavigationViewPager.Classes
 {
     public class VideoDownloader
     {
+        public static bool LatestDownloadSucceeded;
+
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             DownloadVideo(ViewHelpers.Tab3.DownloadLinkEditText.Text);
-
         }
         
         public static bool WriteFilePermissionGranted;
@@ -36,17 +37,9 @@ namespace BottomNavigationViewPager.Classes
             }
         }
 
-        public async static void DownloadVideo(string videoLink)
+        public static async void DownloadVideo(string videoLink)
         {
             GetExternalPermissions();
-            //if (!ReadFilePermissionGranted)
-            //{
-            //    if (!System.Convert.ToBoolean(Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted))
-            //    {
-
-            //    }
-                
-            //}
             
             VideoDownloader _vd = new VideoDownloader();
             if (videoLink != null && videoLink != "")
@@ -55,6 +48,12 @@ namespace BottomNavigationViewPager.Classes
                 await rawHtmlTask;
                 Task<string> videoUrlDecode = _vd.DecodeHtmlVideoSource(rawHtmlTask.Result);
                 await videoUrlDecode;
+                if (videoUrlDecode.Result == "" || videoUrlDecode.Result == null)
+                {
+                    LatestDownloadSucceeded = false;
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
+                    return;
+                }
                 Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(videoUrlDecode.Result);
                 await videoDownloadComplete;
             }
@@ -62,6 +61,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 await _vd.DownloadAndSaveVideo(null);
             }
+
         }
 
         public async Task<string> DecodeHtmlVideoSource(string html)
@@ -128,7 +128,8 @@ namespace BottomNavigationViewPager.Classes
                 .SetColorFilter(_progressColor,
                 Android.Graphics.PorterDuff.Mode.Multiply);
 
-            ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable.SetColorFilter(_progressColor,
+            ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable
+                .SetColorFilter(_progressColor,
                 Android.Graphics.PorterDuff.Mode.SrcAtop);
 
             if (_progressBlue <= 250)
@@ -143,22 +144,19 @@ namespace BottomNavigationViewPager.Classes
 
         public static void OnVideoDownloadFinished(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            //ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Invisible;
             _progressBlue = 50;
         }
 
         public async Task<bool> DownloadAndSaveVideo(string url)
         {
-            //ViewHelpers.Tab3.DownloadProgressBar.Visibility = ViewStates.Visible;
             System.Net.WebClient wc = new System.Net.WebClient();
-
             wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             wc.DownloadFileCompleted += OnVideoDownloadFinished;
-            
             var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
             string filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
             if (url == null || url == "")
             {
+                //debug
                 url = @"https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_1280_10MG.mp4";
             }
             try
@@ -173,12 +171,16 @@ namespace BottomNavigationViewPager.Classes
             }
             if (System.IO.File.Exists(filePath))
             {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.English.IO.FileDownloadSuccess ,ToastLength.Long);
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.FileDownloadSuccess() ,ToastLength.Long);
+                ViewHelpers.Tab3.DownloadLinkEditText.Text = LanguageSupport.Common.IO.FileDownloadSuccess();
+                LatestDownloadSucceeded = true;
                 return true;
             }
             else
             {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.English.IO.FileDownloadFailed, ToastLength.Long);
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.FileDownloadFailed(), ToastLength.Long);
+                ViewHelpers.Tab3.DownloadLinkEditText.Text = LanguageSupport.Common.IO.FileDownloadFailed();
+                LatestDownloadSucceeded = false;
                 return false;
             }
         }

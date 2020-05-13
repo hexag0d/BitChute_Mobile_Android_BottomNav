@@ -18,6 +18,15 @@ namespace BottomNavigationViewPager.Classes
         {
             public class IO
             {
+                public static string VideoSourceMissing()
+                {
+                   switch (AppSettings.AppLanguage)
+                    {
+                        case "en":
+                            return English.IO.VideoSourceMissing;
+                    }
+                    return English.IO.VideoSourceMissing;
+                }
                 public static string FileDownloadSuccess()
                 {
                     switch (AppSettings.AppLanguage)
@@ -45,6 +54,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 public static string FileDownloadSuccess = "File successfully downloaded or already exists";
                 public static string FileDownloadFailed = "File failed to download or already exists";
+                public static string VideoSourceMissing = "Video source is missing; try again momentarily";
             }
         }
     }

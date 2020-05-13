@@ -40,7 +40,7 @@ namespace BottomNavigationViewPager.Classes
             private void SendStopVideoCommand()
             {
                 try {
-                    TheFragment0._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     SubscriptionFragment.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment2._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);

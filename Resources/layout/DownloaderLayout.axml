@@ -33,6 +33,7 @@
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:textColor="@android:color/white"
 				android:id="@+id/progressTextView" />
 			<EditText
 				android:layout_width="match_parent"
@@ -47,11 +48,35 @@
 				android:id="@+id/downloadByUrlFileNameEditText"
 				android:text="TEST45678.mp4"
 				android:hint="filename" />
+			<LinearLayout
+				android:orientation="horizontal"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/linearLayout3">
+				<Button
+					android:text="Download"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/downloadButton1" />
+				<Button
+					android:text="Button"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/button1" />
+			</LinearLayout>
 			<Button
 				android:text="Download"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/downloadButton" />
 		</LinearLayout>
+		<android.support.v7.widget.RecyclerView
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/recyclerView1" />
 	</LinearLayout>
 </LinearLayout>
