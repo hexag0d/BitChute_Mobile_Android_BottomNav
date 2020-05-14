@@ -15,10 +15,12 @@ namespace BottomNavigationViewPager.Classes
     public class VideoDownloader
     {
         public static bool LatestDownloadSucceeded;
+        public static bool VideoDownloadInProgress;
 
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             DownloadVideo(ViewHelpers.Tab3.DownloadLinkEditText.Text);
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = "Initializing Download";
         }
         
         public static bool WriteFilePermissionGranted;
@@ -39,29 +41,36 @@ namespace BottomNavigationViewPager.Classes
 
         public static async void DownloadVideo(string videoLink)
         {
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
             GetExternalPermissions();
-            
-            VideoDownloader _vd = new VideoDownloader();
-            if (videoLink != null && videoLink != "")
+            if (!VideoDownloadInProgress)
             {
-                Task<string> rawHtmlTask = ExtWebInterfaceGeneral.GetHtmlTextFromUrl(videoLink);
-                await rawHtmlTask;
-                Task<string> videoUrlDecode = _vd.DecodeHtmlVideoSource(rawHtmlTask.Result);
-                await videoUrlDecode;
-                if (videoUrlDecode.Result == "" || videoUrlDecode.Result == null)
+                VideoDownloadInProgress = true;
+                VideoDownloader _vd = new VideoDownloader();
+                if (videoLink != null && videoLink != "")
                 {
-                    LatestDownloadSucceeded = false;
-                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
-                    return;
+                    Task<string> rawHtmlTask = ExtWebInterfaceGeneral.GetHtmlTextFromUrl(videoLink);
+                    await rawHtmlTask;
+                    Task<string> videoUrlDecode = _vd.DecodeHtmlVideoSource(rawHtmlTask.Result);
+                    await videoUrlDecode;
+                    if (videoUrlDecode.Result == "" || videoUrlDecode.Result == null)
+                    {
+                        LatestDownloadSucceeded = false;
+                        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
+                        VideoDownloadInProgress = false;
+                        return;
+                    }
+                    Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(videoUrlDecode.Result);
+                    await videoDownloadComplete;
                 }
-                Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(videoUrlDecode.Result);
-                await videoDownloadComplete;
+                else
+                {
+                    await _vd.DownloadAndSaveVideo(null);
+                }
             }
             else
             {
-                await _vd.DownloadAndSaveVideo(null);
             }
-
         }
 
         public async Task<string> DecodeHtmlVideoSource(string html)
@@ -123,11 +132,9 @@ namespace BottomNavigationViewPager.Classes
             _progressColor = Android.Graphics.Color.Rgb(_progressRed, _progressGreen, _progressBlue);
             ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progressColor);
             ViewHelpers.Tab3.DownloadProgressBar.Progress = e.ProgressPercentage;
-
             ViewHelpers.Tab3.DownloadProgressBar.ProgressDrawable
                 .SetColorFilter(_progressColor,
                 Android.Graphics.PorterDuff.Mode.Multiply);
-
             ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable
                 .SetColorFilter(_progressColor,
                 Android.Graphics.PorterDuff.Mode.SrcAtop);
@@ -169,6 +176,7 @@ namespace BottomNavigationViewPager.Classes
             {
                 System.Console.WriteLine(ex);
             }
+            VideoDownloadInProgress = false;
             if (System.IO.File.Exists(filePath))
             {
                 Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.FileDownloadSuccess() ,ToastLength.Long);

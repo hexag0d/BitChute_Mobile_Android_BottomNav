@@ -223,7 +223,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\FileView.axml">
+    <AndroidResource Include="Resources\layout\FileCardView.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

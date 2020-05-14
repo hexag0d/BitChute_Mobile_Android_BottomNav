@@ -111,7 +111,6 @@ namespace BottomNavigationViewPager
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
-
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
                 AppState.Display._horizontal = true;
@@ -122,13 +121,10 @@ namespace BottomNavigationViewPager
             }
             Main = this;
             _window = this.Window;
-            
             var mServiceIntent = new Intent(this, typeof(ExtStickyService));
             StartService(mServiceIntent);
-
             //get the intent incase a notification started the activity
             Intent _sentIntent = Intent;
-
             if (_sentIntent != null)
             {
                 //if it's not null then set the fragment1 url to our intent url string
@@ -140,7 +136,6 @@ namespace BottomNavigationViewPager
                 }
                 catch
                 {
-
                 }
             }
             try
@@ -149,31 +144,22 @@ namespace BottomNavigationViewPager
             }
             catch
             {
-                
             }
-            
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
-
             InitializeTabs();
-            
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-
             //can probably eventually set this back to Resource.Id.bottom_navigation but xamarin is whacked out atm so using the int
             _navigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
-
             _viewPager.OffscreenPageLimit = 4;
-
             CreateNotificationChannel();
-
             ExtStickyService.StartNotificationLoop(90000);
-
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
         }
         
@@ -195,7 +181,6 @@ namespace BottomNavigationViewPager
             };
         }
         
-
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
         public static bool _navHidden = false;
         public static bool _navTimeout = true;
@@ -256,9 +241,7 @@ namespace BottomNavigationViewPager
             while (!_navHidden)
             {
                 await Task.Delay(1000);
-
                 _navTimer++;
-
                 if (_navTimer >= 8)
                 {
                     if (AppState.Display._horizontal)
@@ -385,11 +368,9 @@ namespace BottomNavigationViewPager
                     item.SetShiftingMode(false);
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
-
                     item.SetShiftingMode(false);
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
-
                     if (i == 2)
                     {
                         item.LongClick += FeedTabLongClickListener;

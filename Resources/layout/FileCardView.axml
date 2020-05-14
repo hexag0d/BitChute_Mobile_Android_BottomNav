@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardElevation="4dp"
+		android:id="@+id/fileCardView"
         card_view:cardUseCompatPadding="true"
         card_view:cardCornerRadius="5dp">
         <LinearLayout
@@ -17,15 +18,15 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView"
+                android:id="@+id/videoThumbnail"
                 android:scaleType="centerCrop" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#333333"
-                android:text="Caption"
-                android:id="@+id/textView"
+                android:textColor="@android:color/white"
+                android:text="FileName"
+                android:id="@+id/videoThumbnailTitle"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="4dp" />
         </LinearLayout>

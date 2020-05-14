@@ -56,27 +56,28 @@
 				android:layout_height="wrap_content"
 				android:id="@+id/linearLayout3">
 				<Button
+					android:text="Video Files"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/getVideoFileDownloadButton" />
+				<Button
 					android:text="Download"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:id="@+id/downloadButton1" />
-				<Button
-					android:text="Button"
+					android:id="@+id/downloadButton" />
+				<CheckBox
+					android:text="AutoFill Title"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:id="@+id/button1" />
+					android:textColor="@android:color/white"
+					android:id="@+id/autoFillTitleCheckBox" />
 			</LinearLayout>
-			<Button
-				android:text="Download"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/downloadButton" />
 		</LinearLayout>
 		<android.support.v7.widget.RecyclerView
 			android:minWidth="25px"
 			android:minHeight="25px"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/recyclerView1" />
+			android:id="@+id/fileRecyclerView" />
 	</LinearLayout>
 </LinearLayout>
