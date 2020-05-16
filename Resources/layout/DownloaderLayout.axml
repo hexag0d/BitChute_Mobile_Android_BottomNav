@@ -26,8 +26,7 @@
 				android:indeterminateTint="@android:color/holo_blue_light"
 				android:id="@+id/downloadProgressBar"
 				android:progress="1"
-				style="@android:style/Widget.Holo.ProgressBar.Horizontal" 
-				 />
+				style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
 			<TextView
 				android:text=""
 				android:textAppearance="?android:attr/textAppearanceLarge"
@@ -40,7 +39,8 @@
 				android:layout_height="wrap_content"
 				android:textColor="@android:color/white"
 				android:id="@+id/downloadByUrlEditText"
-				android:hint="url"/>
+				android:hint="url"
+				android:background="#ff263238" />
 			<EditText
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -66,11 +66,17 @@
 					android:layout_height="match_parent"
 					android:id="@+id/downloadButton" />
 				<CheckBox
-					android:text="AutoFill Title"
+					android:text="AutoTitle"
 					android:layout_width="wrap_content"
+					android:checked="true"
 					android:layout_height="match_parent"
 					android:textColor="@android:color/white"
 					android:id="@+id/autoFillTitleCheckBox" />
+				<Button
+					android:text="stop"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/cancelDownloadButton"/>
 			</LinearLayout>
 		</LinearLayout>
 		<android.support.v7.widget.RecyclerView

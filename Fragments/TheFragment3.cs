@@ -89,6 +89,8 @@ namespace BottomNavigationViewPager.Fragments
             ViewHelpers.Tab3.GetDownloadFilesButton.Click += FileBrowser.FileBrowserButton_OnClick;
             ViewHelpers.Tab3.FileLayoutManager = new Android.Support.V7.Widget.LinearLayoutManager(Android.App.Application.Context);
             ViewHelpers.Tab3.FileRecyclerView = ViewHelpers.Tab3.DownloaderLayout.FindViewById<Android.Support.V7.Widget.RecyclerView>(Resource.Id.fileRecyclerView);
+            ViewHelpers.Tab3.CancelDownloadButton = ViewHelpers.Tab3.DownloaderLayout.FindViewById<Button>(Resource.Id.cancelDownloadButton);
+            ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
             if (AppSettings._fanMode)
             {
                 //get the url string from prefs
@@ -109,7 +111,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display._horizontal);
+            CustomSetTouchListener(AppState.Display.Horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             LoadUrlWithDelay(RootUrl, 4000);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
@@ -182,7 +184,7 @@ namespace BottomNavigationViewPager.Fragments
         private static async void CustomOnTouch()
         {
             _scrollY += Wv.ScrollY;
-            if (AppState.Display._horizontal)
+            if (AppState.Display.Horizontal)
             {
                 await Task.Delay(500);
                 if (_scrollY >= 4000)
@@ -279,7 +281,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(delay);
 
-            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display._horizontal)
+            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
             {
                 Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
                 Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
@@ -329,7 +331,7 @@ namespace BottomNavigationViewPager.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
 
-                if (AppState.Display._horizontal)
+                if (AppState.Display.Horizontal)
                 {
                     HidePageTitle(5000);
                 }

@@ -187,7 +187,7 @@ namespace BottomNavigationViewPager.Fragments
                 _tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
-                _versionTextView.Text = AppState._appVersion;
+                _versionTextView.Text = AppState.AppVersion;
                 tabLoaded = true;
             }
             if (AppSettings._zoomControl)
@@ -195,7 +195,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display._horizontal);
+            CustomSetTouchListener(AppState.Display.Horizontal);
             _appSettingsLayout.Visibility = ViewStates.Gone;
             LoadUrlWithDelay(_url, 5000);
             return _view;
@@ -225,13 +225,13 @@ namespace BottomNavigationViewPager.Fragments
         {
             if (_hideverticalnavbaronrb.Checked)
             {
-                AppSettings._hideVerticalNavbar = true;
+                AppSettings.HideVerticalNavBar = true;
             }
             else
             {
-                AppSettings._hideVerticalNavbar = false;
+                AppSettings.HideVerticalNavBar = false;
             }
-            _prefEditor.PutBoolean("hideverticalnavbar", AppSettings._hideVerticalNavbar);
+            _prefEditor.PutBoolean("hideverticalnavbar", AppSettings.HideVerticalNavBar);
             _prefEditor.Commit();
             _systemCheckingRb = false;
         }
@@ -242,12 +242,12 @@ namespace BottomNavigationViewPager.Fragments
             {
                 if (_hidehorizontalnavbaronrb.Checked)
                 {
-                    AppSettings._hideHorizontalNavbar = true;
+                    AppSettings.HideHorizontalNavBar = true;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", true);
                 }
                 else
                 {
-                    AppSettings._hideHorizontalNavbar = false;
+                    AppSettings.HideHorizontalNavBar = false;
                     _prefEditor.PutBoolean("hidehorizontalnavbar", false);
                 }
                 _prefEditor.Commit();
@@ -411,7 +411,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _notificationoffrb.Checked = true;
             }
-            if (AppSettings._hideHorizontalNavbar)
+            if (AppSettings.HideHorizontalNavBar)
             {
                 _hidehorizontalnavbaronrb.Checked = true;
             }
@@ -419,7 +419,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _hidehorizontalnavbaroffrb.Checked = true;
             }
-            if (AppSettings._hideVerticalNavbar)
+            if (AppSettings.HideVerticalNavBar)
             {
                 _hideverticalnavbaronrb.Checked = true;
             }

@@ -17,6 +17,7 @@ namespace BottomNavigationViewPager.Classes
     public class FileBrowser
     {
         private static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
+        public static FileRecyclerViewAdapter FileAdapter;
 
         public static void FileBrowserButton_OnClick(object sender, EventArgs e)
         {
@@ -25,10 +26,19 @@ namespace BottomNavigationViewPager.Classes
 
         public static void OpenFileBrowser()
         {
-            var mLayoutManager = new LinearLayoutManager(Android.App.Application.Context);
-            ViewHelpers.Tab3.FileRecyclerView.SetLayoutManager(mLayoutManager);
-            var adapter = new FileRecyclerViewAdapter(GetFolders());
-            ViewHelpers.Tab3.FileRecyclerView.SetAdapter(adapter);
+            if (ViewHelpers.Tab3.FileLayoutManager == null)
+            ViewHelpers.Tab3.FileLayoutManager = new LinearLayoutManager(Android.App.Application.Context);
+            ViewHelpers.Tab3.FileRecyclerView.SetLayoutManager(ViewHelpers.Tab3.FileLayoutManager);
+            if (ViewHelpers.Tab3.FileRecyclerView.GetAdapter() == null)
+            {
+                FileAdapter = new FileRecyclerViewAdapter(GetFolders());
+                ViewHelpers.Tab3.FileRecyclerView.SetAdapter(FileAdapter);
+            }
+            else
+            {
+                FileAdapter = new FileRecyclerViewAdapter(GetFolders());
+                FileAdapter.NotifyDataSetChanged();
+            }
         }
 
         public static void GetExternalPermissions()
@@ -37,7 +47,6 @@ namespace BottomNavigationViewPager.Classes
             {
                 Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
             }
-
             if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
             {
                 Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
@@ -69,7 +78,6 @@ namespace BottomNavigationViewPager.Classes
 
             public void GetControls()
             {
-
             }
 
             // Get references to the views defined in the CardView layout.

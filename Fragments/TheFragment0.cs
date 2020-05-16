@@ -93,7 +93,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display._horizontal);
+            CustomSetTouchListener(AppState.Display.Horizontal);
             //Wv.SetOnScrollChangeListener(new ExtScrollListener());
             //Wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
@@ -165,7 +165,7 @@ namespace BottomNavigationViewPager.Fragments
         private static async void CustomOnTouch()
         {
             _scrollY += Wv.ScrollY;
-            if (AppState.Display._horizontal)
+            if (AppState.Display.Horizontal)
             {
                 await Task.Delay(500);
                 if (_scrollY >= 4000)
@@ -271,7 +271,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Delay(5000);
 
-            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display._horizontal)
+            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
             {
                 Wv.LoadUrl(JavascriptCommands._jsHideTitle);
                 Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
@@ -340,7 +340,7 @@ namespace BottomNavigationViewPager.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
                 
-                if (AppState.Display._horizontal)
+                if (AppState.Display.Horizontal)
                 {
                     if (url != "https://www.bitchute.com/")
                     {

@@ -22,7 +22,7 @@ namespace BottomNavigationViewPager.Classes
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
         /// </summary>
-        public static int _tabDelay = 800;
+        public static int _tabDelay = 3000;
 
         /// <summary>
         /// the ms delay for fixing link overflow on mobile
@@ -40,9 +40,9 @@ namespace BottomNavigationViewPager.Classes
         /// this bool should be set to/returns whether or not the navbar
         /// will be hidden by default when the device is held horizontally
         /// </summary>
-        public static bool _hideHorizontalNavbar = true;
+        public static bool HideHorizontalNavBar = true;
 
-        public static bool _hideVerticalNavbar = false;
+        public static bool HideVerticalNavBar = false;
 
         public static bool _notifying = true;
         
@@ -67,8 +67,8 @@ namespace BottomNavigationViewPager.Classes
             _tab3Hide = _prefs.GetBoolean("tab3hide", true);
             _tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             _settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            _hideHorizontalNavbar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
-            _hideVerticalNavbar = _prefs.GetBoolean("hideverticalnavbar", false);
+            HideHorizontalNavBar = _prefs.GetBoolean("hidehoriztonalnavbar", true);
+            HideVerticalNavBar = _prefs.GetBoolean("hideverticalnavbar", false);
 
             return;
         }

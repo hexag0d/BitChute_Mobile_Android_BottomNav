@@ -118,12 +118,12 @@ namespace StartServices.Servicesclass
 
             if (myProcess.Importance == Importance.Foreground)
             {
-                AppState._bkgrd = false;
+                AppState.Bkgrd = false;
                 return false;
             }
             else
             {
-                AppState._bkgrd = true;
+                AppState.Bkgrd = true;
                 return true;
             }
         }
@@ -178,7 +178,7 @@ namespace StartServices.Servicesclass
                     }
                     return;
                 }
-                else if (!AppState._userIsLoggedIn)
+                else if (!AppState.UserIsLoggedIn)
                 {
                     await Task.Delay(380000); 
                 }

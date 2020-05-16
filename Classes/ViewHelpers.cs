@@ -37,6 +37,7 @@ namespace BottomNavigationViewPager.Classes
             public static View WebViewSwapable { get; set; }
             public static Button DownloadButton { get; set; }
             public static Button GetDownloadFilesButton { get; set; }
+            public static Button CancelDownloadButton { get; set; }
             public static EditText DownloadLinkEditText { get; set; }
             public static EditText DownloadFileNameEditText { get; set; }
             public static ProgressBar DownloadProgressBar { get; set; }

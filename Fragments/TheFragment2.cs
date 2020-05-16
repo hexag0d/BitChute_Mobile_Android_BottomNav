@@ -77,7 +77,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.DisplayZoomControls = false;
             }
             LoadUrlWithDelay(_url, 2000);
-            CustomSetTouchListener(AppState.Display._horizontal);
+            CustomSetTouchListener(AppState.Display.Horizontal);
             //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
         }
@@ -162,7 +162,7 @@ namespace BottomNavigationViewPager.Fragments
         private static async void CustomOnTouch()
         {
             _scrollY += _wv.ScrollY;
-            if (AppState.Display._horizontal)
+            if (AppState.Display.Horizontal)
             {
                 await Task.Delay(500);
                 if (_scrollY >= 4000)
@@ -235,7 +235,7 @@ namespace BottomNavigationViewPager.Fragments
                 await Task.Delay(delay);
             }
 
-            if (_wv.Url != "https://www.bitchute.com/" && AppState.Display._horizontal)
+            if (_wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
             {
                 _wv.LoadUrl(JavascriptCommands._jsHideTitle);
                 _wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
@@ -290,7 +290,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 SelectSubscribedTab(4000);
 
-                if (AppState.Display._horizontal)
+                if (AppState.Display.Horizontal)
                 {
                     HidePageTitle(5000);
                 }

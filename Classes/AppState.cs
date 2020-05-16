@@ -8,7 +8,7 @@
             /// returns true when the app detects that device
             /// has been rotated horizontally
             /// </summary>
-            public static bool _horizontal = false;
+            public static bool Horizontal = false;
         }
 
         /// <summary>
@@ -18,15 +18,15 @@
         /// 
         /// it doesn't override the OS setting; it keeps the status for you
         /// </summary>
-        public static bool _bkgrd = true;
+        public static bool Bkgrd = true;
 
-        public static bool _userIsLoggedIn = false;
+        public static bool UserIsLoggedIn = false;
 
         /// <summary>
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string _appVersion = "24.1.API8Retainer";
+        public static string AppVersion = "25.1.API8Retainer_VideoDownloader";
 
         /// <summary>
         /// tab 4 string should be set to strings like
