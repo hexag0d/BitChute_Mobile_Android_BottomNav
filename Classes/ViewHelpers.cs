@@ -20,6 +20,11 @@ namespace BottomNavigationViewPager.Classes
     {
         public static ViewGroup Container { get; set; }
 
+        public class Main
+        {
+            public static Android.Support.Design.Widget.FloatingActionButton DownloadFAB { get; set; }
+        }
+
         public class Tab0
         {
             public static View FragmentContainerLayout { get; set; }

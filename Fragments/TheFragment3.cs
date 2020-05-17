@@ -91,6 +91,8 @@ namespace BottomNavigationViewPager.Fragments
             ViewHelpers.Tab3.FileRecyclerView = ViewHelpers.Tab3.DownloaderLayout.FindViewById<Android.Support.V7.Widget.RecyclerView>(Resource.Id.fileRecyclerView);
             ViewHelpers.Tab3.CancelDownloadButton = ViewHelpers.Tab3.DownloaderLayout.FindViewById<Button>(Resource.Id.cancelDownloadButton);
             ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
+            ViewHelpers.Main.DownloadFAB.Clickable = true;
+            ViewHelpers.Main.DownloadFAB.Click += MainActivity.DownloadFAB_OnClick;
             if (AppSettings._fanMode)
             {
                 //get the url string from prefs
@@ -114,6 +116,7 @@ namespace BottomNavigationViewPager.Fragments
             CustomSetTouchListener(AppState.Display.Horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             LoadUrlWithDelay(RootUrl, 4000);
+            //ViewHelpers.Main.DownloadFAB.LayoutParameters = 
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
 

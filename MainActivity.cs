@@ -160,6 +160,7 @@ namespace BottomNavigationViewPager
             ViewPager.OffscreenPageLimit = 4;
             CreateNotificationChannel();
             ExtStickyService.StartNotificationLoop(90000);
+            ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.myFAB);
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
         }
 
@@ -180,6 +181,11 @@ namespace BottomNavigationViewPager
             };
         }
         
+        public static void DownloadFAB_OnClick (object sender, EventArgs e)
+        {
+
+        }
+
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
         public static bool _navHidden = false;
         public static bool _navTimeout = true;
