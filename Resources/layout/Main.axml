@@ -14,13 +14,13 @@
     android:layout_above="@+id/bottom_navigation">
   </FrameLayout>
   <android.support.design.widget.FloatingActionButton
-    android:id="@+id/myFAB"
+    android:id="@+id/downloadFab"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:foregroundGravity="top"
     android:layout_alignParentRight="true"
     android:layout_above="@id/bottom_navigation"
-    android:src="@drawable/xamarin"/>
+    android:src="@drawable/download_grey"/>
   <android.support.v4.view.ViewPager
     android:id="@+id/viewpager"
     android:layout_width="match_parent"

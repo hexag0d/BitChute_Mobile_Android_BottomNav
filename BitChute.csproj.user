@@ -3,7 +3,7 @@
   <PropertyGroup>
     <SelectedDevice>Samsung SM-G930P</SelectedDevice>
     <DefaultDevice>Android_Accelerated_x86_Oreo</DefaultDevice>
-    <AndroidDesignerPreferredTheme>Theme.AppCompat.Dialog.Alert</AndroidDesignerPreferredTheme>
+    <AndroidDesignerPreferredTheme>Theme.Design.BottomSheetDialog</AndroidDesignerPreferredTheme>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>

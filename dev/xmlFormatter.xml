@@ -1,40 +1,386 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:orientation="vertical"
-  android:background="@android:color/black"
-  android:id="@+id/activity_main"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-  <FrameLayout
-    android:id="@+id/fragment_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:id="@+id/settingsFragLayout"
+                android:backgroundTint="@android:color/black"
+                android:background="@android:color/black"
+                android:layout_height="match_parent">
+  <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:minWidth="25px"
+    android:minHeight="25px"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_above="@+id/bottom_navigation">
-  </FrameLayout>
-  <android.support.design.widget.FloatingActionButton
-    android:id="@+id/myFAB"
-    android:layout_width="wrap_content"
+    android:id="@+id/webViewLayout">
+    <StartServices.Servicesclass.ExtStickyService.ServiceWebView
+      android:id="@+id/webView5"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_centerInParent="true"
+      android:textAlignment="center"
+      android:textSize="@dimen/abc_text_size_display_1_material"
+      android:layout_centerVertical="false" />
+  </LinearLayout>
+  <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/appSettingsMainLayout">
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout2">
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/zoomControlGroup">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="#3498db"
+          android:text="Zoom Cntrl On"
+          android:buttonTint="#3498db"
+          android:id="@+id/_zoomControlOnBtn" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="#3498db"
+          android:buttonTint="#3498db"
+          android:text="Off"
+          android:id="@+id/_zoomControlOffBtn" />
+      </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout3">
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/feedTabHideOverride">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="Tab3 Hide On"
+          android:id="@+id/_tab3HideOverrideOn" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="Off"
+          android:id="@+id/_tab3HideOverrideOff" />
+      </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout4">
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tab1FeaturedCreators">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="Tab1 Featured On"
+          android:id="@+id/_tab1FeaturedCreatorsOn" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="Off"
+          android:id="@+id/_tab1FeaturedCreatorsOff" />
+      </RadioGroup>
+    </LinearLayout>
+    <FrameLayout
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/frameLayout1">
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fanModeGroup">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:text="Fan Mode Off"
+          android:textColor="#3498db"
+          android:id="@+id/_fanModeOffBtn" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="On"
+          android:id="@+id/_fanModeOnBtn" />
+      </RadioGroup>
+    </FrameLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout5">
+      <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:id="@+id/tab4OverrideSpinner" />
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroup3">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:checked="true"
+          android:text="RadioButton"
+          android:id="@+id/radioButton1" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="RadioButton"
+          android:id="@+id/radioButton2" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="RadioButton"
+          android:id="@+id/radioButton3" />
+      </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout6">
+      <RadioGroup
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settingsTabOverrideGroup">
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:text="Settings Override Off"
+          android:textColor="#3498db"
+          android:id="@+id/_stOverrideOffRb" />
+        <RadioButton
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+          android:text="On"
+          android:id="@+id/_stOverrideOnRb" />
+      </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout7">
+      <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout8">
+        <Spinner
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textColor="#3498db"
+          android:background="@android:color/darker_gray"
+          android:id="@+id/tab5OverrideSpinner" />
+      </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout9">
+      <Button
+        android:text="Test Notifications"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:id="@+id/_notificationTestButton" />
+      <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout10">
+        <RadioGroup
+          android:minWidth="25px"
+          android:minHeight="25px"
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+          <RadioButton
+            android:text="notifications off"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:id="@+id/_notificationsOffRb" />
+          <RadioButton
+            android:text="on"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:id="@+id/_notificationsOnRb" />
+        </RadioGroup>
+      </LinearLayout>
+      <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup
+          android:minWidth="25px"
+          android:minHeight="25px"
+          android:orientation="horizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:id="@+id/radioGroup4">
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="ShowDlButtonOnPress"
+            android:id="@+id/showDlFabOnPress" />
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AlwaysShow"
+            android:id="@+id/alwaysShowDlFab" />
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Off"
+            android:id="@+id/dlFabOff" />
+        </RadioGroup>
+      </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+      android:orientation="horizontal"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout11">
+      <TextView
+        android:text="Version"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/versionTextView" />
+    </LinearLayout>
+  </LinearLayout>
+  <LinearLayout
+    android:orientation="horizontal"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foregroundGravity="top"
-    android:layout_alignParentRight="true"
-    android:layout_above="@id/bottom_navigation"
-    android:src="@drawable/xamarin"/>
-  <android.support.v4.view.ViewPager
-    android:id="@+id/viewpager"
+    android:id="@+id/linearLayout12">
+    <RadioGroup
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:orientation="horizontal"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:id="@+id/radioGroup1">
+      <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#3498db"
+        android:visibility="gone"
+        android:buttonTint="#3498db"
+        android:text="Show Navbar when Horizontal Off"
+        android:id="@+id/_hideNavBarHorizontalOn" />
+      <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#3498db"
+        android:visibility="gone"
+        android:buttonTint="#3498db"
+        android:text="On"
+        android:id="@+id/_hideNavBarHorizontalOff" />
+    </RadioGroup>
+  </LinearLayout>
+  <RadioGroup
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:foregroundGravity="bottom"
-    android:layout_above="@id/bottom_navigation" />
-  <android.support.design.widget.BottomNavigationView
-    android:id="@+id/bottom_navigation"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_gravity="start"
-    android:layout_alignParentBottom="true"
-    app:itemTextColor="@drawable/bottom_navigation_selector"
-    app:itemIconTint="@drawable/bottom_navigation_selector"
-    android:background="@android:color/black"
-    app:menu="@menu/navigation_main"/>
+    android:layout_height="wrap_content"
+    android:id="@+id/radioGroup2">
+    <RadioButton
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#3498db"
+      android:buttonTint="#3498db"
+      android:visibility="gone"
+      android:text="Vertical Navbar On"
+      android:id="@+id/verticalNavbarRbOn" />
+    <RadioButton
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#3498db"
+      android:buttonTint="#3498db"
+      android:visibility="gone"
+      android:text="Autohide"
+      android:id="@+id/verticalNavbarRbOff" />
+  </RadioGroup>
 </RelativeLayout>

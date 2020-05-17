@@ -18,17 +18,45 @@ namespace BottomNavigationViewPager.Classes
         public static bool LatestDownloadSucceeded;
         public static bool VideoDownloadInProgress;
         static System.Int64 bytes_total;
-        private static System.Net.WebClient wc; 
+        private static System.Net.WebClient _wc; 
 
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Initializing Download";
             InitializeVideoDownload(ViewHelpers.Tab3.DownloadLinkEditText.Text);
         }
-        
+
+        public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
+        {
+            InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));
+        }
+
+        public static string GetVideoUrlByTab(int tab)
+        {
+            string taburl = "";
+            switch (tab)
+            {
+                case 0:
+                    taburl = TheFragment0.Wv.OriginalUrl;
+                    break;
+                case 1:
+                    taburl = TheFragment1.Wv.OriginalUrl;
+                    break;
+                case 2:
+                    taburl = TheFragment2.Wv.OriginalUrl;
+                    break;
+                case 3:
+                    taburl = TheFragment3.Wv.OriginalUrl;
+                    break;
+                case 4:
+                    taburl = TheFragment4.Wv.OriginalUrl;
+                    break;
+            }
+            return taburl;
+        }
+
         public static bool WriteFilePermissionGranted;
         public static bool ReadFilePermissionGranted;
-
         public static void GetExternalPermissions()
         {
             if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
@@ -86,26 +114,35 @@ namespace BottomNavigationViewPager.Classes
             {
                 try
                 {
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                    doc.LoadHtml(html);
-
-                    if (doc != null)
+                    //if the source ends with .mp4 then we've got a raw link
+                    //and can immediately return
+                    if (html.EndsWith(@".mp4"))
                     {
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//source"))
+                        vidCard.VideoUri = new System.Uri(html);
+                        vidCard.Title = html.Replace(@".mp4", "");
+                    }
+                    //source didn't end in .mp4 so we need to decode the link
+                    else
+                    {
+                        HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                        doc.LoadHtml(html);
+                        if (doc != null)
                         {
-                            videoLink = node.Attributes["src"].Value.ToString();
-                            if (videoLink != null || videoLink != "")
+                            foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//source"))
                             {
-                                vidCard.VideoUri = new System.Uri(videoLink);
+                                videoLink = node.Attributes["src"].Value.ToString();
+                                if (videoLink != null || videoLink != "")
+                                {
+                                    vidCard.VideoUri = new System.Uri(videoLink);
+                                }
                             }
-                        }
-
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
-                        {
-                            vidTitle = node.InnerText;
-                            if (vidTitle != null || vidTitle != "")
+                            foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
                             {
-                                vidCard.Title = vidTitle;
+                                vidTitle = node.InnerText;
+                                if (vidTitle != null || vidTitle != "")
+                                {
+                                    vidCard.Title = vidTitle;
+                                }
                             }
                         }
                     }
@@ -114,7 +151,6 @@ namespace BottomNavigationViewPager.Classes
                 {
                 }
             });
-
             return vidCard;
         }
 
@@ -207,9 +243,9 @@ namespace BottomNavigationViewPager.Classes
         public async Task<bool> DownloadAndSaveVideo(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            wc = new System.Net.WebClient();
-            wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
-            wc.DownloadFileCompleted += OnVideoDownloadFinished;
+            _wc = new System.Net.WebClient();
+            _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
+            _wc.DownloadFileCompleted += OnVideoDownloadFinished;
             var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
             string filePath;
             if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
@@ -245,20 +281,20 @@ namespace BottomNavigationViewPager.Classes
                 {
                     await Task.Run(() =>
                     {
-                        wc.OpenRead(vc.VideoUri);
-                        bytes_total = System.Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
+                        _wc.OpenRead(vc.VideoUri);
+                        bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
-                    await wc.DownloadFileTaskAsync(vc.VideoUri,
+                    await _wc.DownloadFileTaskAsync(vc.VideoUri,
                         filePath);
                 }
                 else
                 {
                     await Task.Run(() =>
                     {
-                        wc.OpenRead(new System.Uri(vc.Link));
-                        bytes_total = System.Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
+                        _wc.OpenRead(new System.Uri(vc.Link));
+                        bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
-                    await wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
+                    await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
                         filePath);
                 }
             }
@@ -283,7 +319,7 @@ namespace BottomNavigationViewPager.Classes
 
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
         {
-            wc.CancelAsync();
+            _wc.CancelAsync();
         }
     }
 }

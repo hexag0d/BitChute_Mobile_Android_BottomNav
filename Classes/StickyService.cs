@@ -152,12 +152,12 @@ namespace StartServices.Servicesclass
 
             if (_fm5 == null)
             {
-                await Task.Run(() => _fm5 = MainActivity._fm5);
+                await Task.Run(() => _fm5 = MainActivity.Fm4);
             }
 
             //use a while loop to start the notifications
             //they move over to a service timer eventually to prevent the loop from breaking
-            while (AppSettings._notifying)
+            while (AppSettings.Notifying)
             {
                 if (!TheFragment4._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
@@ -208,11 +208,11 @@ namespace StartServices.Servicesclass
         {
             public async override void Run()
             {
-                if (AppSettings._notifying)
+                if (AppSettings.Notifying)
                 {
                     if (_fm5 == null)
                     {
-                        await Task.Run(() => _fm5 = MainActivity._fm5);
+                        await Task.Run(() => _fm5 = MainActivity.Fm4);
                     }
                     try
                     {

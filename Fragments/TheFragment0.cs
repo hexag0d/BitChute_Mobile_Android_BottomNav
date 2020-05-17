@@ -28,7 +28,8 @@ namespace BottomNavigationViewPager.Fragments
         public static ServiceWebView Wv;
         protected static View _view;
 
-        public static string _url = "https://www.bitchute.com/";
+        public static string RootUrl = "https://www.bitchute.com/";
+        public static string LastLoadedUrl = "";
 
         readonly ExtWebViewClient Wvc = new ExtWebViewClient();
 
@@ -87,8 +88,8 @@ namespace BottomNavigationViewPager.Fragments
                 
                 tabLoaded = true;
             }
-            Wv.LoadUrl(_url);
-            if (AppSettings._zoomControl)
+            Wv.LoadUrl(RootUrl);
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -130,9 +131,9 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            Wv.Settings.SetSupportZoom(AppSettings._zoomControl);
+            Wv.Settings.SetSupportZoom(AppSettings.ZoomControl);
 
-            if (!AppSettings._tab1FeaturedOn)
+            if (!AppSettings.Tab1FeaturedOn)
             {
                 Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
@@ -141,7 +142,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsShowCarousel);
             }
 
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
             }
@@ -242,7 +243,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!WvRling)
             {
                 WvRling = true;
-                await Task.Delay(AppSettings._tabDelay);
+                await Task.Delay(AppSettings.TabDelay);
                 WvRl = true;
                 WvRling = false;
             }
@@ -256,7 +257,7 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(AppSettings._linkOverflowFixDelay);
+            await Task.Delay(AppSettings.LinkOverflowFixDelay);
             Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
             Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
@@ -327,6 +328,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView _view, string url)
             {
+                base.OnPageFinished(_view, url);
+                Wv.ScrollTo(0, 0);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
                
@@ -335,7 +338,7 @@ namespace BottomNavigationViewPager.Fragments
                     HideWatchLabel();
                 
 
-                if (!AppSettings._tab1FeaturedOn)
+                if (!AppSettings.Tab1FeaturedOn)
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
@@ -373,7 +376,7 @@ namespace BottomNavigationViewPager.Fragments
                 //ExpandPage(true);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                base.OnPageFinished(_view, url);
+                
             }
         }
     }

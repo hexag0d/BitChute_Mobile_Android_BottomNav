@@ -22,7 +22,6 @@ namespace BottomNavigationViewPager.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string RootUrl = "https://www.bitchute.com/profile";
-        public static string LastLoadedUrl = "";
 
         bool tabLoaded = false;
 
@@ -92,8 +91,8 @@ namespace BottomNavigationViewPager.Fragments
             ViewHelpers.Tab3.CancelDownloadButton = ViewHelpers.Tab3.DownloaderLayout.FindViewById<Button>(Resource.Id.cancelDownloadButton);
             ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
             ViewHelpers.Main.DownloadFAB.Clickable = true;
-            ViewHelpers.Main.DownloadFAB.Click += MainActivity.DownloadFAB_OnClick;
-            if (AppSettings._fanMode)
+            ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
+            if (AppSettings.FanMode)
             {
                 //get the url string from prefs
                 RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
@@ -108,7 +107,7 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
             }
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -235,7 +234,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(AppSettings._tabDelay);
+                await Task.Delay(AppSettings.TabDelay);
                 _wvRl = true;
                 _wvRling = false;
             }
@@ -243,7 +242,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            if (AppSettings._fanMode && AppSettings._tab4OverridePreference == "Feed")
+            if (AppSettings.FanMode && AppSettings.Tab4OverridePreference == "Feed")
             {
                 Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 Wv.LoadUrl(JavascriptCommands._jsHideTab1);
@@ -252,7 +251,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
 
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -268,7 +267,7 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(AppSettings._linkOverflowFixDelay);
+            await Task.Delay(AppSettings.LinkOverflowFixDelay);
 
             Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
@@ -304,7 +303,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 await Task.Delay(4000);
             }
-            if (AppSettings._tab5OverridePreference == "Subs" || AppSettings._fanMode)
+            if (AppSettings.Tab5OverridePreference == "Subs" || AppSettings.FanMode)
             {
                 Wv.LoadUrl(JavascriptCommands._jsExpandSubs);
             }
@@ -316,6 +315,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                base.OnPageFinished(view, url);
+                Wv.ScrollTo(0, 0);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
@@ -329,7 +330,7 @@ namespace BottomNavigationViewPager.Fragments
                     //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
 
-                if (!AppSettings._tab1FeaturedOn)
+                if (!AppSettings.Tab1FeaturedOn)
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
@@ -344,8 +345,6 @@ namespace BottomNavigationViewPager.Fragments
                 SetReload();
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                base.OnPageFinished(view, url);
-                LastLoadedUrl = url;
             }
         }
     }

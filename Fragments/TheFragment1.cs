@@ -1,4 +1,5 @@
-﻿using Android.Graphics.Drawables;
+﻿using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
@@ -13,7 +14,7 @@ using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    public class SubscriptionFragment : Fragment
+    public class TheFragment1 : Fragment
     {
         string _title;
         string _icon;
@@ -22,11 +23,10 @@ namespace BottomNavigationViewPager.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string RootUrl = "https://bitchute.com/subscriptions/";
-        public static string LastLoadedUrl = "";
         bool tabLoaded = false;
 
-        public static SubscriptionFragment NewInstance(string title, string icon) {
-            var fragment = new SubscriptionFragment();
+        public static TheFragment1 NewInstance(string title, string icon) {
+            var fragment = new TheFragment1();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -63,7 +63,7 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowFileAccess = true;
                 tabLoaded = true;
             }
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -111,7 +111,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            if (AppSettings._zoomControl)
+            if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -184,7 +184,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-                await Task.Delay(AppSettings._tabDelay);
+                await Task.Delay(AppSettings.TabDelay);
                 _wvRl = true;
                 _wvRling = false;
             }
@@ -195,7 +195,7 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(AppSettings._linkOverflowFixDelay);
+            await Task.Delay(AppSettings.LinkOverflowFixDelay);
 
             Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
@@ -248,6 +248,8 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                base.OnPageFinished(view, url);
+                Wv.ScrollTo(0,0);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
                 Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
@@ -263,8 +265,6 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                base.OnPageFinished(view, url);
-                LastLoadedUrl = url;
             }
         }
     }

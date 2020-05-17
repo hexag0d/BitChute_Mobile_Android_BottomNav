@@ -41,10 +41,10 @@ namespace BottomNavigationViewPager.Classes
             {
                 try {
                     TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SubscriptionFragment.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment2._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                     TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment4._wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                 }
                 catch ( Exception ex)
                 {
