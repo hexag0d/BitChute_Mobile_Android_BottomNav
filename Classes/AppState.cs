@@ -4,6 +4,7 @@
     {
         public class Display
         {
+            public static Android.Graphics.Color DarkGrey = new Android.Graphics.Color(20, 20, 20);
             /// <summary>
             /// returns true when the app detects that device
             /// has been rotated horizontally
@@ -27,17 +28,5 @@
         /// of version they're running
         /// </summary>
         public static string AppVersion = "25.1.API8Retainer_VideoDownloader";
-
-        /// <summary>
-        /// tab 4 string should be set to strings like
-        /// "Subs" "Home" or "Feed"
-        /// </summary>
-        public static string _t4Is { get; set; }
-
-        /// <summary>
-        /// tab 5 string should be set to strings like
-        /// "Subs" "Home" or "Feed"
-        /// </summary>
-        public static string _t5Is { get; set; }
     }
 }

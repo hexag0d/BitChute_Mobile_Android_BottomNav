@@ -118,40 +118,38 @@ namespace BottomNavigationViewPager.Fragments
             //ViewHelpers.Main.DownloadFAB.LayoutParameters = 
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
-
-        public static bool DownloadViewEnabled;
-
+        
         /// <summary>
-        /// swaps the view for this tab, View can be null
+        /// swaps the view for the downloader layout
         /// </summary>
         /// <param name="v">nullable, the view to swap for</param>
-        public static void SwapView(View v)
+        public static void SwapDownloaderView(bool showDownloadView)
         {
-            if (v == null)
+            if (showDownloadView)
             {
-                if (!DownloadViewEnabled)
-                {
-                    ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.DownloaderLayout);
-                    DownloadViewEnabled = true;
-                }
-                else
-                {
-                    ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
-                    DownloadViewEnabled = false;
-                }
+                ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.DownloaderLayout);
             }
             else
             {
                 ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-                try
-                {
-                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v);
-                }
-                catch
-                {
-                }
+                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+            }
+        }
+
+        /// <summary>
+        /// swaps the view for this tab
+        /// </summary>
+        /// <param name="v">nullable, the view to swap for</param>
+        public static void SwapView(View v)
+        {
+            ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+            try
+            {
+                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v);
+            }
+            catch
+            {
             }
         }
 
@@ -320,7 +318,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
-                if (AppState._t4Is == "Feed")
+                if (TabStates.T4Is == "Feed")
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                     Wv.LoadUrl(JavascriptCommands._jsHideTab1);

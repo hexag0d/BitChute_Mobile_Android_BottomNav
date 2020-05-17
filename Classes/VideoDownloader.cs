@@ -23,6 +23,7 @@ namespace BottomNavigationViewPager.Classes
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Initializing Download";
+            Toast.MakeText(Android.App.Application.Context, "Download started",ToastLength.Long);
             InitializeVideoDownload(ViewHelpers.Tab3.DownloadLinkEditText.Text);
         }
 
@@ -72,10 +73,10 @@ namespace BottomNavigationViewPager.Classes
 
         public static async void InitializeVideoDownload(string videoLink)
         {
-            ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
-            GetExternalPermissions();
             if (!VideoDownloadInProgress)
             {
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
+                GetExternalPermissions();
                 VideoDownloadInProgress = true;
                 VideoDownloader _vd = new VideoDownloader();
                 if (videoLink != null && videoLink != "")
@@ -89,6 +90,7 @@ namespace BottomNavigationViewPager.Classes
                         || (videoCardTask.Result).VideoUri.AbsolutePath == null)
                     {
                         ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
+                        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.VideoSourceMissing(), ToastLength.Long);
                         VideoDownloadInProgress = false;
                         return;
                     }
@@ -102,6 +104,8 @@ namespace BottomNavigationViewPager.Classes
             }
             else
             {
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = "Video download already in progress, stop it first";
+                Toast.MakeText(Android.App.Application.Context, "Video download already in progress, stop it first", ToastLength.Long);
             }
         }
 
@@ -154,81 +158,83 @@ namespace BottomNavigationViewPager.Classes
             return vidCard;
         }
 
-        private static int _progressRed = 50;
-        private static int _progressBlue = 50;
-        private static int _progressGreen = 20;
-        private static int _progressStep = 0;
-        private static string _progressText;
-        private static string _progressString;
-        private static Android.Graphics.Color _progressColor;
-        private static bool _progressBlueUp = true;
+        private static int _progRed = 50;
+        private static int _progBlue = 50;
+        private static int _progGreen = 20;
+        private static int _progStep = 0;
+        private static string _progText;
+        private static string _progString;
+        private static Android.Graphics.Color _progColor;
+        private static bool _progBlueUp = true;
         
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
             decimal progress = ((decimal)e.BytesReceived/(decimal)bytes_total) * 100;
             if (progress < 100)
-            _progressString = progress.ToString().Substring(0, 4);
-            switch (_progressStep)
+            _progString = progress.ToString().Substring(0, 4);
+            switch (_progStep)
             {
                 case 0:
-                    _progressText = "Downloading   " + _progressString + @"%";
-                    _progressStep++;
+                    _progText = "Downloading   " + _progString + @"%";
+                    _progStep++;
                     break;
                 case 1:
-                    _progressText = "Downloading.  " + _progressString + @"%";
-                    _progressStep++;
+                    _progText = "Downloading.  " + _progString + @"%";
+                    _progStep++;
                     break;
                 case 2:
-                    _progressText = "Downloading.. " + _progressString + @"%";
-                    _progressStep++;
+                    _progText = "Downloading.. " + _progString + @"%";
+                    _progStep++;
                     break;
                 case 3:
-                    _progressText = "Downloading..." + _progressString + @"%";
-                    _progressStep = 0;
+                    _progText = "Downloading..." + _progString + @"%";
+                    _progStep = 0;
                     break;
             }
-            ViewHelpers.Tab3.DownloadProgressTextView.Text = (_progressText);
-            _progressColor = Android.Graphics.Color.Rgb(_progressRed, _progressGreen, _progressBlue);
-            ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progressColor);
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = (_progText);
+            _progColor = Android.Graphics.Color.Rgb(_progRed, _progGreen, _progBlue);
+            ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progColor);
+            ViewHelpers.Main.DownloadFAB.SetColorFilter(_progColor);
             ViewHelpers.Tab3.DownloadProgressBar.Progress = e.ProgressPercentage;
             ViewHelpers.Tab3.DownloadProgressBar.ProgressDrawable
-                .SetColorFilter(_progressColor,
+                .SetColorFilter(_progColor,
                 Android.Graphics.PorterDuff.Mode.Multiply);
             ViewHelpers.Tab3.DownloadProgressBar.IndeterminateDrawable
-                .SetColorFilter(_progressColor,
+                .SetColorFilter(_progColor,
                 Android.Graphics.PorterDuff.Mode.SrcAtop);
-            if (_progressBlueUp)
+            if (_progBlueUp)
             {
-                if (_progressBlue <= 250)
+                if (_progBlue <= 250)
                 {
-                    _progressBlue++;
+                    _progBlue++;
                 }
                 else
                 {
-                    _progressBlue--;
-                    _progressBlueUp = false;
+                    _progBlue--;
+                    _progBlueUp = false;
                 }
             }
             else
             {
-                if (_progressBlue >= 50)
+                if (_progBlue >= 50)
                 {
-                    _progressBlue--;
+                    _progBlue--;
                 }
                 else
                 {
-                    _progressBlue++;
-                    _progressBlueUp = true;
+                    _progBlue++;
+                    _progBlueUp = true;
                 }
             }
         }
 
         public static void OnVideoDownloadFinished(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            _progressBlue = 150;
-            _progressBlueUp = true;
-            _progressColor = Android.Graphics.Color.Rgb(_progressRed, _progressGreen, _progressBlue);
-            ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progressColor);
+            _progBlue = 150;
+            _progBlueUp = true;
+            _progColor = Android.Graphics.Color.Rgb(_progRed, _progGreen, _progBlue);
+            ViewHelpers.Main.DownloadFAB.SetColorFilter(null); 
+            ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progColor);
             ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.FileDownloadSuccess();
         }
 
@@ -266,14 +272,10 @@ namespace BottomNavigationViewPager.Classes
             {
                 if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
                 {
-                    ViewHelpers.Tab3.DownloadLinkEditText.Text = LanguageSupport.Common.IO.VideoSourceMissing();
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
+                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.VideoSourceMissing(), ToastLength.Long);
                     return false;
                 }
-            }
-            else
-            {
-                ViewHelpers.Tab3.DownloadLinkEditText.Text = LanguageSupport.Common.IO.VideoSourceMissing();
-                return false;
             }
             try
             {
@@ -320,6 +322,7 @@ namespace BottomNavigationViewPager.Classes
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             _wc.CancelAsync();
+            VideoDownloadInProgress = false;
         }
     }
 }

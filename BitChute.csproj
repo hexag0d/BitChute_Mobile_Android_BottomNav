@@ -88,6 +88,7 @@
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
     <Compile Include="Classes\StickyService.cs" />
+    <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
     <Compile Include="Fragments\TheFragment0.cs" />
@@ -231,6 +232,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\download_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\download_grey_lg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dev\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\download_grey_round.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

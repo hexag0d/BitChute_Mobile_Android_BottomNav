@@ -435,7 +435,18 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _hideverticalnavbaroffrb.Checked = true;
             }
-
+            if (AppSettings.DlFabShowSetting == "onpress")
+            {
+                _showdlbuttononpress.Checked = true;
+            }
+            else if (AppSettings.DlFabShowSetting == "never")
+            {
+                _showdlbuttonnever.Checked = true;
+            }
+            else if (AppSettings.DlFabShowSetting == "always")
+            {
+                _showdlbuttonalways.Checked = true;
+            }
             await Task.Delay(1000);
             _isNowCheckingBoxes = false;
         }
@@ -503,11 +514,11 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     AppSettings.DlFabShowSetting = "onpress";
                 }
-                if (_showdlbuttonalways.Checked)
+                else if (_showdlbuttonalways.Checked)
                 {
                     AppSettings.DlFabShowSetting = "always";
                 }
-                if (_showdlbuttonnever.Checked)
+                else if (_showdlbuttonnever.Checked)
                 {
                     AppSettings.DlFabShowSetting = "never";
                 }
@@ -644,6 +655,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (mysteryInt == 6)
             {
+                //what... you didn't think I was doing this for free, did you? ;]
                 Wv.LoadUrl(@"https://www.soundcloud.com/vybemasterz/");
             }
             else
@@ -681,7 +693,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wvRling = true;
                 await Task.Delay(AppSettings.TabDelay);
                 _wvRl = true;
-                await Task.Delay(1666);
+                await Task.Delay(6);
                 mysteryInt = 0;
                 _wvRling = false;
             }

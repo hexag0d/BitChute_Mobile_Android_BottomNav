@@ -16,8 +16,33 @@ namespace BottomNavigationViewPager.Classes
         public static bool FanMode { get; set; }
         public static bool Tab3Hide { get; set; }
         public static bool SettingsTabOverride { get; set; }
-        public static string DlFabShowSetting { get; set; }
-        
+        private static string _dlFabShowSetting = "onpress";
+        /// <summary>
+        /// onpress || never || always
+        /// </summary>
+        public static string DlFabShowSetting
+        {
+            get
+            {
+                return _dlFabShowSetting;
+            }
+            set
+            {
+                if (_dlFabShowSetting != value)
+                {
+                    if (value == "never" || 
+                        (value == "onpress" && !TabStates.Tab3.VideoDownloaderViewEnabled))
+                    {
+                        ViewHelpers.Main.DownloadFAB?.Hide();
+                    }
+                    else
+                    {
+                        ViewHelpers.Main.DownloadFAB?.Show();
+                    }
+                    _dlFabShowSetting = value;
+                }
+            }
+        }
         public static string Tab4OverridePreference { get; set; }
         public static string Tab5OverridePreference { get; set; }
         

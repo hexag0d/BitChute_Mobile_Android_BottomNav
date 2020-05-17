@@ -161,6 +161,12 @@ namespace BottomNavigationViewPager
             CreateNotificationChannel();
             ExtStickyService.StartNotificationLoop(90000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
+            //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
+            //mFab.setRippleColor(your color in int);
+            if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
+            {
+                ViewHelpers.Main.DownloadFAB.Hide();
+            }
             _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
         }
 
@@ -519,7 +525,7 @@ namespace BottomNavigationViewPager
                              NavViewItemList[tab].SetTitle("Downloader");
                              NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                              _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                             TheFragment3.RootUrl = Https.URLs._watchLater;
+                             
                         }
                     TheFragment3.LoadUrlWithDelay(TheFragment3.RootUrl, 0);
                     break;
@@ -582,14 +588,25 @@ namespace BottomNavigationViewPager
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
         {
-            if (ViewPager.CurrentItem != 3)
+            if (!TabStates.Tab3.VideoDownloaderViewEnabled)
             {
-                ViewPager.CurrentItem = 3;
-                TheFragment3.SwapView(null);
+                TabStates.Tab3.VideoDownloaderViewEnabled = true;
+                if (AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Show();
+                }
             }
             else
             {
-                TheFragment3.SwapView(null);
+                TabStates.Tab3.VideoDownloaderViewEnabled = false;
+                if (AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Hide();
+                }
+            }
+            if (ViewPager.CurrentItem != 3)
+            {
+                ViewPager.CurrentItem = 3;
             }
         }
 
@@ -733,10 +750,11 @@ namespace BottomNavigationViewPager
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
+            base.OnConfigurationChanged(newConfig);
             if (newConfig.Orientation == Orientation.Landscape)
             {
                 NavigationView.Visibility = ViewStates.Gone;
-
+                
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
@@ -778,8 +796,12 @@ namespace BottomNavigationViewPager
                         break;
                     case 4:
                         Fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                        Fm4.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                        //Fm4.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                         break;
+                }
+                if (AppSettings.DlFabShowSetting != "always")
+                {
+                    ViewHelpers.Main.DownloadFAB.Hide();
                 }
                 AppState.Display.Horizontal = true;
                 _window.ClearFlags(_winflagnotfullscreen);
@@ -806,14 +828,19 @@ namespace BottomNavigationViewPager
                         break;
                     case 3:
                         Fm3.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm4.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        Fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
                         Fm3.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
                         Fm4.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm5.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
+                        Fm4.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
                         Fm4.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
+                }
+                if (AppSettings.DlFabShowSetting != "never" ||
+                    (AppSettings.DlFabShowSetting == "onpress" && TabStates.Tab3.VideoDownloaderViewEnabled))
+                {
+                    ViewHelpers.Main.DownloadFAB.Show();
                 }
                 AppState.Display.Horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
@@ -832,9 +859,6 @@ namespace BottomNavigationViewPager
             Fm2.CustomSetTouchListener(AppState.Display.Horizontal);
             Fm3.CustomSetTouchListener(AppState.Display.Horizontal);
             Fm4.CustomSetTouchListener(AppState.Display.Horizontal);
-
-            base.OnConfigurationChanged(newConfig);
-
         }
 
         /// <summary>
