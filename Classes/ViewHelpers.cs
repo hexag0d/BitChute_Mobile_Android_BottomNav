@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     /// <summary>
     /// static class that contains views to make UI 

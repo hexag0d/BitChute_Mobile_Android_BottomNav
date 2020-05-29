@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using Android;
+using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
@@ -8,16 +9,16 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BottomNavigationViewPager.Fragments.TheFragment4;
+using static BitChute.Fragments.TheFragment4;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
     public class TheFragment0 : Fragment
@@ -37,7 +38,7 @@ namespace BottomNavigationViewPager.Fragments
         private static ExtWebInterface _extWebInterface = MainActivity._extWebInterface;
 
         bool tabLoaded = false;
-        //static MainActivity _main = new MainActivity();
+        //static MainActivity Main = new MainActivity();
 
         public static TheFragment0 NewInstance(string title, string icon) {
             var fragment = new TheFragment0();

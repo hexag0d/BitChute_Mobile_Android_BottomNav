@@ -1,9 +1,9 @@
 ﻿using System;
 using Android.Content;
 using Android.Runtime;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class HeadphoneIntent
     {

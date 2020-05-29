@@ -11,9 +11,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using static BottomNavigationViewPager.Models.CreatorModel;
+using static BitChute.Models.CreatorModel;
 
-namespace BottomNavigationViewPager.Models
+namespace BitChute.Models
 {
     public class VideoModel
     {

@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿
+using Android.App;
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
@@ -7,7 +8,8 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
+using BitChute;
 using Java.Interop;
 using Java.Net;
 using StartServices.Servicesclass;
@@ -17,11 +19,12 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static BottomNavigationViewPager.Classes.ExtendedWebChromeClient;
-using static BottomNavigationViewPager.Classes.ExtNotifications;
+using static BitChute.Classes.ExtendedWebChromeClient;
+using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+
+namespace BitChute.Fragments
 {
     public class TheFragment4 : Android.Support.V4.App.Fragment
     {
@@ -134,7 +137,7 @@ namespace BottomNavigationViewPager.Fragments
             if (!tabLoaded)
             {
                 Wv.SetWebViewClient(new ExtWebViewClient());
-                Wv.SetWebChromeClient(new ExtendedChromeClient(_main));
+                Wv.SetWebChromeClient(new ExtendedChromeClient(Main));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -540,7 +543,7 @@ namespace BottomNavigationViewPager.Fragments
                 _settingsList.Add(AppSettings.Tab1FeaturedOn);
                 _settingsList.Add(AppSettings.SettingsTabOverride);
 
-                _main.OnSettingsChanged(_settingsList);
+                Main.OnSettingsChanged(_settingsList);
             }
         }
 
@@ -855,7 +858,7 @@ namespace BottomNavigationViewPager.Fragments
                             notePos++;
                         }
 
-                        ExtStickyService._notificationsHaveBeenSent = true;
+                        ExtStickyService.NotificationsHaveBeenSent = true;
                     }
                 }
                 catch

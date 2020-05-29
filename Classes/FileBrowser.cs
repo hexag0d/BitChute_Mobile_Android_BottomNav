@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using Android;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -12,7 +12,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class FileBrowser
     {
@@ -31,12 +31,12 @@ namespace BottomNavigationViewPager.Classes
             ViewHelpers.Tab3.FileRecyclerView.SetLayoutManager(ViewHelpers.Tab3.FileLayoutManager);
             if (ViewHelpers.Tab3.FileRecyclerView.GetAdapter() == null)
             {
-                FileAdapter = new FileRecyclerViewAdapter(GetFolders());
+                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos());
                 ViewHelpers.Tab3.FileRecyclerView.SetAdapter(FileAdapter);
             }
             else
             {
-                FileAdapter = new FileRecyclerViewAdapter(GetFolders());
+                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos());
                 FileAdapter.NotifyDataSetChanged();
             }
         }
@@ -53,7 +53,7 @@ namespace BottomNavigationViewPager.Classes
             }
         }
 
-        public static List<string> GetFolders()
+        public static List<string> GetLocalVideos()
         {
             GetExternalPermissions();
             List<string> files = new List<string>();
@@ -102,38 +102,27 @@ namespace BottomNavigationViewPager.Classes
             {
                 FileTitleList = fileSet;
             }
-
-            // Create a new photo CardView (invoked by the layout manager): 
+            
             public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
             {
-                // Inflate the CardView for the photo:
                 View itemView = LayoutInflater.From(parent.Context).
                                 Inflate(Resource.Layout.FileCardView, parent, false);
-
                 CardView cv = itemView.FindViewById<CardView>(Resource.Id.fileCardView);
                 cv.SetBackgroundColor(_darkGrey);
-
-                // Create a ViewHolder to find and hold these view references, and 
-                // register OnClick with the view holder:
                 vh = new FileViewHolder(itemView, OnClick);
 
                 return vh;
             }
-
-            // Fill in the contents of the photo card (invoked by the layout manager):
+            
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
                 vh = holder as FileViewHolder;
-
-                // Set the ImageView and TextView in this ViewHolder's CardView 
-                // from this position in the photo album:
                 if (FileTitleList != null)
                 {
                     vh.Caption.Text = FileTitleList[position];
                 }
             }
-
-            // Return the number of photos available in the photo album:
+            
             public override int ItemCount
             {
                 get
@@ -144,8 +133,7 @@ namespace BottomNavigationViewPager.Classes
                         return 0;
                 }
             }
-
-            // Raise an event when the item-click takes place:
+            
             void OnClick(int position)
             {
                 var pos = position;

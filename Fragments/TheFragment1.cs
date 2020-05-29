@@ -1,18 +1,20 @@
-﻿using Android.Graphics;
+﻿
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
+using BitChute;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     public class TheFragment1 : Fragment
     {
@@ -248,7 +250,6 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                base.OnPageFinished(view, url);
                 Wv.ScrollTo(0,0);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
@@ -265,6 +266,7 @@ namespace BottomNavigationViewPager.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+                base.OnPageFinished(view, url);
             }
         }
     }

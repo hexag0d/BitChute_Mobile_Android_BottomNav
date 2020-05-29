@@ -10,11 +10,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class LanguageSupport
     {
-        public class Common
+        public class Main
         {
             public class IO
             {

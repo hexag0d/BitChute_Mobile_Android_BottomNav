@@ -12,7 +12,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     public class ExtWebInterfaceGeneral
     {
@@ -34,7 +34,7 @@ namespace BottomNavigationViewPager.Classes
                 {
                     //Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
                     //var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-                    var check = BottomNavigationViewPager.Fragments.TheFragment4.CookieHeader;
+                    var check = BitChute.Fragments.TheFragment4.CookieHeader;
                     using (HttpClient _client = new HttpClient(handler))
                     {
                         _client.DefaultRequestHeaders.Add("Cookie", check);

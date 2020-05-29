@@ -11,13 +11,14 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BottomNavigationViewPager.Classes;
+using BitChute.Classes;
+using BitChute;
 using Java.IO;
 using StartServices.Servicesclass;
 using static Android.Views.View;
 using static StartServices.Servicesclass.ExtStickyService;
 
-namespace BottomNavigationViewPager.Fragments
+namespace BitChute.Fragments
 {
     //[Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
     public class TheFragment2 : Fragment
@@ -122,7 +123,7 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static MainActivity _main = MainActivity.Main;
+        public static MainActivity Main = MainActivity.Main;
 
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {

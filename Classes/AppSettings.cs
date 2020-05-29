@@ -1,10 +1,12 @@
 ﻿using Android.Content;
 using Android.Graphics.Drawables;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
     class AppSettings
     {
+        public static bool AutoPlay = true;
+
         //english for now
         public static string AppLanguage = "en";
 

@@ -12,36 +12,277 @@ using Android.Widget;
 using Android.Util;
 
 using Android.Telephony;
-using BottomNavigationViewPager.Classes;
-using BottomNavigationViewPager;
+using BitChute.Classes;
+using BitChute;
 using System.Threading.Tasks;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
 using Android.Support.V4.App;
+using BitChute.Models;
+using static BitChute.Models.VideoModel;
+
+using BitChute;
 
 namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
-    public class ExtStickyService : Service
+    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
+    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener,
+        MediaController.IMediaPlayerControl
     {
-        public static bool _serviceIsLooping = false;
-        public static MainActivity _main;
-        public static ExtNotifications _extNotes = MainActivity.notifications;
+        #region members
 
-        public static BottomNavigationViewPager.Fragments.TheFragment4.ExtWebInterface _extWebInterface =
-            BottomNavigationViewPager.Fragments.TheFragment4._extWebInterface;
+        //Actions
+        public const string ActionPlay = "com.xamarin.action.PLAY";
+        public const string ActionPause = "com.xamarin.action.PAUSE";
+        public const string ActionStop = "com.xamarin.action.STOP";
 
-        public static Java.Util.Timer _timer = new Java.Util.Timer();
-        public static ExtTimerTask _timerTask = new ExtTimerTask();
+        private static bool _serviceIsLooping = false;
+        public static MainActivity Main;
 
-        public static ExtStickyService _service;
-        private static PowerManager _pm;
-        public int counter = 0;
+        private static BitChute.Fragments.TheFragment4.ExtWebInterface _extWebInterface =
+            BitChute.Fragments.TheFragment4._extWebInterface;
 
-        private static WifiManager wifiManager;
-        private static WifiManager.WifiLock wifiLock;
+        private static Java.Util.Timer _timer = new Java.Util.Timer();
+        private static ExtTimerTask _timerTask = new ExtTimerTask();
 
+        public static ExtStickyService ExtStickyServ;
+        public static PowerManager Pm;
+
+        public static WifiManager WifiManager;
+        public static WifiManager.WifiLock wifiLock;
+        public static AudioManager _audioManager;
+
+        private static bool _backgroundTimeout = false;
+        public static bool NotificationsHaveBeenSent = false;
+        private static ExtNotifications _extNotifications = new ExtNotifications();
+        private static TheFragment4 _fm5;
+        private static ActivityManager.RunningAppProcessInfo _myProcess = new ActivityManager.RunningAppProcessInfo();
+        private static int _startForegroundNotificationId = 6666;
+
+        private static bool _notificationStackExecutionInProgress = false;
+        private static bool _notificationLongTimerSet = false;
+
+        public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
+        public static Dictionary<int, ExtMediaController> MediaControllerDictionary
+                     = new Dictionary<int, ExtMediaController>();
+
+        public static int PlayerNumberHasFocus = 0;
+
+        private static bool _paused;
+        //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
+
+        #endregion
+
+
+        /// <summary>
+        /// initializes the mediaplayer object on tab of your choice.  
+        /// if the mediaplayer is already instantiated then it gets reset for new playback
+        /// </summary>
+        /// <param name="mp"></param>
+        /// <returns></returns>
+        public static MediaPlayer InitializePlayer(int tab, Android.Net.Uri uri, Context ctx)
+        {
+            if (ctx == null)
+            {
+                ctx = Android.App.Application.Context;
+            }
+            bool tbo = false;
+            if (tab == -1)
+            {
+                tab = MainActivity.ViewPager.CurrentItem;
+            }
+            if (tab == -2)
+            {
+                tbo = true;
+                tab = -1;
+            }
+
+            // we might be able to eventually just use one media player but I think the buffering will be better
+            // with a few of them, plus this way you can queue up videos and instantly switch
+            if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(tab))
+            {
+                ExtStickyService.MediaPlayerDictionary.Add(tab, new MediaPlayer());
+            }
+            else if (MediaPlayerDictionary[tab] == null)
+            {
+                MediaPlayerDictionary[tab] = new MediaPlayer();
+            }
+            //I tried to figure out how to switch the data source on an existing media player and eventually gave up lol
+            else
+            {
+                MediaPlayerDictionary[tab].Reset();
+                MediaPlayerDictionary[tab].Release();
+
+                //this is odd, have to set the media player back to null and re-instantiate every time the video loads
+                //I couldn't get it working without doing this
+                MediaPlayerDictionary[tab] = null;
+                MediaPlayerDictionary[tab] = new MediaPlayer();
+            }
+
+            if (uri != null)
+            {
+                MediaPlayerDictionary[tab].SetDataSource(ctx, uri);
+            }
+
+            if (tab != 1)
+                AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
+
+            //Wake mode will be partial to keep the CPU still running under lock screen
+            MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
+
+            //When we have prepared the song start playback
+            MediaPlayerDictionary[tab].Prepared += (sender, args) => ExtStickyServ.Play();
+
+            //When we have reached the end of the song stop ourselves, however you could signal next track here.
+            MediaPlayerDictionary[tab].Completion += (sender, args) => OnVideoFinished(false, tab);
+
+            MediaPlayerDictionary[tab].Error += (sender, args) =>
+            {
+                //playback error
+                Console.WriteLine("Error in playback resetting: " + args.What);
+                Stop();//this will clean up and reset properly.
+            };
+
+            if (!tbo)
+                ExtStickyService.MediaPlayerDictionary[tab].Prepare();
+
+            return MediaPlayerDictionary[tab];
+        }
+
+        public ExtMediaController InitializeMediaController(Context ctx)
+        {
+            var mc = new ExtMediaController(ctx);
+            mc.SetMediaPlayer(this);
+            return mc;
+        }
+
+
+        private async void Play()
+        {
+            await Task.Run(() =>
+            {
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
+                {
+                    //We are simply paused so just start again
+                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
+                    //StartForeground();
+                    return;
+                }
+
+                try
+                {
+                    AquireWifiLock();
+                }
+                catch (Exception ex)
+                {
+                    //unable to start playback log error
+                    Console.WriteLine("Unable to start playback: " + ex);
+                }
+
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                {
+                    AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
+                }
+            });
+        }
+
+        public static void SkipToPrev()
+        {
+            ExtStickyServ.CurrentPosition = 0;
+        }
+
+        public static void SkipToNext(VideoCard vc)
+        {
+            if (vc == null)
+            {
+                //TabStates.Tab1.VideoCardLoader = TabStates.Main.NextUp.NextUpVideoCard;
+                //    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Main.GetDefaultVideoDetailView(
+                //        MainActivity.ViewPager.CurrentItem), null, TabStates.Main.NextUp.NextUpVideoCard, 
+                //        MainActivity.ViewPager.CurrentItem);
+            }
+        }
+
+        private void Pause()
+        {
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
+                return;
+
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
+
+            //StopForeground(false);
+            _paused = true;
+        }
+
+        public static void Stop()
+        {
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
+                return;
+
+            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Stop();
+
+            MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
+            _paused = false;
+            ExtStickyServ.StopForeground(true);
+            ReleaseWifiLock();
+            //AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
+        }
+
+        public static bool OnVideoFinished(bool overide, int tab)
+        {
+            if (AppSettings.AutoPlay && tab != -1)
+            {
+                //_vidLoader.LoadVideoFromCard(ViewHelpers.Main.GetDefaultVideoDetailView(tab), null, TabStates.Main.NextUp.NextUpVideoCard, tab);
+                return overide;
+            }
+
+            return overide;
+        }
+
+
+        /// <summary>
+        /// This will release the wifi lock if it is no longer needed
+        /// </summary>
+        private static void ReleaseWifiLock()
+        {
+            if (wifiLock == null)
+                return;
+
+            wifiLock.Release();
+            wifiLock = null;
+        }
+
+        /// <summary>
+        /// When we start on the foreground we will present a notification to the user
+        /// When they press the notification it will take them to the main page so they can control the music
+        /// </summary>
+        public void StartForeground()
+        {
+            try
+            {
+                var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
+                                new Intent(ApplicationContext, typeof(MainActivity)),
+                                PendingIntentFlags.UpdateCurrent);
+
+                var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                .SetContentTitle("BitChute streaming in background") 
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetPriority(NotificationCompat.PriorityLow);
+
+                StartForeground(-6666, builder.Build());
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        #region StickyServiceMethods
         public ExtStickyService(Context applicationContext)
         {
 
@@ -58,8 +299,11 @@ namespace StartServices.Servicesclass
 
         public override void OnCreate()
         {
-            _service = this;
             base.OnCreate();
+            //Find our audio and notificaton managers
+            _audioManager = (AudioManager)GetSystemService(AudioService);
+            WifiManager = (WifiManager)GetSystemService(WifiService);
+            ExtStickyServ = this;
         }
         public override IBinder OnBind(Intent intent)
         {
@@ -67,14 +311,21 @@ namespace StartServices.Servicesclass
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            wifiManager = (WifiManager)GetSystemService(Context.WifiService);
-            _main = MainActivity.Main;
-            _service = this;
+            switch (intent.Action)
+            {
+                case ActionPlay: Play(); break;
+                case ActionStop: Stop(); break;
+                case ActionPause: Pause(); break;
+            }
+
+            WifiManager = (WifiManager)GetSystemService(Context.WifiService);
+            Main = MainActivity.Main;
+            ExtStickyServ = this;
 
             try
             {
-                _pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                Pm = (PowerManager)GetSystemService(Context.PowerService);
+                PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                 _wl.Acquire();
             }
             catch (Exception ex)
@@ -88,47 +339,23 @@ namespace StartServices.Servicesclass
         //private TimerTask timerTask;
         public static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
 
+
+
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
         /// </summary>
-        public void AquireWifiLock()
+        public static void AquireWifiLock()
         {
             if (wifiLock == null)
             {
-                wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
             }
             wifiLock.Acquire();
         }
 
-        public static bool _backgroundTimeout = false;
-        public static bool _notificationsHaveBeenSent = false;
-        public static ExtNotifications _extNotifications = new ExtNotifications();
-        public static TheFragment4 _fm5;
+        #endregion
 
-        private static ActivityManager.RunningAppProcessInfo myProcess = new ActivityManager.RunningAppProcessInfo();
 
-        /// <summary>
-        /// returns true when the app detects that it's running
-        /// in background
-        /// </summary>
-        /// <returns>bool</returns>
-        public static bool IsInBkGrd()
-        {
-            ActivityManager.GetMyMemoryState(myProcess);
-
-            if (myProcess.Importance == Importance.Foreground)
-            {
-                AppState.Bkgrd = false;
-                return false;
-            }
-            else
-            {
-                AppState.Bkgrd = true;
-                return true;
-            }
-        }
-        
-        public static bool _notificationLongTimerSet = false;
 
         /// <summary>
         /// starts/restarts the notifications, 
@@ -167,7 +394,7 @@ namespace StartServices.Servicesclass
                     _fm5.SendNotifications(ExtNotifications._customNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
-                if (ExtStickyService._notificationsHaveBeenSent)
+                if (ExtStickyService.NotificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
                     if (!ExtStickyService._notificationLongTimerSet)
@@ -180,7 +407,7 @@ namespace StartServices.Servicesclass
                 }
                 else if (!AppState.UserIsLoggedIn)
                 {
-                    await Task.Delay(380000); 
+                    await Task.Delay(380000);
                 }
                 //user is logged in but has not yet received a notification
                 else
@@ -190,8 +417,6 @@ namespace StartServices.Servicesclass
             }
         }
 
-        private static bool _notificationStackExecutionInProgress = false;
-        
         public override void OnDestroy()
         {
             try
@@ -203,7 +428,11 @@ namespace StartServices.Servicesclass
                 Console.WriteLine(ex.Message);
             }
         }
-        
+
+        /// <summary>
+        /// Timer task for background notifications
+        /// has to be within the service so that it's more persistent
+        /// </summary>
         public class ExtTimerTask : Java.Util.TimerTask
         {
             public async override void Run()
@@ -233,29 +462,116 @@ namespace StartServices.Servicesclass
             }
         }
 
-
         public static bool DummyLoop()
         {
+
             var dummyVar = true;
             return dummyVar;
         }
 
-        public static int _startForegroundNotificationId = 6666;
-        
+
+        /// <summary>
+        /// returns true when the app detects that it's running
+        /// in background
+        /// </summary>
+        /// <returns>bool</returns>
+        public static bool IsInBkGrd()
+        {
+            ActivityManager.GetMyMemoryState(_myProcess);
+
+            if (_myProcess.Importance == Importance.Foreground)
+            {
+                AppState.Bkgrd = false;
+                return false;
+            }
+            else
+            {
+                AppState.Bkgrd = true;
+                return true;
+            }
+        }
+
+        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
+        {
+
+        }
+
+        public int AudioSessionId { get { return 6; } }
+
+        public int BufferPercentage
+        {
+            get
+            {
+                return 100;
+            }
+        }
+
+        public int CurrentPosition
+        {
+            get
+            {
+                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].CurrentPosition;
+            }
+            set
+            {
+                MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].SeekTo(value);
+            }
+        }
+
+        public int Duration { get { return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].Duration; } }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+            }
+        }
+
+        public bool CanPause()
+        {
+            return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+        }
+
+        public bool CanSeekBackward()
+        {
+            return true;
+        }
+
+        public bool CanSeekForward()
+        {
+            return true;
+        }
+
+        void MediaController.IMediaPlayerControl.Pause()
+        {
+            Pause();
+        }
+
+        public void SeekTo(int pos)
+        {
+            CurrentPosition = pos;
+        }
+
+        void MediaController.IMediaPlayerControl.Start()
+        {
+            Play();
+        }
+
+
+
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
-
             public ExtStickyService _serviceContext;
-            
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 if (MainActivity._backgroundRequested)
                 {
                     try
                     {
-                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                         _wl.Acquire();
                     }
                     catch (Exception ex)
@@ -266,7 +582,7 @@ namespace StartServices.Servicesclass
                     {
                         if (wifiLock == null)
                         {
-                            wifiLock = wifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                            wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
                         }
                         wifiLock.Acquire();
                     }
@@ -281,8 +597,8 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        _pm = (PowerManager)_service.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = _pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+                        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                         _wl.Release();
                     }
                     catch
@@ -314,32 +630,6 @@ namespace StartServices.Servicesclass
             {
             }
         }
-
-        //public static Notification GetStartServiceNotification()
-        //{
-
-        //    var _ctx = Android.App.Application.Context;
-        //    Notification note = new Notification();
-
-        //    var resultIntent = new Intent(_ctx, typeof(MainActivity));
-        //    var valuesForActivity = new Bundle();
-        //    valuesForActivity.PutInt(MainActivity.COUNT_KEY, 1);
-        //    MainActivity.NOTIFICATION_ID += 6;
-        //    var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-
-
-        //    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-        //            .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-        //            .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-        //            .SetContentTitle("BitChute Entering Background Mode") // Set the title
-        //            .SetNumber(1) // Display the count in the Content Info
-        //            .SetSmallIcon(2130837590) // This is the icon to display
-        //            .SetContentText("now Notifying");
-
-        //    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-        //    note = builder.Build();
-        //    return note;
-        //}
     }
 }
 

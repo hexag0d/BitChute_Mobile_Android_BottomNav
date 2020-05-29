@@ -1,19 +1,27 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Fragments;
+using BitChute;
 using HtmlAgilityPack;
-using static BottomNavigationViewPager.Models.VideoModel;
+using StartServices.Servicesclass;
+using static BitChute.Models.VideoModel;
+using BitChute;
 
-namespace BottomNavigationViewPager.Classes
+namespace BitChute.Classes
 {
-    public class VideoDownloader
+    [Service(Exported = true)]
+    public class VideoDownloader : Service
     {
         public static bool LatestDownloadSucceeded;
         public static bool VideoDownloadInProgress;
@@ -89,8 +97,8 @@ namespace BottomNavigationViewPager.Classes
                     if ((videoCardTask.Result).VideoUri.AbsolutePath == "" 
                         || (videoCardTask.Result).VideoUri.AbsolutePath == null)
                     {
-                        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
-                        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.VideoSourceMissing(), ToastLength.Long);
+                        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
+                        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
                         VideoDownloadInProgress = false;
                         return;
                     }
@@ -166,7 +174,15 @@ namespace BottomNavigationViewPager.Classes
         private static string _progString;
         private static Android.Graphics.Color _progColor;
         private static bool _progBlueUp = true;
-        
+
+        public VideoDownloader(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+        {
+        }
+
+        public VideoDownloader()
+        {
+        }
+
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
             decimal progress = ((decimal)e.BytesReceived/(decimal)bytes_total) * 100;
@@ -235,7 +251,7 @@ namespace BottomNavigationViewPager.Classes
             _progColor = Android.Graphics.Color.Rgb(_progRed, _progGreen, _progBlue);
             ViewHelpers.Main.DownloadFAB.SetColorFilter(null); 
             ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progColor);
-            ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.FileDownloadSuccess();
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
         }
 
         /// <summary>
@@ -272,8 +288,8 @@ namespace BottomNavigationViewPager.Classes
             {
                 if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
                 {
-                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.VideoSourceMissing();
-                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.VideoSourceMissing(), ToastLength.Long);
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
+                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
                     return false;
                 }
             }
@@ -307,14 +323,14 @@ namespace BottomNavigationViewPager.Classes
             VideoDownloadInProgress = false;
             if (System.IO.File.Exists(filePath))
             {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.FileDownloadSuccess() ,ToastLength.Long);
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.FileDownloadSuccess();
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadSuccess() ,ToastLength.Long);
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
                 return true;
             }
             else
             {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Common.IO.FileDownloadFailed(), ToastLength.Long);
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Common.IO.FileDownloadFailed();
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadFailed(), ToastLength.Long);
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadFailed();
                 return false;
             }
         }
@@ -323,6 +339,55 @@ namespace BottomNavigationViewPager.Classes
         {
             _wc.CancelAsync();
             VideoDownloadInProgress = false;
+        }
+
+        public override IBinder OnBind(Intent intent)
+        {
+            return null;
+        }
+
+        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
+        {
+            try
+            {
+                if (ExtStickyService.Pm == null)
+                {
+                    ExtStickyService.Pm = (PowerManager)GetSystemService(Context.PowerService);
+                }
+                PowerManager.WakeLock _wl = ExtStickyService.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                _wl.Acquire();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return StartCommandResult.Sticky;
+        }
+
+        /// <summary>
+        /// When we start on the foreground we will present a notification to the user
+        /// When they press the notification it will take them to the main page so they can control the music
+        /// </summary>
+        public void StartForeground()
+        {
+            try
+            {
+                var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
+                                new Intent(ApplicationContext, typeof(MainActivity)),
+                                PendingIntentFlags.UpdateCurrent);
+
+                var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                .SetContentTitle("BitChute streaming in background")
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetPriority(NotificationCompat.PriorityLow);
+
+                StartForeground(-6666, builder.Build());
+            }
+            catch
+            {
+
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ s̪͌t̖͑e̯̻͐ͧe̱̅m̙̼̩̤͎̬̞i͓̦͔t͖̺̙̗͍̞ ̪͎͕̲̱ͨ̎͗̒̚
 g̪ͧab.̖͔͍͖̟ͤ͒͗͆̽ai̹͇̭͙̲̘ͨ͒̅ͥ̂̀ @̜̙͖͕͙̓ͯͪ̌ͩh̏ͭ̿̾e̫̼͓̠̜̭x͚̼̭̩̔͑̅ͦạ͉͓̥͋ͭ̅̒g̹̑o̗͑͌ͅd̠͙͕̤̩ͩ̾͌̽̄
 
 b̏͒a̺̲̺s̲ḛͩd ̲͓̘͇̆̊ͨ̂ȍ̭̙̣̝̈́ͣ̅f̫̩̀̚f͔̹̯̞͓ͮ͋̔̆̃ͮͅ ̥̟ͥ̿t͍̰̗̠ͪ̍̿̓h̘͔͎̲ͅe͎ ̌̄ẗ̩͉̣̬̳̜́͆ͪͣ̄̂e͕̝̭̗̘̘̺̎͗̌ͬ̈́ͤ̒m̬͚ͦ͊ṗ̞̪͍̝̙̞̩͐̃͗̉̅̋l̼̤̲͐̓ͭåͤ̿̐̅͗t͍̠͇e̓ͥ͑ͨ͌͆ ̪̮͇̻̫ͅ hnabbasi
-https://github.com/hnabbasi/BottomNavigationViewPager
+https://github.com/hnabbasi/BitChute
  ̮̼̤̯͐̅̆̒
  *̙͓̠̲̼͆ͣ̔̒̂/
 
@@ -46,23 +46,23 @@ using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Internal;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Views;
-using BottomNavigationViewPager.Adapters;
-using BottomNavigationViewPager.Classes;
-using BottomNavigationViewPager.Fragments;
+using BitChute.Adapters;
+using BitChute.Classes;
+using BitChute.Fragments;
+
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BottomNavigationViewPager.Fragments.TheFragment4;
+using static BitChute.Fragments.TheFragment4;
 
-namespace BottomNavigationViewPager
+namespace BitChute
 {
     //we need to set the intent filter so that links can open inapp
     [Android.App.IntentFilter(new[] { Intent.ActionView },
@@ -101,7 +101,7 @@ namespace BottomNavigationViewPager
         public static readonly string COUNT_KEY = "count";
 
         public static Window _window;
-        public static View _mainView;
+        public static View MainView;
         
         public static ExtStickyService _service = new ExtStickyService();
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;

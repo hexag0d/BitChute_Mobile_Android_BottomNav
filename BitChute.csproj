@@ -10,8 +10,8 @@
     <TemplateGuid>{122416d6-6b49-4ee2-a1e8-b825f31c79fe}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BottomNavigationViewPager</RootNamespace>
-    <AssemblyName>BottomNavigationViewPager</AssemblyName>
+    <RootNamespace>BitChute</RootNamespace>
+    <AssemblyName>BitChute</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
@@ -80,6 +80,7 @@
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
     <Compile Include="Classes\ExtendedChromeClient.cs" />
+    <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
     <Compile Include="Classes\ExtWebInterface.cs" />
     <Compile Include="Classes\FileBrowser.cs" />
@@ -241,6 +242,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\download_grey_round.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\VideoViewLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

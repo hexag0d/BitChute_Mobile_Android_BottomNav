@@ -1,4 +1,4 @@
-﻿namespace BottomNavigationViewPager.Classes
+﻿namespace BitChute.Classes
 {
     class JavascriptCommands
     {
