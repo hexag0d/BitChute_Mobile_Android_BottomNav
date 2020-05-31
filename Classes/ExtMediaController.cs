@@ -71,7 +71,7 @@ namespace BitChute.Classes
     {
         public void OnClick(View v)
         {
-            ExtStickyService.SkipToPrev();
+            ExtStickyService.SkipToPrev(MainActivity.ViewPager.CurrentItem);
         }
 
         public bool OnLongClick(View v)

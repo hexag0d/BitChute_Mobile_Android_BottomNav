@@ -79,16 +79,18 @@ namespace BitChute.Fragments
             //ViewHelpers.Tab0.DownloadButton.Click += VideoDownloader.VideoDownloadButton_OnClick;
 
 
-            if (!tabLoaded)
+            Wv.SetWebViewClient(Wvc);
+            if (AppState.NotificationStartedApp)
             {
-                Wv.SetWebViewClient(Wvc);
-                Wv.Settings.JavaScriptEnabled = true;
-                Wv.Settings.DisplayZoomControls = false;
-                //Wv.Settings.AllowFileAccess = true;
-                //Wv.Settings.AllowContentAccess = true;
-                
-                tabLoaded = true;
+                SetAutoPlayWithDelay(1);
             }
+            Wv.Settings.JavaScriptEnabled = true;
+            Wv.Settings.DisplayZoomControls = false;
+            //Wv.Settings.AllowFileAccess = true;
+            //Wv.Settings.AllowContentAccess = true;
+
+            tabLoaded = true;
+            
             Wv.LoadUrl(RootUrl);
             if (AppSettings.ZoomControl)
             {
@@ -96,9 +98,17 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             CustomSetTouchListener(AppState.Display.Horizontal);
+
+
             //Wv.SetOnScrollChangeListener(new ExtScrollListener());
             //Wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
+        }
+
+        public static async void SetAutoPlayWithDelay(int delay)
+        {
+            await Task.Delay(delay);
+            Wv.Settings.MediaPlaybackRequiresUserGesture = false;
         }
 
         public static void SwapView(View v)
@@ -109,8 +119,6 @@ namespace BitChute.Fragments
         public override void OnResume()
         {
             base.OnResume();
-            IntentFilter intentFilter = new IntentFilter(Intent.ActionHeadsetPlug);
-
         }
 
         /// <summary>
@@ -208,7 +216,7 @@ namespace BitChute.Fragments
         /// <summary>
         /// tells the webview to GoBack, if it can
         /// </summary>
-        public void WebViewGoBack()
+        public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();
@@ -329,7 +337,10 @@ namespace BitChute.Fragments
         {
             public override void OnPageFinished(WebView _view, string url)
             {
-                base.OnPageFinished(_view, url);
+                if (_autoInt == 1 || AppState.NotificationStartedApp)
+                {
+                    Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                }
                 Wv.ScrollTo(0, 0);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
@@ -337,7 +348,6 @@ namespace BitChute.Fragments
                 //Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
 
                     HideWatchLabel();
-                
 
                 if (!AppSettings.Tab1FeaturedOn)
                 {
@@ -365,10 +375,6 @@ namespace BitChute.Fragments
 
                 // if autoInt is 1 then we will set the MediaPlaybackRequiresUserGesture
                 //strange.. i know.. but it works
-                if (_autoInt == 1)
-                {
-                    Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                }
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 SetReload();
                 HideLinkOverflow();
@@ -377,7 +383,7 @@ namespace BitChute.Fragments
                 //ExpandPage(true);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                
+                base.OnPageFinished(_view, url);
             }
         }
     }

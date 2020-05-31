@@ -21,13 +21,13 @@ using Android.Media;
 using Android.Support.V4.App;
 using BitChute.Models;
 using static BitChute.Models.VideoModel;
-
 using BitChute;
 
 namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
-    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback, ActionNext, ActionPrevious })]
+    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
+        ActionNext, ActionPrevious, ActionLoadUrl })]
     public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener,
         MediaController.IMediaPlayerControl
     {
@@ -40,6 +40,8 @@ namespace StartServices.Servicesclass
         public const string ActionTogglePlayback = "com.xamarin.action.TOGGLEPLAYBACK";
         public const string ActionNext = "com.xamarin.action.NEXT";
         public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
+        public const string ActionLoadUrl = "com.xamarin.action.LOADURL";
+
 
         private static bool _serviceIsLooping = false;
         public static MainActivity Main;
@@ -198,9 +200,23 @@ namespace StartServices.Servicesclass
             }
         }
 
-        public static void SkipToPrev()
+        public static void SkipToPrev(int tab)
         {
-            ExtStickyServ.CurrentPosition = 0;
+            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            {
+                switch (tab)
+                {
+                    case 0: TheFragment0.WebViewGoBack(); break;
+                    case 1: TheFragment1.WebViewGoBack(); break;
+                    case 2: TheFragment2.WebViewGoBack(); break;
+                    case 3: TheFragment3.WebViewGoBack(); break;
+                    case 4: TheFragment4.WebViewGoBack(); break;
+                }
+            }
+            else
+            {
+                ExtStickyServ.CurrentPosition = 0;
+            }
         }
 
         /// <summary>
@@ -241,7 +257,7 @@ namespace StartServices.Servicesclass
         {
             if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
             {
-                HeadphoneIntent.ControlIntentReceiver.SendPauseVideoCommand();
+                CustomIntent.ControlIntentReceiver.SendPauseVideoCommand();
             }
             else
             {
@@ -295,6 +311,49 @@ namespace StartServices.Servicesclass
             wifiLock = null;
         }
 
+        protected void OnNewIntent(Intent intent)
+        {
+            string url = "";
+            if (intent != null)
+            {
+                try
+                {
+                    url = intent.Extras.GetString("URL");
+                }
+                catch
+                {
+
+                }
+            }
+            if (url == "" || url == null)
+                return;
+
+            try
+            {
+                switch (MainActivity.ViewPager.CurrentItem)
+                {
+                    case 0:
+                        TheFragment0.Wv.LoadUrl(url);
+                        break;
+                    case 1:
+                        TheFragment1.Wv.LoadUrl(url);
+                        break;
+                    case 2:
+                        TheFragment2.Wv.LoadUrl(url);
+                        break;
+                    case 3:
+                        TheFragment3.Wv.LoadUrl(url);
+                        break;
+                    case 4:
+                        TheFragment4.Wv.LoadUrl(url);
+                        break;
+                }
+            }
+            catch
+            {
+            }
+        }
+
         /// <summary>
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
@@ -339,14 +398,37 @@ namespace StartServices.Servicesclass
         {
             return null;
         }
+
+        public static void LoadVideoFromUrl(int tab, string url)
+        {
+            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            {
+                switch (tab)
+                {
+                    case 0: TheFragment0.Wv.LoadUrl(url); break;
+                    case 1: TheFragment1.Wv.LoadUrl(url); break;
+                    case 2: TheFragment2.Wv.LoadUrl(url); break;
+                    case 3: TheFragment3.Wv.LoadUrl(url); break;
+                    case 4: TheFragment4.Wv.LoadUrl(url); break;
+                }
+            }
+            else
+            {
+
+            }
+        }
+
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            //intent.Flags = ActivityFlags.
             switch (intent.Action)
             {
                 case ActionPlay: Play(); break;
                 case ActionStop: Stop(); break;
                 case ActionPause: Pause(); break;
                 case ActionNext: SkipToNext(null); break;
+                case ActionPrevious: SkipToPrev(MainActivity.ViewPager.CurrentItem); break;
+                case ActionLoadUrl: LoadVideoFromUrl(MainActivity.ViewPager.CurrentItem, intent.Extras.GetString("URL")); break;
             }
 
             WifiManager = (WifiManager)GetSystemService(Context.WifiService);
@@ -385,8 +467,6 @@ namespace StartServices.Servicesclass
         }
 
         #endregion
-
-
 
         /// <summary>
         /// starts/restarts the notifications, 
@@ -621,52 +701,15 @@ namespace StartServices.Servicesclass
             public override string Url => base.Url;
             public ExtStickyService _serviceContext;
 
-            //public override void OnWindowFocusChanged(bool hasWindowFocus)
-            //{
-            //    base.OnWindowFocusChanged(hasWindowFocus);
-                //StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
-                //if (MainActivity._backgroundRequested)
-                //{
-                //    try
-                //    {
-                //        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                //        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                //        _wl.Acquire();
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Console.WriteLine(ex.Message);
-                //    }
-                //    try
-                //    {
-                //        if (wifiLock == null)
-                //        {
-                //            wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
-                //        }
-                //        wifiLock.Acquire();
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Console.WriteLine(ex.Message);
-                //    }
-                //    while (ExtStickyService.IsInBkGrd())
-                //    {
-                //        var dontSleep = DummyLoop();
-                //        System.Threading.Thread.Sleep(3600);
-                //    }
-                //    try
-                //    {
-                //        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                //        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                //        _wl.Release();
-                //    }
-                //    catch
-                //    {
-
-                //    }
-                //}
-                //MainActivity._backgroundRequested = false;
-            //}
+            public override void OnWindowFocusChanged(bool hasWindowFocus)
+            {
+                base.OnWindowFocusChanged(hasWindowFocus);
+                if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
+                {
+                    StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+                }
+                AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+            }
 
             public ServiceWebView(Context context) : base(context)
             {

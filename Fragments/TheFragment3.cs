@@ -49,7 +49,7 @@ namespace BitChute.Fragments
             }
         }
 
-        public void WebViewGoBack()
+        public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();
@@ -100,8 +100,7 @@ namespace BitChute.Fragments
                 //get the url string from prefs
                 RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
             }
-            if (!tabLoaded)
-            {
+
                 Wv.SetWebViewClient(new ExtWebViewClient());
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
@@ -109,7 +108,7 @@ namespace BitChute.Fragments
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
-            }
+            
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;

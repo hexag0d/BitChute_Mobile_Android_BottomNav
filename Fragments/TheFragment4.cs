@@ -141,8 +141,7 @@ namespace BitChute.Fragments
             {
                 RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             }
-            if (!tabLoaded)
-            {
+
                 Wv.SetWebViewClient(new ExtWebViewClient());
                 Wv.SetWebChromeClient(new ExtendedChromeClient(Main));
                 Wv.Settings.JavaScriptEnabled = true;
@@ -207,7 +206,7 @@ namespace BitChute.Fragments
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
                 _versionTextView.Text = AppState.AppVersion;
                 tabLoaded = true;
-            }
+            
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
@@ -650,7 +649,7 @@ namespace BitChute.Fragments
         //    }
         //}
 
-        public void WebViewGoBack()
+        public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();

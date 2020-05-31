@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+	android:id="@+id/playControlTotal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 	<LinearLayout
@@ -24,29 +25,28 @@
 				android:layout_height="match_parent"
 				android:id="@+id/textView1" />
 		</LinearLayout>
-
 		<LinearLayout
 			android:orientation="horizontal"
 			android:minWidth="25px"
 			android:minHeight="25px"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/linearLayout2" >
+			android:id="@+id/linearLayout2">
 			<Button
 				android:text="Prev"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:id="@+id/notificationPrevious" />
 			<Button
-				android:text="play"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:id="@+id/notificationPlay" />
-			<Button
 				android:text="||"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:id="@+id/notificationPause" />
+			<Button
+				android:text="play"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/notificationPlay" />
 			<Button
 				android:text="Next>>"
 				android:layout_width="wrap_content"

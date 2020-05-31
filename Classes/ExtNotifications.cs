@@ -51,7 +51,7 @@ namespace BitChute.Classes
             var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0,
                 new Intent(Android.App.Application.Context, typeof(MainActivity)),
                 PendingIntentFlags.UpdateCurrent);
-
+            
 
             // Using RemoteViews to bind custom layouts into Notification
             RemoteViews views = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
@@ -70,9 +70,9 @@ namespace BitChute.Classes
 
             //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-            //Intent previousIntent = new Intent(this, NotificationService.class);
-            //    previousIntent.setAction(Constants.ACTION.PREV_ACTION);
-            //PendingIntent ppreviousIntent = PendingIntent.GetService(this, 0, previousIntent, 0);
+            Intent previousIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            previousIntent.SetAction(ExtStickyService.ActionPrevious);
+            PendingIntent ppreviousIntent = PendingIntent.GetService(Android.App.Application.Context, 0, previousIntent, 0);
             Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
             playIntent.SetAction(ExtStickyService.ActionPlay);
             PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
@@ -89,6 +89,8 @@ namespace BitChute.Classes
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationPause, ppauseIntent);
             views.SetOnClickPendingIntent(Resource.Id.notificationNext, pnextIntent);
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationNext, pnextIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationPrevious, ppreviousIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationPrevious, ppreviousIntent);
 
             //views.setImageViewResource(R.id.status_bar_play,
             //R.drawable.apollo_holo_dark_pause);
@@ -115,7 +117,74 @@ namespace BitChute.Classes
             status.ContentIntent = pendingIntent;
             return status;
         }
+
+        public static Notification BuildPlayControlNotificationTest()
+        {
+            var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0,
+                new Intent(Android.App.Application.Context, typeof(ExtStickyService)),
+                PendingIntentFlags.UpdateCurrent);
+
+            // Using RemoteViews to bind custom layouts into Notification
+            RemoteViews views = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
+            RemoteViews bigViews = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
+
+            // showing default album image
+            //views.SetViewVisibility(R.id.status_bar_icon, ViewStates.Visible);
+            //views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
+            //bigViews.setImageViewBitmap(R.id.status_bar_album_art,
+            //Constants.getDefaultAlbumArt(this));
+
+            Intent notificationIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            //notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+            //notificationIntent.AddFlags(
+            //| Intent.Flag);
+
+            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            playIntent.SetAction(ExtStickyService.ActionLoadUrl);
+            PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
+
+            views.SetOnClickPendingIntent(Resource.Layout.PlaystateNotification, pplayIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Layout.PlaystateNotification, pplayIntent);
+            views.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
+            views.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationNext, pplayIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationNext, pplayIntent);
+
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                .SetContentTitle("BitChute streaming test")
+                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                .SetOngoing(true)
+                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
+
+            var status = builder.Build();
             
+            status.ContentView = views;
+            status.BigContentView = bigViews;
+            status.Flags = NotificationFlags.OngoingEvent;
+            status.Icon = Resource.Drawable.bitchute_notification2;
+            status.ContentIntent = pendingIntent;
+
+            return status;
+        }
+
+        /// <summary>
+        /// takes an intent and turns it into a notification that won't bring the app to forefront.
+        /// this is useful for when a user wants to play a new video from the notification
+        /// menu instead of going back in the app
+        /// </summary>
+        /// <param name="original">the intent you want to strip</param>
+        /// <returns>background intent</returns>
+        public static Intent SwapToBackgroundNotification(Intent original)
+        {
+            Intent newIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            newIntent.AddFlags(original.Flags);
+            newIntent.PutExtras(original.Extras);
+            newIntent.SetAction(ExtStickyService.ActionLoadUrl);
+            return newIntent;
+        }
+
         public async Task<List<CustomNotification>> DecodeHtmlNotifications(string html)
         {
             await Task.Run(() =>

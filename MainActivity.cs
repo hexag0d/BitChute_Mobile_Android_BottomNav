@@ -36,7 +36,7 @@ s̪͌t̖͑e̯̻͐ͧe̱̅m̙̼̩̤͎̬̞i͓̦͔t͖̺̙̗͍̞ ̪͎͕̲̱ͨ̎͗̒̚
 g̪ͧab.̖͔͍͖̟ͤ͒͗͆̽ai̹͇̭͙̲̘ͨ͒̅ͥ̂̀ @̜̙͖͕͙̓ͯͪ̌ͩh̏ͭ̿̾e̫̼͓̠̜̭x͚̼̭̩̔͑̅ͦạ͉͓̥͋ͭ̅̒g̹̑o̗͑͌ͅd̠͙͕̤̩ͩ̾͌̽̄
 
 b̏͒a̺̲̺s̲ḛͩd ̲͓̘͇̆̊ͨ̂ȍ̭̙̣̝̈́ͣ̅f̫̩̀̚f͔̹̯̞͓ͮ͋̔̆̃ͮͅ ̥̟ͥ̿t͍̰̗̠ͪ̍̿̓h̘͔͎̲ͅe͎ ̌̄ẗ̩͉̣̬̳̜́͆ͪͣ̄̂e͕̝̭̗̘̘̺̎͗̌ͬ̈́ͤ̒m̬͚ͦ͊ṗ̞̪͍̝̙̞̩͐̃͗̉̅̋l̼̤̲͐̓ͭåͤ̿̐̅͗t͍̠͇e̓ͥ͑ͨ͌͆ ̪̮͇̻̫ͅ hnabbasi
-https://github.com/hnabbasi/BitChute
+https://github.com/hnabbasi/BottomNavigationViewPager
  ̮̼̤̯͐̅̆̒
  *̙͓̠̲̼͆ͣ̔̒̂/
 
@@ -105,7 +105,8 @@ namespace BitChute
         public static ExtStickyService _service = new ExtStickyService();
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
-        public static HeadphoneIntent.ControlIntentReceiver _ControlIntentReceiver;
+        public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
+        public static CustomIntent.BackgroundIntentReceiver BackgroundReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -132,17 +133,11 @@ namespace BitChute
                     var _tempUrl = _sentIntent.Extras.GetString("URL");
                     if (_tempUrl != "" && _tempUrl != null)
                         TheFragment0.RootUrl = _tempUrl;
+                    AppState.NotificationStartedApp = true;
                 }
                 catch
                 {
                 }
-            }
-            try
-            {
-                StartService(mServiceIntent);
-            }
-            catch
-            {
             }
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
@@ -166,7 +161,8 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
-            _ControlIntentReceiver = new HeadphoneIntent.ControlIntentReceiver();
+            ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+            BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
         }
 
         public static TheFragment0 Fm0 = TheFragment0.NewInstance("Home", "tab_home");
@@ -185,7 +181,6 @@ namespace BitChute
                 Fm4
             };
         }
-        
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
         public static bool _navHidden = false;
@@ -274,19 +269,19 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        Fm0.WebViewGoBack();
+                        TheFragment0.WebViewGoBack();
                         break;
                     case 1:
-                        Fm1.WebViewGoBack();
+                        TheFragment1.WebViewGoBack();
                         break;
                     case 2:
-                        Fm2.WebViewGoBack();
+                        TheFragment2.WebViewGoBack();
                         break;
                     case 3:
-                        Fm3.WebViewGoBack();
+                        TheFragment3.WebViewGoBack();
                         break;
                     case 4:
-                        Fm4.WebViewGoBack();
+                        TheFragment4.WebViewGoBack();
                         break;
                 }
             }
@@ -443,7 +438,6 @@ namespace BitChute
             Fm3.OnSettingsChanged(oa);
             Fm4.OnSettingsChanged(oa);
         }
-
 
         /// <summary>
         /// changes tabs 4 and 5
@@ -622,7 +616,6 @@ namespace BitChute
             }
             Fm4.ShowAppSettingsMenu();
         }
-        
 
         /// <summary>
         /// Listens for long click events on tab 2
@@ -633,6 +626,7 @@ namespace BitChute
         {
             AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
             ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
+            //ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotificationTest());
             Main.MoveTaskToBack(true);
         }
 
@@ -705,7 +699,6 @@ namespace BitChute
         {
             string url = "";
             base.OnNewIntent(intent);
-
             if (intent != null)
             {
                 try
@@ -725,19 +718,19 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        Fm0.LoadCustomUrl(url);
+                        TheFragment0.Wv.LoadUrl(url);
                         break;
                     case 1:
-                        Fm1.LoadCustomUrl(url);
+                        TheFragment1.Wv.LoadUrl(url);
                         break;
                     case 2:
-                        Fm2.LoadCustomUrl(url);
+                        TheFragment2.Wv.LoadUrl(url);
                         break;
                     case 3:
-                        Fm3.LoadCustomUrl(url);
+                        TheFragment3.Wv.LoadUrl(url);
                         break;
                     case 4:
-                        Fm4.LoadCustomUrl(url);
+                        TheFragment4.Wv.LoadUrl(url);
                         break;
                 }
             }
@@ -902,37 +895,36 @@ namespace BitChute
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
 
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            base.OnWindowFocusChanged(hasFocus);
-            if (hasFocus)
-            {
-            }
-            else
-            {
 
-            }
-        }
+        //protected override void OnPause()
+        //{
+        //    base.OnPause();
+        //    ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+        //}
 
         protected override void OnResume()
         {
-            base.OnResume();
-
+            if (Intent != null)
+            {
+                var check = Intent;
+            }
             try {
                 IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
-                RegisterReceiver(_ControlIntentReceiver, filter);
+                RegisterReceiver(ForegroundReceiver, filter);
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
+            base.OnResume();
         }
         
         protected override void OnDestroy()
         {
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
-            
+            AppState.NotificationStartedApp = false;
             base.OnDestroy();
         }
     }

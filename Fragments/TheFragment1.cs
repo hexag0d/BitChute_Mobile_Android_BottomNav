@@ -55,8 +55,7 @@ namespace BitChute.Fragments
             
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
 
-            if (!tabLoaded)
-            {
+
                 Wv.SetWebViewClient(_wvc);
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.LoadUrl(RootUrl);
@@ -64,7 +63,7 @@ namespace BitChute.Fragments
                 //_wv.Settings.AllowContentAccess = true;
                 //_wv.Settings.AllowFileAccess = true;
                 tabLoaded = true;
-            }
+            
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
@@ -148,7 +147,7 @@ namespace BitChute.Fragments
         //    }
         //}
 
-        public void WebViewGoBack()
+        public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();

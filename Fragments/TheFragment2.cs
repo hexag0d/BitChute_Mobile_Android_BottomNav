@@ -61,22 +61,20 @@ namespace BitChute.Fragments
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
 
-            if (!tabLoaded)
-            {
                 Wv.SetWebViewClient(_wvc);
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                Wv.Settings.DisplayZoomControls = false;
                 Wv.LoadUrl(RootUrl);
                 Wv.Settings.JavaScriptEnabled = true;
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
                 tabLoaded = true;
-            }
+            
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
+            Wv.Settings.DisplayZoomControls = false;
             LoadUrlWithDelay(RootUrl, 2000);
             CustomSetTouchListener(AppState.Display.Horizontal);
             //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
@@ -174,7 +172,7 @@ namespace BitChute.Fragments
             }
         }
 
-        public void WebViewGoBack()
+        public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();
