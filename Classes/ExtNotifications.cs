@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
 using HtmlAgilityPack;
+using StartServices.Servicesclass;
 
 namespace BitChute.Classes
 {
@@ -44,7 +45,76 @@ namespace BitChute.Classes
                 }
             }
         }
-         
+
+        public static Notification BuildPlayControlNotification()
+        {
+            var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0,
+                new Intent(Android.App.Application.Context, typeof(MainActivity)),
+                PendingIntentFlags.UpdateCurrent);
+
+
+            // Using RemoteViews to bind custom layouts into Notification
+            RemoteViews views = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
+            RemoteViews bigViews = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
+
+            // showing default album image
+            //views.SetViewVisibility(R.id.status_bar_icon, ViewStates.Visible);
+            //views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
+            //bigViews.setImageViewBitmap(R.id.status_bar_album_art,
+            //Constants.getDefaultAlbumArt(this));
+
+            Intent notificationIntent = new Intent(Android.App.Application.Context, typeof(MainActivity));
+            //notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+            //notificationIntent.AddFlags(
+            //| Intent.Flag);
+
+            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+            //Intent previousIntent = new Intent(this, NotificationService.class);
+            //    previousIntent.setAction(Constants.ACTION.PREV_ACTION);
+            //PendingIntent ppreviousIntent = PendingIntent.GetService(this, 0, previousIntent, 0);
+            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            playIntent.SetAction(ExtStickyService.ActionPlay);
+            PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
+            Intent nextIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            nextIntent.SetAction(ExtStickyService.ActionNext);
+            PendingIntent pnextIntent = PendingIntent.GetService(Android.App.Application.Context, 0, nextIntent, 0);
+            Intent pauseIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            pauseIntent.SetAction(ExtStickyService.ActionPause);
+            PendingIntent ppauseIntent = PendingIntent.GetService(Android.App.Application.Context, 0, pauseIntent, 0);
+
+            views.SetOnClickPendingIntent(Resource.Id.notificationPlay, pplayIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationPlay , pplayIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationPause, ppauseIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationPause, ppauseIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationNext, pnextIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationNext, pnextIntent);
+
+            //views.setImageViewResource(R.id.status_bar_play,
+            //R.drawable.apollo_holo_dark_pause);
+            //bigViews.setImageViewResource(R.id.status_bar_play,
+            //R.drawable.apollo_holo_dark_pause);
+            //views.setTextViewText(R.id.status_bar_track_name, "Song Title");
+            //bigViews.setTextViewText(R.id.status_bar_track_name, "Song Title");
+            //views.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
+            //bigViews.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
+            //bigViews.setTextViewText(R.id.status_bar_album_name, "Album Name");
+
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                .SetContentTitle("BitChute streaming in background")
+                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
+
+            var status = builder.Build();
+            status.ContentView = views;
+            status.BigContentView = bigViews;
+            status.Flags = NotificationFlags.OngoingEvent;
+            status.Icon = Resource.Drawable.bitchute_notification;
+            status.ContentIntent = pendingIntent;
+            return status;
+        }
+            
         public async Task<List<CustomNotification>> DecodeHtmlNotifications(string html)
         {
             await Task.Run(() =>
@@ -127,9 +197,7 @@ namespace BitChute.Classes
                             _customNoteList.Add(note);
                             currentListIndex++;
                         }
-
                         _customNoteList.Reverse();
-
                     }
                     _fm5 = TheFragment4._fm5;
                 }
@@ -141,9 +209,7 @@ namespace BitChute.Classes
 
                 //_fm5.SendNotifications();
             });
-
             return _customNoteList;
-
         }
         
         public async Task<string> GetBitChuteChannelLinkFromDiscus(string html)

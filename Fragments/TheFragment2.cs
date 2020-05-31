@@ -271,7 +271,6 @@ namespace BitChute.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                base.OnPageFinished(view, url);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
@@ -305,7 +304,8 @@ namespace BitChute.Fragments
                 HideLinkOverflow();
                 ExpandVideoCards(true);
                 //_wv.LoadUrl(JavascriptCommands._jsFillAvailable);
-                
+                base.OnPageFinished(view, url);
+
             }
         }
     }

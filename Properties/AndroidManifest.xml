@@ -16,6 +16,8 @@
 			<action android:name="android.intent.action.VIEW" />
 			<category android:name="android.intent.category.DEFAULT" />
 			<category android:name="android.intent.category.BROWSABLE" />
+      <action android:name="android.intent.action.MEDIA_BUTTON" />
+      <action android:name="android.media.AUDIO_BECOMING_NOISY" />
 		</activity>
 	</intent-filter>
 </manifest>

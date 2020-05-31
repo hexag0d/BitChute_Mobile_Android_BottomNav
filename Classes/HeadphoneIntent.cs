@@ -2,18 +2,19 @@
 using Android.Content;
 using Android.Runtime;
 using BitChute.Fragments;
+using StartServices.Servicesclass;
 
 namespace BitChute.Classes
 {
     public class HeadphoneIntent
     {
-        public class MusicIntentReceiver : BroadcastReceiver
+        public class ControlIntentReceiver : BroadcastReceiver
         {
-            public MusicIntentReceiver()
+            public ControlIntentReceiver()
             {
             }
 
-            public MusicIntentReceiver(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+            public ControlIntentReceiver(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
             {
             }
 
@@ -26,7 +27,7 @@ namespace BitChute.Classes
                     {
                         case 0:
                             //headset unplugged
-                            SendStopVideoCommand();
+                            SendPauseVideoCommand();
                             break;
                         case 1:
                             //headset plugged
@@ -35,9 +36,10 @@ namespace BitChute.Classes
                             break;
                     }
                 }
+                //else if(intent.Action ==)
             }
 
-            private void SendStopVideoCommand()
+            public static void SendPauseVideoCommand()
             {
                 try {
                     TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
@@ -51,6 +53,38 @@ namespace BitChute.Classes
                     Console.WriteLine(ex.Message);
                 }
             }
+
+            //private ComponentName remoteComponentName;
+            //private void RegisterRemoteClient()
+            //{
+            //       remoteComponentName = new ComponentName(PackageName, new RemoteControlBroadcastReceiver().ComponentName);
+            //    try
+            //    {
+            //        if (remoteControlClient == null)
+            //        {
+            //            ExtStickyService.AudioMan.RegisterMediaButtonEventReceiver(remoteComponentName);
+            //            //Create a new pending intent that we want triggered by remote control client
+            //            var mediaButtonIntent = new Intent(Intent.ActionMediaButton);
+            //            mediaButtonIntent.SetComponent(remoteComponentName);
+            //            // Create new pending intent for the intent
+            //            var mediaPendingIntent = PendingIntent.GetBroadcast(this, 0, mediaButtonIntent, 0);
+            //            // Create and register the remote control client
+            //            remoteControlClient = new RemoteControlClient(mediaPendingIntent);
+            //            audioManager.RegisterRemoteControlClient(remoteControlClient);
+            //        }
+            //        //add transport control flags we can to handle
+            //        remoteControlClient.SetTransportControlFlags(RemoteControlFlags.Play |
+            //                                 RemoteControlFlags.Pause |
+            //                                 RemoteControlFlags.PlayPause |
+            //                                 RemoteControlFlags.Stop |
+            //                                 RemoteControlFlags.Previous |
+            //                                 RemoteControlFlags.Next);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex);
+            //    }
+            //}
         }
     }
 }

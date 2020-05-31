@@ -73,6 +73,13 @@ namespace BitChute.Fragments
         private static RadioButton _showdlbuttonalways;
         private static RadioButton _showdlbuttonnever;
 
+        private static RadioButton _backgroundkeyfeed;
+        private static RadioButton _backgroundkeyany;
+
+        private static RadioButton _autoplayminimizedon;
+        private static RadioButton _autoplayfeedonly;
+        private static RadioButton _autoplayminimizedoff;
+
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
 

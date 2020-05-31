@@ -52,7 +52,7 @@ namespace BitChute.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout2, container, false);
-
+            
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
 
             if (!tabLoaded)
@@ -244,6 +244,17 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
 
+        }
+
+        public static void StartVideo()
+        {
+            Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+        }
+
+        public static string GetHtmlText()
+        {
+            string innerHtml = "";
+            return innerHtml;
         }
 
         private class ExtWebViewClient : WebViewClient

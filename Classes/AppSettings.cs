@@ -18,6 +18,17 @@ namespace BitChute.Classes
         public static bool FanMode { get; set; }
         public static bool Tab3Hide { get; set; }
         public static bool SettingsTabOverride { get; set; }
+
+        /// <summary>
+        /// any || feed
+        /// </summary>
+        public static string BackgroundKey { get; set; }
+
+        /// <summary>
+        /// any || feed
+        /// </summary>
+        public static string AutoPlayOnMinimized { get; set; }
+
         private static string _dlFabShowSetting = "onpress";
         /// <summary>
         /// onpress || never || always
@@ -103,6 +114,8 @@ namespace BitChute.Classes
             HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
             HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
             DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
+            AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
+            BackgroundKey = Prefs.GetString("backgroundkey", "feed");
             return;
         }
         

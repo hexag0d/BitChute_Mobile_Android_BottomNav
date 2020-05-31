@@ -27,7 +27,7 @@ using BitChute;
 namespace StartServices.Servicesclass
 {
     [Service(Exported = true)]
-    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop })]
+    [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback, ActionNext, ActionPrevious })]
     public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener,
         MediaController.IMediaPlayerControl
     {
@@ -37,6 +37,9 @@ namespace StartServices.Servicesclass
         public const string ActionPlay = "com.xamarin.action.PLAY";
         public const string ActionPause = "com.xamarin.action.PAUSE";
         public const string ActionStop = "com.xamarin.action.STOP";
+        public const string ActionTogglePlayback = "com.xamarin.action.TOGGLEPLAYBACK";
+        public const string ActionNext = "com.xamarin.action.NEXT";
+        public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
 
         private static bool _serviceIsLooping = false;
         public static MainActivity Main;
@@ -52,7 +55,8 @@ namespace StartServices.Servicesclass
 
         public static WifiManager WifiManager;
         public static WifiManager.WifiLock wifiLock;
-        public static AudioManager _audioManager;
+        public static AudioManager AudioMan;
+        
 
         private static bool _backgroundTimeout = false;
         public static bool NotificationsHaveBeenSent = false;
@@ -158,34 +162,40 @@ namespace StartServices.Servicesclass
             return mc;
         }
 
-
         private async void Play()
         {
-            await Task.Run(() =>
+            if (AppState.MediaPlayback.MediaPlayerIsStreaming)
             {
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
+                await Task.Run(() =>
                 {
+                    if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
+                    {
                     //We are simply paused so just start again
                     MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
                     //StartForeground();
                     return;
-                }
+                    }
 
-                try
-                {
-                    AquireWifiLock();
-                }
-                catch (Exception ex)
-                {
+                    try
+                    {
+                        AquireWifiLock();
+                    }
+                    catch (Exception ex)
+                    {
                     //unable to start playback log error
                     Console.WriteLine("Unable to start playback: " + ex);
-                }
+                    }
 
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                {
-                    AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
-                }
-            });
+                    if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                    {
+                        AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
+                    }
+                });
+            }
+            else
+            {
+                StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+            }
         }
 
         public static void SkipToPrev()
@@ -193,27 +203,57 @@ namespace StartServices.Servicesclass
             ExtStickyServ.CurrentPosition = 0;
         }
 
+        /// <summary>
+        /// skips to the next video on a WebView tab
+        /// </summary>
+        /// <param name="tab"></param>
+        public static void SendWebViewNextVideoCommand(int tab)
+        {
+            switch (tab)
+            {
+                case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+                case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+                case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+                case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+                case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+            }
+        }
+
         public static void SkipToNext(VideoCard vc)
         {
-            if (vc == null)
+            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
             {
-                //TabStates.Tab1.VideoCardLoader = TabStates.Main.NextUp.NextUpVideoCard;
-                //    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Main.GetDefaultVideoDetailView(
-                //        MainActivity.ViewPager.CurrentItem), null, TabStates.Main.NextUp.NextUpVideoCard, 
-                //        MainActivity.ViewPager.CurrentItem);
+                SendWebViewNextVideoCommand(MainActivity.ViewPager.CurrentItem);
+            }
+            else
+            {
+                if (vc == null)
+                {
+                    //TabStates.Tab1.VideoCardLoader = TabStates.Main.NextUp.NextUpVideoCard;
+                    //    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Main.GetDefaultVideoDetailView(
+                    //        MainActivity.ViewPager.CurrentItem), null, TabStates.Main.NextUp.NextUpVideoCard, 
+                    //        MainActivity.ViewPager.CurrentItem);
+                }
             }
         }
 
         private void Pause()
         {
-            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
-                return;
+            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            {
+                HeadphoneIntent.ControlIntentReceiver.SendPauseVideoCommand();
+            }
+            else
+            {
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
+                    return;
 
-            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
+            }
 
             //StopForeground(false);
-            _paused = true;
+            //_paused = true;
         }
 
         public static void Stop()
@@ -259,27 +299,16 @@ namespace StartServices.Servicesclass
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
         /// </summary>
-        public void StartForeground()
+        public static void StartForeground(Notification startNote)
         {
             try
             {
-                var pendingIntent = PendingIntent.GetActivity(ApplicationContext, 0,
-                                new Intent(ApplicationContext, typeof(MainActivity)),
-                                PendingIntentFlags.UpdateCurrent);
-
-                var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
-                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                .SetContentTitle("BitChute streaming in background") 
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
-                                .SetPriority(NotificationCompat.PriorityLow);
-
-                StartForeground(-6666, builder.Build());
+                ExtStickyServ.StartForeground(-777, startNote);
             }
             catch
             {
 
             }
-
         }
 
         #region StickyServiceMethods
@@ -301,7 +330,7 @@ namespace StartServices.Servicesclass
         {
             base.OnCreate();
             //Find our audio and notificaton managers
-            _audioManager = (AudioManager)GetSystemService(AudioService);
+            AudioMan = (AudioManager)GetSystemService(AudioService);
             WifiManager = (WifiManager)GetSystemService(WifiService);
             ExtStickyServ = this;
         }
@@ -316,6 +345,7 @@ namespace StartServices.Servicesclass
                 case ActionPlay: Play(); break;
                 case ActionStop: Stop(); break;
                 case ActionPause: Pause(); break;
+                case ActionNext: SkipToNext(null); break;
             }
 
             WifiManager = (WifiManager)GetSystemService(Context.WifiService);
@@ -325,7 +355,7 @@ namespace StartServices.Servicesclass
             try
             {
                 Pm = (PowerManager)GetSystemService(Context.PowerService);
-                PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "BitChute Wakelock");
                 _wl.Acquire();
             }
             catch (Exception ex)
@@ -558,57 +588,84 @@ namespace StartServices.Servicesclass
             Play();
         }
 
-
+        /// <summary>
+        /// starts the video in background
+        /// </summary>
+        /// <param name="tab"></param>
+        public static async void StartVideoInBkgrd(int tab)
+        {
+            await Task.Delay(1);
+            switch (tab)
+            {
+                case 0:
+                    TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    break;
+                case 1:
+                    TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    break;
+                case 2:
+                    TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    break;
+                case 3:
+                    TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    break;
+                case 4:
+                    TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    break;
+            }
+        }
 
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
             public ExtStickyService _serviceContext;
-            public override void OnWindowFocusChanged(bool hasWindowFocus)
-            {
-                if (MainActivity._backgroundRequested)
-                {
-                    try
-                    {
-                        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                        _wl.Acquire();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    try
-                    {
-                        if (wifiLock == null)
-                        {
-                            wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
-                        }
-                        wifiLock.Acquire();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    while (ExtStickyService.IsInBkGrd())
-                    {
-                        var dontSleep = DummyLoop();
-                        System.Threading.Thread.Sleep(3600);
-                    }
-                    try
-                    {
-                        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
-                        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
-                        _wl.Release();
-                    }
-                    catch
-                    {
 
-                    }
-                }
-                MainActivity._backgroundRequested = false;
-                base.OnWindowFocusChanged(hasWindowFocus);
-            }
+            //public override void OnWindowFocusChanged(bool hasWindowFocus)
+            //{
+            //    base.OnWindowFocusChanged(hasWindowFocus);
+                //StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+                //if (MainActivity._backgroundRequested)
+                //{
+                //    try
+                //    {
+                //        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+                //        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                //        _wl.Acquire();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Console.WriteLine(ex.Message);
+                //    }
+                //    try
+                //    {
+                //        if (wifiLock == null)
+                //        {
+                //            wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                //        }
+                //        wifiLock.Acquire();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Console.WriteLine(ex.Message);
+                //    }
+                //    while (ExtStickyService.IsInBkGrd())
+                //    {
+                //        var dontSleep = DummyLoop();
+                //        System.Threading.Thread.Sleep(3600);
+                //    }
+                //    try
+                //    {
+                //        Pm = (PowerManager)ExtStickyServ.GetSystemService(Context.PowerService);
+                //        PowerManager.WakeLock _wl = Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                //        _wl.Release();
+                //    }
+                //    catch
+                //    {
+
+                //    }
+                //}
+                //MainActivity._backgroundRequested = false;
+            //}
 
             public ServiceWebView(Context context) : base(context)
             {

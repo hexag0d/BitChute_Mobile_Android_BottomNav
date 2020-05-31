@@ -52,6 +52,14 @@
             /// returns -1 if none are playing otherwise it's 0-4 coinciding with the tab played from
             /// </summary>
             public static int MediaPlayerNumberIsStreaming { get; set; }
+
+            /// <summary>
+            /// this bool is set true when a native media player is currently streaming
+            /// it should be set to false when WebView is streaming audio
+            /// </summary>
+            public static bool MediaPlayerIsStreaming = false;
+
+            public static bool UserRequestedBackgroundPlayback = false;
         }
 
         /// <summary>
@@ -69,6 +77,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.1.API8Retainer_VideoDownloader";
+        public static string AppVersion = "25.2.1.API8Retainer.InvokeWLockscreen";
     }
 }

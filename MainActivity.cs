@@ -74,7 +74,6 @@ namespace BitChute
     [Android.App.Activity(LaunchMode = Android.Content.PM.LaunchMode.SingleTop, Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
-
     public class MainActivity : FragmentActivity
     {
         int _tabSelected;
@@ -106,7 +105,7 @@ namespace BitChute
         public static ExtStickyService _service = new ExtStickyService();
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
-        public static HeadphoneIntent.MusicIntentReceiver _musicIntentReceiver;
+        public static HeadphoneIntent.ControlIntentReceiver _ControlIntentReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -167,7 +166,7 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
-            _musicIntentReceiver = new HeadphoneIntent.MusicIntentReceiver();
+            _ControlIntentReceiver = new HeadphoneIntent.ControlIntentReceiver();
         }
 
         public static TheFragment0 Fm0 = TheFragment0.NewInstance("Home", "tab_home");
@@ -623,8 +622,7 @@ namespace BitChute
             }
             Fm4.ShowAppSettingsMenu();
         }
-
-        public static bool _backgroundRequested = false;
+        
 
         /// <summary>
         /// Listens for long click events on tab 2
@@ -633,7 +631,8 @@ namespace BitChute
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            _backgroundRequested = true;
+            AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
+            ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
             Main.MoveTaskToBack(true);
         }
 
@@ -718,7 +717,9 @@ namespace BitChute
 
                 }
             }
-            
+            if (url == "" || url == null)
+                return;
+
             try
             {
                 switch (ViewPager.CurrentItem)
@@ -901,13 +902,25 @@ namespace BitChute
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
 
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+            if (hasFocus)
+            {
+            }
+            else
+            {
+
+            }
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
 
             try {
                 IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
-                RegisterReceiver(_musicIntentReceiver, filter);
+                RegisterReceiver(_ControlIntentReceiver, filter);
             }
             catch(Exception ex)
             {

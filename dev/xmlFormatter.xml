@@ -166,6 +166,7 @@
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:id="@+id/radioGroup3">
         <RadioButton
           android:layout_width="wrap_content"
@@ -235,6 +236,65 @@
           android:textColor="#3498db"
           android:background="@android:color/darker_gray"
           android:id="@+id/tab5OverrideSpinner" />
+        <RadioGroup
+          android:minWidth="25px"
+          android:orientation="horizontal"
+          android:minHeight="25px"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/radioGroup6">
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+            android:text="Background with Feed"
+            android:id="@+id/radioButton4" />
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RadioButton"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+            android:id="@+id/radioButton5" />
+        </RadioGroup>
+        <RadioGroup
+          android:minWidth="25px"
+          android:minHeight="25px"
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:buttonTint="#3498db"
+          android:textColor="#3498db"
+
+          android:id="@+id/radioGroup5">
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="AutoPlay on Minimize"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+
+            android:id="@+id/autoPlayOnMinimize" />
+          <RadioButton
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Off"
+            android:id="@+id/autoPlayOnMinimizeOff" />
+          <RadioButton
+            android:layout_width="wrap_content"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
+
+            android:layout_height="wrap_content"
+            android:text="Manual"
+            android:id="@+id/autoPlayManually" />
+        </RadioGroup>
       </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -297,17 +357,22 @@
           <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
             android:text="ShowDlButtonOnPress"
             android:id="@+id/showDlFabOnPress" />
           <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="#3498db"
+            android:textColor="#3498db"
             android:text="AlwaysShow"
             android:id="@+id/alwaysShowDlFab" />
           <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#3498db"
+            android:buttonTint="#3498db"
             android:text="Off"
             android:id="@+id/dlFabOff" />
         </RadioGroup>
@@ -323,6 +388,7 @@
       <TextView
         android:text="Version"
         android:layout_width="match_parent"
+        android:textColor="#ffffff"
         android:layout_height="match_parent"
         android:id="@+id/versionTextView" />
     </LinearLayout>
