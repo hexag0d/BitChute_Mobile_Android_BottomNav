@@ -259,12 +259,12 @@
         /// <summary>
         /// skips to next video
         /// </summary>
-        public static string _jsNextVideoByA = @"javascript:(function() { " 
-            + @"document.getElementsByClassName(/""a/"")[1].click()" + "})()";
+        public static string _jsNextVideoByASpa = @"javascript:(function() { " 
+            + @"$(" + "\"" + @"a[class='spa'][href*='/video/']" + "\"" + @")[0].click()"  + "})()";
 
 
         public static string _jsNextByImg = "javascript:(function() { " +
                 @"$(" + "\"" + @"img[class*='img-responsive lazyloaded']" + "\"" + @")[1].click()" + @"})()";
-
+        
     }
 }

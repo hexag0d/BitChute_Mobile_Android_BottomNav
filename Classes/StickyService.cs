@@ -211,11 +211,11 @@ namespace StartServices.Servicesclass
         {
             switch (tab)
             {
-                case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
-                case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
-                case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
-                case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
-                case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsNextByImg); break;
+                case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
             }
         }
 
@@ -303,7 +303,8 @@ namespace StartServices.Servicesclass
         {
             try
             {
-                ExtStickyServ.StartForeground(-777, startNote);
+                ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
+                MainActivity.NOTIFICATION_ID++;
             }
             catch
             {

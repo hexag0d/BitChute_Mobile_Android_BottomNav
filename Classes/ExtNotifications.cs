@@ -104,13 +104,14 @@ namespace BitChute.Classes
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming in background")
                 .SetSmallIcon(Resource.Drawable.bitchute_notification)
-                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
+                .SetOngoing(true)
+                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
 
             var status = builder.Build();
             status.ContentView = views;
             status.BigContentView = bigViews;
             status.Flags = NotificationFlags.OngoingEvent;
-            status.Icon = Resource.Drawable.bitchute_notification;
+            status.Icon = Resource.Drawable.bitchute_notification2;
             status.ContentIntent = pendingIntent;
             return status;
         }
