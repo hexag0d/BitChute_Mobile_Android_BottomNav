@@ -17,25 +17,34 @@ namespace BitChute.Classes
 {
     public class ExtNotifications
     {
+        //internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
+
         public static TheFragment4 _fm5 = new TheFragment4();
 
-        public static List<string> _notificationTextList = new List<string>();
-        public static List<string> _notificationTypes = new List<string>();
-        public static List<string> _notificationLinks = new List<string>();
-        public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
-        public static List<CustomNotification> _previousNoteList = new List<CustomNotification>();
+        public static List<string> NotificationTextList = new List<string>();
+        public static List<string> NotificationTypes = new List<string>();
+        public static List<string> NotificationLinks = new List<string>();
+        public static List<CustomNotification> CustomNoteList = new List<CustomNotification>();
+        public static List<CustomNotification> PreviousNoteList = new List<CustomNotification>();
         private int currentListIndex;
+
+        private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
+        private static Android.Support.V4.App.NotificationManagerCompat _notificationManager;
+
+        public static bool _notificationHttpRequestInProgress = false;
+
+        private static int _count = 0;
 
         public class CustomNotification : IEquatable<CustomNotification>
         {
-            public string _noteType { get; set; }
-            public string _noteText { get; set; }
-            public string _noteLink { get; set; }
+            public string NoteType { get; set; }
+            public string NoteText { get; set; }
+            public string NoteLink { get; set; }
 
             public bool Equals(CustomNotification other)
             {
-                if (this._noteType == other._noteType && this._noteText == other._noteText
-                    && this._noteLink == other._noteLink)
+                if (this.NoteType == other.NoteType && this.NoteText == other.NoteText
+                    && this.NoteLink == other.NoteLink)
                 {
                     return true;
                 }
@@ -45,6 +54,93 @@ namespace BitChute.Classes
                 }
             }
         }
+
+
+        public static async void SendNotifications(List<CustomNotification> notificationList)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (_notificationManager == null)
+                    {
+                        _notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(Android.App.Application.Context);
+                    }
+
+                    if (notificationList.Count == 0)
+                    {
+                        return;
+                    }
+                    int notePos = 0;
+
+                    // When the user clicks the notification, MainActivity will start up.
+
+                    foreach (var note in notificationList)
+                    {
+                        var resultIntent = new Intent(Android.App.Application.Context, typeof(MainActivity));
+                        var valuesForActivity = new Bundle();
+                        valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                        valuesForActivity.PutString("URL", note.NoteLink);
+                        resultIntent.PutExtras(valuesForActivity);
+                        var resultPendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
+                        resultIntent.AddFlags(ActivityFlags.SingleTop);
+
+                        var alarmAttributes = new Android.Media.AudioAttributes.Builder()
+                                .SetContentType(Android.Media.AudioContentType.Sonification)
+                                .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
+
+                        if (!_sentNotificationList.Contains(note) && notePos == 0)
+                        {
+                            // Build the notification:
+                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID + 1)
+                                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                    .SetContentTitle(note.NoteText) // Set the title
+                                    .SetNumber(1) // Display the count in the Content Info
+                                                  //.SetLargeIcon(_notificationBMP) // This is the icon to display
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                    .SetContentText(note.NoteType)
+                                    .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMin);
+
+                            MainActivity.NOTIFICATION_ID++;
+
+                            // publish the notification:
+                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                            _sentNotificationList.Add(note);
+                            notePos++;
+                        }
+                        else if (!_sentNotificationList.Contains(note))
+                        {
+                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                .SetContentTitle(note.NoteText) // Set the title
+                                .SetNumber(1) // Display the count in the Content Info
+                                              //.SetLargeIcon(_notificationBMP) // This is the icon to display
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                .SetContentText(note.NoteType)
+                                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
+
+                            MainActivity.NOTIFICATION_ID++;
+
+
+                            // publish the notification:
+                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                            _sentNotificationList.Add(note);
+                            notePos++;
+                        }
+
+                        ExtStickyService.NotificationsHaveBeenSent = true;
+                    }
+                }
+                catch
+                {
+                }
+            });
+        }
+
 
         public static Notification BuildPlayControlNotification()
         {
@@ -193,16 +289,16 @@ namespace BitChute.Classes
                 {
                     if (_fm5 == null)
                     {
-                        _fm5 = TheFragment4._fm5;
+                        _fm5 = TheFragment4.Fm4;
                     }
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(html);
                     var check = doc;
 
-                    _notificationTextList.Clear();
-                    _notificationTypes.Clear();
-                    _notificationLinks.Clear();
+                    NotificationTextList.Clear();
+                    NotificationTypes.Clear();
+                    NotificationLinks.Clear();
 
                     if (doc != null)
                     {
@@ -228,13 +324,13 @@ namespace BitChute.Classes
                                 .Replace(@"&#x27;", @"'")
                                 .Replace(@"&amp;", @"&")
                                 .Replace(@"&quot;", "\"");
-                            _notificationTextList.Add(_tagContents);
+                            NotificationTextList.Add(_tagContents);
                         }
 
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
                         {
                             var _tagContents = node.InnerText;
-                            _notificationTypes.Add(_tagContents.Split('-')[0]);
+                            NotificationTypes.Add(_tagContents.Split('-')[0]);
                         }
 
                         //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
@@ -251,35 +347,35 @@ namespace BitChute.Classes
                         {
                             var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
 
-                            _notificationLinks.Add(_tagContents);
+                            NotificationLinks.Add(_tagContents);
 
                         }
                         currentListIndex = 0;
-                        _customNoteList.Clear();
+                        CustomNoteList.Clear();
 
-                        foreach (var nt in _notificationTypes)
+                        foreach (var nt in NotificationTypes)
                         {
                             var note = new CustomNotification();
 
-                            note._noteType = nt.ToString();
-                            note._noteLink = _notificationLinks[currentListIndex].ToString();
-                            note._noteText = _notificationTextList[currentListIndex].ToString();
-                            _customNoteList.Add(note);
+                            note.NoteType = nt.ToString();
+                            note.NoteLink = NotificationLinks[currentListIndex].ToString();
+                            note.NoteText = NotificationTextList[currentListIndex].ToString();
+                            CustomNoteList.Add(note);
                             currentListIndex++;
                         }
-                        _customNoteList.Reverse();
+                        CustomNoteList.Reverse();
                     }
-                    _fm5 = TheFragment4._fm5;
+                    _fm5 = TheFragment4.Fm4;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                TheFragment4._notificationHttpRequestInProgress = false;
+                ExtNotifications._notificationHttpRequestInProgress = false;
 
                 //_fm5.SendNotifications();
             });
-            return _customNoteList;
+            return CustomNoteList;
         }
         
         public async Task<string> GetBitChuteChannelLinkFromDiscus(string html)
@@ -288,7 +384,6 @@ namespace BitChute.Classes
 
             await Task.Run(() =>
             {
-
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(html);
                 int _nCount = 0;

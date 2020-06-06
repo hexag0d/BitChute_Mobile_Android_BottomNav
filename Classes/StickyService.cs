@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Android.Util;
-
-using Android.Telephony;
 using BitChute.Classes;
 using BitChute;
 using System.Threading.Tasks;
 using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
-using Android.Support.V4.App;
-using BitChute.Models;
 using static BitChute.Models.VideoModel;
-using BitChute;
+using static BitChute.Fragments.TheFragment4;
+
 
 namespace StartServices.Servicesclass
 {
@@ -46,8 +40,7 @@ namespace StartServices.Servicesclass
         private static bool _serviceIsLooping = false;
         public static MainActivity Main;
 
-        private static BitChute.Fragments.TheFragment4.ExtWebInterface _extWebInterface =
-            BitChute.Fragments.TheFragment4._extWebInterface;
+
 
         private static Java.Util.Timer _timer = new Java.Util.Timer();
         private static ExtTimerTask _timerTask = new ExtTimerTask();
@@ -363,7 +356,7 @@ namespace StartServices.Servicesclass
             try
             {
                 ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
-                MainActivity.NOTIFICATION_ID++;
+                //MainActivity.NOTIFICATION_ID++;
             }
             catch
             {
@@ -414,7 +407,6 @@ namespace StartServices.Servicesclass
             }
             else
             {
-
             }
         }
 
@@ -451,8 +443,6 @@ namespace StartServices.Servicesclass
         //public static Timer timer;
         //private TimerTask timerTask;
         public static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
-
-
 
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
@@ -497,12 +487,12 @@ namespace StartServices.Servicesclass
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings.Notifying)
             {
-                if (!TheFragment4._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                if (!ExtNotifications._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
                     _notificationStackExecutionInProgress = true;
-                    await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                    await _extNotifications.DecodeHtmlNotifications(TheFragment4.ExtWebInterface._htmlCode);
-                    _fm5.SendNotifications(ExtNotifications._customNoteList);
+                    await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                    await _extNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
+                    ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
                 if (ExtStickyService.NotificationsHaveBeenSent)
@@ -556,18 +546,17 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        if (!TheFragment4._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                        if (!ExtNotifications._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                         {
                             _notificationStackExecutionInProgress = true;
-                            await _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                            await _extNotifications.DecodeHtmlNotifications(TheFragment4.ExtWebInterface._htmlCode);
-                            _fm5.SendNotifications(ExtNotifications._customNoteList);
+                            await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                            await _extNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
+                            ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
                             _notificationStackExecutionInProgress = false;
                         }
                     }
                     catch
                     {
-
                     }
                 }
             }

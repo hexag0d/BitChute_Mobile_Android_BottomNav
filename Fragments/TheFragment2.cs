@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.Content.Res;
-using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
-using Android.Util;
 using Android.Views;
 using Android.Webkit;
-using Android.Widget;
 using BitChute.Classes;
-using BitChute;
-using Java.IO;
-using StartServices.Servicesclass;
-using static Android.Views.View;
 using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments

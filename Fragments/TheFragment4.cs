@@ -1,21 +1,14 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
-using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
-using BitChute;
-using Java.Interop;
-using Java.Net;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -42,7 +35,7 @@ namespace BitChute.Fragments
 
         bool tabLoaded = false;
 
-        public static string _tab5Title = "Settings";
+        public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
 
         private static RadioButton _fmoffrb;
@@ -82,19 +75,16 @@ namespace BitChute.Fragments
 
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
-
-        public static TheFragment4.ExtWebInterface _extWebInterface = new ExtWebInterface();
+        
         public static TextView _versionTextView;
-        public static bool _notificationHttpRequestInProgress = false;
-
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
-        public static ExtStickyService _stickyService = new ExtStickyService();
+        public static ExtStickyService StickyService = new ExtStickyService();
         private static CookieCollection cookies = new CookieCollection();
 
-        public static TheFragment4 _fm5;
+        public static TheFragment4 Fm4;
 
         public static TheFragment4 NewInstance(string title, string icon)
         {
@@ -102,7 +92,7 @@ namespace BitChute.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
-            _fm5 = fragment;
+            Fm4 = fragment;
             return fragment;
         }
 
@@ -132,7 +122,7 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _fm5 = this;
+            Fm4 = this;
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             WvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
@@ -217,6 +207,8 @@ namespace BitChute.Fragments
             LoadUrlWithDelay(RootUrl, 5000);
             return _view;
         }
+
+        
 
         public void CustomSetTouchListener(bool landscape)
         {
@@ -315,11 +307,11 @@ namespace BitChute.Fragments
         /// this whole system should soon be replaced with databinding
         /// to the android application preferences.
         /// </summary>
-        public bool _isNowCheckingBoxes = false;
+        public bool AppNowCheckingBoxes = false;
 
         public async void SetCheckedState()
         {
-            _isNowCheckingBoxes = true;
+            AppNowCheckingBoxes = true;
 
             if (AppSettings.ZoomControl)
             {
@@ -457,7 +449,7 @@ namespace BitChute.Fragments
                 _showdlbuttonalways.Checked = true;
             }
             await Task.Delay(1000);
-            _isNowCheckingBoxes = false;
+            AppNowCheckingBoxes = false;
         }
         
         /// <summary>
@@ -469,7 +461,7 @@ namespace BitChute.Fragments
         /// <param name="e"></param>
         public void ExtSettingChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 if (_notificationonrb.Checked)
                 {
@@ -555,7 +547,7 @@ namespace BitChute.Fragments
 
         private void OnFanModeRbCheckChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 if (_fmonrb.Checked)
                 {
@@ -570,7 +562,7 @@ namespace BitChute.Fragments
 
         private void OnTab4OverrideSpinnerSelectionChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 AppSettings.Tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
                 if (_fmonrb.Checked)
@@ -599,7 +591,7 @@ namespace BitChute.Fragments
 
         private void OnSettingsTabOverrideSpinnerSelectionChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 AppSettings.Tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
                 if (_fmonrb.Checked)
@@ -676,10 +668,8 @@ namespace BitChute.Fragments
                         Wv.Reload();
                         _wvRl = false;
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                    catch
+                    { }
                 }
                 else
                 {
@@ -719,7 +709,7 @@ namespace BitChute.Fragments
 
         public void OnTab4OverrideChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 if (_fmonrb.Checked)
                 {
@@ -738,7 +728,7 @@ namespace BitChute.Fragments
 
         public void OnTab5OverrideChanged(object sender, EventArgs e)
         {
-            if (!_isNowCheckingBoxes)
+            if (!AppNowCheckingBoxes)
             {
                 if (_stoverrideonrb.Checked)
                 {
@@ -758,11 +748,10 @@ namespace BitChute.Fragments
         public static string _rawNoteText = "";
 
         public static string _cookieString { get; set; }
-        internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
         public List<CustomNotification> GetNotifications()
         {
-            return ExtNotifications._customNoteList;
+            return ExtNotifications.CustomNoteList;
         }
 
         /// <summary>
@@ -780,150 +769,11 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
 
-        public static string CookieHeader;
-        private static ExtNotifications _extNotifications = new ExtNotifications();
-
-        private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
-        private static NotificationManagerCompat _notificationManager;
-
-        public async void SendNotifications(List<CustomNotification> notificationList)
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    var _ctx = Android.App.Application.Context;
-
-                    if (_notificationManager == null)
-                    {
-                        _notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                    }
-
-                    if (notificationList.Count == 0)
-                    {
-                        return;
-                    }
-                    int notePos = 0;
-
-                    // When the user clicks the notification, MainActivity will start up.
-
-                    foreach (var note in notificationList)
-                    {
-                        var resultIntent = new Intent(_ctx, typeof(MainActivity));
-                        var valuesForActivity = new Bundle();
-                        valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
-                        valuesForActivity.PutString("URL", note._noteLink);
-                        resultIntent.PutExtras(valuesForActivity);
-                        var resultPendingIntent = PendingIntent.GetActivity(_ctx, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
-                        resultIntent.AddFlags(ActivityFlags.SingleTop);
-
-                        var alarmAttributes = new Android.Media.AudioAttributes.Builder()
-                                .SetContentType(Android.Media.AudioContentType.Sonification)
-                                .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
-
-                        if (!_sentNotificationList.Contains(note) && notePos == 0)
-                        {
-                            // Build the notification:
-                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID + 1)
-                                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                    .SetContentTitle(note._noteText) // Set the title
-                                    .SetNumber(1) // Display the count in the Content Info
-                                                  //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
-                                    .SetContentText(note._noteType)
-                                    .SetPriority(NotificationCompat.PriorityMin);
-
-                            MainActivity.NOTIFICATION_ID++;
-
-                            // publish the notification:
-                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-                            _sentNotificationList.Add(note);
-                            notePos++;
-                        }
-                        else if (!_sentNotificationList.Contains(note))
-                        {
-                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                .SetContentTitle(note._noteText) // Set the title
-                                .SetNumber(1) // Display the count in the Content Info
-                                              //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
-                                .SetContentText(note._noteType)
-                                .SetPriority(NotificationCompat.PriorityLow);
-
-                            MainActivity.NOTIFICATION_ID++;
-
-
-                            // publish the notification:
-                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-                            _sentNotificationList.Add(note);
-                            notePos++;
-                        }
-
-                        ExtStickyService.NotificationsHaveBeenSent = true;
-                    }
-                }
-                catch
-                {
-                }
-            });
-        }
-
         public void LoadCustomUrl(string url)
         {
             Wv.LoadUrl(url);
         }
 
-        public class ExtWebInterface
-        {
-            public static string _notificationRawText;
-            public static CookieContainer _cookieCon = new CookieContainer();
-            public static string _htmlCode = "";
-
-            /// <summary>
-            /// returns html source of url requested
-            /// </summary>
-            /// <param name="url">use the string you want to get html source from</param>
-            /// <returns></returns>
-            public async Task<string> GetNotificationText(string url)
-            {
-                await Task.Run(() =>
-                {
-                    _htmlCode = "";
-                    HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
-
-                    if (!_notificationHttpRequestInProgress)
-                    {
-                        try
-                        {
-                            Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
-                            var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-
-                            using (HttpClient _client = new HttpClient(handler))
-                            {
-                                _client.DefaultRequestHeaders.Add("Cookie", TheFragment4.CookieHeader);
-                                _notificationHttpRequestInProgress = true;
-
-                                var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
-                                var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                                _htmlCode = resultContent;
-                                _notificationHttpRequestInProgress = false;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                });
-
-                return _htmlCode;
-            }
-        }
 
         private class ExtWebViewClient : WebViewClient
         {
@@ -961,10 +811,10 @@ namespace BitChute.Fragments
 
                 try
                 {
-                    TheFragment4.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
+                    ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
 
-                    Https.CookieString = TheFragment4.CookieHeader.ToString();
-                    var cookiePairs = TheFragment4.CookieHeader.Split('&');
+                    Https.CookieString = ExtWebInterface.CookieHeader.ToString();
+                    var cookiePairs = ExtWebInterface.CookieHeader.Split('&');
 
                     Https.CookieString = "";
 

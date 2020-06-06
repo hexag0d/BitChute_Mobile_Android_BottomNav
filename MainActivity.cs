@@ -669,7 +669,7 @@ namespace BitChute
                 Description = description
             };
 
-            channel.LockscreenVisibility = NotificationVisibility.Private;
+            channel.LockscreenVisibility = NotificationVisibility.Public;
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
             channelSilent.SetSound(null, null);
             notificationManager.CreateNotificationChannel(channel);

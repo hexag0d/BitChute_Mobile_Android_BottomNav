@@ -1,22 +1,15 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
-using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
-using BitChute;
 using HtmlAgilityPack;
 using StartServices.Servicesclass;
 using static BitChute.Models.VideoModel;
-using BitChute;
 
 namespace BitChute.Classes
 {
@@ -90,7 +83,7 @@ namespace BitChute.Classes
                 if (videoLink != null && videoLink != "")
                 {
                     ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting video link";
-                    Task<string> rawHtmlTask = ExtWebInterfaceGeneral.GetHtmlTextFromUrl(videoLink);
+                    Task<string> rawHtmlTask = ExtWebInterface.GetHtmlTextFromUrl(videoLink);
                     await rawHtmlTask;
                     Task<VideoCard> videoCardTask = _vd.DecodeHtmlVideoSource(rawHtmlTask.Result);
                     await videoCardTask;
@@ -166,14 +159,7 @@ namespace BitChute.Classes
             return vidCard;
         }
 
-        private static int _progRed = 50;
-        private static int _progBlue = 50;
-        private static int _progGreen = 20;
-        private static int _progStep = 0;
-        private static string _progText;
-        private static string _progString;
-        private static Android.Graphics.Color _progColor;
-        private static bool _progBlueUp = true;
+
 
         public VideoDownloader(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
@@ -182,6 +168,19 @@ namespace BitChute.Classes
         public VideoDownloader()
         {
         }
+
+        /// <summary>
+        /// these are just for fun, they allow the progress bar to change colors
+        /// </summary>
+        private static int _progRed = 50;
+        private static int _progBlue = 50;
+        private static int _progGreen = 20;
+        private static Android.Graphics.Color _progColor;
+        private static bool _progBlueUp = true;
+
+        private static int _progStep = 0;
+        private static string _progText;
+        private static string _progString;
 
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
