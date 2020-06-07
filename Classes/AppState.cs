@@ -75,12 +75,12 @@
 
         public static bool NotificationStartedApp = false;
 
-        public static Android.App.Notification ForeNote { get; set; }
+        public static Android.App.Notification ForeNote = new Android.App.Notification();
 
         /// <summary>
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.4.2.API8Retainer.FixVideoDownloader";
+        public static string AppVersion = "25.4.3.API8Retainer.FixVideoDownloader";
     }
 }

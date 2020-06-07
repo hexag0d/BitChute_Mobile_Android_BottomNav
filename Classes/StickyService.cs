@@ -516,16 +516,31 @@ namespace StartServices.Servicesclass
 
         public static void ExternalStopForeground()
         {
-            WifiLock?.Release();
-            AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
-            ExtStickyServ.StopForeground(true);
+            try
+            {
+                WifiLock?.Release();
+                AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+                ExtStickyServ.StopForeground(true);
+            }
+            catch
+            {
+
+            }
         }
 
         public override void OnDestroy()
         {
-            StopForeground(true);
-            WifiLock?.Release();
-            AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+            try
+            {
+                StopForeground(true);
+                WifiLock?.Release();
+            }
+            catch { }
+            try
+            {
+                AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+            }
+            catch { }
             base.OnDestroy();
             
         }
