@@ -901,7 +901,11 @@ namespace BitChute
         protected override void OnPause()
         {
             base.OnPause();
-            ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+            try
+            {
+                ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+            }
+            catch { }
         }
 
         protected override void OnResume()
@@ -941,11 +945,16 @@ namespace BitChute
         
         protected override void OnDestroy()
         {
-            UnregisterReceiver(ForegroundReceiver);
-            ExtStickyService.ExternalStopForeground();
-            AppState.NotificationStartedApp = false;
+            try
+            {
+                //UnregisterReceiver(ForegroundReceiver);
+                //
+                AppState.NotificationStartedApp = false;
+            }
+            catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
+            ExtStickyService.ExternalStopForeground();
             base.OnDestroy();
         }
     }

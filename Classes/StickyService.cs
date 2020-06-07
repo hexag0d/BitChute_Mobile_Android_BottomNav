@@ -408,21 +408,30 @@ namespace StartServices.Servicesclass
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            
             //intent.Flags = ActivityFlags.
-            switch (intent.Action)
+            switch (intent?.Action)
             {
                 case ActionPlay: Play(); break;
                 case ActionStop: Stop(); break;
                 case ActionPause: Pause(); break;
                 case ActionNext: SkipToNext(null); break;
                 case ActionPrevious: SkipToPrev(MainActivity.ViewPager.CurrentItem); break;
-                case ActionLoadUrl: LoadVideoFromUrl(MainActivity.ViewPager.CurrentItem, intent.Extras.GetString("URL")); break;
+                case ActionLoadUrl: LoadVideoFromUrl(MainActivity.ViewPager.CurrentItem,
+                    intent.Extras.GetString("URL")); break; 
+                    
+            }    
+
+            try
+            {
+                WifiManager = (WifiManager)GetSystemService(Context.WifiService);
             }
-
-            WifiManager = (WifiManager)GetSystemService(Context.WifiService);
-            Main = MainActivity.Main;
-            ExtStickyServ = this;
-
+            catch
+            {
+            }
+                Main = MainActivity.Main;
+                ExtStickyServ = this;
+            
             try
             {
                 Pm = (PowerManager)GetSystemService(Context.PowerService);
@@ -530,19 +539,18 @@ namespace StartServices.Servicesclass
 
         public override void OnDestroy()
         {
+            base.OnDestroy();
             try
             {
-                StopForeground(true);
+                //StopForeground(true);
                 WifiLock?.Release();
             }
             catch { }
             try
             {
-                AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+               // AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
             }
             catch { }
-            base.OnDestroy();
-            
         }
 
         /// <summary>
@@ -707,9 +715,16 @@ namespace StartServices.Servicesclass
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 base.OnWindowFocusChanged(hasWindowFocus);
-                if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
+                try
                 {
-                    StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+                    if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
+                    {
+                        StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+                    }
+                }
+                catch
+                {
+
                 }
                 //AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
             }

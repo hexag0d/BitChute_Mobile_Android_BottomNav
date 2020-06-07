@@ -81,6 +81,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.4.3.API8Retainer.FixVideoDownloader";
+        public static string AppVersion = "25.4.4.API8Retainer.FixVideoDownloader";
     }
 }
