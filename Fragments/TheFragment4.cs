@@ -777,15 +777,15 @@ namespace BitChute.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
-            //public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
-            //{
-            //    if (request.Url.ToString().Contains("pest."))
-            //    {
-            //        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-            //        return w;
-            //    }
-            //    return base.ShouldInterceptRequest(view, request);
-            //}
+            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().Contains("pest."))
+                {
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                    return w;
+                }
+                return base.ShouldInterceptRequest(view, request);
+            }
 
             public override void OnPageFinished(WebView view, string url)
             {
