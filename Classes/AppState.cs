@@ -79,6 +79,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.2.4.API8Retainer.InvokeWLockscreen";
+        public static string AppVersion = "25.3.1.API8Retainer.RemoveDisqusAds";
     }
 }

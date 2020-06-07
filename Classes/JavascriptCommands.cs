@@ -265,6 +265,24 @@
 
         public static string _jsNextByImg = "javascript:(function() { " +
                 @"$(" + "\"" + @"img[class*='img-responsive lazyloaded']" + "\"" + @")[1].click()" + @"})()";
-        
+
+
+        public static string RemoveDisqusIframeZero = "javascript:(function() { "
+            + @"$('#disqus_thread').children('iframe')[0].src = "";" + @"})()";
+
+        public static string RemoveDisqusIframeTwo = "javascript:(function() { "
+            +  @"})()";
+
+        //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
+        //     + @"$('#disqus_thread').children('iframe')[0].display = none;" + @"})()";
+
+
+        //public static string RemoveDisqusIframeZero = "javascript:(function() { "
+        //    + @"if ($('#disqus_thread').children('iframe').length > 3){ $('#disqus_thread').children('iframe')[0].remove(); }" + @"})()";
+
+
+        //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
+        //    + @"if ($('#disqus_thread').children('iframe').length > 2){ $('#disqus_thread').children('iframe')[2].remove(); }" + @"})()";
+
     }
 }

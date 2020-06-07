@@ -27,6 +27,8 @@ namespace BitChute.Fragments
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         bool tabLoaded = false;
 
+        public static int TNo = 1;
+
         public static TheFragment1 NewInstance(string title, string icon) {
             var fragment = new TheFragment1();
             fragment.Arguments = new Bundle();
@@ -258,9 +260,20 @@ namespace BitChute.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
+            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            {
+                //filter out the ads
+                if (request.Url.ToString().Contains("pest."))
+                {
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                    return w;
+                }
+                return base.ShouldInterceptRequest(view, request);
+            }
+
             public override void OnPageFinished(WebView view, string url)
             {
-                Wv.ScrollTo(0,0);
+                WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
                 Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
@@ -276,6 +289,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+                //AdBlock.RemoveDiscusIFrame(TNo);
                 base.OnPageFinished(view, url);
             }
         }

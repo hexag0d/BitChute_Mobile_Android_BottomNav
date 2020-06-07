@@ -35,9 +35,10 @@ namespace BitChute.Fragments
         readonly ExtWebViewClient Wvc = new ExtWebViewClient();
 
         private static ExtNotifications _extNotifications = MainActivity.notifications;
-        private static ExtWebInterface _extWebInterface = MainActivity._extWebInterface;
+        private static ExtWebInterface _extWebInterface = MainActivity.ExtWebInterface;
 
         bool tabLoaded = false;
+        public static int TNo = 0;
         //static MainActivity Main = new MainActivity();
 
         public static TheFragment0 NewInstance(string title, string icon) {
@@ -332,28 +333,38 @@ namespace BitChute.Fragments
             //Wv.LoadUrl(JavascriptCommands._jsHideVideoMargin);
             //Wv.LoadUrl(JavascriptCommands._jsPut5pxMarginOnRows);
         }
-        
+
         private class ExtWebViewClient : WebViewClient
         {
+            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().Contains("pest."))
+                {
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                    return w;
+                }
+                return base.ShouldInterceptRequest(view, request);
+            }
+
             public override void OnPageFinished(WebView _view, string url)
             {
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
                 {
                     Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
-                Wv.ScrollTo(0, 0);
+                WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
-               
+
                 //Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
 
-                    HideWatchLabel();
+                HideWatchLabel();
 
                 if (!AppSettings.Tab1FeaturedOn)
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
-                
+
                 if (AppState.Display.Horizontal)
                 {
                     if (url != "https://www.bitchute.com/")
@@ -367,7 +378,7 @@ namespace BitChute.Fragments
 
                     HidePageTitle();
                 }
-                
+
                 //add one to the autoint... for some reason if Tab1 has 
                 //Wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
                 //this is a workaround for that glitch
@@ -383,6 +394,7 @@ namespace BitChute.Fragments
                 //ExpandPage(true);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+                //AdBlock.RemoveDiscusIFrame(TNo);
                 base.OnPageFinished(_view, url);
             }
         }

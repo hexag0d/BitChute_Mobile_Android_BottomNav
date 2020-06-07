@@ -23,6 +23,7 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
+        public static int TNo = 4;
 
         public static ServiceWebView Wv;
         public static LinearLayout WvLayout;
@@ -746,7 +747,6 @@ namespace BitChute.Fragments
         }
 
         public static string _rawNoteText = "";
-
         public static string _cookieString { get; set; }
 
         public List<CustomNotification> GetNotifications()
@@ -777,10 +777,21 @@ namespace BitChute.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
+            //public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            //{
+            //    if (request.Url.ToString().Contains("pest."))
+            //    {
+            //        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+            //        return w;
+            //    }
+            //    return base.ShouldInterceptRequest(view, request);
+            //}
+
             public override void OnPageFinished(WebView view, string url)
             {
-                base.OnPageFinished(view, url);
-                Wv.ScrollTo(0, 0);
+
+
+                WebViewHelpers.DelayedScrollToTop(TNo);
                 if (AppSettings.SettingsTabOverride)
                 {
                     //if (AppSettings._tab5OverridePreference != "Settings")
@@ -794,7 +805,7 @@ namespace BitChute.Fragments
 
                         if (Wv.Url == "https://www.bitchute.com/")
                         {
-                            TheFragment2.SelectSubscribedTab(2000);
+                            //TheFragment4.SelectSubscribedTab(2000);
                         }
                     }
                 }
@@ -833,7 +844,6 @@ namespace BitChute.Fragments
                     foreach (Cookie c in cookies)
                     {
                         c.Domain = "https://bitchute.com/";
-
                         if (Https.CookieString == "")
                         {
                             Https.CookieString = c.ToString();
@@ -846,9 +856,10 @@ namespace BitChute.Fragments
                 }
                 catch
                 {
-
                 }
                 HideLinkOverflow();
+                //AdBlock.RemoveDiscusIFrame(TNo);
+                base.OnPageFinished(view, url);
             }
         }
     }

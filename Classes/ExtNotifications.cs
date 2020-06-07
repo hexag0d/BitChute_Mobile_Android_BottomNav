@@ -294,7 +294,6 @@ namespace BitChute.Classes
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(html);
-                    var check = doc;
 
                     NotificationTextList.Clear();
                     NotificationTypes.Clear();
@@ -302,6 +301,7 @@ namespace BitChute.Classes
 
                     if (doc != null)
                     {
+                        var check = doc.DocumentNode;
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
                         {
                             var _tagContents = node.InnerText;

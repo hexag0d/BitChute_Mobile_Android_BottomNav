@@ -5,6 +5,6 @@
     <DefaultDevice>Android_Accelerated_x86_Oreo</DefaultDevice>
     <AndroidDesignerPreferredTheme>Theme.Holo.Light.DarkActionBar</AndroidDesignerPreferredTheme>
     <AndroidDesignerPreferredDevice>pixel</AndroidDesignerPreferredDevice>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
 </Project>

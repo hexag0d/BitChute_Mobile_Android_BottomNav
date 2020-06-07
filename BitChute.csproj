@@ -92,6 +92,7 @@
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
+    <Compile Include="Classes\WebViewHelpers.cs" />
     <Compile Include="Fragments\TheFragment0.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
     <Compile Include="Fragments\TheFragment3.cs" />

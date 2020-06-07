@@ -163,6 +163,21 @@ namespace BitChute
             }
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
             BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
+            //debug
+
+            //System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+            //                                (sender, cert, chain, error) =>
+            //    {
+            //     if (cert.GetCertHashString() == "xxxxxxxxxxxxxxxx")
+            //      {
+            //  return true;
+            //       }
+            //       else
+            //  {
+            //    return error == System.Net.Security.SslPolicyErrors.None;
+            //   }
+            //};
+            //
         }
 
         public static TheFragment0 Fm0 = TheFragment0.NewInstance("Home", "tab_home");
@@ -183,23 +198,23 @@ namespace BitChute
         }
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
-        public static bool _navHidden = false;
-        public static bool _navTimeout = true;
-        public static int _navTimer = 0;
+        public static bool NavHidden = false;
+        public static bool NavTimeout = true;
+        public static int NavTimer = 0;
 
         public async void CustomOnSwipe()
         {
             await Task.Delay(1);
 
-            if (_navTimer != 0)
-                _navTimer = 0;
+            if (NavTimer != 0)
+                NavTimer = 0;
 
-            if (!_navTimeout || AppState.Display.Horizontal)
+            if (!NavTimeout || AppState.Display.Horizontal)
             {
                 NavigationView.Visibility = ViewStates.Visible;
-                _navHidden = false;
+                NavHidden = false;
                 NavBarRemove();
-                _navTimeout = true;
+                NavTimeout = true;
             }
         }
 
@@ -212,17 +227,17 @@ namespace BitChute
         {
             await Task.Delay(1);
 
-                if (_navTimer != 0)
-                    _navTimer = 0;
+                if (NavTimer != 0)
+                    NavTimer = 0;
 
             if (AppState.Display.Horizontal && !AppSettings.HideHorizontalNavBar)
             {
-                if (!_navTimeout)
+                if (!NavTimeout)
                 {
                     NavigationView.Visibility = ViewStates.Visible;
-                    _navHidden = false;
+                    NavHidden = false;
                     NavBarRemove();
-                    _navTimeout = true;
+                    NavTimeout = true;
                 }
             }
             else if (!AppState.Display.Horizontal)
@@ -230,20 +245,20 @@ namespace BitChute
                 if (NavigationView.Visibility == ViewStates.Gone)
                 {
                     NavigationView.Visibility = ViewStates.Visible;
-                    _navHidden = false;
+                    NavHidden = false;
                     NavBarRemove();
-                    _navTimeout = true;
+                    NavTimeout = true;
                 }
             }
         }
 
         public static async void NavBarRemove()
         {
-            while (!_navHidden)
+            while (!NavHidden)
             {
                 await Task.Delay(1000);
-                _navTimer++;
-                if (_navTimer >= 8)
+                NavTimer++;
+                if (NavTimer >= 8)
                 {
                     if (AppState.Display.Horizontal)
                     {
@@ -256,8 +271,8 @@ namespace BitChute
                             NavigationView.Visibility = ViewStates.Gone;
                         }
                     }
-                    _navTimeout = false;
-                    _navHidden = true;
+                    NavTimeout = false;
+                    NavHidden = true;
                 }
             }
         }
@@ -291,7 +306,7 @@ namespace BitChute
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
-            _navTimer = 0;
+            NavTimer = 0;
 
             if (_tabSelected == e.Item.Order)
             {
@@ -322,7 +337,7 @@ namespace BitChute
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            _navTimer = 0;
+            NavTimer = 0;
 
             _menu = NavigationView.Menu.GetItem(e.Position);
             NavigationView.SelectedItemId = _menu.ItemId;
@@ -637,11 +652,11 @@ namespace BitChute
             return _am;
         }
 
-        public static int _serviceTimer = 0;
-        public static int _backgroundTimeoutInt = 0;
-        public static int _backgroundLoopMsDelayInt = 3600;
-        public static ExtWebInterface _extWebInterface = new ExtWebInterface();
-        public static ExtNotifications _extNotifications = new ExtNotifications();
+        public static int ServiceTimer = 0;
+        public static int BackgroundTimeoutInt = 0;
+        public static int BackgroundLoopMsDelayInt = 3600;
+        public static ExtWebInterface ExtWebInterface = new ExtWebInterface();
+        public static ExtNotifications ExtNotifications = new ExtNotifications();
         
         void CreateNotificationChannel()
         {
@@ -844,7 +859,7 @@ namespace BitChute
 
             if (!AppSettings.HideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {
-                _navTimeout = false;
+                NavTimeout = false;
             }
 
             //app seems to be lagging ontouch so removing the touch listener when app is portrait

@@ -25,6 +25,7 @@ namespace BitChute.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string RootUrl = "https://www.bitchute.com/profile";
+        public static int TNo = 3;
 
         bool tabLoaded = false;
 
@@ -313,10 +314,19 @@ namespace BitChute.Fragments
         
         private class ExtWebViewClient : WebViewClient
         {
+            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().Contains("pest."))
+                {
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                    return w;
+                }
+                return base.ShouldInterceptRequest(view, request);
+            }
+
             public override void OnPageFinished(WebView view, string url)
             {
-                base.OnPageFinished(view, url);
-                Wv.ScrollTo(0, 0);
+                WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
@@ -345,6 +355,8 @@ namespace BitChute.Fragments
                 SetReload();
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+                //AdBlock.RemoveDiscusIFrame(TNo);
+                base.OnPageFinished(view, url);
             }
         }
     }

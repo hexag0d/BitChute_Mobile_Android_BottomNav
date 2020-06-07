@@ -69,6 +69,10 @@ namespace BitChute.Classes
         /// </summary>
         public static int LinkOverflowFixDelay = 6000;
 
+        public static int AdBlockDelay = 10000;
+
+        public static int ScrollToTopDelay = 30;
+
         /// <summary>
         /// this int controls the delay in ms of notifications being 
         /// parsed and then sent out.  It should be set to a high int

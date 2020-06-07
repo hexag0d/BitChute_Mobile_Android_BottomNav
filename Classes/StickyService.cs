@@ -700,6 +700,8 @@ namespace StartServices.Servicesclass
                 AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
             }
 
+            
+
             public ServiceWebView(Context context) : base(context)
             {
             }
