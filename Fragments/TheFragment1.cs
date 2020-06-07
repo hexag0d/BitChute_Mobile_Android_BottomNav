@@ -268,6 +268,10 @@ namespace BitChute.Fragments
                     WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
                     return w;
                 }
+                //if (request.Url.ToString().Contains("dlink.bitchute"))
+                //{
+                //    var check = 0;
+                //}
                 return base.ShouldInterceptRequest(view, request);
             }
 
@@ -290,6 +294,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 //AdBlock.RemoveDiscusIFrame(TNo);
+                //JavascriptCommands.CallBackInjection.SetCallBackWithDelay(Wv, JavascriptCommands.CallBackInjection.AddFullScreenCallBack, 10000);
                 base.OnPageFinished(view, url);
             }
         }

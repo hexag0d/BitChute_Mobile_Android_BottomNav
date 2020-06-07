@@ -19,8 +19,9 @@ namespace BitChute.Classes
         public static bool LatestDownloadSucceeded;
         public static bool VideoDownloadInProgress;
         static System.Int64 bytes_total;
-        //private static System.Net.WebClient _wc; 
-        private static System.Net.WebClient _wc;
+        private static ExtWebClient _wc; 
+        //private static System.Net.WebClient _wc;
+        
 
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
@@ -132,8 +133,10 @@ namespace BitChute.Classes
                     {
                         HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                         doc.LoadHtml(html);
+                        
                         if (doc != null)
                         {
+                            var check = doc.DocumentNode;
                             foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//source"))
                             {
                                 videoLink = node.Attributes["src"].Value.ToString();
@@ -254,86 +257,88 @@ namespace BitChute.Classes
             ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
         }
 
-        ///// <summary>
-        ///// uri or url can be null but not both.
-        ///// 
-        ///// returns true if the download succeded or file already exists
-        ///// </summary>
-        ///// <param name="url"></param>
-        ///// <param name="uri"></param>
-        ///// <returns></returns>
-        //public async Task<bool> DownloadAndSaveVideoWebRequest(VideoCard vc)
-        //{
-        //    ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-        //    _wc = new System.Net.WebClient();
-        //    _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
-        //    _wc.DownloadFileCompleted += OnVideoDownloadFinished;
-        //    var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
-        //    string filePath;
-        //    if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
-        //    {
-        //        filePath = string.Join("_", vc.Title.Split(System.IO.Path.GetInvalidFileNameChars()));
-        //        ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
-        //        filePath = documentsPath + filePath;
-        //    }
-        //    else
-        //    {
-        //        filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
-        //    }
-        //    if (!filePath.EndsWith(@".mp4"))
-        //    {
-        //        filePath = filePath + @".mp4";
-        //    }
-        //    if (vc != null)
-        //    {
-        //        if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
-        //        {
-        //            ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
-        //            Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
-        //            return false;
-        //        }
-        //    }
-        //    try
-        //    {
-        //        if (vc.VideoUri != null)
-        //        {
-        //            await Task.Run(() =>
-        //            {
-        //                _wc.OpenRead(vc.VideoUri);
-        //                bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
-        //            });
-        //            await _wc.DownloadFileTaskAsync(vc.VideoUri,
-        //                filePath);
-        //        }
-        //        else
-        //        {
-        //            await Task.Run(() =>
-        //            {
-        //                _wc.OpenRead(new System.Uri(vc.Link));
-        //                bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
-        //            });
-        //            await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
-        //                filePath);
-        //        }
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        System.Console.WriteLine(ex.InnerException);
-        //    }
-        //    VideoDownloadInProgress = false;
-        //    if (System.IO.File.Exists(filePath))
-        //    {
-        //        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadSuccess(), ToastLength.Long);
-        //        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadFailed(), ToastLength.Long);
-        //        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadFailed();
-        //        return false;
-        //    }
-        //}
+        /// <summary>
+        /// uri or url can be null but not both.
+        /// 
+        /// returns true if the download succeded or file already exists
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        public async Task<bool> DownloadAndSaveVideoWebRequest(VideoCard vc)
+        {
+            ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
+            //_wc = new System.Net.WebClient();
+            _wc = new ExtWebClient();
+            _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
+            _wc.DownloadFileCompleted += OnVideoDownloadFinished;
+            var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
+            string filePath;
+            if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
+            {
+                filePath = string.Join("_", vc.Title.Split(System.IO.Path.GetInvalidFileNameChars()));
+                ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
+                filePath = documentsPath + filePath;
+            }
+            else
+            {
+                filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
+            }
+            if (!filePath.EndsWith(@".mp4"))
+            {
+                filePath = filePath + @".mp4";
+            }
+            if (vc != null)
+            {
+                if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
+                {
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
+                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
+                    return false;
+                }
+            }
+            try
+            {
+                if (vc.VideoUri != null)
+                {
+                    await Task.Run(() =>
+                    {
+                        //_wc.DownloadFileAsync(vc.VideoUri, filePath);
+                        _wc.OpenRead(vc.VideoUri);
+                        bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
+                    });
+                    await _wc.DownloadFileTaskAsync(vc.VideoUri,
+                        filePath);
+                }
+                else
+                {
+                    await Task.Run(() =>
+                    {
+                        _wc.OpenRead(new System.Uri(vc.Link));
+                        bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
+                    });
+                    await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
+                        filePath);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine(ex.InnerException);
+            }
+            VideoDownloadInProgress = false;
+            if (System.IO.File.Exists(filePath))
+            {
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadSuccess(), ToastLength.Long);
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
+                return true;
+            }
+            else
+            {
+                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadFailed(), ToastLength.Long);
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadFailed();
+                return false;
+            }
+        }
 
         /// <summary>
         /// uri or url can be null but not both.
@@ -346,7 +351,8 @@ namespace BitChute.Classes
         public async Task<bool> DownloadAndSaveVideo(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            _wc = new System.Net.WebClient();
+            //_wc = new System.Net.WebClient();
+            _wc = new ExtWebClient();
             _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             _wc.DownloadFileCompleted += OnVideoDownloadFinished;
             
@@ -381,6 +387,7 @@ namespace BitChute.Classes
                 {
                     await Task.Run(() =>
                     {
+                       // _wc.DownloadFileAsync(vc.VideoUri, filePath);
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });

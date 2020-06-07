@@ -62,7 +62,12 @@ namespace BitChute.Classes
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
         /// </summary>
-        public static int TabDelay = 3000;
+        public static int TabDelay = 4000;
+
+        /// <summary>
+        /// the number of seconds that the navbar will disappear after
+        /// </summary>
+        public static int NavRemovalDelay = 11;
 
         /// <summary>
         /// the ms delay for fixing link overflow on mobile

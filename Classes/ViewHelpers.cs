@@ -7,6 +7,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 
@@ -22,7 +23,48 @@ namespace BitChute.Classes
 
         public class Main
         {
-            public static Android.Support.Design.Widget.FloatingActionButton DownloadFAB { get; set; }
+            public static FloatingActionButton DownloadFAB { get; set; }
+            public static RelativeLayout.LayoutParams FabLayoutBottom { get; set; }
+            public static RelativeLayout.LayoutParams FabLayoutOrig { get; set; }
+            //public static int LayoutAbove { get; set; }
+            public static Handler UiHandler = new Handler();
+
+            private static bool _navHidden;
+            public static bool NavHidden
+            {
+                get
+                {
+                    return _navHidden;
+                }
+                set
+                {
+                    _navHidden = value;
+                    OnNavBarVizChanged();
+                }
+            }
+
+            public static async void OnNavBarVizChanged()
+            {
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    if (FabLayoutOrig == null)
+                    {
+                        FabLayoutOrig = (RelativeLayout.LayoutParams)DownloadFAB.LayoutParameters;
+                        FabLayoutBottom = FabLayoutOrig;
+                        FabLayoutBottom.AddRule(LayoutRules.AlignParentBottom);
+                    }
+                });
+                if (NavHidden)
+                {
+                    FabLayoutBottom.AddRule(LayoutRules.AlignParentBottom);
+                    UiHandler.Post(() => DownloadFAB.LayoutParameters = FabLayoutBottom);
+                }
+                else
+                {
+                    FabLayoutBottom.RemoveRule(LayoutRules.AlignParentBottom);
+                    UiHandler.Post(() => DownloadFAB.LayoutParameters = FabLayoutBottom);
+                }
+            }
         }
 
         public class Tab0

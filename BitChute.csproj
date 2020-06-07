@@ -79,9 +79,12 @@
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
-    <Compile Include="Classes\ExtendedChromeClient.cs" />
+    <Compile Include="Classes\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
+    <Compile Include="Classes\ExtWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Classes\ExtWebInterface.cs" />
     <Compile Include="Classes\FileBrowser.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />

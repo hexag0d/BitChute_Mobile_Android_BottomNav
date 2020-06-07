@@ -75,10 +75,12 @@
 
         public static bool NotificationStartedApp = false;
 
+        public static Android.App.Notification ForeNote { get; set; }
+
         /// <summary>
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.3.1.API8Retainer.RemoveDisqusAds";
+        public static string AppVersion = "25.4.2.API8Retainer.FixVideoDownloader";
     }
 }

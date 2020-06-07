@@ -111,16 +111,18 @@ namespace BitChute
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
+            _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
                 AppState.Display.Horizontal = true;
+                _window.ClearFlags(_winflagnotfullscreen);
+                _window.AddFlags(_winflagfullscreen);
             }
             else
             {
                 AppState.Display.Horizontal = false;
             }
             Main = this;
-            _window = this.Window;
             var mServiceIntent = new Intent(this, typeof(ExtStickyService));
             StartService(mServiceIntent);
             //get the intent incase a notification started the activity
@@ -130,14 +132,13 @@ namespace BitChute
                 //if it's not null then set the fragment1 url to our intent url string
                 try
                 {
-                    var _tempUrl = _sentIntent.Extras.GetString("URL");
+                    var _tempUrl = _sentIntent.Extras?.GetString("URL");
                     if (_tempUrl != "" && _tempUrl != null)
                         TheFragment0.RootUrl = _tempUrl;
                     AppState.NotificationStartedApp = true;
                 }
                 catch
-                {
-                }
+                { }
             }
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
@@ -161,23 +162,9 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
-            ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
-            BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
-            //debug
 
-            //System.Net.ServicePointManager.ServerCertificateValidationCallback +=
-            //                                (sender, cert, chain, error) =>
-            //    {
-            //     if (cert.GetCertHashString() == "xxxxxxxxxxxxxxxx")
-            //      {
-            //  return true;
-            //       }
-            //       else
-            //  {
-            //    return error == System.Net.Security.SslPolicyErrors.None;
-            //   }
-            //};
-            //
+            ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+            //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
         }
 
         public static TheFragment0 Fm0 = TheFragment0.NewInstance("Home", "tab_home");
@@ -198,7 +185,7 @@ namespace BitChute
         }
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
-        public static bool NavHidden = false;
+       // public static bool NavHidden = false;
         public static bool NavTimeout = true;
         public static int NavTimer = 0;
 
@@ -212,7 +199,7 @@ namespace BitChute
             if (!NavTimeout || AppState.Display.Horizontal)
             {
                 NavigationView.Visibility = ViewStates.Visible;
-                NavHidden = false;
+                ViewHelpers.Main.NavHidden = false;
                 NavBarRemove();
                 NavTimeout = true;
             }
@@ -235,7 +222,7 @@ namespace BitChute
                 if (!NavTimeout)
                 {
                     NavigationView.Visibility = ViewStates.Visible;
-                    NavHidden = false;
+                    ViewHelpers.Main.NavHidden = false;
                     NavBarRemove();
                     NavTimeout = true;
                 }
@@ -245,7 +232,7 @@ namespace BitChute
                 if (NavigationView.Visibility == ViewStates.Gone)
                 {
                     NavigationView.Visibility = ViewStates.Visible;
-                    NavHidden = false;
+                    ViewHelpers.Main.NavHidden = false;
                     NavBarRemove();
                     NavTimeout = true;
                 }
@@ -254,11 +241,11 @@ namespace BitChute
 
         public static async void NavBarRemove()
         {
-            while (!NavHidden)
+            while (!ViewHelpers.Main.NavHidden)
             {
                 await Task.Delay(1000);
                 NavTimer++;
-                if (NavTimer >= 8)
+                if (NavTimer >= AppSettings.NavRemovalDelay)
                 {
                     if (AppState.Display.Horizontal)
                     {
@@ -272,7 +259,7 @@ namespace BitChute
                         }
                     }
                     NavTimeout = false;
-                    NavHidden = true;
+                    ViewHelpers.Main.NavHidden = true;
                 }
             }
         }
@@ -911,18 +898,35 @@ namespace BitChute
         }
 
 
-        //protected override void OnPause()
-        //{
-        //    base.OnPause();
-        //    ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
-        //}
+        protected override void OnPause()
+        {
+            base.OnPause();
+            ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+        }
 
         protected override void OnResume()
         {
-            if (Intent != null)
+            if (!TabStates.Tab3.VideoDownloaderViewEnabled)
             {
-                var check = Intent;
+                if (AppSettings.DlFabShowSetting != "always")
+                {
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                }
+                else { ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible; }
             }
+            else if (TabStates.Tab3.VideoDownloaderViewEnabled)
+            {
+                if (AppSettings.DlFabShowSetting != "never")
+                {
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                }
+                else { ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone; }
+            }
+
+        //    if (Intent != null)
+        //    {
+
+        //    }
             try {
                 IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
                 RegisterReceiver(ForegroundReceiver, filter);
@@ -937,9 +941,11 @@ namespace BitChute
         
         protected override void OnDestroy()
         {
+            UnregisterReceiver(ForegroundReceiver);
+            ExtStickyService.ExternalStopForeground();
+            AppState.NotificationStartedApp = false;
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
-            AppState.NotificationStartedApp = false;
             base.OnDestroy();
         }
     }

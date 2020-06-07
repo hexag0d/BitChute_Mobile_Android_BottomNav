@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static BitChute.Classes.ExtendedWebChromeClient;
+using static BitChute.Classes.ExtWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
 
@@ -73,9 +73,6 @@ namespace BitChute.Fragments
         private static RadioButton _autoplayminimizedon;
         private static RadioButton _autoplayfeedonly;
         private static RadioButton _autoplayminimizedoff;
-
-        public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
-        public static int _count = 0;
         
         public static TextView _versionTextView;
         public static List<string> _tabOverrideStringList = new List<string>();
@@ -746,9 +743,6 @@ namespace BitChute.Fragments
             }
         }
 
-        public static string _rawNoteText = "";
-        public static string _cookieString { get; set; }
-
         public List<CustomNotification> GetNotifications()
         {
             return ExtNotifications.CustomNoteList;
@@ -773,8 +767,7 @@ namespace BitChute.Fragments
         {
             Wv.LoadUrl(url);
         }
-
-
+        
         private class ExtWebViewClient : WebViewClient
         {
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
@@ -789,8 +782,6 @@ namespace BitChute.Fragments
 
             public override void OnPageFinished(WebView view, string url)
             {
-
-
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 if (AppSettings.SettingsTabOverride)
                 {

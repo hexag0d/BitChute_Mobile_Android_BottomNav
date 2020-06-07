@@ -19,7 +19,7 @@ namespace BitChute.Classes
     {
         //internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
-        public static TheFragment4 _fm5 = new TheFragment4();
+        public static TheFragment4 Fm4 = new TheFragment4();
 
         public static List<string> NotificationTextList = new List<string>();
         public static List<string> NotificationTypes = new List<string>();
@@ -54,8 +54,7 @@ namespace BitChute.Classes
                 }
             }
         }
-
-
+        
         public static async void SendNotifications(List<CustomNotification> notificationList)
         {
             await Task.Run(() =>
@@ -136,8 +135,7 @@ namespace BitChute.Classes
                     }
                 }
                 catch
-                {
-                }
+                { }
             });
         }
 
@@ -287,9 +285,9 @@ namespace BitChute.Classes
             {
                 try
                 {
-                    if (_fm5 == null)
+                    if (Fm4 == null)
                     {
-                        _fm5 = TheFragment4.Fm4;
+                        Fm4 = TheFragment4.Fm4;
                     }
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -365,7 +363,7 @@ namespace BitChute.Classes
                         }
                         CustomNoteList.Reverse();
                     }
-                    _fm5 = TheFragment4.Fm4;
+                    Fm4 = TheFragment4.Fm4;
                 }
                 catch (Exception ex)
                 {

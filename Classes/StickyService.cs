@@ -49,11 +49,10 @@ namespace StartServices.Servicesclass
         public static PowerManager Pm;
 
         public static WifiManager WifiManager;
-        public static WifiManager.WifiLock wifiLock;
+        public static WifiManager.WifiLock WifiLock;
         public static AudioManager AudioMan;
         
 
-        private static bool _backgroundTimeout = false;
         public static bool NotificationsHaveBeenSent = false;
         private static ExtNotifications _extNotifications = new ExtNotifications();
         private static TheFragment4 _fm5;
@@ -66,8 +65,6 @@ namespace StartServices.Servicesclass
         public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
         public static Dictionary<int, ExtMediaController> MediaControllerDictionary
                      = new Dictionary<int, ExtMediaController>();
-
-        public static int PlayerNumberHasFocus = 0;
 
         private static bool _paused;
         //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
@@ -297,11 +294,11 @@ namespace StartServices.Servicesclass
         /// </summary>
         private static void ReleaseWifiLock()
         {
-            if (wifiLock == null)
+            if (WifiLock == null)
                 return;
 
-            wifiLock.Release();
-            wifiLock = null;
+            WifiLock.Release();
+            WifiLock = null;
         }
 
         protected void OnNewIntent(Intent intent)
@@ -356,12 +353,11 @@ namespace StartServices.Servicesclass
             try
             {
                 ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
+                AppState.ForeNote = startNote;
                 //MainActivity.NOTIFICATION_ID++;
             }
             catch
-            {
-
-            }
+            {  }
         }
 
         #region StickyServiceMethods
@@ -449,11 +445,11 @@ namespace StartServices.Servicesclass
         /// </summary>
         public static void AquireWifiLock()
         {
-            if (wifiLock == null)
+            if (WifiLock == null)
             {
-                wifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
+                WifiLock = WifiManager.CreateWifiLock(Android.Net.WifiMode.Full, "bitchute_wifi_lock");
             }
-            wifiLock.Acquire();
+            WifiLock.Acquire();
         }
 
         #endregion
@@ -501,7 +497,7 @@ namespace StartServices.Servicesclass
                     if (!ExtStickyService._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(ExtStickyService._extTimerTask, 500000, 780000); // 780000
+                        _timer.ScheduleAtFixedRate(_extTimerTask, 500000, 780000); // 780000
                         _notificationLongTimerSet = true;
                     }
                     return;
@@ -518,16 +514,20 @@ namespace StartServices.Servicesclass
             }
         }
 
+        public static void ExternalStopForeground()
+        {
+            WifiLock?.Release();
+            AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+            ExtStickyServ.StopForeground(true);
+        }
+
         public override void OnDestroy()
         {
-            try
-            {
-                base.OnDestroy();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            StopForeground(true);
+            WifiLock?.Release();
+            AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+            base.OnDestroy();
+            
         }
 
         /// <summary>
@@ -688,7 +688,6 @@ namespace StartServices.Servicesclass
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
-            public ExtStickyService _serviceContext;
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
@@ -697,11 +696,9 @@ namespace StartServices.Servicesclass
                 {
                     StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
                 }
-                AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                //AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
             }
-
             
-
             public ServiceWebView(Context context) : base(context)
             {
             }

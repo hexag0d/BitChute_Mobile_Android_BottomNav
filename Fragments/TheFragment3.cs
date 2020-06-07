@@ -96,6 +96,7 @@ namespace BitChute.Fragments
             ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
             ViewHelpers.Main.DownloadFAB.Clickable = true;
             ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
+            
             if (AppSettings.FanMode)
             {
                 //get the url string from prefs

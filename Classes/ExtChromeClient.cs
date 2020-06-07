@@ -14,7 +14,7 @@ using Android.Widget;
 
 namespace BitChute.Classes
 {
-    public class ExtendedWebChromeClient
+    public class ExtWebChromeClient
     {
         public class ExtendedChromeClient : WebChromeClient
         {
