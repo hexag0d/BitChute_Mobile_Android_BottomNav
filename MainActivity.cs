@@ -703,14 +703,8 @@ namespace BitChute
             base.OnNewIntent(intent);
             if (intent != null)
             {
-                try
-                {
-                    url = intent.Extras.GetString("URL");
-                }
-                catch
-                {
-
-                }
+                try {url = intent.Extras.GetString("URL");}
+                catch { }
             }
             if (url == "" || url == null)
                 return;
@@ -910,6 +904,7 @@ namespace BitChute
 
         protected override void OnResume()
         {
+            AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
             if (!TabStates.Tab3.VideoDownloaderViewEnabled)
             {
                 if (AppSettings.DlFabShowSetting != "always")

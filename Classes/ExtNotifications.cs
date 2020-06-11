@@ -26,12 +26,16 @@ namespace BitChute.Classes
         public static List<string> NotificationLinks = new List<string>();
         public static List<CustomNotification> CustomNoteList = new List<CustomNotification>();
         public static List<CustomNotification> PreviousNoteList = new List<CustomNotification>();
-        private int currentListIndex;
+        private int _currentListIndex;
 
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
         private static Android.Support.V4.App.NotificationManagerCompat _notificationManager;
 
-        public static bool _notificationHttpRequestInProgress = false;
+        /// <summary>
+        /// returns/should be set to true when there's already a notification http request
+        /// in progress
+        /// </summary>
+        public static bool NotificationHttpRequestInProgress = false;
 
         private static int _count = 0;
 
@@ -83,7 +87,6 @@ namespace BitChute.Classes
                         resultIntent.PutExtras(valuesForActivity);
                         var resultPendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
                         resultIntent.AddFlags(ActivityFlags.SingleTop);
-
                         var alarmAttributes = new Android.Media.AudioAttributes.Builder()
                                 .SetContentType(Android.Media.AudioContentType.Sonification)
                                 .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
@@ -123,14 +126,12 @@ namespace BitChute.Classes
 
                             MainActivity.NOTIFICATION_ID++;
 
-
                             // publish the notification:
                             //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
                             _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
                             _sentNotificationList.Add(note);
                             notePos++;
                         }
-
                         ExtStickyService.NotificationsHaveBeenSent = true;
                     }
                 }
@@ -348,7 +349,7 @@ namespace BitChute.Classes
                             NotificationLinks.Add(_tagContents);
 
                         }
-                        currentListIndex = 0;
+                        _currentListIndex = 0;
                         CustomNoteList.Clear();
 
                         foreach (var nt in NotificationTypes)
@@ -356,10 +357,10 @@ namespace BitChute.Classes
                             var note = new CustomNotification();
 
                             note.NoteType = nt.ToString();
-                            note.NoteLink = NotificationLinks[currentListIndex].ToString();
-                            note.NoteText = NotificationTextList[currentListIndex].ToString();
+                            note.NoteLink = NotificationLinks[_currentListIndex].ToString();
+                            note.NoteText = NotificationTextList[_currentListIndex].ToString();
                             CustomNoteList.Add(note);
-                            currentListIndex++;
+                            _currentListIndex++;
                         }
                         CustomNoteList.Reverse();
                     }
@@ -369,7 +370,7 @@ namespace BitChute.Classes
                 {
                     Console.WriteLine(ex.Message);
                 }
-                ExtNotifications._notificationHttpRequestInProgress = false;
+                ExtNotifications.NotificationHttpRequestInProgress = false;
 
                 //_fm5.SendNotifications();
             });

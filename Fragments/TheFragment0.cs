@@ -161,8 +161,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = false;
             }
         }
-        
-        
+
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
@@ -186,8 +185,6 @@ namespace BitChute.Fragments
                 }
             }
         }
-
-
 
         private static int _scrollY = 0;
 
@@ -343,11 +340,22 @@ namespace BitChute.Fragments
                     WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
                     return w;
                 }
+                //if (request.Url.ToString().Contains("nk.bitchute.com"))
+                //{
+                //    var check = request.Url.ToString();
+                //}
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override void OnPageFinished(WebView _view, string url)
             {
+                //add one to the autoint... for some reason if Tab1 has 
+                //Wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
+                //this is a workaround for that glitch
+                _autoInt++;
+
+                // if autoInt is 1 then we will set the MediaPlaybackRequiresUserGesture
+                //strange.. i know.. but it works
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
                 {
                     Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -379,13 +387,6 @@ namespace BitChute.Fragments
                     HidePageTitle();
                 }
 
-                //add one to the autoint... for some reason if Tab1 has 
-                //Wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
-                //this is a workaround for that glitch
-                _autoInt++;
-
-                // if autoInt is 1 then we will set the MediaPlaybackRequiresUserGesture
-                //strange.. i know.. but it works
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 SetReload();
                 HideLinkOverflow();
@@ -394,7 +395,8 @@ namespace BitChute.Fragments
                 //ExpandPage(true);
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                //AdBlock.RemoveDiscusIFrame(TNo);
+                //JavascriptCommands.CallBackInjection.SetCallbackWithDelay(
+                //    Wv, JavascriptCommands.CallBackInjection.AddFullScreenCallback, 6000);
                 base.OnPageFinished(_view, url);
             }
         }

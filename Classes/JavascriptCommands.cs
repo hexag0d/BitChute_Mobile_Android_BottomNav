@@ -291,19 +291,22 @@ namespace BitChute.Classes
             /// </summary>
         public class CallBackInjection
         {
-            public static string AddFullScreenCallBack = @"javascript:(" +
-                        @"var customFullScreen = function() {  $('#loader-container').load('https://dlink.bitchute.com/callbacks/fullscreen'); } "
-                       + @"document.getElementsByClassName('plyr__controls__item plyr__control plyr__tab-focus')[0].addEventListener('click', customFullScreen, false);"
-                       + @"})()";
+            //public static string AddFullScreenCallback = @"javascript:(" + @"function() { " +
+            // @"customFullScreen = function() {  $('#loader-container').load('https://dlink.bitchute.com/callbacks/fullscreen'); } "
+            //  + @"document.getElementsByClassName('plyr__controls__item plyr__control plyr__tab-focus')[0].addEventListener('click', customFullScreen, false);"
+            //        + @"})()";
 
-            public static async void SetCallBackWithDelay (ServiceWebView wv, string js, int delay)
-            {
-                await System.Threading.Tasks.Task.Delay(delay);
-                await System.Threading.Tasks.Task.Run(() => {
-                    ViewHelpers.Main.UiHandler.Post(() => { wv.LoadUrl(js); });
-                });
-            }
+            //public static string AddFullScreenCallback = @"javascript:(function() { var customFullScreen = function() {  $('#loader-container').load('https://dlink.bitchute.com/callbacks/fullscreen'); }" +
+            // @"document.getElementsByClassName('plyr__controls__item plyr__control')[0].addEventListener('click', customFullScreen, false); })();";
+
+            //public static string AddFullScreenEventListener = @"document.getElementsByClassName('plyr__controls__item plyr__control')[0].addEventListener('click', customFullScreen, false); })();";
+            //public static async void SetCallbackWithDelay (ServiceWebView wv, string js, int delay)
+            //{
+            //    await System.Threading.Tasks.Task.Delay(delay);
+            //    await System.Threading.Tasks.Task.Run(() => {
+            //        ViewHelpers.Main.UiHandler.Post(() => { wv.LoadUrl(js); });
+            //    });
+            //}
         }
-
     }
 }

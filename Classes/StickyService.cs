@@ -56,7 +56,7 @@ namespace StartServices.Servicesclass
         public static bool NotificationsHaveBeenSent = false;
         private static ExtNotifications _extNotifications = new ExtNotifications();
         private static TheFragment4 _fm5;
-        private static ActivityManager.RunningAppProcessInfo _myProcess = new ActivityManager.RunningAppProcessInfo();
+        private static ActivityManager.RunningAppProcessInfo _dProcess = new ActivityManager.RunningAppProcessInfo();
         private static int _startForegroundNotificationId = 6666;
 
         private static bool _notificationStackExecutionInProgress = false;
@@ -186,6 +186,7 @@ namespace StartServices.Servicesclass
             }
             else
             {
+                AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
                 StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
             }
         }
@@ -311,9 +312,7 @@ namespace StartServices.Servicesclass
                     url = intent.Extras.GetString("URL");
                 }
                 catch
-                {
-
-                }
+                {   }
             }
             if (url == "" || url == null)
                 return;
@@ -322,17 +321,10 @@ namespace StartServices.Servicesclass
             {
                 switch (MainActivity.ViewPager.CurrentItem)
                 {
-                    case 0:
-                        TheFragment0.Wv.LoadUrl(url);
-                        break;
-                    case 1:
-                        TheFragment1.Wv.LoadUrl(url);
-                        break;
-                    case 2:
-                        TheFragment2.Wv.LoadUrl(url);
-                        break;
-                    case 3:
-                        TheFragment3.Wv.LoadUrl(url);
+                    case 0: TheFragment0.Wv.LoadUrl(url); break;
+                    case 1: TheFragment1.Wv.LoadUrl(url); break;
+                    case 2: TheFragment2.Wv.LoadUrl(url); break;
+                    case 3: TheFragment3.Wv.LoadUrl(url);
                         break;
                     case 4:
                         TheFragment4.Wv.LoadUrl(url);
@@ -340,8 +332,7 @@ namespace StartServices.Servicesclass
                 }
             }
             catch
-            {
-            }
+            {   }
         }
 
         /// <summary>
@@ -402,14 +393,11 @@ namespace StartServices.Servicesclass
                 }
             }
             else
-            {
-            }
+            { }
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            
-            //intent.Flags = ActivityFlags.
             switch (intent?.Action)
             {
                 case ActionPlay: Play(); break;
@@ -419,7 +407,6 @@ namespace StartServices.Servicesclass
                 case ActionPrevious: SkipToPrev(MainActivity.ViewPager.CurrentItem); break;
                 case ActionLoadUrl: LoadVideoFromUrl(MainActivity.ViewPager.CurrentItem,
                     intent.Extras.GetString("URL")); break; 
-                    
             }    
 
             try
@@ -492,7 +479,7 @@ namespace StartServices.Servicesclass
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings.Notifying)
             {
-                if (!ExtNotifications._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
                     _notificationStackExecutionInProgress = true;
                     await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
@@ -546,11 +533,11 @@ namespace StartServices.Servicesclass
                 WifiLock?.Release();
             }
             catch { }
-            try
-            {
-               // AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
-            }
-            catch { }
+            //try
+            //{
+            //   // AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+            //}
+            //catch { }
         }
 
         /// <summary>
@@ -569,7 +556,7 @@ namespace StartServices.Servicesclass
                     }
                     try
                     {
-                        if (!ExtNotifications._notificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                        if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                         {
                             _notificationStackExecutionInProgress = true;
                             await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
@@ -579,15 +566,13 @@ namespace StartServices.Servicesclass
                         }
                     }
                     catch
-                    {
-                    }
+                    {   }
                 }
             }
         }
 
         public static bool DummyLoop()
         {
-
             var dummyVar = true;
             return dummyVar;
         }
@@ -600,9 +585,9 @@ namespace StartServices.Servicesclass
         /// <returns>bool</returns>
         public static bool IsInBkGrd()
         {
-            ActivityManager.GetMyMemoryState(_myProcess);
+            ActivityManager.GetMyMemoryState(_dProcess);
 
-            if (_myProcess.Importance == Importance.Foreground)
+            if (_dProcess.Importance == Importance.Foreground)
             {
                 AppState.Bkgrd = false;
                 return false;
@@ -688,23 +673,26 @@ namespace StartServices.Servicesclass
         public static async void StartVideoInBkgrd(int tab)
         {
             await Task.Delay(1);
-            switch (tab)
+            if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
             {
-                case 0:
-                    TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                    break;
-                case 1:
-                    TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                    break;
-                case 2:
-                    TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                    break;
-                case 3:
-                    TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                    break;
-                case 4:
-                    TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                    break;
+                switch (tab)
+                {
+                    case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        break;
+                    case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        break;
+                    case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        break;
+                    case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        break;
+                    case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        break;
+                }
             }
         }
 
@@ -715,18 +703,6 @@ namespace StartServices.Servicesclass
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 base.OnWindowFocusChanged(hasWindowFocus);
-                try
-                {
-                    if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
-                    {
-                        StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
-                    }
-                }
-                catch
-                {
-
-                }
-                //AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
             }
             
             public ServiceWebView(Context context) : base(context)

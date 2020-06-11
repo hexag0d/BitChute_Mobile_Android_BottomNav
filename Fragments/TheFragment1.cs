@@ -268,10 +268,10 @@ namespace BitChute.Fragments
                     WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
                     return w;
                 }
-                //if (request.Url.ToString().Contains("dlink.bitchute"))
-                //{
-                //    var check = 0;
-                //}
+                if (request.Url.ToString().Contains("dlink.bitchute"))
+                {
+                    var check = 0;
+                }
                 return base.ShouldInterceptRequest(view, request);
             }
 

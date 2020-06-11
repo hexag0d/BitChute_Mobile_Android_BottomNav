@@ -32,6 +32,8 @@ namespace BitChute.Classes
 
         public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
         {
+            //JavascriptCommands.CallBackInjection.SetCallbackWithDelay(TheFragment1.Wv,
+            //    JavascriptCommands.CallBackInjection.AddFullScreenCallback, 0);
             InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));
         }
 
@@ -40,21 +42,11 @@ namespace BitChute.Classes
             string taburl = "";
             switch (tab)
             {
-                case 0:
-                    taburl = TheFragment0.Wv.OriginalUrl;
-                    break;
-                case 1:
-                    taburl = TheFragment1.Wv.OriginalUrl;
-                    break;
-                case 2:
-                    taburl = TheFragment2.Wv.OriginalUrl;
-                    break;
-                case 3:
-                    taburl = TheFragment3.Wv.OriginalUrl;
-                    break;
-                case 4:
-                    taburl = TheFragment4.Wv.OriginalUrl;
-                    break;
+                case 0: taburl = TheFragment0.Wv.OriginalUrl; break;
+                case 1: taburl = TheFragment1.Wv.OriginalUrl; break;
+                case 2: taburl = TheFragment2.Wv.OriginalUrl; break;
+                case 3: taburl = TheFragment3.Wv.OriginalUrl; break;
+                case 4: taburl = TheFragment4.Wv.OriginalUrl; break;
             }
             return taburl;
         }

@@ -27,7 +27,7 @@ namespace BitChute.Classes
             // for security purposes make sure that we're requesting from bitchute.com
             if (address.Host.EndsWith(".bitchute.com") && address.AbsolutePath.EndsWith(".mp4"))
             {
-                //this is super dirty, add to a one off Callback with a hardcoded hash
+                //this is super dirty; add to a one off Callback with a hardcoded hash
                 request.ServerCertificateValidationCallback += (sender, cert, chain, error) =>
                 {
                     //if the cert request matches the bitchute thumbprint then it's valid

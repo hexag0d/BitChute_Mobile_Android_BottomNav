@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace BitChute.Classes
 {
@@ -34,7 +25,7 @@ namespace BitChute.Classes
                 HtmlCode = "";
                 HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
 
-                if (!ExtNotifications._notificationHttpRequestInProgress)
+                if (!ExtNotifications.NotificationHttpRequestInProgress)
                 {
                     try
                     {
@@ -44,12 +35,12 @@ namespace BitChute.Classes
                         using (HttpClient _client = new HttpClient(handler))
                         {
                             _client.DefaultRequestHeaders.Add("Cookie", ExtWebInterface.CookieHeader);
-                            ExtNotifications._notificationHttpRequestInProgress = true;
+                            ExtNotifications.NotificationHttpRequestInProgress = true;
 
                             var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
                             var resultContent = getRequest.Content.ReadAsStringAsync().Result;
                             HtmlCode = resultContent;
-                            ExtNotifications._notificationHttpRequestInProgress = false;
+                            ExtNotifications.NotificationHttpRequestInProgress = false;
                         }
                     }
                     catch (Exception ex)

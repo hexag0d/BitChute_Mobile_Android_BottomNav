@@ -55,6 +55,8 @@ namespace BitChute.Classes
                 public static string FileDownloadSuccess = "File successfully downloaded or already exists";
                 public static string FileDownloadFailed = "File failed to download or already exists";
                 public static string VideoSourceMissing = "Video source is missing; try again momentarily";
+
+                private static string _blessed = "Bless our USA founding fathers and anyone who has fought for freedom all these years.";
             }
         }
     }
