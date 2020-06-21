@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using Android;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 
@@ -22,6 +16,23 @@ namespace BitChute.Classes
         public static void FileBrowserButton_OnClick(object sender, EventArgs e)
         {
             OpenFileBrowser();
+        }
+
+        public static void SaveFileToStorage(Java.IO.File f)
+        {
+            if (f == null)
+            {
+                return;
+            }
+            try
+            {
+                Java.IO.FileOutputStream fos = new Java.IO.FileOutputStream(f);
+                fos.Close();
+            }
+            catch (FileNotFoundException e)
+            { }
+            catch (IOException e)
+            { }
         }
 
         public static void OpenFileBrowser()

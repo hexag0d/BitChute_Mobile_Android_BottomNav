@@ -65,45 +65,42 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
-            Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
+            _view = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
+            ViewHelpers.VideoEncoder.StartEncodingButton = _view.FindViewById<Button>(Resource.Id.encodingStartButton);
+            ViewHelpers.VideoEncoder.EncodingStatusTextView = _view.FindViewById<TextView>(Resource.Id.encodingStatusTextBox);
+            ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
+            //debug ... disabling the homepage for now 
 
-            //ViewHelpers.Tab0.FragmentContainerLayout = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
-            //ViewHelpers.Tab0.DownloaderLayout = inflater.Inflate(Resource.Layout.DownloaderLayout, container, false);
-            //ViewHelpers.Tab0.TabFragmentLinearLayout = 
-            //    (RelativeLayout)ViewHelpers.Tab0.FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);
-            //ViewHelpers.Tab0.DownloadButton = ViewHelpers.Tab0.DownloaderLayout.FindViewById<Button>(Resource.Id.downloadButton);
-            //Wv = (ServiceWebView)ViewHelpers.Tab0.WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView3Swapable);
-            //ViewHelpers.Container = container;
-            //ViewHelpers.Tab0.TabFragmentLinearLayout.AddView(ViewHelpers.Tab0.WebViewFragmentLayout);
+            //_view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
+            //Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
-            //ViewHelpers.Tab0.DownloadButton.Click += VideoDownloader.VideoDownloadButton_OnClick;
+            //Wv.SetWebViewClient(Wvc);
+            //if (AppState.NotificationStartedApp)
+            //{
+            //    SetAutoPlayWithDelay(1);
+            //}
+            //Wv.Settings.JavaScriptEnabled = true;
+            //Wv.Settings.DisplayZoomControls = false;
 
+            //tabLoaded = true;
 
-            Wv.SetWebViewClient(Wvc);
-            if (AppState.NotificationStartedApp)
-            {
-                SetAutoPlayWithDelay(1);
-            }
-            Wv.Settings.JavaScriptEnabled = true;
-            Wv.Settings.DisplayZoomControls = false;
-            //Wv.Settings.AllowFileAccess = true;
-            //Wv.Settings.AllowContentAccess = true;
+            //Wv.LoadUrl(RootUrl);
+            //if (AppSettings.ZoomControl)
+            //{
+            //    Wv.Settings.BuiltInZoomControls = true;
+            //    Wv.Settings.DisplayZoomControls = false;
+            //}
+            //CustomSetTouchListener(AppState.Display.Horizontal);
 
-            tabLoaded = true;
-            
-            Wv.LoadUrl(RootUrl);
-            if (AppSettings.ZoomControl)
-            {
-                Wv.Settings.BuiltInZoomControls = true;
-                Wv.Settings.DisplayZoomControls = false;
-            }
-            CustomSetTouchListener(AppState.Display.Horizontal);
-
-
-            //Wv.SetOnScrollChangeListener(new ExtScrollListener());
-            //Wv.SetOnTouchListener(new ExtTouchListener());
             return _view;
+        }
+
+        public static void StartEncodingButton_OnClick(object sender, EventArgs e)
+        {
+            var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
+            Task.Run(() => {
+                myCodec.Start();
+            });
         }
 
         public static async void SetAutoPlayWithDelay(int delay)

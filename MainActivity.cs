@@ -952,5 +952,10 @@ namespace BitChute
             ExtStickyService.ExternalStopForeground();
             base.OnDestroy();
         }
+
+        public static Context GetMainContext()
+        {
+            return Main.ApplicationContext;
+        }
     }
 }

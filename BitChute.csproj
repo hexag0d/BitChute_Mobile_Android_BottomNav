@@ -91,6 +91,7 @@
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
+    <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
@@ -106,6 +107,12 @@
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VideoEncoding\CameraToMp4.cs" />
+    <Compile Include="VideoEncoding\FileToMp4.cs" />
+    <Compile Include="VideoEncoding\GeneratedVideoToMp4.cs" />
+    <Compile Include="VideoEncoding\InputSurface.cs" />
+    <Compile Include="VideoEncoding\OutputSurface.cs" />
+    <Compile Include="VideoEncoding\TextureRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -316,6 +323,14 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-xxhdpi\ic_action_videocam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\VideoEncodingLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\raw\mylastvidd.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

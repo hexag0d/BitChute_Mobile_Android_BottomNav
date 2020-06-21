@@ -43,6 +43,12 @@ namespace BitChute.Classes
                 }
             }
 
+            public static bool UpdateView(object toBeUpdated, object updateWith)
+            {
+                UiHandler.Post(() => toBeUpdated = updateWith);
+                return true;
+            }
+            
             public static async void OnNavBarVizChanged()
             {
                 await System.Threading.Tasks.Task.Run(() =>
@@ -93,6 +99,12 @@ namespace BitChute.Classes
             public static CheckBox AutoFillVideoTitleText { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager FileLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView FileRecyclerView { get; set; }
+        }
+
+        public class VideoEncoder
+        {
+            public static TextView EncodingStatusTextView { get; set; }
+            public static Button StartEncodingButton { get; set; }
         }
     }
 }
