@@ -76,7 +76,7 @@ namespace BitChute.Classes
 
         public static int AdBlockDelay = 10000;
 
-        public static int ScrollToTopDelay = 30;
+        public static int ScrollToTopDelay = 200;
 
         /// <summary>
         /// this int controls the delay in ms of notifications being 

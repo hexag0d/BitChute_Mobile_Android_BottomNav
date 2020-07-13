@@ -200,9 +200,9 @@ namespace BitChute.Classes
             var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming in background")
-                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                 .SetOngoing(true)
-                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
+                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMax);            
 
             var status = builder.Build();
             status.ContentView = views;
@@ -249,7 +249,7 @@ namespace BitChute.Classes
             var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming test")
-                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                 .SetOngoing(true)
                 .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
 

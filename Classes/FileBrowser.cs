@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content;
@@ -31,43 +32,53 @@ namespace BitChute.Classes
             ViewHelpers.Tab3.FileRecyclerView.SetLayoutManager(ViewHelpers.Tab3.FileLayoutManager);
             if (ViewHelpers.Tab3.FileRecyclerView.GetAdapter() == null)
             {
-                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos());
+                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos().Result);
                 ViewHelpers.Tab3.FileRecyclerView.SetAdapter(FileAdapter);
             }
             else
             {
-                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos());
+                FileAdapter = new FileRecyclerViewAdapter(GetLocalVideos().Result);
                 FileAdapter.NotifyDataSetChanged();
             }
         }
 
-        public static void GetExternalPermissions()
+        public static bool GetExternalPermissions()
         {
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+            try
             {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                {
+                    Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
+                }
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                {
+                    Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
+                }
+                return true;
             }
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
-            }
+            catch { return false; }
         }
 
-        public static List<string> GetLocalVideos()
+        public static async Task<List<string>> GetLocalVideos()
         {
-            GetExternalPermissions();
-            List<string> files = new List<string>();
-            var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "download";
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            var filesList = Directory.GetFiles(folder);
-            foreach (var file in filesList)
+            try
             {
-                var filename = Path.GetFileName(file);
-                files.Add(filename);
+                Task<bool> pTask = Task.FromResult<bool>(GetExternalPermissions());
+                await pTask;
+                List<string> files = new List<string>();
+                var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "download";
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                var filesList = Directory.GetFiles(folder);
+                foreach (var file in filesList)
+                {
+                    var filename = Path.GetFileName(file);
+                    files.Add(filename);
+                }
+                return files;
             }
-            return files;
+            catch { return null; }
         }
 
         public class FileViewHolder : Android.Support.V7.Widget.RecyclerView.ViewHolder

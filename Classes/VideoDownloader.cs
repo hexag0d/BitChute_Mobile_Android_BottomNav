@@ -53,16 +53,24 @@ namespace BitChute.Classes
 
         public static bool WriteFilePermissionGranted;
         public static bool ReadFilePermissionGranted;
-        public static void GetExternalPermissions()
+        public static bool GetExternalPermissions()
         {
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+            try
             {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
-            }
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                {
+                    Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
+                }
 
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+                {
+                    Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
+                }
+                return true;
+            }
+            catch
             {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
+                return false;
             }
         }
 
@@ -71,7 +79,8 @@ namespace BitChute.Classes
             if (!VideoDownloadInProgress)
             {
                 ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
-                GetExternalPermissions();
+                Task<bool> pTask = Task.FromResult<bool>(GetExternalPermissions());
+                await pTask;
                 VideoDownloadInProgress = true;
                 VideoDownloader _vd = new VideoDownloader();
                 if (videoLink != null && videoLink != "")
@@ -460,8 +469,8 @@ namespace BitChute.Classes
                 var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                                 .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                                 .SetContentTitle("BitChute streaming in background")
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
-                                .SetPriority(NotificationCompat.PriorityLow);
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                .SetPriority(NotificationCompat.PriorityMax);
 
                 StartForeground(-6666, builder.Build());
             }

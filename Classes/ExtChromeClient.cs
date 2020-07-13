@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Webkit;
-
+using System.Threading.Tasks;
 
 namespace BitChute.Classes
 {
@@ -20,11 +20,18 @@ namespace BitChute.Classes
 
             public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback, FileChooserParams fileChooserParams)
             {
-                this.message = filePathCallback;
-                Intent chooserIntent = fileChooserParams.CreateIntent();
-                chooserIntent.AddCategory(Intent.CategoryOpenable);
-                this.activity.StartActivity(Intent.CreateChooser(chooserIntent, "File Chooser"), filechooser, this.OnActivityResult);
-                return true;
+                try
+                {
+                    FileBrowser.GetExternalPermissions();
+                    this.message = filePathCallback;
+                    Intent chooserIntent = fileChooserParams.CreateIntent();
+                    chooserIntent.AddCategory(Intent.CategoryOpenable);
+                    this.activity.StartActivity(Intent.CreateChooser(chooserIntent, "File Chooser"), filechooser, this.OnActivityResult);
+                    return true;
+                }catch
+                {
+                    return false;
+                }
             }
 
             private void OnActivityResult(int requestCode, Result resultCode, Intent data)
