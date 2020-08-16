@@ -97,7 +97,8 @@ namespace BitChute.Fragments
 
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
-            var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
+            var s = new System.Drawing.Size(854, 480);
+            var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, s);
             Task.Run(() => {
                 myCodec.Start();
             });

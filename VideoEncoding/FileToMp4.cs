@@ -87,6 +87,7 @@ namespace MediaCodecHelper {
 		// camera state
 		private MediaPlayer _mediaPlayer;
 		private OutputSurface _outputSurface;
+        private string _outputPath = "";
 
 		// allocate one of these up front so we don't need to do it every time
 		private MediaCodec.BufferInfo mBufferInfo;
@@ -121,10 +122,10 @@ namespace MediaCodecHelper {
 
 				var st = _outputSurface.SurfaceTexture;
 				int frameCount = 0;
-
-				var curShad = false;
+               
 				bool isCompleted = false;
-				_mediaPlayer.Completion += (object sender, System.EventArgs e) => 
+                _outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);
+                _mediaPlayer.Completion += (object sender, System.EventArgs e) => 
 				{
 					isCompleted = true;
 				};
@@ -132,17 +133,6 @@ namespace MediaCodecHelper {
 					// Feed any pending encoder output into the muxer.
 
 					drainEncoder(false);
-
-					if ((frameCount % _fps) == 0) {
-						curShad = !curShad;
-					}
-
-					// We flash it between rgb and bgr to quickly demonstrate shading is working
-					if (curShad) {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
-					} else {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
-					}
 
 					frameCount++;
 
@@ -184,13 +174,14 @@ namespace MediaCodecHelper {
 				releaseEncoder();
 				releaseSurfaceTexture();
 			}
+            var fileExists = File.Exists(_outputPath);
 		}
 
 		private void prepareMediaPlayer() {
 			
 			_mediaPlayer = new MediaPlayer ();
 
-			_mediaPlayer.SetDataSource (Path.Combine (_workingDirectory, "5678910.mp4"));
+			_mediaPlayer.SetDataSource (Path.Combine (_workingDirectory, "car_audio_sample.mp4"));
 			_mediaPlayer.Prepare ();
 			if (_width == 0 || _height == 0) {
 				_width = _mediaPlayer.VideoWidth;
@@ -267,9 +258,12 @@ namespace MediaCodecHelper {
 
 			// Output filename.  Ideally this would use Context.getFilesDir() rather than a
 			// hard-coded output directory.
-			string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
+			_outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
                       + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
-			Log.Info(TAG, "Output file is " + outputPath);
+
+
+            var _fileExists = File.Exists(_outputPath);
+            Log.Info(TAG, "Output file is " + _outputPath);
 
 			// Create a MediaMuxer.  We can't add the video track and start() the muxer here,
 			// because our MediaFormat doesn't have the Magic Goodies.  These can only be
@@ -278,7 +272,7 @@ namespace MediaCodecHelper {
 			// We're not actually interested in multiplexing audio.  We just want to convert
 			// the raw H.264 elementary stream we get from MediaCodec into a .mp4 file.
 			try {
-				mMuxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MuxerOutputMpeg4);
+				mMuxer = new MediaMuxer(_outputPath, MediaMuxer.OutputFormat.MuxerOutputMpeg4);
 			} catch(System.Exception e) {
 				throw new System.Exception (e.Message);
 			}
