@@ -22,6 +22,7 @@ using Android.Content;
 using System.Drawing;
 using BitChute;
 using System.Linq;
+using static Android.Media.MediaCodec;
 
 namespace MediaCodecHelper
 {
@@ -84,7 +85,8 @@ namespace MediaCodecHelper
 
         // encoder / muxer state
         private MediaCodec mEncoder;
-        private static MediaCodec mAudioEncoder;
+        private static MediaCodec _audioEncoder;
+        private static MediaCodec _audioDecoder;
         private InputSurface _inputSurface;
         private MediaMuxer mMuxer;
         public static MediaMuxer StaticMuxer;
@@ -98,13 +100,13 @@ namespace MediaCodecHelper
         private MediaPlayer _mediaPlayer;
         private OutputSurface _outputSurface;
         private string _outputPath = "";
-        private MediaFormat _newAudioFormat;
+        private static MediaFormat _newAudioFormat;
         private MediaExtractor _audioExtractor;
         private string _videoSource = "";
 
         // allocate one of these up front so we don't need to do it every time
         private MediaCodec.BufferInfo mBufferInfo;
-        private MediaCodec.BufferInfo mAudioBufferInfo;
+        private static MediaCodec.BufferInfo _audioBufferInfo;
 
         public void Start()
         {
@@ -124,6 +126,7 @@ namespace MediaCodecHelper
         {
             return StaticMuxer;
         }
+        
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
@@ -183,15 +186,24 @@ namespace MediaCodecHelper
                     _inputSurface.SwapBuffers();
                 }
                 isCompleted = false;
-                PrepareAudioEncoder();
-                var inputCodec = PrepareMediaExtractor(_videoSource);
-                //mAudioTrackIndex = mMuxer.AddTrack(_newAudioFormat);
-                //mMuxer.Start();
-                mAudioMuxerStarted = true;
-                await BitChute.VideoEncoding.Sound.Extraction.InitializeExtractor(null);
-                mAudioEncoder.SetCallback(new BitChute.VideoEncoding.Sound.Extraction());
-                mAudioEncoder.Start();
-                // send end-of-stream to encoder, and drain remaining output
+                
+                BufferInfo info = new BufferInfo();
+                ByteBuffer buff = null;
+                var index = 0;
+                await PrepareAudioEncoder();
+                _audioEncoder.Start();
+                buff = _audioEncoder.GetInputBuffer(index);
+                info.Size = buff.Capacity();
+                info.Offset = buff.ArrayOffset();
+                mMuxer.WriteSampleData(mAudioTrackIndex, buff, info);
+                index++;
+                while (buff.HasRemaining)
+                {
+                    buff = _audioEncoder.GetInputBuffer(index);
+                    info.Offset = buff.ArrayOffset();
+                    mMuxer.WriteSampleData(mAudioTrackIndex, buff, info);
+                    index++;
+                }
             }
             catch (Exception ex)
             {
@@ -242,6 +254,7 @@ namespace MediaCodecHelper
             _audioExtractor = new MediaExtractor();
             _audioExtractor.SetDataSource(path);
             var codecs = BitChute.VideoEncoding.Sound.Extraction.GetAudioCodecByFilePath(path).Result.First();
+            _audioDecoder = codecs.Value;
             return codecs.Value;
         }
 
@@ -339,20 +352,15 @@ namespace MediaCodecHelper
  * Configures encoder and muxer state, and prepares the input Surface.  Initializes
  * mEncoder, mMuxer, mInputSurface, mBufferInfo, mTrackIndex, and mMuxerStarted.
  */
-        public void PrepareAudioEncoder(int bitrate = 96000)
+        public static async System.Threading.Tasks.Task<MediaCodec> PrepareAudioEncoder(int bitrate = 96000)
         {
-            mAudioBufferInfo = new MediaCodec.BufferInfo();
-            if (VERBOSE) Log.Debug(TAG, "format: " + _newAudioFormat);
-            // Create a MediaCodec encoder, and configure it with our format.  Get a Surface
-            // we can use for input and wrap it with a class that handles the EGL work.
-            //
-            // If you want to have two EGL contexts -- one for display, one for recording --
-            // you will likely want to defer instantiation of CodecInputSurface until after the
-            // "display" EGL context is created, then modify the eglCreateContext call to
-            // take eglGetCurrentContext() as the share_context argument.
-            mAudioEncoder = MediaCodec.CreateEncoderByType(MediaFormat.MimetypeAudioAac);
-            mAudioEncoder.Configure(_newAudioFormat, null, null, MediaCodec.ConfigureFlagEncode);
-            //inputsurface? = audio buffer?
+            _audioBufferInfo = new MediaCodec.BufferInfo();
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                _audioEncoder = MediaCodec.CreateEncoderByType(MediaFormat.MimetypeAudioAac);
+                _audioEncoder.Configure(_newAudioFormat, null, null, MediaCodecConfigFlags.Encode);
+            });
+            return _audioEncoder;
         }
 
 
@@ -515,7 +523,7 @@ namespace MediaCodecHelper
         {
             if (endOfStream)
             {
-                mAudioEncoder.SignalEndOfInputStream();
+                _audioEncoder.SignalEndOfInputStream();
                 ReleaseMuxer();
                 return false;
             }
