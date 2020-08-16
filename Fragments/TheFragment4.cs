@@ -202,7 +202,7 @@ namespace BitChute.Fragments
             }
             CustomSetTouchListener(AppState.Display.Horizontal);
             AppSettingsLayout.Visibility = ViewStates.Gone;
-            LoadUrlWithDelay(RootUrl, 5000);
+            //LoadUrlWithDelay(RootUrl, 5000);
             return _view;
         }
 

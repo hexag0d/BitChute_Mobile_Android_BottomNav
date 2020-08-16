@@ -91,8 +91,14 @@ namespace BitChute.Fragments
             //    Wv.Settings.DisplayZoomControls = false;
             //}
             //CustomSetTouchListener(AppState.Display.Horizontal);
-
+            StartEncodingAfterDelay(6000);
             return _view;
+        }
+
+        public async void StartEncodingAfterDelay(int delay)
+        {
+            await Task.Delay(delay);
+            StartEncodingButton_OnClick(null, null);
         }
 
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)

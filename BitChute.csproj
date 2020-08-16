@@ -112,6 +112,7 @@
     <Compile Include="VideoEncoding\GeneratedVideoToMp4.cs" />
     <Compile Include="VideoEncoding\InputSurface.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
+    <Compile Include="VideoEncoding\Sound.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
