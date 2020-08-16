@@ -12,6 +12,7 @@ namespace BitChute.Classes
     {
         private static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
         public static FileRecyclerViewAdapter FileAdapter;
+        public static string DefaultWorkingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
 
         public static void FileBrowserButton_OnClick(object sender, EventArgs e)
         {

@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.TheFragment4;
 using static StartServices.Servicesclass.ExtStickyService;
+using BitChute.VideoEncoding;
 
 namespace BitChute.Fragments
 {
@@ -103,11 +104,13 @@ namespace BitChute.Fragments
 
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
-            var s = new System.Drawing.Size(854, 480);
-            var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, s);
-            Task.Run(() => {
-                myCodec.Start();
-            });
+            MuxerEncoding muxerEncoding = new VideoEncoding.MuxerEncoding();
+            muxerEncoding.Trim(0, 2000, FileBrowser.DefaultWorkingDirectory + "car_audio_sample.mp4");
+            //var s = new System.Drawing.Size(854, 480);
+            //var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, s);
+            //Task.Run(() => {
+            //    myCodec.Start();
+            //});
         }
 
         public static async void SetAutoPlayWithDelay(int delay)
