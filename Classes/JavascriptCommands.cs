@@ -275,6 +275,9 @@ namespace BitChute.Classes
         public static string RemoveDisqusIframeTwo = "javascript:(function() { "
             +  @"})()";
 
+        public static string RestoreDisqusIFrame = "javascript:(function() { "
+            + @"$('#disqus_thread').children('iframe')[0].src = "";" + @"})()";
+
         //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
         //     + @"$('#disqus_thread').children('iframe')[0].display = none;" + @"})()";
 
@@ -286,9 +289,9 @@ namespace BitChute.Classes
         //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
         //    + @"if ($('#disqus_thread').children('iframe').length > 2){ $('#disqus_thread').children('iframe')[2].remove(); }" + @"})()";
 
-            /// <summary>
-            /// javascript/jquery commands that add observable callbacks into the webview
-            /// </summary>
+        /// <summary>
+        /// javascript/jquery commands that add observable callbacks into the webview
+        /// </summary>
         public class CallBackInjection
         {
             //public static string AddFullScreenCallback = @"javascript:(" + @"function() { " +

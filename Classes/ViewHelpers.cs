@@ -67,6 +67,11 @@ namespace BitChute.Classes
             }
         }
 
+        internal static void RestoreDisqusIFrame(int tab)
+        {
+
+        }
+
         public class Tab0
         {
             public static View FragmentContainerLayout { get; set; }

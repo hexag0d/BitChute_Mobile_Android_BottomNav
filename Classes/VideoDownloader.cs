@@ -34,6 +34,8 @@ namespace BitChute.Classes
         {
             //JavascriptCommands.CallBackInjection.SetCallbackWithDelay(TheFragment1.Wv,
             //    JavascriptCommands.CallBackInjection.AddFullScreenCallback, 0);
+            ViewHelpers.
+            RestoreDisqusIFrame();
             InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));
         }
 
