@@ -27,7 +27,7 @@ namespace MediaCodecHelper
 
         private Context _context;
         private string _workingDirectory;
-        bool VERBOSE = true;
+        bool LOGGING = true;
         public CameraToMpegTest(Context context)
         {
             _context = context;
@@ -110,9 +110,7 @@ namespace MediaCodecHelper
 
                 while (JavaSystem.NanoTime() < desiredEnd)
                 {
-                    // Feed any pending encoder output into the muxer.
                     drainEncoder(false);
-
                     if ((frameCount % 24) == 0)
                     {
                         curShad = !curShad;
@@ -139,7 +137,7 @@ namespace MediaCodecHelper
 
                     // Set the presentation time stamp from the SurfaceTexture's time stamp.  This
                     // will be used by MediaMuxer to set the PTS in the video.
-                    if (VERBOSE)
+                    if (LOGGING)
                     {
                         Log.Debug(TAG, "present: " +
                             ((st.Timestamp - startWhen) / 1000000.0) + "ms");
@@ -151,7 +149,7 @@ namespace MediaCodecHelper
                     // buffer (which we can't do, since we're stuck here).  So long as we fully drain
                     // the encoder before supplying additional input, the system guarantees that we
                     // can supply another frame without blocking.
-                    if (VERBOSE) Log.Debug(TAG, "sending frame to encoder");
+                    if (LOGGING) Log.Debug(TAG, "sending frame to encoder");
                     _inputSurface.SwapBuffers();
                 }
 
@@ -219,7 +217,7 @@ namespace MediaCodecHelper
             // We should make sure that the requested MPEG size is less than the preferred
             // size, and has the same aspect ratio.
             Camera.Size ppsfv = parms.PreferredPreviewSizeForVideo;
-            if (VERBOSE && ppsfv != null)
+            if (LOGGING && ppsfv != null)
             {
                 Log.Debug(TAG, "Camera preferred preview size for video is " +
                     ppsfv.Width + "x" + ppsfv.Height);
@@ -246,7 +244,7 @@ namespace MediaCodecHelper
 	     */
         private void releaseCamera()
         {
-            if (VERBOSE) Log.Debug(TAG, "releasing camera");
+            if (LOGGING) Log.Debug(TAG, "releasing camera");
             if (_camera != null)
             {
                 _camera.StopPreview();
@@ -303,7 +301,7 @@ namespace MediaCodecHelper
             format.SetInteger(MediaFormat.KeyBitRate, bitRate);
             format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
             format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-            if (VERBOSE) Log.Debug(TAG, "format: " + format);
+            if (LOGGING) Log.Debug(TAG, "format: " + format);
 
             // Create a MediaCodec encoder, and configure it with our format.  Get a Surface
             // we can use for input and wrap it with a class that handles the EGL work.
@@ -346,7 +344,7 @@ namespace MediaCodecHelper
 	     */
         private void releaseEncoder()
         {
-            if (VERBOSE) Log.Debug(TAG, "releasing encoder objects");
+            if (LOGGING) Log.Debug(TAG, "releasing encoder objects");
             if (mEncoder != null)
             {
                 mEncoder.Stop();
@@ -379,11 +377,11 @@ namespace MediaCodecHelper
         private void drainEncoder(bool endOfStream)
         {
             int TIMEOUT_USEC = 10000;
-            if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")");
+            if (LOGGING) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")");
 
             if (endOfStream)
             {
-                if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
+                if (LOGGING) Log.Debug(TAG, "sending EOS to encoder");
                 mEncoder.SignalEndOfInputStream();
             }
 
@@ -400,7 +398,7 @@ namespace MediaCodecHelper
                     }
                     else
                     {
-                        if (VERBOSE) Log.Debug(TAG, "no output available, spinning to await EOS");
+                        if (LOGGING) Log.Debug(TAG, "no output available, spinning to await EOS");
                     }
                 }
                 else if (encoderStatus == (int)MediaCodec.InfoOutputBuffersChanged)
@@ -442,7 +440,7 @@ namespace MediaCodecHelper
                     {
                         // The codec config data was pulled out and fed to the muxer when we got
                         // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-                        if (VERBOSE) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                        if (LOGGING) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         mBufferInfo.Size = 0;
                     }
 
@@ -458,7 +456,7 @@ namespace MediaCodecHelper
                         encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
 
                         mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
-                        if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
+                        if (LOGGING) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
                     }
 
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -471,7 +469,7 @@ namespace MediaCodecHelper
                         }
                         else
                         {
-                            if (VERBOSE) Log.Debug(TAG, "end of stream reached");
+                            if (LOGGING) Log.Debug(TAG, "end of stream reached");
                         }
                         break;      // out of while
                     }

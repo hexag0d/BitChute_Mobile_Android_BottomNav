@@ -54,7 +54,7 @@ namespace MediaCodecHelper {
 	
 	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener {
 		private const string TAG = "OutputSurface";
-		private const bool VERBOSE = false;
+		private const bool LOGGING = false;
 		private const int EGL_OPENGL_ES2_BIT = 4;
 		private IEGL10 mEGL;
 		private EGLDisplay mEGLDisplay;
@@ -287,7 +287,7 @@ namespace MediaCodecHelper {
 	}
 	
 	public void OnFrameAvailable(SurfaceTexture st) {
-		if (VERBOSE) Log.Debug(TAG, "new frame available");
+		if (LOGGING) Log.Debug(TAG, "new frame available");
 		lock (_frameSyncObject) {
 			if (IsFrameAvailable) {
 				throw new RuntimeException("mFrameAvailable already set, frame could be dropped");

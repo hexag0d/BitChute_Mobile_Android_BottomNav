@@ -18,7 +18,6 @@ namespace BitChute.VideoEncoding
     public class MuxerEncoding
     {
         public MuxerEncoding() {  }
-
         public static int GetVideoLength(string filepath)
         {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -33,7 +32,6 @@ namespace BitChute.VideoEncoding
             MediaExtractor extractor = new MediaExtractor();
             extractor.SetDataSource(filepath);
             int trackCount = extractor.TrackCount;
-            Dictionary<int, int> indexDict = new Dictionary<int, int>(trackCount);
             int bufferSize = -1;
             for (int i = 0; i < trackCount; i++)
             {
@@ -109,26 +107,13 @@ namespace BitChute.VideoEncoding
                     else
                     {
                         bufferInfo.PresentationTimeUs = extractor.SampleTime;
-                        if (endMs > 0 && bufferInfo.PresentationTimeUs > (endMs * 1000))
-                        {
-                            Console.WriteLine("The current sample is over the trim end time.");
-                            break;
-                        }
+                        if (endMs > 0 && bufferInfo.PresentationTimeUs > (endMs * 1000)) { Console.WriteLine("The current sample is over the trim end time."); break; }
                         else
                         {
                             bufferInfo.Flags = ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(extractor.SampleFlags);
-                            trackIndex = extractor.SampleTrackIndex;
-                            if (trackIndex == 0) //reroute the video to custom resized muxing
-                            {
-                                    //do nothing because we already encoded this track
-                            }
-                            else // if track index is 1 it's audio
-                            {
-                                if (trackIndexOverride != -1) {  muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo);  }
-                                else { muxer.WriteSampleData(indexDict[trackIndex], dstBuf, bufferInfo);  } // audio reformatting coming soon! @hexagod
-                            }
-                            extractor.Advance();
+                            if (trackIndexOverride != -1) { muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo); }
                         }
+                        extractor.Advance();
                     }
                 }
             }
@@ -147,7 +132,7 @@ namespace BitChute.VideoEncoding
         private string GetOutputPath(string inputPath)
         {
             string[] parts = inputPath.Split('.');
-            return $"{parts[0]}_trimmed{new System.Random().Next(0, 66666666)}.{parts[1]}";
+            return $"{parts[0]}_encoded{new System.Random().Next(0, 66666666)}.{parts[1]}";
         }
 
         private MediaCodecBufferFlags ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(MediaExtractorSampleFlags mediaExtractorSampleFlag)
