@@ -41,7 +41,7 @@ namespace MediaCodecHelper {
 
 		private const string TAG = "DecodeEditEncode";
 		private const bool WORK_AROUND_BUGS = false; // avoid fatal codec bugs
-		private const bool VERBOSE = true; // lots of logging
+		private const bool LOGGING = true; // lots of logging
 		private const bool DEBUG_SAVE_FILE = true; // save copy of encoded movie // TODO: Made true.
 		// parameters for the encoder
 		private const string  MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
@@ -128,7 +128,7 @@ namespace MediaCodecHelper {
 	* @return true on success, false on "soft" failure
 	*/
 		private bool generateVideoFile(VideoChunks output) {
-			if (VERBOSE) Log.Debug(TAG, "generateVideoFile " + mWidth + "x" + mHeight);
+			if (LOGGING) Log.Debug(TAG, "generateVideoFile " + mWidth + "x" + mHeight);
 			MediaCodec encoder = null;
 			InputSurface inputSurface = null;
 			try {
@@ -138,7 +138,7 @@ namespace MediaCodecHelper {
 					Log.Error(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
 					return false;
 				}
-				if (VERBOSE) Log.Debug(TAG, "found codec: " + codecInfo.Name);
+				if (LOGGING) Log.Debug(TAG, "found codec: " + codecInfo.Name);
 				// We avoid the device-specific limitations on width and height by using values that
 				// are multiples of 16, which all tested devices seem to be able to handle.
 				MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, mWidth, mHeight);
@@ -149,7 +149,7 @@ namespace MediaCodecHelper {
 				format.SetInteger(MediaFormat.KeyBitRate, mBitRate);
 				format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
 				format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-				if (VERBOSE) Log.Debug(TAG, "format: " + format);
+				if (LOGGING) Log.Debug(TAG, "format: " + format);
 				output.setMediaFormat(format);
 				// Create a MediaCodec for the desired codec, then configure it as an encoder with
 				// our desired properties.
@@ -161,10 +161,10 @@ namespace MediaCodecHelper {
 				generateVideoData(encoder, inputSurface, output);
 			} finally {
 				if (encoder != null) {
-					if (VERBOSE) Log.Debug(TAG, "releasing encoder");
+					if (LOGGING) Log.Debug(TAG, "releasing encoder");
 					encoder.Stop();
 					encoder.Release();
-					if (VERBOSE) Log.Debug(TAG, "released encoder");
+					if (LOGGING) Log.Debug(TAG, "released encoder");
 				}
 				if (inputSurface != null) {
 					inputSurface.Release();
@@ -213,13 +213,13 @@ namespace MediaCodecHelper {
 			bool inputDone = false;
 			bool outputDone = false;
 			while (!outputDone) {
-				if (VERBOSE) Log.Debug(TAG, "gen loop");
+				if (LOGGING) Log.Debug(TAG, "gen loop");
 				// If we're not done submitting frames, generate a new one and submit it. The
 				// eglSwapBuffers call will block if the input is full.
 				if (!inputDone) {
 					if (generateIndex == NUM_FRAMES) {
 						// Send an empty frame with the end-of-stream flag set.
-						if (VERBOSE) Log.Debug(TAG, "signaling input EOS");
+						if (LOGGING) Log.Debug(TAG, "signaling input EOS");
 						if (WORK_AROUND_BUGS) {
 							// Might drop a frame, but at least we won't crash mediaserver.
 							try { Thread.Sleep(500); } catch (InterruptedException ie) {}
@@ -231,7 +231,7 @@ namespace MediaCodecHelper {
 					} else {
 						generateSurfaceFrame(generateIndex);
 						inputSurface.SetPresentationTime(computePresentationTime(generateIndex) * 1000);
-						if (VERBOSE) Log.Debug(TAG, "inputSurface swapBuffers");
+						if (LOGGING) Log.Debug(TAG, "inputSurface swapBuffers");
 						inputSurface.SwapBuffers();
 					}
 					generateIndex++;
@@ -246,16 +246,16 @@ namespace MediaCodecHelper {
 					int encoderStatus = encoder.DequeueOutputBuffer(info, TIMEOUT_USEC);
 					if (encoderStatus == (int) MediaCodecInfoState.TryAgainLater) {
 						// no output available yet
-						if (VERBOSE) Log.Debug(TAG, "no output from encoder available");
+						if (LOGGING) Log.Debug(TAG, "no output from encoder available");
 						break; // out of while
 					} else if (encoderStatus == (int) MediaCodecInfoState.OutputBuffersChanged) {
 						// not expected for an encoder
 						encoderOutputBuffers = encoder.GetOutputBuffers();
-						if (VERBOSE) Log.Debug(TAG, "encoder output buffers changed");
+						if (LOGGING) Log.Debug(TAG, "encoder output buffers changed");
 					} else if (encoderStatus == (int) MediaCodecInfoState.OutputFormatChanged) {
 						// not expected for an encoder
 						MediaFormat newFormat = encoder.OutputFormat;
-						if (VERBOSE) Log.Debug(TAG, "encoder output format changed: " + newFormat);
+						if (LOGGING) Log.Debug(TAG, "encoder output format changed: " + newFormat);
 					} else if (encoderStatus < 0) {
 						fail("unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);
 					} else { // encoderStatus >= 0
@@ -336,7 +336,7 @@ namespace MediaCodecHelper {
 	* use a fragment shader to do transformations.
 	*/
 		private VideoChunks editVideoFile(VideoChunks inputData) {
-			if (VERBOSE) Log.Debug(TAG, "editVideoFile " + mWidth + "x" + mHeight);
+			if (LOGGING) Log.Debug(TAG, "editVideoFile " + mWidth + "x" + mHeight);
 			VideoChunks outputData = new VideoChunks();
 			MediaCodec decoder = null;
 			MediaCodec encoder = null;
@@ -366,7 +366,7 @@ namespace MediaCodecHelper {
 				decoder.Start();
 				editVideoData(inputData, decoder, outputSurface, inputSurface, encoder, outputData);
 			} finally {
-				if (VERBOSE) Log.Debug(TAG, "shutting down encoder, decoder");
+				if (LOGGING) Log.Debug(TAG, "shutting down encoder, decoder");
 				if (outputSurface != null) {
 					outputSurface.Release();
 				}
@@ -400,7 +400,7 @@ namespace MediaCodecHelper {
 			bool inputDone = false;
 			bool decoderDone = false;
 			while (!outputDone) {
-				if (VERBOSE) Log.Debug(TAG, "edit loop");
+				if (LOGGING) Log.Debug(TAG, "edit loop");
 				// Feed more data to the decoder.
 				if (!inputDone) {
 					int inputBufIndex = decoder.DequeueInputBuffer(TIMEOUT_USEC);
@@ -410,7 +410,7 @@ namespace MediaCodecHelper {
 							decoder.QueueInputBuffer(inputBufIndex, 0, 0, 0L,
 								MediaCodecBufferFlags.EndOfStream);
 							inputDone = true;
-							if (VERBOSE) Log.Debug(TAG, "sent input EOS (with zero-length frame)");
+							if (LOGGING) Log.Debug(TAG, "sent input EOS (with zero-length frame)");
 						} else {
 							// Copy a chunk of input to the decoder. The first chunk should have
 							// the BUFFER_FLAG_CODEC_CONFIG flag set.
@@ -421,14 +421,14 @@ namespace MediaCodecHelper {
 							long time = inputData.getChunkTime(inputChunk);
 							decoder.QueueInputBuffer(inputBufIndex, 0, inputBuf.Position(),
 								time, (MediaCodecBufferFlags) flags); // TODO: Not sure if it's MediaCodecBufferFlags, verify.
-							if (VERBOSE) {
+							if (LOGGING) {
 								Log.Debug(TAG, "submitted frame " + inputChunk + " to dec, size=" +
 									inputBuf.Position() + " flags=" + flags);
 							}
 							inputChunk++;
 						}
 					} else {
-						if (VERBOSE) Log.Debug(TAG, "input buffer not available");
+						if (LOGGING) Log.Debug(TAG, "input buffer not available");
 					}
 				}
 				// Assume output is available. Loop until both assumptions are false.
@@ -440,14 +440,14 @@ namespace MediaCodecHelper {
 					int encoderStatus = encoder.DequeueOutputBuffer(info, TIMEOUT_USEC);
 					if (encoderStatus == (int) MediaCodecInfoState.TryAgainLater) {
 						// no output available yet
-						if (VERBOSE) Log.Debug(TAG, "no output from encoder available");
+						if (LOGGING) Log.Debug(TAG, "no output from encoder available");
 						encoderOutputAvailable = false;
 					} else if (encoderStatus == (int) MediaCodecInfoState.OutputBuffersChanged) {
 						encoderOutputBuffers = encoder.GetOutputBuffers();
-						if (VERBOSE) Log.Debug(TAG, "encoder output buffers changed");
+						if (LOGGING) Log.Debug(TAG, "encoder output buffers changed");
 					} else if (encoderStatus == (int) MediaCodecInfoState.OutputFormatChanged) {
 						MediaFormat newFormat = encoder.OutputFormat;
-						if (VERBOSE) Log.Debug(TAG, "encoder output format changed: " + newFormat);
+						if (LOGGING) Log.Debug(TAG, "encoder output format changed: " + newFormat);
 					} else if (encoderStatus < 0) {
 						fail("unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);
 					} else { // encoderStatus >= 0
@@ -461,7 +461,7 @@ namespace MediaCodecHelper {
 							encodedData.Limit(info.Offset + info.Size);
 							outputData.addChunk(encodedData, (int) info.Flags, info.PresentationTimeUs);
 							outputCount++;
-							if (VERBOSE) Log.Debug(TAG, "encoder output " + info.Size + " bytes");
+							if (LOGGING) Log.Debug(TAG, "encoder output " + info.Size + " bytes");
 						}
 						outputDone = (info.Flags & MediaCodec.BufferFlagEndOfStream) != 0;
 						encoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -477,19 +477,19 @@ namespace MediaCodecHelper {
 						int decoderStatus = decoder.DequeueOutputBuffer(info, TIMEOUT_USEC);
 						if (decoderStatus == (int) MediaCodec.InfoTryAgainLater) {
 							// no output available yet
-							if (VERBOSE) Log.Debug(TAG, "no output from decoder available");
+							if (LOGGING) Log.Debug(TAG, "no output from decoder available");
 							decoderOutputAvailable = false;
 						} else if (decoderStatus == (int) MediaCodec.InfoOutputBuffersChanged) {
 							//decoderOutputBuffers = decoder.getOutputBuffers();
-							if (VERBOSE) Log.Debug(TAG, "decoder output buffers changed (we don't care)");
+							if (LOGGING) Log.Debug(TAG, "decoder output buffers changed (we don't care)");
 						} else if (decoderStatus == (int) MediaCodec.InfoOutputFormatChanged) {
 							// expected before first buffer of data
 							MediaFormat newFormat = decoder.OutputFormat;
-							if (VERBOSE) Log.Debug(TAG, "decoder output format changed: " + newFormat);
+							if (LOGGING) Log.Debug(TAG, "decoder output format changed: " + newFormat);
 						} else if (decoderStatus < 0) {
 							fail("unexpected result from decoder.dequeueOutputBuffer: "+decoderStatus);
 						} else { // decoderStatus >= 0
-							if (VERBOSE) Log.Debug(TAG, "surface decoder given buffer " + decoderStatus + " (size=" + info.Size  +"(");
+							if (LOGGING) Log.Debug(TAG, "surface decoder given buffer " + decoderStatus + " (size=" + info.Size  +"(");
 								// The ByteBuffers are null references, but we still get a nonzero
 								// size for the decoded data.
 								bool doRender = (info.Size != 0);
@@ -501,17 +501,17 @@ namespace MediaCodecHelper {
 								decoder.ReleaseOutputBuffer(decoderStatus, doRender);
 								if (doRender) {
 									// This waits for the image and renders it after it arrives.
-									if (VERBOSE) Log.Debug(TAG, "awaiting frame");
+									if (LOGGING) Log.Debug(TAG, "awaiting frame");
 									outputSurface.AwaitNewImage();
 									outputSurface.DrawImage();
 									// Send it to the encoder.
 									inputSurface.SetPresentationTime(info.PresentationTimeUs * 1000);
-									if (VERBOSE) Log.Debug(TAG, "swapBuffers");
+									if (LOGGING) Log.Debug(TAG, "swapBuffers");
 									inputSurface.SwapBuffers();
 								}
 								if ((info.Flags & MediaCodec.BufferFlagEndOfStream) != 0) {
 									// forward decoder EOS to encoder
-									if (VERBOSE) Log.Debug(TAG, "signaling input EOS");
+									if (LOGGING) Log.Debug(TAG, "signaling input EOS");
 									if (WORK_AROUND_BUGS) {
 										// Bail early, possibly dropping a frame.
 										return;
@@ -536,7 +536,7 @@ namespace MediaCodecHelper {
 									OutputSurface surface = null;
 									MediaCodec decoder = null;
 									mLargestColorDelta = -1;
-									if (VERBOSE) Log.Debug(TAG, "checkVideoFile");
+									if (LOGGING) Log.Debug(TAG, "checkVideoFile");
 									try {
 										surface = new OutputSurface(mWidth, mHeight);
 										MediaFormat format = inputData.getMediaFormat();
@@ -574,7 +574,7 @@ namespace MediaCodecHelper {
 									bool outputDone = false;
 									bool inputDone = false;
 									while (!outputDone) {
-										if (VERBOSE) Log.Debug(TAG, "check loop");
+										if (LOGGING) Log.Debug(TAG, "check loop");
 										// Feed more data to the decoder.
 										if (!inputDone) {
 											int inputBufIndex = decoder.DequeueInputBuffer(TIMEOUT_USEC);
@@ -584,7 +584,7 @@ namespace MediaCodecHelper {
 													decoder.QueueInputBuffer(inputBufIndex, 0, 0, 0L,
 								MediaCodec.BufferFlagEndOfStream);
 													inputDone = true;
-													if (VERBOSE) Log.Debug(TAG, "sent input EOS");
+													if (LOGGING) Log.Debug(TAG, "sent input EOS");
 												} else {
 													// Copy a chunk of input to the decoder. The first chunk should have
 													// the BUFFER_FLAG_CODEC_CONFIG flag set.
@@ -595,35 +595,35 @@ namespace MediaCodecHelper {
 													long time = inputData.getChunkTime(inputChunk);
 													decoder.QueueInputBuffer(inputBufIndex, 0, inputBuf.Position(),
 								time, (MediaCodecBufferFlags) flags);
-													if (VERBOSE) {
+													if (LOGGING) {
 														Log.Debug(TAG, "submitted frame " + inputChunk + " to dec, size=" +
 															inputBuf.Position() + " flags=" + flags);
 													}
 													inputChunk++;
 												}
 											} else {
-												if (VERBOSE) Log.Debug(TAG, "input buffer not available");
+												if (LOGGING) Log.Debug(TAG, "input buffer not available");
 											}
 										}
 										if (!outputDone) {
 											int decoderStatus = decoder.DequeueOutputBuffer(info, TIMEOUT_USEC);
 					if (decoderStatus == (int) MediaCodec.InfoTryAgainLater) {
 												// no output available yet
-												if (VERBOSE) Log.Debug(TAG, "no output from decoder available");
+												if (LOGGING) Log.Debug(TAG, "no output from decoder available");
 					} else if (decoderStatus == (int) MediaCodec.InfoOutputBuffersChanged) {
 												decoderOutputBuffers = decoder.GetOutputBuffers();
-												if (VERBOSE) Log.Debug(TAG, "decoder output buffers changed");
+												if (LOGGING) Log.Debug(TAG, "decoder output buffers changed");
 					} else if (decoderStatus == (int) MediaCodec.InfoOutputFormatChanged) {
 						MediaFormat newFormat = decoder.OutputFormat;
-												if (VERBOSE) Log.Debug(TAG, "decoder output format changed: " + newFormat);
+												if (LOGGING) Log.Debug(TAG, "decoder output format changed: " + newFormat);
 											} else if (decoderStatus < 0) {
 												fail("unexpected result from decoder.dequeueOutputBuffer: " + decoderStatus);
 											} else { // decoderStatus >= 0
 												ByteBuffer decodedData = decoderOutputBuffers[decoderStatus];
-												if (VERBOSE) Log.Debug(TAG, "surface decoder given buffer " + decoderStatus +
+												if (LOGGING) Log.Debug(TAG, "surface decoder given buffer " + decoderStatus +
 													" (size=" + info.Size + ")");
 						if ((info.Flags & MediaCodec.BufferFlagEndOfStream) != 0) {
-													if (VERBOSE) Log.Debug(TAG, "output EOS");
+													if (LOGGING) Log.Debug(TAG, "output EOS");
 													outputDone = true;
 												}
 												bool doRender = (info.Size != 0);
@@ -633,7 +633,7 @@ namespace MediaCodecHelper {
 												// need to wait for the onFrameAvailable callback to fire.
 												decoder.ReleaseOutputBuffer(decoderStatus, doRender);
 												if (doRender) {
-													if (VERBOSE) Log.Debug(TAG, "awaiting frame " + checkIndex);
+													if (LOGGING) Log.Debug(TAG, "awaiting frame " + checkIndex);
 													assertEquals("Wrong time stamp", computePresentationTime(checkIndex),
 														info.PresentationTimeUs);
 													surface.AwaitNewImage();

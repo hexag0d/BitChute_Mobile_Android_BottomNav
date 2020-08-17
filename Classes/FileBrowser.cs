@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -12,11 +13,10 @@ namespace BitChute.Classes
     {
         private static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
         public static FileRecyclerViewAdapter FileAdapter;
+        private static string _defaultWorkingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
+        public static string GetSampleVideoPath() { return _defaultWorkingDirectory; }
 
-        public static void FileBrowserButton_OnClick(object sender, EventArgs e)
-        {
-            OpenFileBrowser();
-        }
+        public static void FileBrowserButton_OnClick(object sender, EventArgs e)  {  OpenFileBrowser(); }
 
         public static void SaveFileToStorage(Java.IO.File f)
         {
@@ -29,10 +29,8 @@ namespace BitChute.Classes
                 Java.IO.FileOutputStream fos = new Java.IO.FileOutputStream(f);
                 fos.Close();
             }
-            catch (FileNotFoundException e)
-            { }
-            catch (IOException e)
-            { }
+            catch (FileNotFoundException e) { }
+            catch (IOException e) { }
         }
 
         public static void OpenFileBrowser()
@@ -52,16 +50,13 @@ namespace BitChute.Classes
             }
         }
 
-        public static void GetExternalPermissions()
+        public static async Task<bool> GetExternalPermissions()
         {
             if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
-            }
+            {Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0); }
             if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
-            }
+            { Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);  }
+            return true;
         }
 
         public static List<string> GetLocalVideos()
@@ -71,7 +66,6 @@ namespace BitChute.Classes
             var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "download";
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-
             var filesList = Directory.GetFiles(folder);
             foreach (var file in filesList)
             {
@@ -121,17 +115,13 @@ namespace BitChute.Classes
                 CardView cv = itemView.FindViewById<CardView>(Resource.Id.fileCardView);
                 cv.SetBackgroundColor(_darkGrey);
                 vh = new FileViewHolder(itemView, OnClick);
-
                 return vh;
             }
             
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
             {
                 vh = holder as FileViewHolder;
-                if (FileTitleList != null)
-                {
-                    vh.Caption.Text = FileTitleList[position];
-                }
+                if (FileTitleList != null) {  vh.Caption.Text = FileTitleList[position]; }
             }
             
             public override int ItemCount
