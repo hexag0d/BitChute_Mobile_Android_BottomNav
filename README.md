@@ -1,18 +1,21 @@
+```
 # BitChute_Mobile_Android_BottomNav \n
-A new version of the BitChute android app which uses bottomnavigation tabs and a viewpager. \n
-Also a GL native hybrid Xamarin video encoding template for Android, designed specifically for BitChute.com \n
+BitChute android app, uses bottomnavigation tabs and a viewpager. \n
+Also a GL native hybrid Xamarin video encoding template for Android \n
+```
+/* App by:
 
-/* App by: \n
-    Ray Vahey \n
-   && Rich Jones && \n
-   \n
-.__                                             .___   \n
-|  |__   ____ ___  ________     ____   ____   __| _/     \n
-|  |  \_/ __ \\  \/  /\__  \   / ___\ /  _ \ / __ |      \n
-|   Y  \  ___/ >    <  / __ \_/ /_/  >  <_> ) /_/ |      \n
-|___|  /\___  >__/\_ \(____  /\___  / \____/\____ |     \n
-     \/     \/      \/     \//_____/             \/  \n
-	 \n
+    Ray Vahey 
+    Rich Jones
+```
+>.__                                             .___   \n
+>|  |__   ____ ___  ________     ____   ____   __| _/     \n
+>|  |  \_/ __ \\  \/  /\__  \   / ___\ /  _ \ / __ |      \n
+>|   Y  \  ___/ >    <  / __ \_/ /_/  >  <_> ) /_/ |      \n
+>|___|  /\___  >__/\_ \(____  /\___  / \____/\____ |     \n
+>     \/     \/      \/     \//_____/             \/  \n
+
+```
 https://bitchute.com/channel/hexagod \n
 https://soundcloud.com/vybemasterz \n
 
