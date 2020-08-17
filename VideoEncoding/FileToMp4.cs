@@ -116,12 +116,9 @@ namespace MediaCodecHelper
 
         private void EncodeCameraToMp4(string filepath)
         {
-            var audioFormat = MuxerEncoding.GetSourceTrackFormats(filepath);
-            // arbitrary but popular values
-
+            var audioFormat = MuxerEncoding.GetAudioTrackFormat(filepath);
             try
             {
-
                 prepareMediaPlayer(filepath);
                 prepareEncoder();
                 _inputSurface.MakeCurrent();

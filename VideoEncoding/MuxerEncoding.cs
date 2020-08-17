@@ -28,12 +28,11 @@ namespace BitChute.VideoEncoding
             return millSecond;
         }
 
-        public static MediaFormat GetSourceTrackFormats(string filepath)
+        public static MediaFormat GetAudioTrackFormat(string filepath)
         {
             MediaExtractor extractor = new MediaExtractor();
             extractor.SetDataSource(filepath);
             int trackCount = extractor.TrackCount;
-            //muxer = new MediaMuxer(outputPath, MuxerOutputType.Mpeg4);
             Dictionary<int, int> indexDict = new Dictionary<int, int>(trackCount);
             int bufferSize = -1;
             for (int i = 0; i < trackCount; i++)
@@ -41,14 +40,8 @@ namespace BitChute.VideoEncoding
                 MediaFormat format = extractor.GetTrackFormat(i);
                 string mime = format.GetString(MediaFormat.KeyMime);
                 bool selectCurrentTrack = false;
-                if (mime.StartsWith("audio/"))
-                {
-                    selectCurrentTrack = true;
-                }
-                else if (mime.StartsWith("video/"))
-                {
-                    selectCurrentTrack = false; //rerouted to gl video encoder
-                }
+                if (mime.StartsWith("audio/")) { selectCurrentTrack = true; }
+                else if (mime.StartsWith("video/")) { selectCurrentTrack = false;  }
                 if (selectCurrentTrack)
                 {
                     extractor.SelectTrack(i);
@@ -68,7 +61,6 @@ namespace BitChute.VideoEncoding
             MediaExtractor extractor = new MediaExtractor();
             extractor.SetDataSource(inputPath);
             int trackCount = extractor.TrackCount;
-            //muxer = new MediaMuxer(outputPath, MuxerOutputType.Mpeg4);
             Dictionary<int, int> indexDict = new Dictionary<int, int>(trackCount);
             int bufferSize = -1;
             for (int i = 0; i < trackCount; i++)
@@ -76,24 +68,12 @@ namespace BitChute.VideoEncoding
                 MediaFormat format = extractor.GetTrackFormat(i);
                 string mime = format.GetString(MediaFormat.KeyMime);
                 bool selectCurrentTrack = false;
-                if (mime.StartsWith("audio/"))
-                {
-                    selectCurrentTrack = true;
-                }
-                else if (mime.StartsWith("video/"))
-                {
-                    selectCurrentTrack = false; //rerouted to gl video encoder
-                }
+                if (mime.StartsWith("audio/")) {  selectCurrentTrack = true; }
+                else if (mime.StartsWith("video/")) {  selectCurrentTrack = false; } /*rerouted to gl video encoder*/
                 if (selectCurrentTrack)
                 {
                     extractor.SelectTrack(i);
-                    int dstIndex = 1;
-                    //try
-                    //{
-                    //    dstIndex = muxer.AddTrack(format);
-                    ////}
-                    //catch (Java.Lang.Exception ex) { Console.WriteLine(ex.Message); }
-                    indexDict.Add(i, dstIndex);
+                    if (trackIndexOverride != -1) { indexDict.Add(i, i); }
                     if (format.ContainsKey(MediaFormat.KeyMaxInputSize))
                     {
                         int newSize = format.GetInteger(MediaFormat.KeyMaxInputSize);
@@ -101,29 +81,16 @@ namespace BitChute.VideoEncoding
                     }
                 }
             }
-            if (bufferSize < 0)
-            {
-                bufferSize = 1337; //TODO: I don't know what to put here tbh, it will most likely be above 0 at this point anyways :)
-            }
-            // Set up the orientation and starting time for extractor.
+            if (bufferSize < 0) { bufferSize = 1337; } //arbitrary value
             MediaMetadataRetriever retrieverSrc = new MediaMetadataRetriever();
             retrieverSrc.SetDataSource(inputPath);
             string degreesString = retrieverSrc.ExtractMetadata(MetadataKey.VideoRotation);
             if (degreesString != null)
             {
                 int degrees = int.Parse(degreesString);
-                if (degrees >= 0)
-                {
-                    //muxer.SetOrientationHint(degrees);
-                }
+                if (degrees >= 0) {  /* muxer.SetOrientationHint(degrees); */  } //muxer won't accept this param once started
             }
-            if (startMs > 0)
-            {
-                extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync);
-            }
-            // Copy the samples from MediaExtractor to MediaMuxer. We will loop
-            // for copying each sample and stop when we get to the end of the source
-            // file or exceed the end time of the trimming.
+            if (startMs > 0){ extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync); }
             int offset = 0;
             int trackIndex = -1;
             ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
@@ -157,24 +124,15 @@ namespace BitChute.VideoEncoding
                             }
                             else // if track index is 1 it's audio
                             {
-                                if (trackIndexOverride != -1)
-                                {
-                                    muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo);
-                                }
-                                else
-                                {
-                                    muxer.WriteSampleData(indexDict[trackIndex], dstBuf, bufferInfo);
-                                }
+                                if (trackIndexOverride != -1) {  muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo);  }
+                                else { muxer.WriteSampleData(indexDict[trackIndex], dstBuf, bufferInfo);  } // audio reformatting coming soon! @hexagod
                             }
                             extractor.Advance();
                         }
                     }
                 }
             }
-            catch (Java.Lang.IllegalStateException e)
-            {
-                Console.WriteLine("The source video file is malformed");
-            }
+            catch (Java.Lang.IllegalStateException e) { Console.WriteLine("The source video file is malformed"); }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
             finally
             {
@@ -186,9 +144,6 @@ namespace BitChute.VideoEncoding
             else { return null; }
         }
 
-
-
-        //Splits the string at the dot, separating the file name and the extension. then adding the "_trimmed" string between both
         private string GetOutputPath(string inputPath)
         {
             string[] parts = inputPath.Split('.');

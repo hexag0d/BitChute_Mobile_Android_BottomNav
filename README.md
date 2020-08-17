@@ -1,27 +1,27 @@
-# BitChute_Mobile_Android_BottomNav
-A new version of the BitChute android app which uses bottomnavigation tabs and a viewpager.
+# BitChute_Mobile_Android_BottomNav \n
+A new version of the BitChute android app which uses bottomnavigation tabs and a viewpager. \n
+Also a GL native hybrid Xamarin video encoding template for Android, designed specifically for BitChute.com \n
 
-/* App by:
-    Ray Vahey
-   && Rich Jones &&
-.__                                             .___
-|  |__   ____ ___  ________     ____   ____   __| _/
-|  |  \_/ __ \\  \/  /\__  \   / ___\ /  _ \ / __ | 
-|   Y  \  ___/ >    <  / __ \_/ /_/  >  <_> ) /_/ | 
-|___|  /\___  >__/\_ \(____  /\___  / \____/\____ | 
-     \/     \/      \/     \//_____/             \/ 
+/* App by: \n
+    Ray Vahey \n
+   && Rich Jones && \n
+   \n
+.__                                             .___   \n
+|  |__   ____ ___  ________     ____   ____   __| _/     \n
+|  |  \_/ __ \\  \/  /\__  \   / ___\ /  _ \ / __ |      \n
+|   Y  \  ___/ >    <  / __ \_/ /_/  >  <_> ) /_/ |      \n
+|___|  /\___  >__/\_ \(____  /\___  / \____/\____ |     \n
+     \/     \/      \/     \//_____/             \/  \n
+	 \n
+https://bitchute.com/channel/hexagod \n
+https://soundcloud.com/vybemasterz \n
 
-https://bitchute.com/channel/hexagod
-https://soundcloud.com/vybemasterz
+twitter @vybeypantelonez    \n
+minds @hexagod   \n
+steemit @vybemasterz   \n
+gab.ai @hexagod   \n
 
-twitter @vybeypantelonez
-minds @hexagod
-steemit @vybemasterz
-gab.ai @hexagod
-
-&& Ray Vahey
-
-based off the template by hnabbasi
-https://github.com/hnabbasi/BottomNavigationViewPager
+based off the template by hnabbasi   \n
+https://github.com/hnabbasi/BottomNavigationViewPager   \n
 
  */
