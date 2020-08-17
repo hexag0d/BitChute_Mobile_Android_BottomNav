@@ -102,20 +102,13 @@ namespace MediaCodecHelper {
 				int frameCount = 0;
 
 				var curShad = false;
-
-				while (JavaSystem.NanoTime() < desiredEnd) {
+                
+                _outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);
+                while (JavaSystem.NanoTime() < desiredEnd) {
 					// Feed any pending encoder output into the muxer.
 					drainEncoder(false);
 
-					if ((frameCount % 24) == 0) {
-						curShad = !curShad;
-					}
 
-					if (curShad) {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
-					} else {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER2);	
-					}
 
 					frameCount++;
 

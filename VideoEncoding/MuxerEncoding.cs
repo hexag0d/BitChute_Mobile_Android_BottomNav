@@ -21,6 +21,15 @@ namespace BitChute.VideoEncoding
 
         }
 
+        public static int GetVideoLength(string filepath)
+        {
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.SetDataSource(filepath);
+            string durationStr = mmr.ExtractMetadata(MediaMetadataRetriever.MetadataKeyDuration);
+            int millSecond = Convert.ToInt32(durationStr);
+            return millSecond;
+        }
+
         public string Trim(int startMs, int endMs, string inputPath)
         {
             // Set up MediaExtractor to read from the source.

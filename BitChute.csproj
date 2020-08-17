@@ -107,6 +107,7 @@
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VideoEncoding\EncoderToMp4.cs" />
     <Compile Include="VideoEncoding\CameraToMp4.cs" />
     <Compile Include="VideoEncoding\FileToMp4.cs" />
     <Compile Include="VideoEncoding\GeneratedVideoToMp4.cs" />

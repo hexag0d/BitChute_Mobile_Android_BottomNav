@@ -105,7 +105,8 @@ namespace BitChute.Fragments
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
             MuxerEncoding muxerEncoding = new VideoEncoding.MuxerEncoding();
-            muxerEncoding.Trim(0, 2000, FileBrowser.DefaultWorkingDirectory + "car_audio_sample.mp4");
+            muxerEncoding.Trim(0, MuxerEncoding.GetVideoLength(FileBrowser.DefaultWorkingDirectory + "car_audio_sample.mp4"),
+                FileBrowser.DefaultWorkingDirectory + "car_audio_sample.mp4");
             //var s = new System.Drawing.Size(854, 480);
             //var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, s);
             //Task.Run(() => {
