@@ -3794,14 +3794,14 @@ namespace BitChute
 			// aapt resource value: 0x7f090098
 			public const int submit_area = 2131296408;
 			
-			// aapt resource value: 0x7f0900db
-			public const int tab0relativeLayout = 2131296475;
+			// aapt resource value: 0x7f0900da
+			public const int tab0relativeLayout = 2131296474;
 			
 			// aapt resource value: 0x7f0900eb
 			public const int tab1FeaturedCreators = 2131296491;
 			
-			// aapt resource value: 0x7f0900df
-			public const int tab3LinearLayout = 2131296479;
+			// aapt resource value: 0x7f0900de
+			public const int tab3LinearLayout = 2131296478;
 			
 			// aapt resource value: 0x7f0900f3
 			public const int tab4OverrideSpinner = 2131296499;
@@ -3926,17 +3926,17 @@ namespace BitChute
 			// aapt resource value: 0x7f090118
 			public const int visible = 2131296536;
 			
+			// aapt resource value: 0x7f0900db
+			public const int webView1 = 2131296475;
+			
 			// aapt resource value: 0x7f0900dc
-			public const int webView1 = 2131296476;
+			public const int webView2 = 2131296476;
 			
 			// aapt resource value: 0x7f0900dd
-			public const int webView2 = 2131296477;
+			public const int webView3 = 2131296477;
 			
-			// aapt resource value: 0x7f0900de
-			public const int webView3 = 2131296478;
-			
-			// aapt resource value: 0x7f0900da
-			public const int webView3Swapable = 2131296474;
+			// aapt resource value: 0x7f0900df
+			public const int webView3Swapable = 2131296479;
 			
 			// aapt resource value: 0x7f0900e2
 			public const int webView5 = 2131296482;
@@ -4257,22 +4257,22 @@ namespace BitChute
 			public const int support_simple_spinner_dropdown_item = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int Tab3WebView = 2130968645;
+			public const int Tab0FragLayout = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int TheFragmentLayout0 = 2130968646;
+			public const int Tab1FragLayout = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int TheFragmentLayout2 = 2130968647;
+			public const int Tab2FragLayout = 2130968647;
 			
 			// aapt resource value: 0x7f040048
-			public const int TheFragmentLayout3 = 2130968648;
+			public const int Tab3FragLayout = 2130968648;
 			
 			// aapt resource value: 0x7f040049
-			public const int TheFragmentLayout4 = 2130968649;
+			public const int Tab3WebView = 2130968649;
 			
 			// aapt resource value: 0x7f04004a
-			public const int TheFragmentLayout5 = 2130968650;
+			public const int Tab4FragLayout = 2130968650;
 			
 			// aapt resource value: 0x7f04004b
 			public const int VideoViewLayout = 2130968651;

@@ -65,10 +65,10 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
+            _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
             Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
-            //ViewHelpers.Tab0.FragmentContainerLayout = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
+            //ViewHelpers.Tab0.FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
             //ViewHelpers.Tab0.DownloaderLayout = inflater.Inflate(Resource.Layout.DownloaderLayout, container, false);
             //ViewHelpers.Tab0.TabFragmentLinearLayout = 
             //    (RelativeLayout)ViewHelpers.Tab0.FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);

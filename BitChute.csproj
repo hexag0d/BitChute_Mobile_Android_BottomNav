@@ -166,19 +166,19 @@
     <AndroidResource Include="Resources\menu\navigation_main.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout2.axml">
+    <AndroidResource Include="Resources\layout\Tab1FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout4.axml">
+    <AndroidResource Include="Resources\layout\Tab3FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout5.axml">
+    <AndroidResource Include="Resources\layout\Tab4FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -190,13 +190,13 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout0.axml">
+    <AndroidResource Include="Resources\layout\Tab0FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout3.axml">
+    <AndroidResource Include="Resources\layout\Tab2FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

@@ -207,8 +207,7 @@ namespace BitChute.Classes
                                              var ite5 = videocard_array[i];  
                                             ite5.style.maxWidth = 'none';
                                         }" + "})()";
-
-
+        
         public static string _jsHideVideoMargin = "javascript:(function() { " +
                         @"document.getElementsByClassName('container')[0].style.paddingLeft='0px'; " +
                         @"document.getElementsByClassName('container')[0].style.paddingRight='0px'; " +
@@ -245,8 +244,7 @@ namespace BitChute.Classes
         /// pauses the video
         /// </summary>
         public static string _jsPauseVideo = "javascript:(function() { " + "plyr.pause()" +  "})()";
-
-
+        
         /// <summary>
         /// plays the video
         /// </summary>
@@ -267,18 +265,11 @@ namespace BitChute.Classes
 
         public static string _jsNextByImg = "javascript:(function() { " +
                 @"$(" + "\"" + @"img[class*='img-responsive lazyloaded']" + "\"" + @")[1].click()" + @"})()";
-
-
-        public static string RemoveDisqusIframeZero = "javascript:(function() { "
-            + @"$('#disqus_thread').children('iframe')[0].src = "";" + @"})()";
-
-        public static string RemoveDisqusIframeTwo = "javascript:(function() { "
-            +  @"})()";
-
+        
         /// <summary>
         /// Restores? (untested) the missing link disqus iFrame
         /// 
-        /// what's happening here is that the iFrames lazy load different on
+        /// what's happening here is that the iFrames randomly load different on
         /// android vs on desktop, so the iFrame is completely missing sometimes on mobile
         /// 
         /// I think we're moving away from disqus soon, so this is just a bandaid
@@ -299,18 +290,7 @@ namespace BitChute.Classes
         /// </summary>
         public static string RestoreDisqusIFrame = "javascript:(function() { "
             + @"$('iFrame')[0].style.height='600px'})()";
-
-        //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
-        //     + @"$('#disqus_thread').children('iframe')[0].display = none;" + @"})()";
-
-
-        //public static string RemoveDisqusIframeZero = "javascript:(function() { "
-        //    + @"if ($('#disqus_thread').children('iframe').length > 3){ $('#disqus_thread').children('iframe')[0].remove(); }" + @"})()";
-
-
-        //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
-        //    + @"if ($('#disqus_thread').children('iframe').length > 2){ $('#disqus_thread').children('iframe')[2].remove(); }" + @"})()";
-
+        
         /// <summary>
         /// javascript/jquery commands that add observable callbacks into the webview
         /// </summary>

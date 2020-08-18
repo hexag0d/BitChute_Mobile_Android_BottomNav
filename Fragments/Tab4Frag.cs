@@ -121,7 +121,7 @@ namespace BitChute.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             Fm4 = this;
-            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
+            _view = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView5);
             WvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             AppSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
@@ -206,9 +206,7 @@ namespace BitChute.Fragments
             LoadUrlWithDelay(RootUrl, 5000);
             return _view;
         }
-
         
-
         public void CustomSetTouchListener(bool landscape)
         {
             if (landscape)

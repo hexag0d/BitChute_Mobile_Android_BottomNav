@@ -48,7 +48,7 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
+            var _view = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
 
                 Wv.SetWebViewClient(_wvc);
