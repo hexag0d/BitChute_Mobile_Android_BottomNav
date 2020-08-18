@@ -396,7 +396,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/javascriptDebugInjectionTextBox"
 			android:lines="10"
-			android:text="javascript:(function() { $('iFrame')[0].style.height='600px'})()"
+			android:text=" $('iFrame')[0].style.height='600px'"
 			android:background="#ff000000"
 			android:textColor="#ff00ff21"
 			android:textColorHighlight="#ff0009f1" />
