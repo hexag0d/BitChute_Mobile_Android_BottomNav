@@ -81,6 +81,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "26.2.1.GPS.FixLockscreenAuto";
+        public static string AppVersion = "27.0.2.API9.FixDisqusMissingIFrame";
     }
 }

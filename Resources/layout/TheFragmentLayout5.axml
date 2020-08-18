@@ -390,6 +390,16 @@
         android:layout_height="match_parent"
         android:id="@+id/versionTextView" />
     </LinearLayout>
+		<EditText
+			android:inputType="textMultiLine"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/javascriptDebugInjectionTextBox"
+			android:lines="10"
+			android:text="javascript:(function() { $('iFrame')[0].style.height='600px'})()"
+			android:background="#ff000000"
+			android:textColor="#ff00ff21"
+			android:textColorHighlight="#ff0009f1" />
   </LinearLayout>
   <LinearLayout
     android:orientation="horizontal"

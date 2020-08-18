@@ -235,7 +235,7 @@ namespace BitChute.Classes
                         @"$(" + "\"" + @"a[href*='#listing-subscribed']" + "\"" + @").click()" + @"})()";
 
         /// <summary>
-        /// Hides the sticking tooltips that happen on all android browsers.  Not to be
+        /// Hides the sticking tooltips that happen on all android browsers, not to be
         /// confused with disabletooltips, which disables the data-toggle attribute.
         /// </summary>
         public static string _jsHideTooltips = "javascript:(function() { " +
@@ -275,8 +275,30 @@ namespace BitChute.Classes
         public static string RemoveDisqusIframeTwo = "javascript:(function() { "
             +  @"})()";
 
+        /// <summary>
+        /// Restores? (untested) the missing link disqus iFrame
+        /// 
+        /// what's happening here is that the iFrames lazy load different on
+        /// android vs on desktop, so the iFrame is completely missing sometimes on mobile
+        /// 
+        /// I think we're moving away from disqus soon, so this is just a bandaid
+        /// I believe this is related to the disqus ads.
+        /// At one point, the disqus ads were almost completely blocking out the users being able to post.
+        /// the ads themselves took up more room than the comment section on android
+        /// 
+        /// Not doing any of this to be disrespectful to disqus, it's more
+        /// an issue of freespeech useability.  I can't have ads blocking out
+        /// the users from being able to share their thoughts, especially
+        /// when said ads are completely anti-thetical to what users
+        /// are saying in the comment section.
+        /// 
+        /// If they had kept the ads to a tiny bar below the comments section,
+        /// I'd have never blocked out their ads.  I think they deserve to
+        /// make money, but a line was crossed where their desire for wealth
+        /// superseded the displaying of thoughts from our user base.  That is unacceptable. @hexagod
+        /// </summary>
         public static string RestoreDisqusIFrame = "javascript:(function() { "
-            + @"$('#disqus_thread').children('iframe')[0].src = "";" + @"})()";
+            + @"$('iFrame')[0].style.height='600px'})()";
 
         //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
         //     + @"$('#disqus_thread').children('iframe')[0].display = none;" + @"})()";

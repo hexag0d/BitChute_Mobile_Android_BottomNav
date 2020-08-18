@@ -15,13 +15,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BitChute.Fragments.TheFragment4;
+using static BitChute.Fragments.Tab4Frag;
 using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
     [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
-    public class TheFragment0 : Fragment
+    public class Tab0Frag : Fragment
     {
         string _title;
         string _icon;
@@ -41,8 +41,8 @@ namespace BitChute.Fragments
         public static int TNo = 0;
         //static MainActivity Main = new MainActivity();
 
-        public static TheFragment0 NewInstance(string title, string icon) {
-            var fragment = new TheFragment0();
+        public static Tab0Frag NewInstance(string title, string icon) {
+            var fragment = new Tab0Frag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);

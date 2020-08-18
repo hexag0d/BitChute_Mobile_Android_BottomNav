@@ -9,7 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Views;
+using Android.Webkit;
 using Android.Widget;
+using BitChute.Fragments;
 
 namespace BitChute.Classes
 {
@@ -67,9 +69,45 @@ namespace BitChute.Classes
             }
         }
 
-        internal static void RestoreDisqusIFrame(int tab)
+        /// <summary>
+        /// Restores the missing disqus iFrame
+        /// Disqus disappears due to scripting conflicts between
+        /// the lazy loaded disqus iFrames and BitChute.com 
+        /// video detail page script.  This will restore the missing iFrame
+        /// </summary>
+        /// <param name="tab"></param>
+        public static void RestoreDisqusIFrame(int tab)
         {
-
+            switch (tab)
+            {
+                case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrame); break;
+                case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrame); break;
+                case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrame); break;
+                case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrame); break;
+                case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrame); break;
+            }
+        }
+        
+        /// <summary>
+        /// Provides an interface to inject javascript commands into any tab
+        /// Designed for advanced users or debugging only, should be disabled on releases
+        /// </summary>
+        /// <param name="tab">the tab you want to inject into</param>
+        /// <param name="jsCode">the jsCode to inject, null = get from settings EditText</param>
+        public static void InjectJavascriptIntoWebView(int tab, string jsCode)
+        {
+            if (jsCode == null) { jsCode = Tab4.JavascriptInjectionTextBox.Text; }
+            string jsf = @"javascript:(function() { ";
+            string jsc = @"})()";
+            string js2i = jsf + jsCode + jsc;
+            switch (tab)
+            {
+                case 0: Tab0Frag.Wv.LoadUrl(js2i); break;
+                case 1: Tab1Frag.Wv.LoadUrl(js2i); break;
+                case 2: Tab2Frag.Wv.LoadUrl(js2i); break;
+                case 3: Tab3Frag.Wv.LoadUrl(js2i); break;
+                case 4: Tab4Frag.Wv.LoadUrl(js2i); break;
+            }
         }
 
         public class Tab0
@@ -98,6 +136,11 @@ namespace BitChute.Classes
             public static CheckBox AutoFillVideoTitleText { get; set; }
             public static Android.Support.V7.Widget.RecyclerView.LayoutManager FileLayoutManager { get; set; }
             public static Android.Support.V7.Widget.RecyclerView FileRecyclerView { get; set; }
+        }
+
+        public class Tab4
+        {
+            public static EditText JavascriptInjectionTextBox { get; set; }
         }
     }
 }

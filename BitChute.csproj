@@ -23,10 +23,14 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidKeyStore>false</AndroidKeyStore>
-    <AndroidSigningKeyStore></AndroidSigningKeyStore>
-    <AndroidSigningStorePass></AndroidSigningStorePass>
-    <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass></AndroidSigningKeyPass>
+    <AndroidSigningKeyStore>
+    </AndroidSigningKeyStore>
+    <AndroidSigningStorePass>
+    </AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>
+    </AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>
+    </AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,11 +97,11 @@
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />
-    <Compile Include="Fragments\TheFragment0.cs" />
-    <Compile Include="Fragments\TheFragment4.cs" />
-    <Compile Include="Fragments\TheFragment3.cs" />
-    <Compile Include="Fragments\TheFragment2.cs" />
-    <Compile Include="Fragments\TheFragment1.cs" />
+    <Compile Include="Fragments\Tab0Frag.cs" />
+    <Compile Include="Fragments\Tab4Frag.cs" />
+    <Compile Include="Fragments\Tab3Frag.cs" />
+    <Compile Include="Fragments\Tab2Frag.cs" />
+    <Compile Include="Fragments\Tab1Frag.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\VideoModel.cs" />

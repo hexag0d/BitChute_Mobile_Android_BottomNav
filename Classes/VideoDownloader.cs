@@ -32,11 +32,9 @@ namespace BitChute.Classes
 
         public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
         {
-            //JavascriptCommands.CallBackInjection.SetCallbackWithDelay(TheFragment1.Wv,
-            //    JavascriptCommands.CallBackInjection.AddFullScreenCallback, 0);
-            ViewHelpers.
-            RestoreDisqusIFrame();
-            InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));
+            ViewHelpers.InjectJavascriptIntoWebView(MainActivity.ViewPager.CurrentItem, null);
+            //ViewHelpers.RestoreDisqusIFrame(MainActivity.ViewPager.CurrentItem); // @DEBUG using this button to test the initial js command, because I haven't pinpointed exactly how to recover the missing iFrame at this time; this needs to be switched back to the download button and an iFrame event inspection needs implemented before golive
+            //InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));  // @TODO restore
         }
 
         public static string GetVideoUrlByTab(int tab)
@@ -44,11 +42,11 @@ namespace BitChute.Classes
             string taburl = "";
             switch (tab)
             {
-                case 0: taburl = TheFragment0.Wv.OriginalUrl; break;
-                case 1: taburl = TheFragment1.Wv.OriginalUrl; break;
-                case 2: taburl = TheFragment2.Wv.OriginalUrl; break;
-                case 3: taburl = TheFragment3.Wv.OriginalUrl; break;
-                case 4: taburl = TheFragment4.Wv.OriginalUrl; break;
+                case 0: taburl = Tab0Frag.Wv.OriginalUrl; break;
+                case 1: taburl = Tab1Frag.Wv.OriginalUrl; break;
+                case 2: taburl = Tab2Frag.Wv.OriginalUrl; break;
+                case 3: taburl = Tab3Frag.Wv.OriginalUrl; break;
+                case 4: taburl = Tab4Frag.Wv.OriginalUrl; break;
             }
             return taburl;
         }
