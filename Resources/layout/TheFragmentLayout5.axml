@@ -5,7 +5,8 @@
                 android:backgroundTint="@android:color/black"
                 android:background="@android:color/black"
                 android:layout_height="match_parent">
-  <LinearLayout
+
+	<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:minWidth="25px"
@@ -13,6 +14,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/webViewLayout">
+			  
     <StartServices.Servicesclass.ExtStickyService.ServiceWebView
       android:id="@+id/webView5"
       android:layout_width="fill_parent"
@@ -21,8 +23,9 @@
       android:textAlignment="center"
       android:textSize="@dimen/abc_text_size_display_1_material"
       android:layout_centerVertical="false" />
-  </LinearLayout>
-  <LinearLayout
+	</LinearLayout>
+
+	<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:minWidth="25px"
@@ -30,34 +33,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/appSettingsMainLayout">
-    <LinearLayout
-      android:orientation="vertical"
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout2">
-      <RadioGroup
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/zoomControlGroup">
-        <RadioButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="#3498db"
-          android:text="Zoom Cntrl On"
-          android:buttonTint="#3498db"
-          android:id="@+id/_zoomControlOnBtn" />
-        <RadioButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="#3498db"
-          android:buttonTint="#3498db"
-          android:text="Off"
-          android:id="@+id/_zoomControlOffBtn" />
+					<EditText
+			android:inputType="textMultiLine"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/javascriptDebugInjectionTextBox"
+			android:lines="3"
+			android:text=" $('iFrame')[0].style.height='600px'"
+			android:background="#ff000000"
+			android:textColor="#ff00ff21"
+			android:textColorHighlight="#ff0009f1" />
+			<LinearLayout
+				android:orientation="vertical"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/linearLayout2">
+				<RadioGroup
+			     android:minWidth="25px"
+			    android:minHeight="25px"
+			    android:orientation="horizontal"
+			   android:layout_width="match_parent"
+			   android:layout_height="wrap_content"
+			   android:id="@+id/zoomControlGroup">
+			<RadioButton
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			   android:textColor="#3498db"
+			    android:text="Zoom Cntrl On"
+			    android:buttonTint="#3498db"
+			     android:id="@+id/_zoomControlOnBtn" />
+		    <RadioButton
+			      android:layout_width="wrap_content"
+			      android:layout_height="wrap_content"
+			      android:textColor="#3498db"
+			     android:buttonTint="#3498db"
+			     android:text="Off"
+			      android:id="@+id/_zoomControlOffBtn" />
       </RadioGroup>
     </LinearLayout>
     <LinearLayout
@@ -390,18 +403,12 @@
         android:layout_height="match_parent"
         android:id="@+id/versionTextView" />
     </LinearLayout>
-		<EditText
-			android:inputType="textMultiLine"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/javascriptDebugInjectionTextBox"
-			android:lines="10"
-			android:text=" $('iFrame')[0].style.height='600px'"
-			android:background="#ff000000"
-			android:textColor="#ff00ff21"
-			android:textColorHighlight="#ff0009f1" />
-  </LinearLayout>
-  <LinearLayout
+
+
+
+	</LinearLayout>
+		  
+	<LinearLayout
     android:orientation="horizontal"
     android:minWidth="25px"
     android:minHeight="25px"
@@ -432,8 +439,9 @@
         android:text="On"
         android:id="@+id/_hideNavBarHorizontalOff" />
     </RadioGroup>
-  </LinearLayout>
-  <RadioGroup
+    </LinearLayout>
+
+	<RadioGroup
     android:minWidth="25px"
     android:minHeight="25px"
     android:orientation="horizontal"
@@ -448,13 +456,13 @@
       android:visibility="gone"
       android:text="Vertical Navbar On"
       android:id="@+id/verticalNavbarRbOn" />
-    <RadioButton
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textColor="#3498db"
-      android:buttonTint="#3498db"
-      android:visibility="gone"
-      android:text="Autohide"
-      android:id="@+id/verticalNavbarRbOff" />
-  </RadioGroup>
+		<RadioButton
+		  android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	   android:textColor="#3498db"
+	   android:buttonTint="#3498db"
+	   android:visibility="gone"
+	   android:text="Autohide"
+	   android:id="@+id/verticalNavbarRbOff" />
+    </RadioGroup>
 </RelativeLayout>
