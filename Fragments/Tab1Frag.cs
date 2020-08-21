@@ -22,7 +22,6 @@ namespace BitChute.Fragments
         public static ServiceWebView Wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
-        bool tabLoaded = false;
         public static int TNo = 1;
         public static Tab1Frag NewInstance(string title, string icon) {
             var fragment = new Tab1Frag();
@@ -50,7 +49,6 @@ namespace BitChute.Fragments
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.LoadUrl(RootUrl);
                 Wv.Settings.JavaScriptEnabled = true;
-                tabLoaded = true;
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;

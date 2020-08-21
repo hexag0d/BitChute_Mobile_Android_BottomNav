@@ -529,6 +529,7 @@ namespace BitChute.Fragments
                 }
                 catch{ }
                 HideLinkOverflow();
+                ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(view, url);
             }
         }

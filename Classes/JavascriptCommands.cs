@@ -280,7 +280,7 @@ namespace BitChute.Classes
         /// Not doing any of this to be disrespectful to disqus, it's more
         /// an issue of freespeech useability.  I can't have ads blocking out
         /// the users from being able to share their thoughts, especially
-        /// when said ads are completely anti-thetical to what users
+        /// when said ads are completely antithetical to what users
         /// are saying in the comment section.
         /// 
         /// If they had kept the ads to a tiny bar below the comments section,
@@ -291,7 +291,7 @@ namespace BitChute.Classes
         public static string RestoreDisqusIFrame = "javascript:(function() { "
             + @"$('iFrame')[0].style.height='600px'})()";
 
-        public static string RestoreDisqusIFrameWithDelay(int delay = 10000)
+        public static string RestoreDisqusIFrameWithDelay(int delay = 9000)
         {
             string r = "var _dms=" + delay.ToString() +
                 " ;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);";

@@ -47,7 +47,6 @@ namespace BitChute.Fragments
             {
                 if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
-
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }

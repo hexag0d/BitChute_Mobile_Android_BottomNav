@@ -4,7 +4,6 @@
     {
         public class Display
         {
-
             public static Android.Graphics.Color DarkGrey = new Android.Graphics.Color(20, 20, 20);
 
             /// <summary>
@@ -81,6 +80,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "27.0.3.API9.FixDisqusMissingIFrame";
+        public static string AppVersion = "27.1.0.API9.FixDisqusMissingIFrame";
     }
 }

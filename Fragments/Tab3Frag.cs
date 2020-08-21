@@ -229,7 +229,6 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
-        
         private class ExtWebViewClient : WebViewClient
         {
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
@@ -246,7 +245,6 @@ namespace BitChute.Fragments
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
-
                 if (TabStates.T4Is == "Feed")
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
@@ -254,21 +252,15 @@ namespace BitChute.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideTab2);
                     Wv.LoadUrl(JavascriptCommands._jsSelectTab3);
                     Wv.LoadUrl(JavascriptCommands._jsHideTrending);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
-                if (!AppSettings.Tab1FeaturedOn)
-                {
-                    Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                }
-                if (AppState.Display.Horizontal)
-                {
-                    HidePageTitle(5000);
-                }
+                if(!AppSettings.Tab1FeaturedOn){Wv.LoadUrl(JavascriptCommands._jsHideCarousel);}
+                if (AppState.Display.Horizontal){HidePageTitle(5000);}
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 HideLinkOverflow();
                 SetReload();
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+                ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(view, url);
             }
         }

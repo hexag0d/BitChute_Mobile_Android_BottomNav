@@ -48,10 +48,7 @@ namespace BitChute.Classes
                     {
                         ViewHelpers.Main.DownloadFAB?.Hide();
                     }
-                    else
-                    {
-                        ViewHelpers.Main.DownloadFAB?.Show();
-                    }
+                    else { ViewHelpers.Main.DownloadFAB?.Show(); }
                     _dlFabShowSetting = value;
                 }
             }
@@ -136,7 +133,6 @@ namespace BitChute.Classes
         public static string GetTabOverrideUrlPref(string tabPref)
         {
             Prefs = GetAppSharedPrefs();
-
             switch (tabPref)
             {
                 case "tab4overridestring":
