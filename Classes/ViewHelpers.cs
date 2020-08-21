@@ -88,13 +88,25 @@ namespace BitChute.Classes
             }
         }
         
+        public static void AutoRestoreDisqusWithDelay(int tab)
+        {
+            switch (tab)
+            {
+                case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
+                case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
+                case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
+                case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
+                case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
+            }
+        }
+
         /// <summary>
         /// Provides an interface to inject javascript commands into any tab
         /// Designed for advanced users or debugging only, should be disabled on releases
         /// </summary>
         /// <param name="tab">the tab you want to inject into</param>
         /// <param name="jsCode">the jsCode to inject, null = get from settings EditText</param>
-        public static void InjectJavascriptIntoWebView(int tab, string jsCode)
+        public static void InjectJavascriptIntoWebView(int tab, string jsCode = null)
         {
             if (jsCode == null) { jsCode = Tab4.JavascriptInjectionTextBox.Text; }
             string jsf = @"javascript:(function() { ";

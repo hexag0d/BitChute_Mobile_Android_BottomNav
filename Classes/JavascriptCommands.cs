@@ -290,6 +290,13 @@ namespace BitChute.Classes
         /// </summary>
         public static string RestoreDisqusIFrame = "javascript:(function() { "
             + @"$('iFrame')[0].style.height='600px'})()";
+
+        public static string RestoreDisqusIFrameWithDelay(int delay = 10000)
+        {
+            string r = "var _dms=" + delay.ToString() +
+                " ;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);";
+            return r;
+        }
         
         /// <summary>
         /// javascript/jquery commands that add observable callbacks into the webview

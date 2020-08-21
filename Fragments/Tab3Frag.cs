@@ -13,22 +13,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static StartServices.Servicesclass.ExtStickyService;
 
-
 namespace BitChute.Fragments
 {
     public class Tab3Frag : Fragment
     {
         string _title;
         string _icon;
-
         public static ServiceWebView Wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
-
         public static string RootUrl = "https://www.bitchute.com/profile";
         public static int TNo = 3;
-
-        bool tabLoaded = false;
-
         public static Tab3Frag NewInstance(string title, string icon) {
             var fragment = new Tab3Frag();
             fragment.Arguments = new Bundle();
@@ -36,7 +30,6 @@ namespace BitChute.Fragments
             fragment.Arguments.PutString("icon", icon);
             return fragment;
         }
-
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -49,28 +42,17 @@ namespace BitChute.Fragments
                     _icon = (string)Arguments.Get("icon");
             }
         }
-
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack())
                 Wv.GoBack();
         }
-
         static bool _wvRl = true;
-
         public void Pop2Root()
         {
-            if (_wvRl)
-            {
-                Wv.Reload();
-                _wvRl = false;
-            }
-            else
-            {
-                Wv.LoadUrl(RootUrl);
-            }
+            if (_wvRl) { Wv.Reload(); _wvRl = false; }
+            else{ Wv.LoadUrl(RootUrl);}
         }
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             ViewHelpers.Tab3.FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab3FragLayout, container, false);
@@ -96,33 +78,20 @@ namespace BitChute.Fragments
             ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
             ViewHelpers.Main.DownloadFAB.Clickable = true;
             ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
-            
-            if (AppSettings.FanMode)
-            {
-                //get the url string from prefs
-                RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring");
-            }
-
-                Wv.SetWebViewClient(new ExtWebViewClient());
-                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                Wv.Settings.DisplayZoomControls = false;
-                Wv.Settings.JavaScriptEnabled = true;
-                //_wv.Settings.AllowFileAccess = true;
-                //_wv.Settings.AllowContentAccess = true;
-                tabLoaded = true;
-            
+            if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
+            Wv.SetWebViewClient(new ExtWebViewClient());
+            Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+            Wv.Settings.DisplayZoomControls = false;
+            Wv.Settings.JavaScriptEnabled = true;
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
             CustomSetTouchListener(AppState.Display.Horizontal);
-            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             LoadUrlWithDelay(RootUrl, 4000);
-            //ViewHelpers.Main.DownloadFAB.LayoutParameters = 
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
-        
         /// <summary>
         /// swaps the view for the downloader layout
         /// </summary>
@@ -140,7 +109,6 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
             }
         }
-
         /// <summary>
         /// swaps the view for this tab
         /// </summary>
@@ -148,33 +116,18 @@ namespace BitChute.Fragments
         public static void SwapView(View v)
         {
             ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-            try
-            {
-                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v);
-            }
-            catch
-            {
-            }
+            try { ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v); }
+            catch{}
         }
-
         public void CustomSetTouchListener(bool landscape)
         {
-            if (landscape)
-            {
-                Wv.SetOnTouchListener(new ExtTouchListener());
-            }
-            else
-            {
-                Wv.SetOnTouchListener(null);
-            }
+            if (landscape) { Wv.SetOnTouchListener(new ExtTouchListener()); }
+            else { Wv.SetOnTouchListener(null); }
         }
-
         public static async void LoadUrlWithDelay(string url, int delay)
         {
-            await Task.Delay(delay);
-            Wv.LoadUrl(url);
+            await Task.Delay(delay); Wv.LoadUrl(url);
         }
-        
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
@@ -184,7 +137,6 @@ namespace BitChute.Fragments
                 return false;
             }
         }
-
         private static async void CustomOnTouch()
         {
             _scrollY += Wv.ScrollY;
@@ -198,34 +150,8 @@ namespace BitChute.Fragments
                 }
             }
         }
-
         private static int _scrollY = 0;
-
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        OnScrollChanged(scrollY);
-        //    }
-        //}
-
-        //public static async void OnScrollChanged(int scrollY)
-        //{
-        //    await Task.Delay(60);
-        //    _scrollY += scrollY;
-        //    if (AppState.Display._horizontal)
-        //    {
-        //        await Task.Delay(500);
-        //        if (_scrollY >= 4000)
-        //        {
-        //            ExpandVideoCards(false);
-        //            _scrollY = 0;
-        //        }
-        //    }
-        //}
-
         public static bool _wvRling = false;
-
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
@@ -241,7 +167,6 @@ namespace BitChute.Fragments
                 _wvRling = false;
             }
         }
-
         public void OnSettingsChanged(List<object> settings)
         {
             if (AppSettings.FanMode && AppSettings.Tab4OverridePreference == "Feed")
@@ -252,18 +177,13 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsSelectTab3);
                 Wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
-
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            else
-            {
-                Wv.Settings.BuiltInZoomControls = false;
-            }
+            else { Wv.Settings.BuiltInZoomControls = false; }
         }
-
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
         /// </summary>
@@ -280,7 +200,6 @@ namespace BitChute.Fragments
         {
             Wv.LoadUrl(url);
         }
-
         public static async void HidePageTitle(int delay)
         {
             await Task.Delay(delay);
@@ -293,12 +212,10 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
             }
         }
-
         public void SetWebViewVis()
         {
             Wv.Visibility = ViewStates.Visible;
         }
-
         public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)
@@ -324,7 +241,6 @@ namespace BitChute.Fragments
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
-
             public override void OnPageFinished(WebView view, string url)
             {
                 WebViewHelpers.DelayedScrollToTop(TNo);
@@ -340,23 +256,19 @@ namespace BitChute.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideTrending);
                     //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
-
                 if (!AppSettings.Tab1FeaturedOn)
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
-
                 if (AppState.Display.Horizontal)
                 {
                     HidePageTitle(5000);
                 }
-                
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 HideLinkOverflow();
                 SetReload();
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                //AdBlock.RemoveDiscusIFrame(TNo);
                 base.OnPageFinished(view, url);
             }
         }
