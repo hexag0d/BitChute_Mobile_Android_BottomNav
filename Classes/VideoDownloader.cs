@@ -31,8 +31,7 @@ namespace BitChute.Classes
         public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
         {
             ViewHelpers.InjectJavascriptIntoWebView(MainActivity.ViewPager.CurrentItem, null);
-            //ViewHelpers.RestoreDisqusIFrame(MainActivity.ViewPager.CurrentItem); // @DEBUG using this button to test the initial js command, because I haven't pinpointed exactly how to recover the missing iFrame at this time; this needs to be switched back to the download button and an iFrame event inspection needs implemented before golive
-            //InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));  // @TODO restore
+            InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));  // @TODO restore
         }
 
         public static string GetVideoUrlByTab(int tab)
