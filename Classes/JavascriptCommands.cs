@@ -87,7 +87,6 @@ namespace BitChute.Classes
         /// </summary>
         public static string _jsShowTrending = "javascript:(function() { " +
                         "document.getElementById('listing-trending').style.display='block'; " + "})()";
-        //$('.show-more').click(function(){listingExtend(40);});
 
         public static string _jqShowMore = "javascript:(function() { " +
                         "document.listingExtend(40);" + "})()";
@@ -268,30 +267,11 @@ namespace BitChute.Classes
         
         /// <summary>
         /// Restores? (untested) the missing link disqus iFrame
-        /// 
-        /// what's happening here is that the iFrames randomly load different on
-        /// android vs on desktop, so the iFrame is completely missing sometimes on mobile
-        /// 
-        /// I think we're moving away from disqus soon, so this is just a bandaid
-        /// I believe this is related to the disqus ads.
-        /// At one point, the disqus ads were almost completely blocking out the users being able to post.
-        /// the ads themselves took up more room than the comment section on android
-        /// 
-        /// Not doing any of this to be disrespectful to disqus, it's more
-        /// an issue of freespeech useability.  I can't have ads blocking out
-        /// the users from being able to share their thoughts, especially
-        /// when said ads are completely antithetical to what users
-        /// are saying in the comment section.
-        /// 
-        /// If they had kept the ads to a tiny bar below the comments section,
-        /// I'd have never blocked out their ads.  I think they deserve to
-        /// make money, but a line was crossed where their desire for wealth
-        /// superseded the displaying of thoughts from our user base.  That is unacceptable. @hexagod
         /// </summary>
         public static string RestoreDisqusIFrame = "javascript:(function() { "
             + @"$('iFrame')[0].style.height='600px'})()";
 
-        public static string RestoreDisqusIFrameWithDelay(int delay = 9000)
+        public static string RestoreDisqusIFrameWithDelay(int delay = 12000)
         {
             string r = "var _dms=" + delay.ToString() +
                 " ;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);";
@@ -301,7 +281,7 @@ namespace BitChute.Classes
         /// <summary>
         /// javascript/jquery commands that add observable callbacks into the webview
         /// </summary>
-        public class CallBackInjection
+        public class CallbackInjection
         {
             //public static string AddFullScreenCallback = @"javascript:(" + @"function() { " +
             // @"customFullScreen = function() {  $('#loader-container').load('https://dlink.bitchute.com/callbacks/fullscreen'); } "

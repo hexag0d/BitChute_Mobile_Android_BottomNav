@@ -138,10 +138,7 @@ namespace BitChute.Fragments
                 Wv.Reload();
                 WvRl = false;
             }
-            else
-            {
-                Wv.LoadUrl(@"https://bitchute.com/");
-            }
+            else { Wv.LoadUrl(@"https://bitchute.com/"); }
         }
         public static bool WvRling = false;
         /// <summary>
@@ -170,10 +167,7 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
             Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
         }
-        public void LoadCustomUrl(string url)
-        {
-            Wv.LoadUrl(url);
-        }
+        public void LoadCustomUrl(string url){ Wv.LoadUrl(url); }
         public static async void HidePageTitle()
         {
             await Task.Delay(5000);
@@ -192,10 +186,7 @@ namespace BitChute.Fragments
             if (Wv.Url != "https://www.bitchute.com/")
             Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
-        public void SetWebViewVis()
-        {
-            Wv.Visibility = ViewStates.Visible;
-        }
+        public void SetWebViewVis(){ Wv.Visibility = ViewStates.Visible; }
         public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)

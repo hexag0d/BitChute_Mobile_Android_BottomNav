@@ -20,8 +20,6 @@ namespace BitChute.Classes
         public static bool VideoDownloadInProgress;
         static System.Int64 bytes_total;
         private static ExtWebClient _wc; 
-        //private static System.Net.WebClient _wc;
-        
 
         public static void VideoDownloadButton_OnClick(object sender, System.EventArgs e)
         {
@@ -61,17 +59,13 @@ namespace BitChute.Classes
                 {
                     Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
                 }
-
                 if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
                 {
                     Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
                 }
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
         public static async void InitializeVideoDownload(string videoLink)
@@ -101,10 +95,7 @@ namespace BitChute.Classes
                     Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(videoCardTask.Result);
                     await videoDownloadComplete;
                 }
-                else
-                {
-                    await _vd.DownloadAndSaveVideo(null);
-                }
+                else { await _vd.DownloadAndSaveVideo(null);}
             }
             else
             {
@@ -134,7 +125,6 @@ namespace BitChute.Classes
                     {
                         HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                         doc.LoadHtml(html);
-                        
                         if (doc != null)
                         {
                             var check = doc.DocumentNode;
@@ -157,23 +147,12 @@ namespace BitChute.Classes
                         }
                     }
                 }
-                catch
-                {
-                }
+                catch { }
             });
             return vidCard;
         }
-
-
-
-        public VideoDownloader(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
-        {
-        }
-
-        public VideoDownloader()
-        {
-        }
-
+        public VideoDownloader(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer) { }
+        public VideoDownloader() { }
         /// <summary>
         /// these are just for fun, they allow the progress bar to change colors
         /// </summary>
@@ -182,11 +161,9 @@ namespace BitChute.Classes
         private static int _progGreen = 20;
         private static Android.Graphics.Color _progColor;
         private static bool _progBlueUp = true;
-
         private static int _progStep = 0;
         private static string _progText;
         private static string _progString;
-
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
             decimal progress = ((decimal)e.BytesReceived/(decimal)bytes_total) * 100;
@@ -269,7 +246,6 @@ namespace BitChute.Classes
         public async Task<bool> DownloadAndSaveVideoWebRequest(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            //_wc = new System.Net.WebClient();
             _wc = new ExtWebClient();
             _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             _wc.DownloadFileCompleted += OnVideoDownloadFinished;
@@ -281,14 +257,8 @@ namespace BitChute.Classes
                 ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
                 filePath = documentsPath + filePath;
             }
-            else
-            {
-                filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
-            }
-            if (!filePath.EndsWith(@".mp4"))
-            {
-                filePath = filePath + @".mp4";
-            }
+            else{ filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text; }
+            if (!filePath.EndsWith(@".mp4")) {  filePath = filePath + @".mp4"; }
             if (vc != null)
             {
                 if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
@@ -304,7 +274,6 @@ namespace BitChute.Classes
                 {
                     await Task.Run(() =>
                     {
-                        //_wc.DownloadFileAsync(vc.VideoUri, filePath);
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
@@ -352,11 +321,9 @@ namespace BitChute.Classes
         public async Task<bool> DownloadAndSaveVideo(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            //_wc = new System.Net.WebClient();
             _wc = new ExtWebClient();
             _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             _wc.DownloadFileCompleted += OnVideoDownloadFinished;
-            
             var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
             string filePath;
             if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
@@ -365,14 +332,8 @@ namespace BitChute.Classes
                 ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
                 filePath = documentsPath + filePath;
             }
-            else
-            {
-                filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
-            }
-            if (!filePath.EndsWith(@".mp4"))
-            {
-                filePath = filePath + @".mp4";
-            }
+            else { filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text; }
+            if (!filePath.EndsWith(@".mp4")){ filePath = filePath + @".mp4"; }
             if (vc != null)
             {
                 if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
@@ -388,7 +349,6 @@ namespace BitChute.Classes
                 {
                     await Task.Run(() =>
                     {
-                       // _wc.DownloadFileAsync(vc.VideoUri, filePath);
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
@@ -406,10 +366,7 @@ namespace BitChute.Classes
                         filePath);
                 }
             }
-            catch (System.Exception ex)
-            {
-                System.Console.WriteLine(ex.InnerException);
-            }
+            catch (System.Exception ex) { System.Console.WriteLine(ex.InnerException); }
             VideoDownloadInProgress = false;
             if (System.IO.File.Exists(filePath))
             {
@@ -424,18 +381,12 @@ namespace BitChute.Classes
                 return false;
             }
         }
-
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
         {
             _wc.CancelAsync();
             VideoDownloadInProgress = false;
         }
-
-        public override IBinder OnBind(Intent intent)
-        {
-            return null;
-        }
-
+        public override IBinder OnBind(Intent intent) { return null; }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             try
