@@ -9,16 +9,15 @@ using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
-    //[Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
     public class Tab2Frag : Fragment
     {
         string _title;
         string _icon;
         public static ServiceWebView Wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
-        bool tabLoaded = false;
         public static int TNo = 2;
         public static string RootUrl = "https://www.bitchute.com/";
+
         public static Tab2Frag NewInstance(string title, string icon)
         {
             var fragment = new Tab2Frag();
@@ -46,7 +45,6 @@ namespace BitChute.Fragments
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.LoadUrl(RootUrl);
                 Wv.Settings.JavaScriptEnabled = true;
-                tabLoaded = true;
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;

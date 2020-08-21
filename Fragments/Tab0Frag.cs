@@ -60,7 +60,6 @@ namespace BitChute.Fragments
             if (AppState.NotificationStartedApp){ SetAutoPlayWithDelay(1); }
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
-            tabLoaded = true;
             Wv.LoadUrl(RootUrl);
             if (AppSettings.ZoomControl)
             {

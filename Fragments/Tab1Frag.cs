@@ -100,7 +100,7 @@ namespace BitChute.Fragments
         public void Pop2Root()
         {
             if (_wvRl) { Wv.Reload(); _wvRl = false; }
-            else { Wv.LoadUrl(@"https://bitchute.com/subscriptions/"); }
+            else { Wv.LoadUrl(RootUrl); }
         }
         public void SetWebViewVis() {  Wv.Visibility = ViewStates.Visible; }
         public static bool _wvRling = false;

@@ -152,7 +152,6 @@ namespace BitChute.Fragments
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
                 _versionTextView.Text = AppState.AppVersion;
-                tabLoaded = true;
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
