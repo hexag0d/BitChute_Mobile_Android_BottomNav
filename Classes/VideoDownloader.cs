@@ -30,7 +30,6 @@ namespace BitChute.Classes
 
         public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
         {
-            ViewHelpers.InjectJavascriptIntoWebView(MainActivity.ViewPager.CurrentItem, null);
             InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));  // @TODO restore
         }
 
