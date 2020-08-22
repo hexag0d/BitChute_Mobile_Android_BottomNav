@@ -6,6 +6,8 @@ Also a GL native hybrid Xamarin video encoding template for Android, designed sp
     Ray Vahey \n
    && Rich Jones && \n
    \n
+   
+   ```
 .__                                             .___   \n
 |  |__   ____ ___  ________     ____   ____   __| _/     \n
 |  |  \_/ __ \\  \/  /\__  \   / ___\ /  _ \ / __ |      \n
@@ -13,6 +15,8 @@ Also a GL native hybrid Xamarin video encoding template for Android, designed sp
 |___|  /\___  >__/\_ \(____  /\___  / \____/\____ |     \n
      \/     \/      \/     \//_____/             \/  \n
 	 \n
+	 
+	 ```
 https://bitchute.com/channel/hexagod \n
 https://soundcloud.com/vybemasterz \n
 
