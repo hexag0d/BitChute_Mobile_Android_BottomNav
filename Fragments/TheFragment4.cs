@@ -33,9 +33,7 @@ namespace BitChute.Fragments
         public static List<object> _settingsList = new List<object>();
         public static Spinner _tab4OverrideSpinner;
         public static Spinner _tab5OverrideSpinner;
-
-        bool tabLoaded = false;
-
+        
         public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
 
@@ -193,7 +191,6 @@ namespace BitChute.Fragments
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
                 _versionTextView.Text = AppState.AppVersion;
-                tabLoaded = true;
             
             if (AppSettings.ZoomControl)
             {
@@ -202,7 +199,7 @@ namespace BitChute.Fragments
             }
             CustomSetTouchListener(AppState.Display.Horizontal);
             AppSettingsLayout.Visibility = ViewStates.Gone;
-            LoadUrlWithDelay(RootUrl, 5000);
+            if (AppSettings.Browsing) { LoadUrlWithDelay(RootUrl, 5000); }
             return _view;
         }
 

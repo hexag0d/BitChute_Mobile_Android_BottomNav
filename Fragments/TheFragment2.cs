@@ -53,7 +53,7 @@ namespace BitChute.Fragments
 
                 Wv.SetWebViewClient(_wvc);
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                Wv.LoadUrl(RootUrl);
+
                 Wv.Settings.JavaScriptEnabled = true;
                 //_wv.Settings.AllowFileAccess = true;
                 //_wv.Settings.AllowContentAccess = true;
@@ -65,7 +65,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             Wv.Settings.DisplayZoomControls = false;
-            LoadUrlWithDelay(RootUrl, 2000);
+            if (AppSettings.Browsing) { LoadUrlWithDelay(RootUrl, 2000); }
             CustomSetTouchListener(AppState.Display.Horizontal);
             //  _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;

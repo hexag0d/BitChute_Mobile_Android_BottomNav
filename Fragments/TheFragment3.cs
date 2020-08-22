@@ -118,7 +118,7 @@ namespace BitChute.Fragments
             }
             CustomSetTouchListener(AppState.Display.Horizontal);
             //_wv.SetOnScrollChangeListener(new ExtScrollListener());
-            LoadUrlWithDelay(RootUrl, 4000);
+            if (AppSettings.Browsing) { LoadUrlWithDelay(RootUrl, 4000); }
             //ViewHelpers.Main.DownloadFAB.LayoutParameters = 
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }

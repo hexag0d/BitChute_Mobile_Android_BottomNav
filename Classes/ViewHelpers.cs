@@ -26,21 +26,13 @@ namespace BitChute.Classes
             public static FloatingActionButton DownloadFAB { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutBottom { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutOrig { get; set; }
-            //public static int LayoutAbove { get; set; }
             public static Handler UiHandler = new Handler();
 
             private static bool _navHidden;
             public static bool NavHidden
             {
-                get
-                {
-                    return _navHidden;
-                }
-                set
-                {
-                    _navHidden = value;
-                    OnNavBarVizChanged();
-                }
+                get { return _navHidden; }
+                set { _navHidden = value;  OnNavBarVizChanged(); }
             }
 
             public static bool UpdateView(object toBeUpdated, object updateWith)

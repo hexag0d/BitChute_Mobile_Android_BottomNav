@@ -6,7 +6,7 @@ namespace BitChute.Classes
     class AppSettings
     {
         public static bool AutoPlay = true;
-
+        public static bool Browsing = false; //debug for video encoder, no need to spam BitChute.com with requests
         //english for now
         public static string AppLanguage = "en";
 

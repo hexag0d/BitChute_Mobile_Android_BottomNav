@@ -60,7 +60,7 @@ namespace BitChute.Fragments
 
                 Wv.SetWebViewClient(_wvc);
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                Wv.LoadUrl(RootUrl);
+            if (AppSettings.Browsing) { Wv.LoadUrl(RootUrl); }
                 Wv.Settings.JavaScriptEnabled = true;
                 //_wv.Settings.AllowContentAccess = true;
                 //_wv.Settings.AllowFileAccess = true;

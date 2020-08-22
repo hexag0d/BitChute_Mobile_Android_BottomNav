@@ -23,6 +23,8 @@ using System.Drawing;
 using BitChute;
 using BitChute.VideoEncoding;
 using BitChute.Classes;
+using System;
+using System.Threading.Tasks;
 
 namespace MediaCodecHelper
 {
@@ -35,10 +37,9 @@ namespace MediaCodecHelper
         private int _secondPerIFrame;
         private int _bitRate;
 
-        public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 6000000)
+        public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 500000)
         {
             _context = context;
-            
             _secondPerIFrame = secondPerIFrame;
             _fps = fps;
             _bitRate = bitRate;
@@ -62,16 +63,16 @@ namespace MediaCodecHelper
             "  vec4 color1 = texture2D(sTexture, vTextureCoord).rgba;\n" +
             "  gl_FragColor = color1;\n" +
             "}\n";
-        
+
         private MediaCodec mEncoder;
         private InputSurface _inputSurface;
         private MediaMuxer mMuxer;
         private int mTrackIndex;
         private bool mMuxerStarted;
-        
+
         private MediaPlayer _mediaPlayer;
         private OutputSurface _outputSurface;
-      
+
         private MediaCodec.BufferInfo mBufferInfo;
         public static string LatestFileOutputPath = "";
 
@@ -84,7 +85,7 @@ namespace MediaCodecHelper
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
-        private void EncodeCameraToMp4(string filepath)
+        private async void EncodeCameraToMp4(string filepath)
         {
             var audioFormat = MuxerEncoding.GetAudioTrackFormat(filepath);
             try
@@ -92,124 +93,42 @@ namespace MediaCodecHelper
                 prepareMediaPlayer(filepath);
                 PrepareEncoder();
                 _inputSurface.MakeCurrent();
-                prepareSurfaceTexture();
+                PrepareSurfaceTexture();
                 _mediaPlayer.Start();
                 var st = _outputSurface.SurfaceTexture;
                 int frameCount = 0;
                 bool isCompleted = false;
-                _mediaPlayer.Completion += (object sender, System.EventArgs e)=>{isCompleted=true;};
+                _mediaPlayer.Completion += (object sender, System.EventArgs e) => { isCompleted = true; };
                 while (!isCompleted)
                 {
                     drainEncoder(false, filepath, audioFormat);
-                    frameCount++;
                     if (!_outputSurface.AwaitNewImage()) { break; }
+                    frameCount++;
                     _outputSurface.DrawImage();
-                    _inputSurface.SetPresentationTime(st.Timestamp);
+                    if (LOGGING) { Log.Debug("EncodeCameraToMp4", $"timestamp={st.Timestamp.ToString()}"); }
+                    _inputSurface.SetPresentationTime(st.Timestamp); //@TODO 
                     _inputSurface.SwapBuffers();
                 }
                 drainEncoder(true, filepath, audioFormat);
             }
-            catch (Exception ex){ System.Console.WriteLine(ex); }
-            finally { releaseMediaPlayer(); releaseEncoder();  releaseSurfaceTexture(); }
+            catch (System.Exception ex) { System.Console.WriteLine(ex); }
+            finally
+            {
+                await ReleaseMediaPlayer();
+                await ReleaseEncoder();
+                await ReleaseSurfaceTexture();
+            }
             MuxerEncoding mxe = new MuxerEncoding();
             mxe.HybridMuxingTrimmer(0, MuxerEncoding.GetVideoLength(filepath), filepath, mMuxer, 1);
+            //try{ mMuxer.Stop(); mMuxer.Release(); }
+            //catch (System.Exception ex) { Console.WriteLine(ex.Message); }
             var success = File.Exists(LatestFileOutputPath);
+            
         }
 
-        private void prepareMediaPlayer(string filepath)
-        {
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.SetDataSource(Path.Combine(_workingDirectory, "car_audio_sample.mp4"));
-            _mediaPlayer.SetVolume(0, 0);
-            _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
-            _mediaPlayer.Prepare();
-        }
+        private static long _totalBitsWritten;
 
-        /**
-	     * Stops camera preview, and releases the camera to the system.
-	     */
-        private void releaseMediaPlayer()
-        {
-            if (LOGGING) Log.Debug(TAG, "releasing camera");
-            if (_mediaPlayer != null)
-            {
-                _mediaPlayer.Stop();
-                _mediaPlayer.Release();
-                _mediaPlayer = null;
-            }
-        }
-
-        /**
-	     * Configures SurfaceTexture for camera preview.  Initializes mStManager, and sets the
-	     * associated SurfaceTexture as the Camera's "preview texture".
-	     * <p>
-	     * Configure the EGL surface that will be used for output before calling here.
-	     */
-        private void prepareSurfaceTexture()
-        {
-            _outputSurface = new OutputSurface();
-            var st = _outputSurface.Surface;
-            try { _mediaPlayer.SetSurface(st); }
-            catch (System.Exception e) { throw new System.Exception("setPreviewTexture failed:" + e.Message); }
-        }
-
-        /**
-	     * Releases the SurfaceTexture.
-	     */
-        private void releaseSurfaceTexture()
-        {
-            if (_outputSurface != null)
-            {
-                _outputSurface.Release();
-                _outputSurface = null;
-            }
-        }
-
-        /**
-	     * Configures encoder and muxer state, and prepares the input Surface.  Initializes
-	     * mEncoder, mMuxer, mInputSurface, mBufferInfo, mTrackIndex, and mMuxerStarted.
-	     */
-        private void PrepareEncoder(int bitRate = 500000, int frameRate = 30, int width = 854, int height = 480)
-        {
-            mBufferInfo = new MediaCodec.BufferInfo();
-            MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, width, height);
-            format.SetInteger(MediaFormat.KeyColorFormat, (int)MediaCodecCapabilities.Formatsurface);
-            format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
-            format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
-            format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-            if (LOGGING) Log.Debug(TAG, "format: " + format);
-            mEncoder = MediaCodec.CreateEncoderByType(MIME_TYPE);
-            mEncoder.Configure(format, null, null, MediaCodec.ConfigureFlagEncode);
-            _inputSurface = new InputSurface(mEncoder.CreateInputSurface());
-            mEncoder.Start();
-            string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
-                      + "/download/" + "_encoderTest" + new System.Random().Next(0, 66666666) + ".mp4");
-            LatestFileOutputPath = outputPath;
-            try{ mMuxer = new MediaMuxer(outputPath, MuxerOutputType.Mpeg4); }
-            catch (System.Exception e) { throw new System.Exception(e.Message);  }
-            mTrackIndex = -1;
-            mMuxerStarted = false;
-        }
-
-        /**
-	     * Releases encoder resources.
-	     */
-        private void releaseEncoder()
-        {
-            if (LOGGING) Log.Debug(TAG, "releasing encoder objects");
-            if (mEncoder != null)
-            {
-                mEncoder.Stop();
-                mEncoder.Release();
-                mEncoder = null;
-            }
-            if (_inputSurface != null)
-            {
-                _inputSurface.Release();
-                _inputSurface = null;
-            }
-        }
-
+        private static bool _bitsWritten = false;
         /**
 	     * Extracts all pending data from the encoder and forwards it to the muxer.
 	     * <p>
@@ -220,14 +139,14 @@ namespace MediaCodecHelper
 	     * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
 	     * not recording audio.
 	     */
-        private void drainEncoder(bool endOfStream, string filepath, MediaFormat audioFormat)
+        private async void drainEncoder(bool endOfStream, string filepath, MediaFormat audioFormat)
         {
+            //mBufferInfo.Offset = 0;
             int TIMEOUT_USEC = 10000;
             if (endOfStream)
             {
                 mEncoder.SignalEndOfInputStream();
             }
-
             ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
             while (true)
             {
@@ -243,14 +162,14 @@ namespace MediaCodecHelper
                 }
                 else if (encoderStatus == (int)MediaCodec.InfoOutputFormatChanged)
                 {
-                    if (mMuxerStarted) { throw new RuntimeException("format changed twice");  }
+                    if (mMuxerStarted) { throw new RuntimeException("format changed twice"); }
                     MediaFormat newFormat = mEncoder.OutputFormat;
                     mTrackIndex = mMuxer.AddTrack(newFormat);
                     var mAudioTrackIndex = mMuxer.AddTrack(audioFormat);
                     mMuxer.Start();
                     mMuxerStarted = true;
                 }
-                else if (encoderStatus < 0) {  }
+                else if (encoderStatus < 0) { }
                 else
                 {
                     ByteBuffer encodedData = encoderOutputBuffers[encoderStatus];
@@ -259,44 +178,202 @@ namespace MediaCodecHelper
                         throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
                             " was null");
                     }
-
                     if ((mBufferInfo.Flags & MediaCodec.BufferFlagCodecConfig) != 0)
                     {
                         if (LOGGING) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         mBufferInfo.Size = 0;
                     }
-
                     if (mBufferInfo.Size != 0)
                     {
+                        if (!_bitsWritten) { mBufferInfo.PresentationTimeUs = 0; _bitsWritten = true; }
+                        else { mBufferInfo.PresentationTimeUs = CalculatePresentationTimestamp(mBufferInfo.Size); }
                         if (!mMuxerStarted)
                         {
                             throw new RuntimeException("muxer hasn't started");
                         }
-
-                        // adjust the ByteBuffer values to match BufferInfo (not needed?)
-                        encodedData.Position(mBufferInfo.Offset);
-                        encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
-
+                        //// adjust the ByteBuffer values to match BufferInfo (not needed?)
+                        //encodedData.Position(mBufferInfo.Offset);
+                        if (LOGGING) { Log.Debug("drainEncoder", $"mBufferInfo.Offset={mBufferInfo.Offset}"); }
+                        //encodedData.Limit(mBufferInfo.Size);
+                        if (LOGGING) { Log.Debug("drainEncoder", $"mBufferInfo.Size={mBufferInfo.Size}"); }
+                        
+                        if (LOGGING) { Log.Debug("drainEncoder", $"calcT={mBufferInfo.PresentationTimeUs}"); }
+                        //mBufferInfo.PresentationTimeUs = getPTSUs();
                         mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
-                        if (LOGGING) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
+                        
+                        if (LOGGING) { Log.Debug("drainEncoder", $"timestamp={getPTSUs().ToString()}"); }
+                        //prevOutputPTSUs = mBufferInfo.PresentationTimeUs;
                     }
-
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
-
                     if ((mBufferInfo.Flags & MediaCodec.BufferFlagEndOfStream) != 0)
                     {
-                        if (!endOfStream)
-                        {
-                            Log.Warn(TAG, "reached end of stream unexpectedly");
-                        }
-                        else
-                        {
-                            if (LOGGING) Log.Debug(TAG, "end of stream reached");
-                        }
+                        if (!endOfStream) { Log.Warn(TAG, "reached end of stream unexpectedly"); }
+                        else { if (LOGGING) Log.Debug(TAG, "end of stream reached"); }
+                        _bitsWritten = false;
                         break;      // out of while
                     }
                 }
             }
+        }
+
+        private static long _cpts;
+
+        public async Task<long> CalculatePresentationTimestampAsync(long bitsWritten)
+        {
+            await Task.Run(() =>
+            {
+                _totalBitsWritten += bitsWritten;
+                var ptsc = (long)(((decimal)_totalBitsWritten / (decimal)_bitRate) * 1000 /* ms */ * 1000 /* ums */);
+                _cpts = ptsc;
+                return ptsc;
+            });
+            return (long)0;
+        }
+
+        public long CalculatePresentationTimestamp(long bitsWritten)
+        {
+            _totalBitsWritten += (bitsWritten * 8);
+            var ptsc = (long)(((decimal)_totalBitsWritten / (decimal)_bitRate) * 1000 /* ms */ * 1000 /* ums */);
+            return ptsc;
+        }
+        
+        /**
+ * previous presentationTimeUs for writing
+ */
+        private long prevOutputPTSUs = 0;
+        /**
+         * get next encoding presentationTimeUs
+         * @return
+         */
+        protected long getPTSUs() //@TODO delete this
+        {
+            long result = Java.Lang.JavaSystem.NanoTime() / 1000L;
+            // presentationTimeUs should be monotonic
+            // otherwise muxer fail to write
+            if (result < prevOutputPTSUs)
+                result = (prevOutputPTSUs - result) + result;
+            return result;
+        }
+
+        private void prepareMediaPlayer(string filepath)
+        {
+            _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.SetDataSource(Path.Combine(_workingDirectory, "car_audio_sample.mp4"));
+            _mediaPlayer.SetVolume(0, 0);
+            _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
+            _mediaPlayer.Prepare();
+
+        }
+
+        /// <summary>
+        /// Stops camera preview, and releases the camera to the system.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> ReleaseMediaPlayer()
+        {
+            try
+            {
+                await Task.Run(() =>
+               {
+                   if (LOGGING) Log.Debug(TAG, "releasing camera");
+                   if (_mediaPlayer != null)
+                   {
+                       _mediaPlayer.Stop();
+                       _mediaPlayer.Release();
+                       _mediaPlayer = null;
+                   }
+               });
+                return true;
+            }
+            catch (System.Exception ex) { Log.Debug("Release_Media_Player", ex.Message); return false; }
+        }
+        
+        ///<summary>
+        ///Configures SurfaceTexture for camera preview.  Initializes mStManager, and sets the
+        ///associated SurfaceTexture as the Camera's "preview texture".
+        ///Configure the EGL surface that will be used for output before calling here.
+        ///</summary>
+        private void PrepareSurfaceTexture()
+        {
+            _outputSurface = new OutputSurface();
+            var st = _outputSurface.Surface;
+            try { _mediaPlayer.SetSurface(st); }
+            catch (System.Exception e) { throw new System.Exception("setPreviewTexture failed:" + e.Message); }
+        }
+
+        /// <summary>
+        /// Releases the SurfaceTexture.
+        /// </summary>
+        private async Task<bool> ReleaseSurfaceTexture()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (_outputSurface != null)
+                    {
+                        _outputSurface.Release();
+                        _outputSurface = null;
+                    }
+                });
+                return true;
+            }
+            catch (System.Exception ex){Log.Debug("Release_Surface_Texture", ex.Message); return false; }
+        }
+
+        /**
+	     * Configures encoder and muxer state, and prepares the input Surface.  Initializes
+	     * mEncoder, mMuxer, mInputSurface, mBufferInfo, mTrackIndex, and mMuxerStarted.
+	     */
+        private void PrepareEncoder(int bitRate = 500000, int frameRate = 30, int width = 854, int height = 480)
+        {
+            mBufferInfo = new MediaCodec.BufferInfo();
+            MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, width, height);
+            format.SetInteger(MediaFormat.KeyColorFormat, (int)MediaCodecCapabilities.Formatsurface);
+            format.SetInteger(MediaFormat.KeyBitRate, bitRate);
+            format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
+            format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
+            if (LOGGING) Log.Debug(TAG, "format: " + format);
+            mEncoder = MediaCodec.CreateEncoderByType(MIME_TYPE);
+            mEncoder.Configure(format, null, null, MediaCodec.ConfigureFlagEncode);
+            _inputSurface = new InputSurface(mEncoder.CreateInputSurface());
+            mEncoder.Start();
+            string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
+                      + "/download/" + "_encoderTest" + new System.Random().Next(0, 66666666) + ".mp4");
+            LatestFileOutputPath = outputPath;
+            try { mMuxer = new MediaMuxer(outputPath, MuxerOutputType.Mpeg4); }
+            catch (System.Exception e) { throw new System.Exception(e.Message); }
+            mTrackIndex = -1;
+            mMuxerStarted = false;
+        }
+
+        /// <summary>
+        /// Releases encoder resources.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> ReleaseEncoder()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (LOGGING) Log.Debug(TAG, "releasing encoder objects");
+                    if (mEncoder != null)
+                    {
+                        mEncoder.Stop();
+                        mEncoder.Release();
+                        mEncoder = null;
+                    }
+                    if (_inputSurface != null)
+                    {
+                        _inputSurface.Release();
+                        _inputSurface = null;
+                    }
+                    return true;
+                });
+            }
+            catch (System.Exception ex) { Log.Debug("Release_Encoder", ex.Message); return false; }
+            return true;
         }
     }
 }

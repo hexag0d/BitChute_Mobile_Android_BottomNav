@@ -12,6 +12,7 @@ using Android.Views;
 using Android.Widget;
 using Java.Nio;
 using MediaCodecHelper;
+using static Android.Media.MediaCodec;
 
 namespace BitChute.VideoEncoding
 {
@@ -54,7 +55,7 @@ namespace BitChute.VideoEncoding
             return null;
         }
 
-        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1)
+        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1, BufferInfo bufferInfo = null)
         {
             MediaExtractor extractor = new MediaExtractor();
             extractor.SetDataSource(inputPath);
@@ -67,7 +68,7 @@ namespace BitChute.VideoEncoding
                 string mime = format.GetString(MediaFormat.KeyMime);
                 bool selectCurrentTrack = false;
                 if (mime.StartsWith("audio/")) {  selectCurrentTrack = true; }
-                else if (mime.StartsWith("video/")) {  selectCurrentTrack = false; } /*rerouted to gl video encoder*/
+                else if (mime.StartsWith("video/")) { selectCurrentTrack = false; } /*rerouted to gl video encoder*/
                 if (selectCurrentTrack)
                 {
                     extractor.SelectTrack(i);
@@ -91,19 +92,15 @@ namespace BitChute.VideoEncoding
             if (startMs > 0){ extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync); }
             int offset = 0;
             int trackIndex = -1;
+            if (bufferInfo == null) { bufferInfo = new MediaCodec.BufferInfo(); }
             ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
-            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
             try
             {
                 while (true)
                 {
-                    bufferInfo.Offset = offset;
-                    bufferInfo.Size = extractor.ReadSampleData(dstBuf, offset);
-                    if (bufferInfo.Size < 0)
-                    {
-                        bufferInfo.Size = 0;
-                        break;
-                    }
+                    bufferInfo.Offset = offset; 
+                    bufferInfo.Size = extractor.ReadSampleData(dstBuf, offset); 
+                    if (bufferInfo.Size < 0){ bufferInfo.Size = 0; break; }
                     else
                     {
                         bufferInfo.PresentationTimeUs = extractor.SampleTime;
