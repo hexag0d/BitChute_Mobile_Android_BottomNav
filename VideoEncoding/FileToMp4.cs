@@ -90,7 +90,7 @@ namespace MediaCodecHelper
             var audioFormat = MuxerEncoding.GetAudioTrackFormat(filepath);
             try
             {
-                prepareMediaPlayer(filepath);
+                PrepareMediaPlayer(filepath);
                 PrepareEncoder();
                 _inputSurface.MakeCurrent();
                 PrepareSurfaceTexture();
@@ -101,7 +101,7 @@ namespace MediaCodecHelper
                 _mediaPlayer.Completion += (object sender, System.EventArgs e) => { isCompleted = true; };
                 while (!isCompleted)
                 {
-                    drainEncoder(false, filepath, audioFormat);
+                    DrainEncoder(false, filepath, audioFormat);
                     if (!_outputSurface.AwaitNewImage()) { break; }
                     frameCount++;
                     _outputSurface.DrawImage();
@@ -109,20 +109,15 @@ namespace MediaCodecHelper
                     _inputSurface.SetPresentationTime(st.Timestamp); //@TODO 
                     _inputSurface.SwapBuffers();
                 }
-                drainEncoder(true, filepath, audioFormat);
+                DrainEncoder(true, filepath, audioFormat);
             }
             catch (System.Exception ex) { System.Console.WriteLine(ex); }
             finally
             {
-                await ReleaseMediaPlayer();
-                await ReleaseEncoder();
-                await ReleaseSurfaceTexture();
+                this.OnVideoEncoderFinished();
             }
             MuxerEncoding mxe = new MuxerEncoding();
             mxe.HybridMuxingTrimmer(0, MuxerEncoding.GetVideoLength(filepath), filepath, mMuxer, 1);
-            //try{ mMuxer.Stop(); mMuxer.Release(); }
-            //catch (System.Exception ex) { Console.WriteLine(ex.Message); }
-            var success = File.Exists(LatestFileOutputPath);
             
         }
 
@@ -139,10 +134,8 @@ namespace MediaCodecHelper
 	     * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
 	     * not recording audio.
 	     */
-        private async void drainEncoder(bool endOfStream, string filepath, MediaFormat audioFormat)
+        private void DrainEncoder(bool endOfStream, string filepath, MediaFormat audioFormat, int TIMEOUT_USEC = 10000)
         {
-            //mBufferInfo.Offset = 0;
-            int TIMEOUT_USEC = 10000;
             if (endOfStream)
             {
                 mEncoder.SignalEndOfInputStream();
@@ -191,18 +184,10 @@ namespace MediaCodecHelper
                         {
                             throw new RuntimeException("muxer hasn't started");
                         }
-                        //// adjust the ByteBuffer values to match BufferInfo (not needed?)
-                        //encodedData.Position(mBufferInfo.Offset);
                         if (LOGGING) { Log.Debug("drainEncoder", $"mBufferInfo.Offset={mBufferInfo.Offset}"); }
-                        //encodedData.Limit(mBufferInfo.Size);
                         if (LOGGING) { Log.Debug("drainEncoder", $"mBufferInfo.Size={mBufferInfo.Size}"); }
-                        
                         if (LOGGING) { Log.Debug("drainEncoder", $"calcT={mBufferInfo.PresentationTimeUs}"); }
-                        //mBufferInfo.PresentationTimeUs = getPTSUs();
                         mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
-                        
-                        if (LOGGING) { Log.Debug("drainEncoder", $"timestamp={getPTSUs().ToString()}"); }
-                        //prevOutputPTSUs = mBufferInfo.PresentationTimeUs;
                     }
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
                     if ((mBufferInfo.Flags & MediaCodec.BufferFlagEndOfStream) != 0)
@@ -215,47 +200,35 @@ namespace MediaCodecHelper
                 }
             }
         }
-
-        private static long _cpts;
-
-        public async Task<long> CalculatePresentationTimestampAsync(long bitsWritten)
+        
+        public async Task<long> CalculatePresentationTimestampAsync(long bytesWritten)
         {
             await Task.Run(() =>
             {
-                _totalBitsWritten += bitsWritten;
+                _totalBitsWritten += bytesWritten;
                 var ptsc = (long)(((decimal)_totalBitsWritten / (decimal)_bitRate) * 1000 /* ms */ * 1000 /* ums */);
-                _cpts = ptsc;
                 return ptsc;
             });
             return (long)0;
         }
 
-        public long CalculatePresentationTimestamp(long bitsWritten)
+        public long CalculatePresentationTimestamp(long bytesWritten) 
         {
-            _totalBitsWritten += (bitsWritten * 8);
+            _totalBitsWritten += (bytesWritten * 8);
             var ptsc = (long)(((decimal)_totalBitsWritten / (decimal)_bitRate) * 1000 /* ms */ * 1000 /* ums */);
             return ptsc;
         }
-        
-        /**
- * previous presentationTimeUs for writing
- */
-        private long prevOutputPTSUs = 0;
-        /**
-         * get next encoding presentationTimeUs
-         * @return
-         */
-        protected long getPTSUs() //@TODO delete this
-        {
-            long result = Java.Lang.JavaSystem.NanoTime() / 1000L;
-            // presentationTimeUs should be monotonic
-            // otherwise muxer fail to write
-            if (result < prevOutputPTSUs)
-                result = (prevOutputPTSUs - result) + result;
-            return result;
-        }
 
-        private void prepareMediaPlayer(string filepath)
+        public async void OnVideoEncoderFinished()
+        {
+            await this.ReleaseMediaPlayer();
+            await this.ReleaseEncoder();
+            await this.ReleaseSurfaceTexture();
+            _totalBitsWritten = 0;
+            var success = File.Exists(LatestFileOutputPath); // @TODO something with this?
+        }
+        
+        private void PrepareMediaPlayer(string filepath)
         {
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.SetDataSource(Path.Combine(_workingDirectory, "car_audio_sample.mp4"));
