@@ -290,9 +290,11 @@ namespace BitChute.Classes
         public static string ExpandSearchIcon(int sizePercentage = 120)
         {
             string exp = "javascript:(function() { " +
+                @"$('.search-text')[1].style='font-size:26px;color:chartreuse;z-index:6677;';" +
+                @"$('#nav-side-menu')[0].style='width:60%;';" +
                 @"$('.search-icon')[1].style='width:30%;';" +
                 @"$(" + "\"" + @"svg[data-icon*='search']" + "\"" + $")[1].style='width:{sizePercentage.ToString()}%;height:auto;';" + /* @"})()";*/
-             @"$(" + "\"" + @"svg[data-icon*='times']" + "\"" + @")[5].style='z-index:950;position:relative;width:60%;height:auto;position:relative;'" + @"})()";
+             @"$(" + "\"" + @"svg[data-icon*='times']" + "\"" + @")[5].style='z-index:950;position:relative;width:30%;height:auto;position:relative;'" + @"})()";
             return exp;
         }
 
