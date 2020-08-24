@@ -1,4 +1,5 @@
 ﻿using Android.OS;
+using Android.Webkit;
 using Android.Widget;
 using BitChute.Fragments;
 using System;
@@ -141,6 +142,19 @@ namespace BitChute.Classes
                 catch { }
             }
 
+            public static void WvSearchOverride(WebView wv, string url, bool darkMode = true)
+            {
+                if (darkMode)
+                {
+                    MainActivity.Main.RunOnUiThread(() => { wv.LoadUrl(url); });
+                }
+                else
+                {
+                    MainActivity.Main.RunOnUiThread(() => { wv.LoadUrl(url); });
+                }
+                SearchOverride.SearchOverrideInProg = false;
+            }
+
             public static void OnSearchSpinnerChanged(object sender, EventArgs e)
             {
                 AppSettings.SearchOverrideSource = Tab4.SearchOverrideSourceSpinner.SelectedItem.ToString();
@@ -148,8 +162,7 @@ namespace BitChute.Classes
 
             public static void OnSearchOverridePrefChanged(object sender, EventArgs e)
             {
-                if (Tab4.SearchOverrideOnRb.Checked == true) { AppSettings.SearchFeatureOverride = true; }
-                else if (Tab4.SearchOverrideOffRb.Checked == true) { AppSettings.SearchFeatureOverride = false; }
+                AppSettings.SearchFeatureOverride = Tab4.SearchOverrideOnRb.Checked;
             }
         }
     }

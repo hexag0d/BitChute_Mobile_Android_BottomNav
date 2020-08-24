@@ -233,13 +233,26 @@ namespace BitChute.Fragments
         {
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("pest."))
+                if (!request.Url.ToString().Contains("pest.") && !request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                { //Return immediately to optimize the ux
+                    return base.ShouldInterceptRequest(view, request);
+                }
+                if (request.Url.ToString().Contains("pest.")) // this blocks the crazy big ads, which make it hard to read the comments; if they had kept them smaller, this wouldn't be necessary
                 {
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null); return w;
+                }
+                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg && request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                {
+                    SearchOverride.SearchOverrideInProg = true;
+                    MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
+                    var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
+                    SearchOverride.UI.WvSearchOverride(view, ro);
                     WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
                     return w;
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
+
             public override void OnPageFinished(WebView view, string url)
             {
                 WebViewHelpers.DelayedScrollToTop(TNo);

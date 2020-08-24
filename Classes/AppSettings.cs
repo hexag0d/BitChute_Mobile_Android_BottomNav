@@ -168,13 +168,15 @@ namespace BitChute.Classes
         {
             try
             {
-                switch (typeof(object).ToString())
+                var yo = newSet.GetType().ToString().ToLower();
+                switch (newSet.GetType().ToString().ToLower())
                 {
-                    case "bool": PrefEditor.PutBoolean(setting, Convert.ToBoolean(newSet)); break;
-                    case "string": PrefEditor.PutString(setting, newSet.ToString()); break;
+                    case "system.boolean": PrefEditor.PutBoolean(setting, Convert.ToBoolean(newSet)); break;
+                    case "system.string": PrefEditor.PutString(setting, newSet.ToString()); break;
                 }
                 PrefEditor.Commit();
-            }catch{ }
+            }
+            catch { }
         }
         
         /// <summary>
