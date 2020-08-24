@@ -20,7 +20,19 @@ namespace BitChute.Classes
         public static bool FanMode { get; set; }
         public static bool Tab3Hide { get; set; }
         public static bool SettingsTabOverride { get; set; }
-        public static bool SearchFeatureOverride = true;
+        private static bool _searchFeatureOverride { get; set; }
+        public static bool SearchFeatureOverride
+        {
+            get { return _searchFeatureOverride; }
+            set
+            {
+                if (!AppSettings.AppSettingsLoadingFromAndroid)
+                {
+                    AppSettings.SendPrefSettingToAndroid("searchfeatureoverride", value);
+                }
+                _searchFeatureOverride = value;
+            }
+        }
 
         static string _searchOverrideSource { get; set; }
         public static string SearchOverrideSource
@@ -30,7 +42,7 @@ namespace BitChute.Classes
             {
                 if (!AppSettings.AppSettingsLoadingFromAndroid)
                 {
-                    AppSettings.SendPrefSettingToAndroid("searchoverridesource", value, "string");
+                    AppSettings.SendPrefSettingToAndroid("searchoverridesource", value);
                 }
                 _searchOverrideSource = value;
             }
@@ -118,6 +130,7 @@ namespace BitChute.Classes
         public static Android.Content.ISharedPreferences GetAppSharedPrefs()
         {
             Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+            PrefEditor = Prefs.Edit();
             return Prefs;
         }
 
@@ -151,7 +164,7 @@ namespace BitChute.Classes
             return;
         }
 
-        public static void SendPrefSettingToAndroid(string setting, object newSet, string type)
+        public static void SendPrefSettingToAndroid(string setting, object newSet)
         {
             try
             {

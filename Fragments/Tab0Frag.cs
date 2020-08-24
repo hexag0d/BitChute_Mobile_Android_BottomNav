@@ -247,7 +247,6 @@ namespace BitChute.Fragments
                 }
                 if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg && request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
                 {
-                    //GetSearchEngineCookie(); @TODO
                     MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
                     var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
                     WvSearchOverride(ro);
@@ -257,35 +256,6 @@ namespace BitChute.Fragments
                 return base.ShouldInterceptRequest(view, request);
             }
             
-            //private WebResourceResponse getNewResponse(String url)
-            //{
-
-            //    try
-            //    {
-            //        OkHttpClient httpClient = new OkHttpClient();
-                    
-            //        Request request = new Request.Builder()
-            //                .url(url.trim())
-            //                .addHeader("Authorization", "YOU_AUTH_KEY") // Example header
-            //                .addHeader("api-key", "YOUR_API_KEY") // Example header
-            //                .build();
-
-            //        Response response = httpClient.newCall(request).execute();
-
-            //        return new WebResourceResponse(
-            //                null,
-            //                response.header("content-encoding", "utf-8"),
-            //                response.body().byteStream()
-            //        );
-
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        return null;
-            //    }
-
-            //}
-
             public override void OnPageFinished(WebView _view, string url)
             {
                 _autoInt++;
@@ -321,7 +291,6 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(_view, url);
-
             }
         }
     }

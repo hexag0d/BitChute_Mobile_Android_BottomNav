@@ -3122,9 +3122,6 @@ namespace BitChute
 			// aapt resource value: 0x7f090119
 			public const int _hideNavBarHorizontalOn = 2131296537;
 			
-			// aapt resource value: 0x7f090107
-			public const int _notificationTestButton = 2131296519;
-			
 			// aapt resource value: 0x7f090109
 			public const int _notificationsOffRb = 2131296521;
 			
@@ -3482,8 +3479,8 @@ namespace BitChute
 			// aapt resource value: 0x7f0900a9
 			public const int linearLayout1 = 2131296425;
 			
-			// aapt resource value: 0x7f090108
-			public const int linearLayout10 = 2131296520;
+			// aapt resource value: 0x7f090107
+			public const int linearLayout10 = 2131296519;
 			
 			// aapt resource value: 0x7f090110
 			public const int linearLayout11 = 2131296528;
@@ -3658,6 +3655,9 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f0900ff
 			public const int radioGroup6 = 2131296511;
+			
+			// aapt resource value: 0x7f090108
+			public const int radioGroup7 = 2131296520;
 			
 			// aapt resource value: 0x7f090055
 			public const int right = 2131296341;

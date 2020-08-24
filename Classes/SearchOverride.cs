@@ -112,26 +112,44 @@ namespace BitChute.Classes
 
         public class UI
         {
-            public static void PopulateSpinner()
+            public static void SetupSearchOverrideControls()
             {
-                var _searchAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
-                    Resource.Id.searchOverrideSourceSpinner, SearchEngineNames);
-
-                Tab4.SearchOverrideSourceSpinner.Adapter = _searchAdapter;
-
-                switch (AppSettings.SearchOverrideSource)
+                try
                 {
-                    case "DuckDuckGo": Tab4.SearchOverrideSourceSpinner.SetSelection(0); break;
-                    case "Google": Tab4.SearchOverrideSourceSpinner.SetSelection(1); break;
-                }
+                    var _searchAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
+                        Android.Resource.Layout.SimpleListItem1, SearchEngineNames);
 
-                ViewHelpers.Tab4.SearchOverrideSourceSpinner.ItemSelected += OnSearchSpinnerChanged;
+                    Tab4.SearchOverrideSourceSpinner.Adapter = _searchAdapter;
+
+                    switch (AppSettings.SearchOverrideSource)
+                    {
+                        case "DuckDuckGo": Tab4.SearchOverrideSourceSpinner.SetSelection(0); break;
+                        case "Google": Tab4.SearchOverrideSourceSpinner.SetSelection(1); break;
+                        case "JoshWhoSearch": Tab4.SearchOverrideSourceSpinner.SetSelection(2); break;
+                        case "StartPage": Tab4.SearchOverrideSourceSpinner.SetSelection(3); break;
+                        case "Bing": Tab4.SearchOverrideSourceSpinner.SetSelection(4); break;
+                    }
+
+                    if (AppSettings.SearchFeatureOverride) { Tab4.SearchOverrideOnRb.Checked = true; }
+                    else { Tab4.SearchOverrideOffRb.Checked = true; }
+                    
+                    Tab4.SearchOverrideOnRb.CheckedChange += OnSearchOverridePrefChanged;
+
+                    ViewHelpers.Tab4.SearchOverrideSourceSpinner.ItemSelected += OnSearchSpinnerChanged;
+                    ViewHelpers.Tab4.SearchOverrideOnRb.CheckedChange += OnSearchOverridePrefChanged;
+                }
+                catch { }
             }
 
             public static void OnSearchSpinnerChanged(object sender, EventArgs e)
             {
                 AppSettings.SearchOverrideSource = Tab4.SearchOverrideSourceSpinner.SelectedItem.ToString();
-               
+            }
+
+            public static void OnSearchOverridePrefChanged(object sender, EventArgs e)
+            {
+                if (Tab4.SearchOverrideOnRb.Checked == true) { AppSettings.SearchFeatureOverride = true; }
+                else if (Tab4.SearchOverrideOffRb.Checked == true) { AppSettings.SearchFeatureOverride = false; }
             }
         }
     }

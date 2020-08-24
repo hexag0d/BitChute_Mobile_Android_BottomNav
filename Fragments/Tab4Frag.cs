@@ -158,7 +158,7 @@ namespace BitChute.Fragments
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
                 _versionTextView.Text = AppState.AppVersion;
 
-            SearchOverride.UI.PopulateSpinner(); // populate the search override spinner
+            
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
@@ -240,6 +240,7 @@ namespace BitChute.Fragments
         public async void SetCheckedState()
         {
             AppNowCheckingBoxes = true;
+            SearchOverride.UI.SetupSearchOverrideControls(); // populate the search override controls
             if (AppSettings.ZoomControl) {  _zconrb.Checked = true; }
             else{  _zcoffrb.Checked = true;}
             if (AppSettings.FanMode){ _fmonrb.Checked = true; }
