@@ -277,7 +277,25 @@ namespace BitChute.Classes
                 " ;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);";
             return r;
         }
-        
+
+        //public static string ExpandSearchIcon (int sizePercentage = 120)
+        //{
+        //    string exp = "javascript:(function() { " +
+        //        @"$('.search-icon')[1].style='width:100%;z-index:200;position:relative;'" +
+        //        @"$(" + "\"" + @"svg[data-icon*='search']" + "\"" + $")[1].style='width:{sizePercentage.ToString()}%;height:auto;object-fit:contain;z-index:200;position:absolute;'" +
+        //        @"$(" + "\"" + @"svg[data-icon*='times']" + "\"" + @")[5].style='z-index:950;position:relative;width:400%;position:relative;'" + @"})()"; 
+        //    return exp;
+        //}
+
+        public static string ExpandSearchIcon(int sizePercentage = 120)
+        {
+            string exp = "javascript:(function() { " +
+                @"$('.search-icon')[1].style='width:30%;';" +
+                @"$(" + "\"" + @"svg[data-icon*='search']" + "\"" + $")[1].style='width:{sizePercentage.ToString()}%;height:auto;';" + /* @"})()";*/
+             @"$(" + "\"" + @"svg[data-icon*='times']" + "\"" + @")[5].style='z-index:950;position:relative;width:60%;height:auto;position:relative;'" + @"})()";
+            return exp;
+        }
+
         /// <summary>
         /// javascript/jquery commands that add observable callbacks into the webview
         /// </summary>

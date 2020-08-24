@@ -219,6 +219,7 @@ namespace BitChute.Fragments
                 ExpandVideoCards(true);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(view, url);
+                view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }
         }
     }

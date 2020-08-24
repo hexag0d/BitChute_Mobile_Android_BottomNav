@@ -556,6 +556,7 @@ namespace BitChute.Fragments
                 HideLinkOverflow();
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(view, url);
+                view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }
         }
     }

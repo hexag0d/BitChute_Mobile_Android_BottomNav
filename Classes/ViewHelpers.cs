@@ -99,7 +99,7 @@ namespace BitChute.Classes
                 case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands.RestoreDisqusIFrameWithDelay()); break;
             }
         }
-
+        
         /// <summary>
         /// Provides an interface to inject javascript commands into any tab
         /// Designed for advanced users or debugging only, should be disabled on releases

@@ -238,8 +238,9 @@ namespace BitChute.Fragments
                 return base.ShouldInterceptRequest(view, request);
             }
             
-            public override void OnPageFinished(WebView _view, string url)
+            public override void OnPageFinished(WebView view, string url)
             {
+                Wv.LoadUrl(JavascriptCommands.ExpandSearchIcon());
                 _autoInt++;
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
                 {
@@ -272,7 +273,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
-                base.OnPageFinished(_view, url);
+                base.OnPageFinished(view, url);
             }
         }
     }

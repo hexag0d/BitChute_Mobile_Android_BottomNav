@@ -35,7 +35,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/javascriptDebugInjectionTextBox"
-			android:visibility="gone"
+			android:visibility="visible"
 			android:lines="3"
 			android:text="var _dms=12000;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);"
 			android:background="#ff000000"
