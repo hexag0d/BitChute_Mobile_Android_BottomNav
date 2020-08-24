@@ -27,5 +27,8 @@ gab.ai @hexagod   \n
 
 based off the template by hnabbasi   \n
 https://github.com/hnabbasi/BottomNavigationViewPager   \n
+also gl rendering library by: leye0 
+https://github.com/leye0/XamarinAndroidMediaCodecSurfaceToSurface
 
+special thanks to everyone
  */

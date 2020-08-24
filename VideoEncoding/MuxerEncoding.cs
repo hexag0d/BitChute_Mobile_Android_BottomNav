@@ -55,7 +55,8 @@ namespace BitChute.VideoEncoding
             return null;
         }
 
-        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1, BufferInfo bufferInfo = null, string outputPath = null)
+        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1,
+            BufferInfo bufferInfo = null, string outputPath = null)
         {
             if (outputPath == null) { outputPath = FileToMp4.LatestFileOutputPath; }
             MediaExtractor extractor = new MediaExtractor();
