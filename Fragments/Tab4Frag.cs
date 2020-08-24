@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using static BitChute.Classes.ExtWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Classes.ViewHelpers;
 
 namespace BitChute.Fragments
 {
@@ -47,7 +48,7 @@ namespace BitChute.Fragments
         private static RadioButton _hidehorizontalnavbaronrb;
         private static RadioButton _hidehorizontalnavbaroffrb;
         private static RadioButton _hideverticalnavbaronrb;
-        private static RadioButton _hideverticalnavbaroffrb;
+        private static RadioButton _hideverticalnavbaroffrb;  
         private static RadioButton _showdlbuttononpress;
         private static RadioButton _showdlbuttonalways;
         private static RadioButton _showdlbuttonnever;
@@ -99,7 +100,7 @@ namespace BitChute.Fragments
                 RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring");
             }
                 Wv.SetWebViewClient(new ExtWebViewClient());
-                Wv.SetWebChromeClient(new ExtendedChromeClient(Main));
+                Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -117,7 +118,11 @@ namespace BitChute.Fragments
                 _stoverrideonrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
                 _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
-                _notificationonrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
+            Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
+            Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
+            Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
+            Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
+            _notificationonrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
                 _notificationoffrb = _view.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
                 _hidehorizontalnavbaronrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
                 _hidehorizontalnavbaroffrb = _view.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
@@ -152,6 +157,8 @@ namespace BitChute.Fragments
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
                 _versionTextView.Text = AppState.AppVersion;
+
+            SearchOverride.UI.PopulateSpinner(); // populate the search override spinner
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
@@ -268,12 +275,16 @@ namespace BitChute.Fragments
             if (AppSettings.Notifying) { _notificationonrb.Checked = true; }
             else{ _notificationoffrb.Checked = true;}
             if (AppSettings.HideHorizontalNavBar) { _hidehorizontalnavbaronrb.Checked = true; }
-            else { _hidehorizontalnavbaroffrb.Checked = true;}
-            if (AppSettings.HideVerticalNavBar) { _hideverticalnavbaronrb.Checked = true;}
-            else{ _hideverticalnavbaroffrb.Checked = true;}
-            if(AppSettings.DlFabShowSetting=="onpress"){_showdlbuttononpress.Checked = true;}
-            else if (AppSettings.DlFabShowSetting=="never"){_showdlbuttonnever.Checked = true;}
-            else if (AppSettings.DlFabShowSetting=="always"){_showdlbuttonalways.Checked = true;}
+            else { _hidehorizontalnavbaroffrb.Checked = true; }
+            if (AppSettings.HideVerticalNavBar) { _hideverticalnavbaronrb.Checked = true; }
+            else { _hideverticalnavbaroffrb.Checked = true; }
+            try // something weird going on here.. dl fab setting selector is throwing resource error @TODO fix it
+            {
+                if (AppSettings.DlFabShowSetting == "onpress") { _showdlbuttononpress.Checked = true; }
+                else if (AppSettings.DlFabShowSetting == "never") { _showdlbuttonnever.Checked = true; }
+                else if (AppSettings.DlFabShowSetting == "always") { _showdlbuttonalways.Checked = true; }
+            }
+            catch { }
             await Task.Delay(1000);
             AppNowCheckingBoxes = false;
         }
@@ -318,7 +329,7 @@ namespace BitChute.Fragments
                _settingsList.Add(AppSettings.Tab3Hide);
                _settingsList.Add(AppSettings.Tab1FeaturedOn);
                _settingsList.Add(AppSettings.SettingsTabOverride);
-               Main.OnSettingsChanged(_settingsList);
+               MainActivity.Main.OnSettingsChanged(_settingsList);
             }
         }
         private void OnFanModeRbCheckChanged(object sender, EventArgs e)
@@ -371,7 +382,7 @@ namespace BitChute.Fragments
         {
             if (_firstTimeLoad)
             {
-                SetCheckedState();
+                 SetCheckedState(); //@TODO reenable
                 _firstTimeLoad = false;
             }
             if (WvLayout.Visibility == ViewStates.Visible)
@@ -522,7 +533,7 @@ namespace BitChute.Fragments
                     }
                     foreach (Cookie c in cookies)
                     {
-                        c.Domain = "https://bitchute.com/";
+                        c.Domain = "https://bitchute.com/"; // get the bitchute cookies
                         if (Https.CookieString == ""){ Https.CookieString = c.ToString(); }
                         else{ Https.CookieString += c.ToString(); }
                     }

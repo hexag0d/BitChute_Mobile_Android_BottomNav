@@ -153,6 +153,10 @@ namespace BitChute.Classes
         public class Tab4
         {
             public static EditText JavascriptInjectionTextBox { get; set; }
+            public static Spinner SearchOverrideSourceSpinner { get; set; }
+            public static RadioButton SearchOverrideOffRb { get; set;}
+            public static RadioButton SearchOverrideOnRb { get; set; }
+            public static RadioButton SearchOverrideWithStaticBarRb { get; set; }
         }
     }
 }

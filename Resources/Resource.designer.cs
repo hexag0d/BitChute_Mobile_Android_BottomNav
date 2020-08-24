@@ -3116,11 +3116,11 @@ namespace BitChute
 			// aapt resource value: 0x7f0900f1
 			public const int _fanModeOnBtn = 2131296497;
 			
-			// aapt resource value: 0x7f090114
-			public const int _hideNavBarHorizontalOff = 2131296532;
+			// aapt resource value: 0x7f09011a
+			public const int _hideNavBarHorizontalOff = 2131296538;
 			
-			// aapt resource value: 0x7f090113
-			public const int _hideNavBarHorizontalOn = 2131296531;
+			// aapt resource value: 0x7f090119
+			public const int _hideNavBarHorizontalOn = 2131296537;
 			
 			// aapt resource value: 0x7f090107
 			public const int _notificationTestButton = 2131296519;
@@ -3230,8 +3230,8 @@ namespace BitChute
 			// aapt resource value: 0x7f09003f
 			public const int always = 2131296319;
 			
-			// aapt resource value: 0x7f09010d
-			public const int alwaysShowDlFab = 2131296525;
+			// aapt resource value: 0x7f09010e
+			public const int alwaysShowDlFab = 2131296526;
 			
 			// aapt resource value: 0x7f0900e3
 			public const int appSettingsMainLayout = 2131296483;
@@ -3347,8 +3347,8 @@ namespace BitChute
 			// aapt resource value: 0x7f090027
 			public const int disableHome = 2131296295;
 			
-			// aapt resource value: 0x7f09010e
-			public const int dlFabOff = 2131296526;
+			// aapt resource value: 0x7f09010f
+			public const int dlFabOff = 2131296527;
 			
 			// aapt resource value: 0x7f0900b1
 			public const int downloadButton = 2131296433;
@@ -3485,11 +3485,11 @@ namespace BitChute
 			// aapt resource value: 0x7f090108
 			public const int linearLayout10 = 2131296520;
 			
-			// aapt resource value: 0x7f09010f
-			public const int linearLayout11 = 2131296527;
+			// aapt resource value: 0x7f090110
+			public const int linearLayout11 = 2131296528;
 			
-			// aapt resource value: 0x7f090111
-			public const int linearLayout12 = 2131296529;
+			// aapt resource value: 0x7f090117
+			public const int linearLayout12 = 2131296535;
 			
 			// aapt resource value: 0x7f0900aa
 			public const int linearLayout2 = 2131296426;
@@ -3521,26 +3521,29 @@ namespace BitChute
 			// aapt resource value: 0x7f090070
 			public const int list_item = 2131296368;
 			
-			// aapt resource value: 0x7f090119
-			public const int masked = 2131296537;
+			// aapt resource value: 0x7f09010b
+			public const int lowerSettingsLayout = 2131296523;
+			
+			// aapt resource value: 0x7f09011f
+			public const int masked = 2131296543;
 			
 			// aapt resource value: 0x7f0900c4
 			public const int media_actions = 2131296452;
 			
-			// aapt resource value: 0x7f09011a
-			public const int menu_home = 2131296538;
+			// aapt resource value: 0x7f090120
+			public const int menu_home = 2131296544;
 			
-			// aapt resource value: 0x7f09011d
-			public const int menu_mychannel = 2131296541;
+			// aapt resource value: 0x7f090123
+			public const int menu_mychannel = 2131296547;
 			
-			// aapt resource value: 0x7f09011e
-			public const int menu_settings = 2131296542;
+			// aapt resource value: 0x7f090124
+			public const int menu_settings = 2131296548;
 			
-			// aapt resource value: 0x7f09011c
-			public const int menu_stream = 2131296540;
+			// aapt resource value: 0x7f090122
+			public const int menu_stream = 2131296546;
 			
-			// aapt resource value: 0x7f09011b
-			public const int menu_subs = 2131296539;
+			// aapt resource value: 0x7f090121
+			public const int menu_subs = 2131296545;
 			
 			// aapt resource value: 0x7f09009c
 			public const int message = 2131296412;
@@ -3638,17 +3641,17 @@ namespace BitChute
 			// aapt resource value: 0x7f0900f7
 			public const int radioButton3 = 2131296503;
 			
-			// aapt resource value: 0x7f090112
-			public const int radioGroup1 = 2131296530;
+			// aapt resource value: 0x7f090118
+			public const int radioGroup1 = 2131296536;
 			
-			// aapt resource value: 0x7f090115
-			public const int radioGroup2 = 2131296533;
+			// aapt resource value: 0x7f09011b
+			public const int radioGroup2 = 2131296539;
 			
 			// aapt resource value: 0x7f0900f4
 			public const int radioGroup3 = 2131296500;
 			
-			// aapt resource value: 0x7f09010b
-			public const int radioGroup4 = 2131296523;
+			// aapt resource value: 0x7f09010c
+			public const int radioGroup4 = 2131296524;
 			
 			// aapt resource value: 0x7f090102
 			public const int radioGroup5 = 2131296514;
@@ -3691,6 +3694,21 @@ namespace BitChute
 			
 			// aapt resource value: 0x7f09005d
 			public const int scrollable = 2131296349;
+			
+			// aapt resource value: 0x7f090113
+			public const int searchEngineOverrideOffRb = 2131296531;
+			
+			// aapt resource value: 0x7f090114
+			public const int searchEngineOverrideOnRb = 2131296532;
+			
+			// aapt resource value: 0x7f090115
+			public const int searchEngineOverrideWithStaticBarRb = 2131296533;
+			
+			// aapt resource value: 0x7f090112
+			public const int searchOverrideRadioGroup = 2131296530;
+			
+			// aapt resource value: 0x7f090111
+			public const int searchOverrideSourceSpinner = 2131296529;
 			
 			// aapt resource value: 0x7f090091
 			public const int search_badge = 2131296401;
@@ -3740,8 +3758,8 @@ namespace BitChute
 			// aapt resource value: 0x7f09002a
 			public const int showCustom = 2131296298;
 			
-			// aapt resource value: 0x7f09010c
-			public const int showDlFabOnPress = 2131296524;
+			// aapt resource value: 0x7f09010d
+			public const int showDlFabOnPress = 2131296525;
 			
 			// aapt resource value: 0x7f09002b
 			public const int showHome = 2131296299;
@@ -3899,14 +3917,14 @@ namespace BitChute
 			// aapt resource value: 0x7f09002d
 			public const int useLogo = 2131296301;
 			
-			// aapt resource value: 0x7f090110
-			public const int versionTextView = 2131296528;
-			
-			// aapt resource value: 0x7f090117
-			public const int verticalNavbarRbOff = 2131296535;
-			
 			// aapt resource value: 0x7f090116
-			public const int verticalNavbarRbOn = 2131296534;
+			public const int versionTextView = 2131296534;
+			
+			// aapt resource value: 0x7f09011d
+			public const int verticalNavbarRbOff = 2131296541;
+			
+			// aapt resource value: 0x7f09011c
+			public const int verticalNavbarRbOn = 2131296540;
 			
 			// aapt resource value: 0x7f0900b6
 			public const int videoThumbnail = 2131296438;
@@ -3923,8 +3941,8 @@ namespace BitChute
 			// aapt resource value: 0x7f0900bd
 			public const int viewpager = 2131296445;
 			
-			// aapt resource value: 0x7f090118
-			public const int visible = 2131296536;
+			// aapt resource value: 0x7f09011e
+			public const int visible = 2131296542;
 			
 			// aapt resource value: 0x7f0900db
 			public const int webView1 = 2131296475;

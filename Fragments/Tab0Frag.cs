@@ -13,6 +13,7 @@ using BitChute.Classes;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.Tab4Frag;
@@ -209,16 +210,82 @@ namespace BitChute.Fragments
         {
             if (delayed){await Task.Delay(3000);}
         }
+
+
+        public static void WvSearchOverride(string url, bool darkMode = true)
+        {
+            if (darkMode)
+            {
+
+                //var headers = new Map
+                var headers = new Dictionary<string, string>
+                {
+                    ["ae"] = "t"
+                };
+                //headers.Add("ae", "t");
+                MainActivity.Main.RunOnUiThread(() => { Wv.LoadUrl(url, headers); });
+            }
+            else
+            {
+                MainActivity.Main.RunOnUiThread(() => { Wv.LoadUrl(url); });
+            }
+        }
+
+
+
         private class ExtWebViewClient : WebViewClient
         {
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
+                if (!request.Url.ToString().Contains("pest.") && !request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                {
+                    return base.ShouldInterceptRequest(view, request);
+                }
                 if (request.Url.ToString().Contains("pest."))
                 {
-                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);return w;
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null); return w;
+                }
+                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg && request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                {
+                    //GetSearchEngineCookie(); @TODO
+                    MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
+                    var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
+                    WvSearchOverride(ro);
+                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                    return w;
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
+            
+            //private WebResourceResponse getNewResponse(String url)
+            //{
+
+            //    try
+            //    {
+            //        OkHttpClient httpClient = new OkHttpClient();
+                    
+            //        Request request = new Request.Builder()
+            //                .url(url.trim())
+            //                .addHeader("Authorization", "YOU_AUTH_KEY") // Example header
+            //                .addHeader("api-key", "YOUR_API_KEY") // Example header
+            //                .build();
+
+            //        Response response = httpClient.newCall(request).execute();
+
+            //        return new WebResourceResponse(
+            //                null,
+            //                response.header("content-encoding", "utf-8"),
+            //                response.body().byteStream()
+            //        );
+
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        return null;
+            //    }
+
+            //}
+
             public override void OnPageFinished(WebView _view, string url)
             {
                 _autoInt++;
@@ -254,6 +321,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(_view, url);
+
             }
         }
     }

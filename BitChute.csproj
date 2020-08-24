@@ -92,6 +92,7 @@
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
+    <Compile Include="Classes\SearchOverride.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />

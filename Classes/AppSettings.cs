@@ -1,5 +1,7 @@
 ﻿using Android.Content;
 using Android.Graphics.Drawables;
+using System;
+using System.Threading.Tasks;
 
 namespace BitChute.Classes
 {
@@ -18,6 +20,23 @@ namespace BitChute.Classes
         public static bool FanMode { get; set; }
         public static bool Tab3Hide { get; set; }
         public static bool SettingsTabOverride { get; set; }
+        public static bool SearchFeatureOverride = true;
+
+        static string _searchOverrideSource { get; set; }
+        public static string SearchOverrideSource
+        {
+            get { return _searchOverrideSource; }
+            set
+            {
+                if (!AppSettings.AppSettingsLoadingFromAndroid)
+                {
+                    AppSettings.SendPrefSettingToAndroid("searchoverridesource", value, "string");
+                }
+                _searchOverrideSource = value;
+            }
+        }
+
+
 
         /// <summary>
         /// any || feed
@@ -102,12 +121,15 @@ namespace BitChute.Classes
             return Prefs;
         }
 
+        public static bool AppSettingsLoadingFromAndroid = false;
+
         /// <summary>
         /// Loads the stored android preferences for app
         /// and puts them into the static AppSettings class
         /// </summary>
-        public static void LoadAllPrefsFromSettings()
+        public static async void LoadAllPrefsFromSettings()
         {
+            AppSettingsLoadingFromAndroid = true;
             GetAppSharedPrefs();
             Notifying = Prefs.GetBoolean("notificationson", true);
             Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
@@ -122,7 +144,24 @@ namespace BitChute.Classes
             DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
             AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
             BackgroundKey = Prefs.GetString("backgroundkey", "feed");
+            SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", true); // @TODO set to false
+            SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+            await Task.Delay(2000);
+            AppSettingsLoadingFromAndroid = false;
             return;
+        }
+
+        public static void SendPrefSettingToAndroid(string setting, object newSet, string type)
+        {
+            try
+            {
+                switch (typeof(object).ToString())
+                {
+                    case "bool": PrefEditor.PutBoolean(setting, Convert.ToBoolean(newSet)); break;
+                    case "string": PrefEditor.PutString(setting, newSet.ToString()); break;
+                }
+                PrefEditor.Commit();
+            }catch{ }
         }
         
         /// <summary>
