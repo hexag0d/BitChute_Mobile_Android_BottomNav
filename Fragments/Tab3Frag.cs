@@ -275,7 +275,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
                 base.OnPageFinished(view, url);
-                view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
+               // view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }
         }
     }

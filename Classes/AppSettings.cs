@@ -47,9 +47,7 @@ namespace BitChute.Classes
                 _searchOverrideSource = value;
             }
         }
-
-
-
+        
         /// <summary>
         /// any || feed
         /// </summary>
