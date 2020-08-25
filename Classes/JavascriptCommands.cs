@@ -273,8 +273,9 @@ namespace BitChute.Classes
 
         public static string RestoreDisqusIFrameWithDelay(int delay = 12000)
         {
-            string r = "var _dms=" + delay.ToString() +
-                " ;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);";
+            string r = "var _dms=" + delay.ToString() + " ;setTimeout(function() {var _hi=$('iFrame')[0]" +
+                ".style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);" + "setTimeout(function() {var _hi=$('iFrame')[0]" +
+                ".style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, (_dms * 1.5));";
             return r;
         }
 

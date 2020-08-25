@@ -157,7 +157,7 @@ namespace BitChute.Classes
             DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
             AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
             BackgroundKey = Prefs.GetString("backgroundkey", "feed");
-            SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", true); // @TODO set to false
+            SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
             SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
             await Task.Delay(2000);
             AppSettingsLoadingFromAndroid = false;
