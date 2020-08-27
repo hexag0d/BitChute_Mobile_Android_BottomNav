@@ -52,7 +52,7 @@ namespace BitChute.Fragments
             }
             Wv.Settings.DisplayZoomControls = false;
             LoadUrlWithDelay(RootUrl, 2000);
-            CustomSetTouchListener(AppState.Display.Horizontal);
+            //CustomSetTouchListener(AppState.Display.Horizontal);
             return _view;
         }
         public async void LoadUrlWithDelay(string url, int delay)

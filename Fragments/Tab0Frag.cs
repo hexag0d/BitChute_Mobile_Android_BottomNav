@@ -66,7 +66,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display.Horizontal);
+            //CustomSetTouchListener(AppState.Display.Horizontal);
             return _view;
         }
         public static async void SetAutoPlayWithDelay(int delay)
@@ -240,7 +240,7 @@ namespace BitChute.Fragments
             
             public override void OnPageFinished(WebView view, string url)
             {
-                Wv.LoadUrl(JavascriptCommands.ExpandSearchIcon());
+                //Wv.LoadUrl(JavascriptCommands.ExpandSearchIcon());
                 _autoInt++;
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
                 {

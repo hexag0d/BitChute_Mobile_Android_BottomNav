@@ -54,7 +54,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display.Horizontal);
+            //CustomSetTouchListener(AppState.Display.Horizontal);
             return _view;
         }
         public void CustomSetTouchListener(bool landscape)

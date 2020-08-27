@@ -88,7 +88,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            CustomSetTouchListener(AppState.Display.Horizontal);
+            //CustomSetTouchListener(AppState.Display.Horizontal);
             LoadUrlWithDelay(RootUrl, 4000);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
