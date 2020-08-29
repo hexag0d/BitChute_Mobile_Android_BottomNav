@@ -21,6 +21,8 @@ using MediaCodecHelper;
 using Android.Content;
 using System.Drawing;
 using BitChute;
+using BitChute.VideoEncoding;
+using static Android.Media.MediaCodec;
 
 namespace MediaCodecHelper {
 
@@ -34,19 +36,25 @@ namespace MediaCodecHelper {
 		private int _fps;
 		private int _secondPerIFrame;
 		private int _bitRate;
+        public static string LatestOutputPath = "";
+        public static string LatestInputPath = "";
+        public static int LatestAudioTrackIndex;
+        public static MediaFormat LatestAudioInputFormat;
 
-		public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 6000000) {
+
+        public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 600000) {
 			_context = context;
 
 			if (outputSize.HasValue) {
 				_width = outputSize.Value.Width;
 				_height = outputSize.Value.Height;
 			}
-
+            _width = 854;
+            _height = 480;
 			_secondPerIFrame = secondPerIFrame;
 			_fps = fps;
 			_bitRate = bitRate;
-			_workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path  + "/download/";
+			_workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path  + "/download/" ;
 		}
         
 		private const string TAG = "CameraToMpegTest";
@@ -106,13 +114,14 @@ namespace MediaCodecHelper {
 
 		// For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
-		private void EncodeCameraToMp4() {
+		private void EncodeCameraToMp4(bool encodeAudio = true) {
 
-			// arbitrary but popular values
-
-			try {
-				
-				prepareMediaPlayer();
+            // arbitrary but popular values
+            var len = MuxerEncoding.GetVideoLength(Path.Combine(_workingDirectory, "car_audio_sample.mp4"));
+            LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(Path.Combine(_workingDirectory, "car_audio_sample.mp4"));
+            long lts = -1;
+            try {
+                prepareMediaPlayer();
 				prepareEncoder();
 				_inputSurface.MakeCurrent();
 				prepareSurfaceTexture();
@@ -124,27 +133,30 @@ namespace MediaCodecHelper {
 
 				var curShad = false;
 				bool isCompleted = false;
+                var lnt = st.Timestamp;
+
 				_mediaPlayer.Completion += (object sender, System.EventArgs e) => 
 				{
 					isCompleted = true;
 				};
 				while (!isCompleted) {
-					// Feed any pending encoder output into the muxer.
+                    // Feed any pending encoder output into the muxer.
+                    //var ct = _mediaPlayer.Timestamp.AnchorSytemNanoTime - lnt;
+                    //if (VERBOSE) Log.Debug(TAG, "to encoder: " + ct.ToString());
+                    drainEncoder(false);
 
-					drainEncoder(false);
+					//if ((frameCount % _fps) == 0) {
+					//	curShad = !curShad;
+					//}
 
-					if ((frameCount % _fps) == 0) {
-						curShad = !curShad;
-					}
+					//// We flash it between rgb and bgr to quickly demonstrate shading is working
+					//if (curShad) {
+					//	_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
+					//} else {
+					//	_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
+					//}
 
-					// We flash it between rgb and bgr to quickly demonstrate shading is working
-					if (curShad) {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
-					} else {
-						_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
-					}
-
-					frameCount++;
+					//frameCount++;
 
 					// Acquire a new frame of input, and render it to the Surface.  If we had a
 					// GLSurfaceView we could switch EGL contexts and call drawImage() a second
@@ -157,24 +169,26 @@ namespace MediaCodecHelper {
 					}
 					_outputSurface.DrawImage();
 
-					// Set the presentation time stamp from the SurfaceTexture's time stamp.  This
-					// will be used by MediaMuxer to set the PTS in the video.
+                    // Set the presentation time stamp from the SurfaceTexture's time stamp.  This
+                    // will be used by MediaMuxer to set the PTS in the video.
 
 					_inputSurface.SetPresentationTime(st.Timestamp);
-
+                    if (VERBOSE) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
 					// Submit it to the encoder.  The eglSwapBuffers call will block if the input
 					// is full, which would be bad if it stayed full until we dequeued an output
 					// buffer (which we can't do, since we're stuck here).  So long as we fully drain
 					// the encoder before supplying additional input, the system guarantees that we
 					// can supply another frame without blocking.
-					if (VERBOSE) Log.Debug(TAG, "sending frame to encoder");
+					//if (VERBOSE) Log.Debug(TAG, "sending frame to encoder:");
 					_inputSurface.SwapBuffers();
+                    lts = st.Timestamp;
 				}
-
-				// send end-of-stream to encoder, and drain remaining output
-				drainEncoder(true);
+                var finalTimeStamp = st.Timestamp;
+                // send end-of-stream to encoder, and drain remaining output
+                drainEncoder(true);
 			}catch (Exception ex)
             {
+                var finalTimeStamp = lts;
                 System.Console.WriteLine(ex);
             }
 
@@ -184,14 +198,26 @@ namespace MediaCodecHelper {
 				releaseEncoder();
 				releaseSurfaceTexture();
 			}
-		}
+            if (encodeAudio)
+            {
+                MuxerEncoding mxe = new MuxerEncoding();
+                mxe.HybridMuxingTrimmer(0, len, LatestInputPath, mMuxer, LatestAudioTrackIndex);
+            }
+            else
+            {
+                mMuxer.Stop();
+                mMuxer.Release();
+                mMuxer = null;
+            }
+        }
 
 		private void prepareMediaPlayer() {
 			
 			_mediaPlayer = new MediaPlayer ();
 
-			_mediaPlayer.SetDataSource (Path.Combine (_workingDirectory, "5678910.mp4"));
-			_mediaPlayer.Prepare ();
+			_mediaPlayer.SetDataSource (Path.Combine (_workingDirectory, "car_audio_sample.mp4"));
+            LatestInputPath = Path.Combine(_workingDirectory, "car_audio_sample.mp4");
+            _mediaPlayer.Prepare ();
 			if (_width == 0 || _height == 0) {
 				_width = _mediaPlayer.VideoWidth;
 				_height = _mediaPlayer.VideoHeight;
@@ -269,6 +295,7 @@ namespace MediaCodecHelper {
 			// hard-coded output directory.
 			string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
                       + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
+            LatestOutputPath = outputPath;
 			Log.Info(TAG, "Output file is " + outputPath);
 
 			// Create a MediaMuxer.  We can't add the video track and start() the muxer here,
@@ -301,12 +328,15 @@ namespace MediaCodecHelper {
 				_inputSurface.Release();
 				_inputSurface = null;
 			}
-			if (mMuxer != null) {
-				mMuxer.Stop();
-				mMuxer.Release();
-				mMuxer = null;
-			}
+			//if (mMuxer != null) {
+			//	mMuxer.Stop();
+			//	mMuxer.Release();
+			//	mMuxer = null;
+			//}
 		}
+
+        public static long LastKnownBuffer;
+        public static long FirstKnownBuffer;
 
 		/**
 	     * Extracts all pending data from the encoder and forwards it to the muxer.
@@ -350,6 +380,7 @@ namespace MediaCodecHelper {
 
 					// now that we have the Magic Goodies, start the muxer
 					mTrackIndex = mMuxer.AddTrack(newFormat);
+                    LatestAudioTrackIndex = mMuxer.AddTrack(LatestAudioInputFormat); // @TODO No processing on this yet
 					mMuxer.Start();
 					mMuxerStarted = true;
 				} else if (encoderStatus < 0) {
@@ -378,9 +409,10 @@ namespace MediaCodecHelper {
 						// adjust the ByteBuffer values to match BufferInfo (not needed?)
 						encodedData.Position(mBufferInfo.Offset);
 						encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
-
+                        //if (psts != -1000) mBufferInfo.PresentationTimeUs = psts;
 						mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
-						if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
+                        if (FirstKnownBuffer == 0) FirstKnownBuffer = mBufferInfo.PresentationTimeUs;
+						if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
 					}
 
 					mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -395,6 +427,7 @@ namespace MediaCodecHelper {
 					}
 				}
 			}
+            LastKnownBuffer = mBufferInfo.PresentationTimeUs;
 		}
 	}
 }
