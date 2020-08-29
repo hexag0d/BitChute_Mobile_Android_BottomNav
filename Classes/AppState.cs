@@ -80,6 +80,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "27.3.0.API9.FixAPI9TouchLag";
+        public static string AppVersion = "27.3.1.API9.FixAPI9TouchLag";
     }
 }
