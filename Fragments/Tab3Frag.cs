@@ -23,6 +23,7 @@ namespace BitChute.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
         public static string RootUrl = "https://www.bitchute.com/profile";
         public static int TNo = 3;
+        public static bool FirstPageLoaded = false;
         public static Tab3Frag NewInstance(string title, string icon) {
             var fragment = new Tab3Frag();
             fragment.Arguments = new Bundle();
@@ -255,6 +256,7 @@ namespace BitChute.Fragments
 
             public override void OnPageFinished(WebView view, string url)
             {
+                if (!FirstPageLoaded) { Wv.LoadUrl(JavascriptCommands.RemoveEnterButtonListener); FirstPageLoaded = true; }
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);

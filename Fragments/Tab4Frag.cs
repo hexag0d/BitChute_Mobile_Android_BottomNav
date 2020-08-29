@@ -24,6 +24,7 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static int TNo = 4;
+        public static bool FirstPageLoaded = false;
         public static ServiceWebView Wv;
         public static LinearLayout WvLayout;
         public static LinearLayout AppSettingsLayout;
@@ -555,6 +556,7 @@ namespace BitChute.Fragments
                 catch{ }
                 HideLinkOverflow();
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
+                if (!FirstPageLoaded) { Wv.LoadUrl(JavascriptCommands.RemoveEnterButtonListener); FirstPageLoaded = true; }
                 base.OnPageFinished(view, url);
                 //view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }

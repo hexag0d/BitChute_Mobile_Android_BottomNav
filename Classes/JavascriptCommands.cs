@@ -300,6 +300,18 @@ namespace BitChute.Classes
         }
 
         /// <summary>
+        /// Allows for carriage return on comment textbox
+        /// 
+        /// Interestingly enough, I looked at the js code for this and it looks like it's
+        /// designed to capture the ctrl + enter .. but it's actually capturing all
+        /// enter press, which means the user can't do multiline comments
+        /// </summary>
+        public static string RemoveEnterButtonListener = @"javascript:(function(){" + @"window.addEventListener('keydown',function(ev){" +
+                    @"if($('.textarea').is(':focus')){ev.stopPropagation();}},true);" + @"})()";
+
+
+
+        /// <summary>
         /// javascript/jquery commands that add observable callbacks into the webview
         /// </summary>
         public class CallbackInjection

@@ -23,6 +23,7 @@ namespace BitChute.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         public static int TNo = 1;
+        public static bool FirstPageLoaded = false;
         public static Tab1Frag NewInstance(string title, string icon) {
             var fragment = new Tab1Frag();
             fragment.Arguments = new Bundle();
@@ -200,6 +201,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
                 ViewHelpers.AutoRestoreDisqusWithDelay(TNo);
+                if (!FirstPageLoaded) { Wv.LoadUrl(JavascriptCommands.RemoveEnterButtonListener); FirstPageLoaded = true; }
                 base.OnPageFinished(view, url);
                 //view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }

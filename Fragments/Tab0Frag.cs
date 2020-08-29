@@ -66,7 +66,8 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            //CustomSetTouchListener(AppState.Display.Horizontal);
+            //CustomSetTouchListener(AppState.Display.Horizontal); // disabled for performance reasons and not needed right now
+            
             return _view;
         }
         public static async void SetAutoPlayWithDelay(int delay)
@@ -245,6 +246,7 @@ namespace BitChute.Fragments
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
                 {
                     Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                    Wv.LoadUrl(JavascriptCommands.RemoveEnterButtonListener);
                 }
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
