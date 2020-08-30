@@ -1,20 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:background="@android:color/black"
+	android:layout_height="match_parent">
 	<TextView
-		android:text="Status"
+		android:text="Video Encoder (pre-processing)"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="match_parent"
+		android:textColor="@android:color/white"
+		android:layout_height="wrap_content"
+		android:id="@+id/encoderLayoutTitle" />
+	<TextView
+		android:text=""
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/encodingStatusTextBox" />
+		android:textColor="@android:color/white"
+		android:id="@+id/encoderStatusTextView" />
+	<ProgressBar
+		android:layout_width="match_parent"
+		android:layout_height="100px"
+		android:progressBackgroundTint="@android:color/holo_purple"
+		android:indeterminateTintMode="src_atop"
+		android:indeterminateTint="@android:color/holo_blue_light"
+		android:id="@+id/encoderProgressBar"
+		android:min="0"
+		android:progress="0"
+		android:max="100"
+		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+	<EditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textSize="@dimen/abc_text_size_medium_material"
+		android:text="your file here"
+		android:textColor="@android:color/white"
+		android:id="@+id/encoderSourceFileEditText" />
 	<Button
 		android:text="Encode"
 		android:layout_width="match_parent"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/white"
 		android:minWidth="25px"
-		android:minHeight="25px"
+		android:minHeight="400px"
+		android:background="#404040"
 		android:id="@+id/encodingStartButton" />
+	<Button
+		android:text="Pick a Video"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/encodingPickAVideoButton" />
+	<EditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textSize="@dimen/abc_text_size_medium_material"
+		android:text="output file"
+		android:textColor="@android:color/white"
+		android:id="@+id/encoderOutputFileEditText" />
+	<TextView
+		android:text=""
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/textView3" />
+	<TextView
+		android:text="Testing status is: experimental"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/textView2" />
 
 </LinearLayout>

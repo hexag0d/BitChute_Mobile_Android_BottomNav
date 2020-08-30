@@ -67,10 +67,11 @@ namespace BitChute.Fragments
         {
             _view = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.StartEncodingButton = _view.FindViewById<Button>(Resource.Id.encodingStartButton);
-            ViewHelpers.VideoEncoder.EncodingStatusTextView = _view.FindViewById<TextView>(Resource.Id.encodingStatusTextBox);
+            ViewHelpers.VideoEncoder.EncodingStatusTextView = _view.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
             ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
             //debug ... disabling the homepage for now 
-
+            ViewHelpers.VideoEncoder.EncoderOutputFileEditText = _view.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
+            ViewHelpers.VideoEncoder.EncodeProgressBar = _view.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
             //_view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
             //Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
@@ -100,12 +101,39 @@ namespace BitChute.Fragments
             FileBrowser.GetExternalPermissions();
             var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
             Task.Run(() => {
-                string inputPath = Android.OS.Environment.ExternalStorageDirectory.Path
-                          + "/download/" + "car_audio_sample.mp4";
-                string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
-                          + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
-                codec.Start(inputPath, outputPath);
+                try
+                {
+                    codec.Progress += OnEncoderProgress;
+                    string inputPath = Android.OS.Environment.ExternalStorageDirectory.Path
+                              + "/download/" + "car_audio_sample.mp4";
+                    string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
+                              + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
+                    codec.Start(inputPath, outputPath);
+                }
+                catch { /* probably didn't have permissions & @TODO await the permission granted response */ } 
             });
+        }
+
+        public static void OnEncoderProgress(VideoEncoding.EncoderEventArgs e)
+        {
+            var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
+            ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Encoding video:{r}% done";
+            if (e.Finished) { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 70; }
+            else { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r; }
+        }
+
+        public static void OnMuxerProgress(VideoEncoding.MuxerEventArgs e)
+        {
+            if (e.Finished)
+            {
+                ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
+                ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text = e.Data;
+                ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"File finished processing";
+                return;
+            }
+            var r = (int)((((decimal)e.Time/1000)/(decimal)e.Length)*100);
+            ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
+            ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Muxing audio:{r}% done";
         }
 
         public static async void SetAutoPlayWithDelay(int delay)

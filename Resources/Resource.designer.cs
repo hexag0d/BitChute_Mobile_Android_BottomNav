@@ -2693,11 +2693,26 @@ namespace BitChute
 			// aapt resource value: 0x7f08007d
 			public const int edit_query = 2131230845;
 			
-			// aapt resource value: 0x7f080108
-			public const int encodingStartButton = 2131230984;
-			
 			// aapt resource value: 0x7f080107
-			public const int encodingStatusTextBox = 2131230983;
+			public const int encoderLayoutTitle = 2131230983;
+			
+			// aapt resource value: 0x7f08010d
+			public const int encoderOutputFileEditText = 2131230989;
+			
+			// aapt resource value: 0x7f080109
+			public const int encoderProgressBar = 2131230985;
+			
+			// aapt resource value: 0x7f08010a
+			public const int encoderSourceFileEditText = 2131230986;
+			
+			// aapt resource value: 0x7f080108
+			public const int encoderStatusTextView = 2131230984;
+			
+			// aapt resource value: 0x7f08010c
+			public const int encodingPickAVideoButton = 2131230988;
+			
+			// aapt resource value: 0x7f08010b
+			public const int encodingStartButton = 2131230987;
 			
 			// aapt resource value: 0x7f08002f
 			public const int end = 2131230767;
@@ -2840,26 +2855,26 @@ namespace BitChute
 			// aapt resource value: 0x7f080060
 			public const int list_item = 2131230816;
 			
-			// aapt resource value: 0x7f08010a
-			public const int masked = 2131230986;
+			// aapt resource value: 0x7f080111
+			public const int masked = 2131230993;
 			
 			// aapt resource value: 0x7f0800b3
 			public const int media_actions = 2131230899;
 			
-			// aapt resource value: 0x7f08010b
-			public const int menu_home = 2131230987;
+			// aapt resource value: 0x7f080112
+			public const int menu_home = 2131230994;
 			
-			// aapt resource value: 0x7f08010e
-			public const int menu_mychannel = 2131230990;
+			// aapt resource value: 0x7f080115
+			public const int menu_mychannel = 2131230997;
 			
-			// aapt resource value: 0x7f08010f
-			public const int menu_settings = 2131230991;
+			// aapt resource value: 0x7f080116
+			public const int menu_settings = 2131230998;
 			
-			// aapt resource value: 0x7f08010d
-			public const int menu_stream = 2131230989;
+			// aapt resource value: 0x7f080114
+			public const int menu_stream = 2131230996;
 			
-			// aapt resource value: 0x7f08010c
-			public const int menu_subs = 2131230988;
+			// aapt resource value: 0x7f080113
+			public const int menu_subs = 2131230995;
 			
 			// aapt resource value: 0x7f080106
 			public const int message = 2131230982;
@@ -3128,6 +3143,12 @@ namespace BitChute
 			// aapt resource value: 0x7f0800c2
 			public const int textView1 = 2131230914;
 			
+			// aapt resource value: 0x7f08010f
+			public const int textView2 = 2131230991;
+			
+			// aapt resource value: 0x7f08010e
+			public const int textView3 = 2131230990;
+			
 			// aapt resource value: 0x7f080097
 			public const int text_input_password_toggle = 2131230871;
 			
@@ -3206,8 +3227,8 @@ namespace BitChute
 			// aapt resource value: 0x7f0800ac
 			public const int viewpager = 2131230892;
 			
-			// aapt resource value: 0x7f080109
-			public const int visible = 2131230985;
+			// aapt resource value: 0x7f080110
+			public const int visible = 2131230992;
 			
 			// aapt resource value: 0x7f0800cb
 			public const int webView1 = 2131230923;

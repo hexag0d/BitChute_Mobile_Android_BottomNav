@@ -20,7 +20,12 @@ namespace BitChute.VideoEncoding
 {
     public class MuxerEncoding
     {
-        public MuxerEncoding() { }
+        public delegate void MuxerEventDelegate(MuxerEventArgs _args);
+        public event MuxerEventDelegate Progress;
+        public MuxerEncoding()
+        {
+
+        }
         public static int GetVideoLength(string filepath)
         {
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -114,6 +119,7 @@ namespace BitChute.VideoEncoding
                             bufferInfo.Flags = ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(extractor.SampleFlags);
                             if (trackIndexOverride == -1) { muxer.WriteSampleData(FileToMp4.LatestAudioTrackIndex, dstBuf, bufferInfo); }
                             else { muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo); }
+                            this.Progress.Invoke(new MuxerEventArgs(extractor.SampleTime, endMs));
                         }
                         extractor.Advance();
                     }
@@ -131,7 +137,11 @@ namespace BitChute.VideoEncoding
             if (outputPath != null)
             {
                 var success = System.IO.File.Exists(outputPath);
-                if (success) { return outputPath; }
+                if (success)
+                {
+                    this.Progress.Invoke(new MuxerEventArgs(0,0, outputPath, true));
+                    return outputPath;
+                }
             }
             return null; //nothing to look for
         }

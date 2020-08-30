@@ -23,6 +23,7 @@ using System.Drawing;
 using BitChute;
 using BitChute.VideoEncoding;
 using static Android.Media.MediaCodec;
+using BitChute.Fragments;
 
 namespace MediaCodecHelper {
 
@@ -30,7 +31,7 @@ namespace MediaCodecHelper {
 
 		private Context _context;
 		private string _workingDirectory;
-        bool VERBOSE = true;
+        bool VERBOSE = false;
 		private int _width;
 		private int _height;
 		private int _fps;
@@ -41,6 +42,8 @@ namespace MediaCodecHelper {
         public static int LatestAudioTrackIndex;
         public static MediaFormat LatestAudioInputFormat;
 
+        public delegate void VideoEncoderEventDelegate(EncoderEventArgs _args);
+        public event VideoEncoderEventDelegate Progress;
 
         public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 600000) {
 			_context = context;
@@ -98,6 +101,19 @@ namespace MediaCodecHelper {
 
 		// allocate one of these up front so we don't need to do it every time
 		private MediaCodec.BufferInfo mBufferInfo;
+        private static long _encodedBits = 0;
+        public static long EncodedBits(int encoded)
+        {
+            _encodedBits += encoded * 8; 
+            return _encodedBits;
+        }
+
+        private static long _estimatedTotalSize = 0;
+        public static long EstimateTotalSize(int length, int bitrate)
+        {
+            _estimatedTotalSize = ((length/1000 * bitrate));
+            return _estimatedTotalSize;
+        }
 
 		public void Start(string inputPath, string outputPath) {
             if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
@@ -119,6 +135,7 @@ namespace MediaCodecHelper {
 		private void EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true) {
             var len = MuxerEncoding.GetVideoLength(inputPath);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath);
+            EstimateTotalSize(len, _bitRate);
             try {
                 prepareMediaPlayer(inputPath);
 				prepareEncoder(outputPath);
@@ -128,7 +145,7 @@ namespace MediaCodecHelper {
 				_mediaPlayer.Start();
                 _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                 _mediaPlayer.SetVolume(0, 0);
-
+                int frameCount = 0;
 				var st = _outputSurface.SurfaceTexture;
 				bool isCompleted = false;
 
@@ -153,8 +170,8 @@ namespace MediaCodecHelper {
 					//	_outputSurface.ChangeFragmentShader(FRAGMENT_SHADER1);	
 					//}
 
-					//frameCount++;
-
+					frameCount++;
+                    
 					// Acquire a new frame of input, and render it to the Surface.  If we had a
 					// GLSurfaceView we could switch EGL contexts and call drawImage() a second
 					// time to render it on screen.  The texture can be shared between contexts by
@@ -192,6 +209,7 @@ namespace MediaCodecHelper {
             if (encodeAudio)
             {
                 MuxerEncoding mxe = new MuxerEncoding();
+                mxe.Progress += TheFragment0.OnMuxerProgress;
                 mxe.HybridMuxingTrimmer(0, len, inputPath, mMuxer, LatestAudioTrackIndex, null, outputPath, _firstKnownBuffer);
             }
             else
@@ -320,6 +338,7 @@ namespace MediaCodecHelper {
 			//}
 		}
         private static long _firstKnownBuffer;
+        
 
 		/**
 	     * Extracts all pending data from the encoder and forwards it to the muxer.
@@ -338,9 +357,10 @@ namespace MediaCodecHelper {
 			if (endOfStream) {
 				if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
 				mEncoder.SignalEndOfInputStream();
-			}
+                this.Progress.Invoke(new EncoderEventArgs(0, _estimatedTotalSize, true));
+            }
 
-			ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
+            ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
 			while (true) {
 				int encoderStatus = mEncoder.DequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
 				if (encoderStatus == (int) MediaCodec.InfoTryAgainLater) {
@@ -393,8 +413,9 @@ namespace MediaCodecHelper {
 						encodedData.Position(mBufferInfo.Offset);
 						encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
                         //if (psts != -1000) mBufferInfo.PresentationTimeUs = psts;
-						mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
                         if (_firstKnownBuffer == 0) _firstKnownBuffer = mBufferInfo.PresentationTimeUs;
+                        mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
+                        this.Progress.Invoke(new EncoderEventArgs(EncodedBits(mBufferInfo.Size), _estimatedTotalSize));
 						if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
 					}
 
@@ -406,10 +427,11 @@ namespace MediaCodecHelper {
 						} else {
 							if (VERBOSE) Log.Debug(TAG, "end of stream reached");
 						}
-						break;      // out of while
-					}
+                        this.Progress.Invoke(new EncoderEventArgs(0, _estimatedTotalSize, true));
+                        break;      // out of while
+                    }
 				}
 			}
-		}
+        }
 	}
 }
