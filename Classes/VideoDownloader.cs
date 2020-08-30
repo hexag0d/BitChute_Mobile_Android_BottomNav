@@ -42,11 +42,11 @@ namespace BitChute.Classes
             string taburl = "";
             switch (tab)
             {
-                case 0: taburl = TheFragment0.Wv.OriginalUrl; break;
-                case 1: taburl = TheFragment1.Wv.OriginalUrl; break;
-                case 2: taburl = TheFragment2.Wv.OriginalUrl; break;
-                case 3: taburl = TheFragment3.Wv.OriginalUrl; break;
-                case 4: taburl = TheFragment4.Wv.OriginalUrl; break;
+                case 0: taburl = Tab0Frag.Wv.OriginalUrl; break;
+                case 1: taburl = Tab1Frag.Wv.OriginalUrl; break;
+                case 2: taburl = Tab2Frag.Wv.OriginalUrl; break;
+                case 3: taburl = Tab3Frag.Wv.OriginalUrl; break;
+                case 4: taburl = Tab4Frag.Wv.OriginalUrl; break;
             }
             return taburl;
         }

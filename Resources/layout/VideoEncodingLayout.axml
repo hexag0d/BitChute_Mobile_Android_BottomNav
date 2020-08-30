@@ -4,6 +4,7 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:background="@android:color/black"
+	android:id="@+id/videoEncoderMainLayout"
 	android:layout_height="match_parent">
 	<TextView
 		android:text="Video Encoder (pre-processing)"

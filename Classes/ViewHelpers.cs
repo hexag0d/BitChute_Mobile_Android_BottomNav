@@ -101,8 +101,23 @@ namespace BitChute.Classes
             public static Android.Support.V7.Widget.RecyclerView FileRecyclerView { get; set; }
         }
 
+        public class Tab4
+        {
+            public static View FragmentContainerLayout { get; set; }
+            public static View WebViewFragmentLayout { get; set; }
+            public static View InternalTabbedLayout { get; set; }
+            public static View SettingsTabLayout { get; set; }
+            public static LinearLayout TabFragmentLinearLayout { get; set; }
+            public static LinearLayout EncoderFlexLinearLayout { get; set; }
+            public static TabHost InternalTabHost { get; set; }
+            public static TabWidget InternalTabWidget { get; set; }
+            public static Button ShowEncoderViewButton { get; set; }
+            public static Button ShowWebViewButton { get; set; }
+        }
+
         public class VideoEncoder
         {
+            public static View VideoEncoderLayout { get; set; }
             public static TextView EncodingStatusTextView { get; set; }
             public static Button StartEncodingButton { get; set; }
             public static EditText EncoderOutputFileEditText { get; set; }

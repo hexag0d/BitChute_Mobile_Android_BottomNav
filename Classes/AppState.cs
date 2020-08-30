@@ -81,6 +81,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "25.4.5.API8Retainer.FixLockscreenAuto";
+        public static string AppVersion = "28.0.0.API8Retainer.VideoEncodingMuxer";
     }
 }

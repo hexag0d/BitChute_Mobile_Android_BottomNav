@@ -41,11 +41,11 @@ namespace BitChute.Classes
             public static void SendPauseVideoCommand()
             {
                 try {
-                    TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                 }
                 catch ( Exception ex)
                 {
@@ -90,11 +90,11 @@ namespace BitChute.Classes
             {
                 try
                 {
-                    TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
                 }
                 catch (Exception ex)
                 {

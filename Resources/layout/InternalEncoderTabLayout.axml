@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:background="@android:color/black"
+	android:id="@+id/tabbedLinearLayoutMain"
+	android:layout_height="match_parent">
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout1" >
+		<Button
+			android:text="Encoder"
+			android:layout_width="wrap_content"
+			android:layout_weight=".5"
+			android:layout_height="match_parent"
+			android:id="@+id/encoderViewSwapButton" />
+		<Button
+			android:text="Web"
+			android:layout_weight=".5"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/webViewSwapButton" />
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/encoderFlexLinearLayout">
+	</LinearLayout>
+</LinearLayout>

@@ -98,17 +98,18 @@
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />
-    <Compile Include="Fragments\TheFragment0.cs" />
-    <Compile Include="Fragments\TheFragment4.cs" />
-    <Compile Include="Fragments\TheFragment3.cs" />
-    <Compile Include="Fragments\TheFragment2.cs" />
-    <Compile Include="Fragments\TheFragment1.cs" />
+    <Compile Include="Fragments\Tab0Frag.cs" />
+    <Compile Include="Fragments\Tab4Frag.cs" />
+    <Compile Include="Fragments\Tab3Frag.cs" />
+    <Compile Include="Fragments\Tab2Frag.cs" />
+    <Compile Include="Fragments\Tab1Frag.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\VideoModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VideoEncoding\CameraToMp4.cs" />
+    <Compile Include="VideoEncoding\EncoderDialog.cs" />
     <Compile Include="VideoEncoding\EncoderEvents.cs" />
     <Compile Include="VideoEncoding\FileToMp4.cs" />
     <Compile Include="VideoEncoding\GeneratedVideoToMp4.cs" />
@@ -125,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\InternalEncoderTabLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\colors.xml" />
@@ -175,19 +179,13 @@
     <AndroidResource Include="Resources\menu\navigation_main.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout2.axml">
+    <AndroidResource Include="Resources\layout\Tab1FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout4.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout5.axml">
+    <AndroidResource Include="Resources\layout\Tab3FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -199,13 +197,13 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout0.axml">
+    <AndroidResource Include="Resources\layout\Tab0FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\TheFragmentLayout3.axml">
+    <AndroidResource Include="Resources\layout\Tab2FragLayout.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -334,6 +332,23 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\raw\mylastvidd.mp4" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\SettingsTabLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Tab4WebView.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Tab4FragLayout.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

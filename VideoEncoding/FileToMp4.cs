@@ -205,7 +205,7 @@ namespace MediaCodecHelper {
             if (encodeAudio)
             {
                 MuxerEncoding mxe = new MuxerEncoding();
-                mxe.Progress += TheFragment0.OnMuxerProgress;
+                mxe.Progress += Tab4Frag.OnMuxerProgress;
                 mxe.HybridMuxingTrimmer(0, len, inputPath, mMuxer, LatestAudioTrackIndex, null, outputPath, _firstKnownBuffer);
             }
             else

@@ -16,13 +16,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BitChute.Fragments.TheFragment4;
+using static BitChute.Fragments.Tab4Frag;
 using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
     [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
-    public class TheFragment0 : Fragment
+    public class Tab0Frag : Fragment
     {
         string _title;
         string _icon;
@@ -42,8 +42,8 @@ namespace BitChute.Fragments
         public static int TNo = 0;
         //static MainActivity Main = new MainActivity();
 
-        public static TheFragment0 NewInstance(string title, string icon) {
-            var fragment = new TheFragment0();
+        public static Tab0Frag NewInstance(string title, string icon) {
+            var fragment = new Tab0Frag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -66,94 +66,26 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _view = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
-            ViewHelpers.VideoEncoder.StartEncodingButton = _view.FindViewById<Button>(Resource.Id.encodingStartButton);
-            ViewHelpers.VideoEncoder.EncodingStatusTextView = _view.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
-            ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
-            //debug ... disabling the homepage for now 
-            ViewHelpers.VideoEncoder.EncoderOutputFileEditText = _view.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
-            ViewHelpers.VideoEncoder.EncodeProgressBar = _view.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
-            ViewHelpers.VideoEncoder.EncoderSourceEditText = _view.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
-            ViewHelpers.VideoEncoder.PickSourceButton = _view.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
-            ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick; 
-            //_view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
-            //Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
+            _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
+            Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
-            //Wv.SetWebViewClient(Wvc);
-            //if (AppState.NotificationStartedApp)
-            //{
-            //    SetAutoPlayWithDelay(1);
-            //}
-            //Wv.Settings.JavaScriptEnabled = true;
-            //Wv.Settings.DisplayZoomControls = false;
+            Wv.SetWebViewClient(Wvc);
+            if (AppState.NotificationStartedApp)
+            {
+                SetAutoPlayWithDelay(1);
+            }
+            Wv.Settings.JavaScriptEnabled = true;
+            Wv.Settings.DisplayZoomControls = false;
 
-            //tabLoaded = true;
-
-            //Wv.LoadUrl(RootUrl);
-            //if (AppSettings.ZoomControl)
-            //{
-            //    Wv.Settings.BuiltInZoomControls = true;
-            //    Wv.Settings.DisplayZoomControls = false;
-            //}
-            //CustomSetTouchListener(AppState.Display.Horizontal);
+            tabLoaded = true;
+            Wv.LoadUrl(RootUrl);
+            if (AppSettings.ZoomControl)
+            {
+                Wv.Settings.BuiltInZoomControls = true;
+                Wv.Settings.DisplayZoomControls = false;
+            }
 
             return _view;
-        }
-
-        public static void StartEncodingButton_OnClick(object sender, EventArgs e)
-        {
-            FileBrowser.GetExternalPermissions();
-            var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
-            Task.Run(() => {
-                try
-                {
-                    codec.Progress += OnEncoderProgress;
-                    string inputPath = ViewHelpers.VideoEncoder.EncoderSourceEditText.Text;
-                    Android.Net.Uri tempuri = Android.Net.Uri.Parse(inputPath);
-                    var fileName = tempuri.LastPathSegment.Split(@"/").ToList<string>().Last();
-                    string outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName.Replace(".mp4","")}_encoded{new System.Random().Next(0, 66666666)}.mp4";
-                    codec.Start(inputPath, outputPath);
-                }
-                catch (Exception ex) { Console.WriteLine(ex); } 
-            });
-        }
-        
-        public static void EncoderSourceButton_OnClick(object sender, EventArgs e)
-        {
-            FileBrowser.ShowFileChooser("encoder");
-        }
-
-        public static void OnEncoderProgress(VideoEncoding.EncoderEventArgs e)
-        {
-            var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
-            if (r > 100) { r = 100; }
-            ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Encoding video:{r}% done";
-            if (e.Finished) { }
-            else { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r; }
-        }
-
-        public static void OnMuxerProgress(VideoEncoding.MuxerEventArgs e)
-        {
-            if (!e.Finished)
-            {
-                var r = (int)((((decimal)e.Time / 1000) / (decimal)e.Length) * 100);
-                if (r <= 1)
-                {
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Max = 100;
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Min = 0;
-                }
-                ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
-                ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Muxing audio:{r}% done";
-            }
-            else
-            {
-                ViewHelpers.Main.UiHandler.Post(() =>
-                {
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
-                    ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"File finished processing";
-                    ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text = e.Data;
-                });
-            }
         }
 
         public static async void SetAutoPlayWithDelay(int delay)

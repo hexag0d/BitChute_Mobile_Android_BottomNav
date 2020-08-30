@@ -14,7 +14,7 @@ using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
 using static BitChute.Models.VideoModel;
-using static BitChute.Fragments.TheFragment4;
+using static BitChute.Fragments.Tab4Frag;
 
 
 namespace StartServices.Servicesclass
@@ -55,7 +55,7 @@ namespace StartServices.Servicesclass
 
         public static bool NotificationsHaveBeenSent = false;
         private static ExtNotifications _extNotifications = new ExtNotifications();
-        private static TheFragment4 _fm5;
+        private static Tab4Frag _fm5;
         private static ActivityManager.RunningAppProcessInfo _dProcess = new ActivityManager.RunningAppProcessInfo();
         private static int _startForegroundNotificationId = 6666;
 
@@ -197,11 +197,11 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: TheFragment0.WebViewGoBack(); break;
-                    case 1: TheFragment1.WebViewGoBack(); break;
-                    case 2: TheFragment2.WebViewGoBack(); break;
-                    case 3: TheFragment3.WebViewGoBack(); break;
-                    case 4: TheFragment4.WebViewGoBack(); break;
+                    case 0: Tab0Frag.WebViewGoBack(); break;
+                    case 1: Tab1Frag.WebViewGoBack(); break;
+                    case 2: Tab2Frag.WebViewGoBack(); break;
+                    case 3: Tab3Frag.WebViewGoBack(); break;
+                    case 4: Tab4Frag.WebViewGoBack(); break;
                 }
             }
             else
@@ -218,11 +218,11 @@ namespace StartServices.Servicesclass
         {
             switch (tab)
             {
-                case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
             }
         }
 
@@ -321,13 +321,13 @@ namespace StartServices.Servicesclass
             {
                 switch (MainActivity.ViewPager.CurrentItem)
                 {
-                    case 0: TheFragment0.Wv.LoadUrl(url); break;
-                    case 1: TheFragment1.Wv.LoadUrl(url); break;
-                    case 2: TheFragment2.Wv.LoadUrl(url); break;
-                    case 3: TheFragment3.Wv.LoadUrl(url);
+                    case 0: Tab0Frag.Wv.LoadUrl(url); break;
+                    case 1: Tab1Frag.Wv.LoadUrl(url); break;
+                    case 2: Tab2Frag.Wv.LoadUrl(url); break;
+                    case 3: Tab3Frag.Wv.LoadUrl(url);
                         break;
                     case 4:
-                        TheFragment4.Wv.LoadUrl(url);
+                        Tab4Frag.Wv.LoadUrl(url);
                         break;
                 }
             }
@@ -385,11 +385,11 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: TheFragment0.Wv.LoadUrl(url); break;
-                    case 1: TheFragment1.Wv.LoadUrl(url); break;
-                    case 2: TheFragment2.Wv.LoadUrl(url); break;
-                    case 3: TheFragment3.Wv.LoadUrl(url); break;
-                    case 4: TheFragment4.Wv.LoadUrl(url); break;
+                    case 0: Tab0Frag.Wv.LoadUrl(url); break;
+                    case 1: Tab1Frag.Wv.LoadUrl(url); break;
+                    case 2: Tab2Frag.Wv.LoadUrl(url); break;
+                    case 3: Tab3Frag.Wv.LoadUrl(url); break;
+                    case 4: Tab4Frag.Wv.LoadUrl(url); break;
                 }
             }
             else
@@ -677,19 +677,19 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: TheFragment0.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 1: TheFragment1.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 2: TheFragment2.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 3: TheFragment3.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 4: TheFragment4.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
                 }
