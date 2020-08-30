@@ -97,9 +97,14 @@ namespace BitChute.Fragments
 
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
-            var myCodec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
+            FileBrowser.GetExternalPermissions();
+            var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
             Task.Run(() => {
-                myCodec.Start();
+                string inputPath = Android.OS.Environment.ExternalStorageDirectory.Path
+                          + "/download/" + "car_audio_sample.mp4";
+                string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
+                          + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
+                codec.Start(inputPath, outputPath);
             });
         }
 

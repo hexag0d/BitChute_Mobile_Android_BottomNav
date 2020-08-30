@@ -57,7 +57,7 @@ namespace BitChute.VideoEncoding
             return null;
         }
 
-        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1, BufferInfo bufferInfo = null, string outputPath = null)
+        public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1, BufferInfo bufferInfo = null, string outputPath = null, long ptOffset = 0)
         {
             //OnAudioProcessingProgressChanged(0, endMs, "initializing audio processing");
             if (outputPath == null) { outputPath = FileToMp4.LatestOutputPath; }
@@ -95,10 +95,8 @@ namespace BitChute.VideoEncoding
             }
             if (startMs > 0) { extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync); }
             int offset = 0;
-            int trackIndex = -1;
             if (bufferInfo == null) { bufferInfo = new MediaCodec.BufferInfo(); }
             ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
-            //OnAudioProcessingProgressChanged(0, endMs, "encoding and muxing audio...");
             try
             {
                 while (true)
@@ -108,36 +106,34 @@ namespace BitChute.VideoEncoding
                     if (bufferInfo.Size < 0) { bufferInfo.Size = 0; break; }
                     else
                     {
-                        bufferInfo.PresentationTimeUs = (extractor.SampleTime + FileToMp4.FirstKnownBuffer);
-                        if (false) { }
+                        bufferInfo.PresentationTimeUs = (extractor.SampleTime + ptOffset);
+                        if (false) { } //@DEBUG @TODO add back in the trimmer, right now I'm just trying to get the timestamps working
                         //if (endMs > 0 && bufferInfo.PresentationTimeUs > (endMs * 1000)) { Console.WriteLine("The current sample is over the trim end time."); break; }
                         else
                         {
                             bufferInfo.Flags = ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(extractor.SampleFlags);
-                            Log.Debug("MuxerEncoding", "to sound: " + bufferInfo.PresentationTimeUs);
-                            if (trackIndexOverride != -1) { muxer.WriteSampleData(FileToMp4.LatestAudioTrackIndex, dstBuf, bufferInfo); }
+                            if (trackIndexOverride == -1) { muxer.WriteSampleData(FileToMp4.LatestAudioTrackIndex, dstBuf, bufferInfo); }
+                            else { muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo); }
                         }
                         extractor.Advance();
-                        //OnAudioProcessingProgressChanged(bufferInfo.PresentationTimeUs, endMs);
                     }
                 }
             }
             catch (Java.Lang.IllegalStateException e) { Console.WriteLine("The source video file is malformed"); }
             catch (Java.Lang.Exception ex) { Console.WriteLine(ex.Message); }
-            finally
-            {
-            }
             try
             {
-
                 muxer.Stop();
                 muxer.Release();
                 muxer = null;
             }
             catch (Java.Lang.Exception ex) { Log.Debug("MuxingEncoder", ex.Message); }
-            var success = System.IO.File.Exists(FileToMp4.LatestOutputPath);
-            if (success) { return FileToMp4.LatestOutputPath; }
-            else { return null; }
+            if (outputPath != null)
+            {
+                var success = System.IO.File.Exists(outputPath);
+                if (success) { return outputPath; }
+            }
+            return null; //nothing to look for
         }
 
         public static void OnAudioProcessingProgressChanged(long currentums, int totalMs, string text = null)
