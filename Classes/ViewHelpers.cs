@@ -107,6 +107,8 @@ namespace BitChute.Classes
             public static Button StartEncodingButton { get; set; }
             public static EditText EncoderOutputFileEditText { get; set; }
             public static ProgressBar EncodeProgressBar { get; set; }
+            public static Button PickSourceButton { get; set; }
+            public static EditText EncoderSourceEditText { get; set; }
         }
     }
 }

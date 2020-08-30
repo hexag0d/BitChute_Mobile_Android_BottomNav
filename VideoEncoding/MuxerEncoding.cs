@@ -111,7 +111,7 @@ namespace BitChute.VideoEncoding
                     if (bufferInfo.Size < 0) { bufferInfo.Size = 0; break; }
                     else
                     {
-                        bufferInfo.PresentationTimeUs = (extractor.SampleTime + ptOffset);
+                        bufferInfo.PresentationTimeUs = (extractor.SampleTime + ptOffset); // I had to add this offset to get the audio lined up with visuals
                         if (false) { } //@DEBUG @TODO add back in the trimmer, right now I'm just trying to get the timestamps working
                         //if (endMs > 0 && bufferInfo.PresentationTimeUs > (endMs * 1000)) { Console.WriteLine("The current sample is over the trim end time."); break; }
                         else
@@ -139,7 +139,7 @@ namespace BitChute.VideoEncoding
                 var success = System.IO.File.Exists(outputPath);
                 if (success)
                 {
-                    this.Progress.Invoke(new MuxerEventArgs(0,0, outputPath, true));
+                    this.Progress.Invoke(new MuxerEventArgs(endMs * 1000, endMs, outputPath, true));
                     return outputPath;
                 }
             }

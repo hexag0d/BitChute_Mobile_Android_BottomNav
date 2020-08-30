@@ -30,7 +30,7 @@ namespace MediaCodecHelper {
 	public class FileToMp4  {
 
 		private Context _context;
-		private string _workingDirectory;
+        private static string _workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
         bool VERBOSE = false;
 		private int _width;
 		private int _height;
@@ -44,6 +44,12 @@ namespace MediaCodecHelper {
 
         public delegate void VideoEncoderEventDelegate(EncoderEventArgs _args);
         public event VideoEncoderEventDelegate Progress;
+
+        public static string GetWorkingDirectory(string wd = null)
+        {
+            if (wd != null) { _workingDirectory = wd; }
+            return _workingDirectory;
+        }
 
         public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 600000) {
 			_context = context;
@@ -116,23 +122,13 @@ namespace MediaCodecHelper {
         }
 
 		public void Start(string inputPath, string outputPath) {
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
-            }
-
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
-            {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
-            }
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) == (int)Android.Content.PM.Permission.Granted &&
-                Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) == (int)Android.Content.PM.Permission.Granted)
-            { EncodeCameraToMp4(inputPath, outputPath); }
+            BitChute.Classes.FileBrowser.GetExternalPermissions();
+             EncodeCameraToMp4(inputPath, outputPath); 
 		}
 
 		// For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
-		private void EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true) {
+		private void EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
             var len = MuxerEncoding.GetVideoLength(inputPath);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath);
             EstimateTotalSize(len, _bitRate);

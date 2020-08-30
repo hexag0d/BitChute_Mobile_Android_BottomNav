@@ -29,6 +29,7 @@
 		android:min="0"
 		android:progress="0"
 		android:max="100"
+		android:scaleY="3"
 		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
 	<EditText
 		android:layout_width="match_parent"
@@ -57,6 +58,7 @@
 		android:textSize="@dimen/abc_text_size_medium_material"
 		android:text="output file"
 		android:textColor="@android:color/white"
+		android:lines="3"
 		android:id="@+id/encoderOutputFileEditText" />
 	<TextView
 		android:text=""

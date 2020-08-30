@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using Android.App;
+using Android.Content;
+using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -12,10 +16,78 @@ namespace BitChute.Classes
     {
         private static Android.Graphics.Color _darkGrey = new Android.Graphics.Color(20, 20, 20);
         public static FileRecyclerViewAdapter FileAdapter;
+        private static int _requestCode;
+        public static FileBrowser StatBrowser = new FileBrowser();
+        public delegate void FileChooserEventDelegate(FileChooserArgs _args);
+        public event FileChooserEventDelegate Selected;
+        public static string LatestFilePath = "";
+        public static string LatestSendTo;
+        public FileBrowser() { this.Selected += OnFileSelected; }
+        public static string WorkingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + @"/";
+        public static string FullDefaultSavePath = WorkingDirectory + @"Download/";
 
         public static void FileBrowserButton_OnClick(object sender, EventArgs e)
         {
             OpenFileBrowser();
+        }
+
+        /// <summary>
+        /// sendto = "encoder", "static", "uploader"
+        /// </summary>
+        /// <param name="sendTo"></param>
+        public static void ShowFileChooser(string sendTo = null)
+        {
+            Intent intent = new Intent(Intent.ActionGetContent);
+            if (sendTo != null) { LatestSendTo = sendTo; intent.PutExtra("sendTo", sendTo); }
+            intent.SetType("*/*");
+            
+            // Update with additional mime types here using a String[]. 
+            //intent.PutExtra(Intent.ExtraMimeTypes, );
+
+            // Only pick openable and local files. Theoretically we could pull files from google drive
+            // or other applications that have networked files, but that's unnecessary for this example.
+            intent.AddCategory(Intent.CategoryOpenable);
+            intent.PutExtra(Intent.ExtraLocalOnly, true);
+            
+            // REQUEST_CODE = <some-integer>
+            MainActivity.Main.StartActivityForResult(intent, _requestCode);
+        }
+
+        /// <summary>
+        /// sendto = "encoder", "uploader"
+        /// </summary>
+        public class FileChooserArgs : EventArgs
+        {
+            private string _path;
+            private bool _cancelled;
+            private string _sendTo;
+            public FileChooserArgs(string path, string sendTo = null, bool cancelled = false)
+            {
+                _path = path;
+                _cancelled = cancelled;
+                if (sendTo != null) { _sendTo = sendTo; }
+            }
+            public string Path { get { return _path; } }
+            public bool Cancelled { get { return _cancelled; } }
+            public string SendTo { get { return _sendTo; } }
+        }
+
+        public static void OnFileSelected(FileChooserArgs e)
+        {
+            if (e.Path != null || e.Path != "") { LatestFilePath = e.Path; }
+            if (e.SendTo != null)
+            {
+                if (e.SendTo == "encoder") { ViewHelpers.VideoEncoder.EncoderSourceEditText.Text = e.Path; }
+                else if (e.SendTo == "uploader") {  }
+            }
+        }
+        
+        public static string ImportFile(Android.Net.Uri uri, string sendToIntent, Context ctx)
+        {
+            string decodedPath = "";
+            decodedPath = UriDecoder.ConvertUriToString(uri);
+            StatBrowser.Selected.Invoke(new FileChooserArgs(decodedPath, sendToIntent));
+            return decodedPath;
         }
 
         public static void SaveFileToStorage(Java.IO.File f)
@@ -29,10 +101,8 @@ namespace BitChute.Classes
                 Java.IO.FileOutputStream fos = new Java.IO.FileOutputStream(f);
                 fos.Close();
             }
-            catch (FileNotFoundException e)
-            { }
-            catch (IOException e)
-            { }
+            catch (FileNotFoundException e) { }
+            catch (IOException e) { }
         }
 
         public static void OpenFileBrowser()

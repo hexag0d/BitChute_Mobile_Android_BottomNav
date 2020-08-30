@@ -94,6 +94,7 @@
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\TabStates.cs" />
+    <Compile Include="Classes\UriDecoder.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Classes\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />

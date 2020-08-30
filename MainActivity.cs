@@ -682,19 +682,45 @@ namespace BitChute
 
         public void StartActivity(Intent intent, int requestCode, Action<int, Result, Intent> resultCallback)
         {
-            this.resultCallbackvalue = resultCallback;
-            StartActivityForResult(intent, requestCode);
+            //if (intent.Action == Intent.ActionGetContent)
+            //{
+                this.resultCallbackvalue = resultCallback;
+                StartActivityForResult(intent, requestCode);
+            //}
         }
+
+        public override void StartActivityForResult(Intent intent, int requestCode)
+        {
+            _chooserIntentStr = intent.GetStringExtra("sendTo");
+            base.StartActivityForResult(intent, requestCode);
+        }
+
+        private static string _chooserIntentStr;
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (this.resultCallbackvalue != null)
+            if (resultCode == Result.Canceled) { return; }
+            else if (resultCode == Result.Ok)
             {
-                this.resultCallbackvalue(requestCode, resultCode, data);
-                this.resultCallbackvalue = null;
+                try
+                {
+                    if (data.Data != null)
+                    {
+                        var path = FileBrowser.ImportFile(data.Data, _chooserIntentStr, this.ApplicationContext);
+                    }
+                }
+                catch { }
+                base.OnActivityResult(requestCode, resultCode, data);
+                if (this.resultCallbackvalue != null)
+                {
+                    this.resultCallbackvalue(requestCode, resultCode, data);
+                    this.resultCallbackvalue = null;
+                }
+                _chooserIntentStr = null;
             }
         }
+
+
 
 
         protected override void OnNewIntent(Intent intent)

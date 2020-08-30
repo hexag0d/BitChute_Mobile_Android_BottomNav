@@ -13,6 +13,7 @@ using BitChute.Classes;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.TheFragment4;
@@ -72,6 +73,9 @@ namespace BitChute.Fragments
             //debug ... disabling the homepage for now 
             ViewHelpers.VideoEncoder.EncoderOutputFileEditText = _view.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
             ViewHelpers.VideoEncoder.EncodeProgressBar = _view.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
+            ViewHelpers.VideoEncoder.EncoderSourceEditText = _view.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
+            ViewHelpers.VideoEncoder.PickSourceButton = _view.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
+            ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick; 
             //_view = inflater.Inflate(Resource.Layout.TheFragmentLayout0, container, false);
             //Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
 
@@ -104,36 +108,52 @@ namespace BitChute.Fragments
                 try
                 {
                     codec.Progress += OnEncoderProgress;
-                    string inputPath = Android.OS.Environment.ExternalStorageDirectory.Path
-                              + "/download/" + "car_audio_sample.mp4";
-                    string outputPath = (Android.OS.Environment.ExternalStorageDirectory.Path
-                              + "/download/" + "_encoderTest" + new System.Random().Next(0, 666666) + ".mp4");
+                    string inputPath = ViewHelpers.VideoEncoder.EncoderSourceEditText.Text;
+                    Android.Net.Uri tempuri = Android.Net.Uri.Parse(inputPath);
+                    var fileName = tempuri.LastPathSegment.Split(@"/").ToList<string>().Last();
+                    string outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName.Replace(".mp4","")}_encoded{new System.Random().Next(0, 66666666)}.mp4";
                     codec.Start(inputPath, outputPath);
                 }
-                catch { /* probably didn't have permissions & @TODO await the permission granted response */ } 
+                catch (Exception ex) { Console.WriteLine(ex); } 
             });
+        }
+        
+        public static void EncoderSourceButton_OnClick(object sender, EventArgs e)
+        {
+            FileBrowser.ShowFileChooser("encoder");
         }
 
         public static void OnEncoderProgress(VideoEncoding.EncoderEventArgs e)
         {
             var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
+            if (r > 100) { r = 100; }
             ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Encoding video:{r}% done";
-            if (e.Finished) { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 70; }
+            if (e.Finished) { }
             else { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r; }
         }
 
         public static void OnMuxerProgress(VideoEncoding.MuxerEventArgs e)
         {
-            if (e.Finished)
+            if (!e.Finished)
             {
-                ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
-                ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text = e.Data;
-                ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"File finished processing";
-                return;
+                var r = (int)((((decimal)e.Time / 1000) / (decimal)e.Length) * 100);
+                if (r <= 1)
+                {
+                    ViewHelpers.VideoEncoder.EncodeProgressBar.Max = 100;
+                    ViewHelpers.VideoEncoder.EncodeProgressBar.Min = 0;
+                }
+                ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
+                ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Muxing audio:{r}% done";
             }
-            var r = (int)((((decimal)e.Time/1000)/(decimal)e.Length)*100);
-            ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
-            ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Muxing audio:{r}% done";
+            else
+            {
+                ViewHelpers.Main.UiHandler.Post(() =>
+                {
+                    ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
+                    ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"File finished processing";
+                    ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text = e.Data;
+                });
+            }
         }
 
         public static async void SetAutoPlayWithDelay(int delay)
@@ -302,7 +322,7 @@ namespace BitChute.Fragments
 
         public void LoadCustomUrl(string url)
         {
-            Wv.LoadUrl(url);
+            Wv?.LoadUrl(url);
         }
 
         public static async void HidePageTitle()
