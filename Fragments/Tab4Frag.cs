@@ -231,8 +231,6 @@ namespace BitChute.Fragments
             {
                 ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
                 ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(InternalTabbedLayout);
-                //if (EncoderViewIsVisible) { EncoderFlexLinearLayout.AddView(ViewHelpers.VideoEncoder.VideoEncoderLayout); }
-                //else { EncoderFlexLinearLayout.AddView(Tab4.SettingsTabLayout); }
             }
             else
             {
