@@ -24,7 +24,7 @@ gab.ai @hexagod
 ```
 based off the template by hnabbasi
 https://github.com/hnabbasi/BottomNavigationViewPager
-OpenGL video encoding heavily ported but courtesy of leye0 (sorry, I forgot to include you):
+OpenGL video encoding heavily ported but courtesy of leye0
 https://github.com/leye0/XamarinAndroidMediaCodecSurfaceToSurface
 ```
  */
