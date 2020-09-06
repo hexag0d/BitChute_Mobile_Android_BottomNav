@@ -32,6 +32,27 @@
 		android:max="100"
 		android:scaleY="3"
 		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+		<TextView
+		android:text=""
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/white"
+		android:id="@+id/audioEncoderStatusTextView" />	
+	<ProgressBar
+		android:layout_width="match_parent"
+		android:layout_height="100px"
+		android:progressBackgroundTint="@android:color/holo_purple"
+		android:indeterminateTintMode="src_atop"
+		android:indeterminateTint="@android:color/holo_blue_light"
+		android:id="@+id/audioEncoderProgressBar"
+		android:min="0"
+		android:progress="0"
+		android:max="100"
+		android:scaleY="3"
+		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+
+	
 	<EditText
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -45,13 +66,14 @@
 		android:layout_height="wrap_content"
 		android:textColor="@android:color/white"
 		android:minWidth="25px"
-		android:minHeight="400px"
+		android:minHeight="300px"
 		android:background="#404040"
 		android:id="@+id/encodingStartButton" />
 	<Button
 		android:text="Pick a Video"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:minHeight="250px"
 		android:id="@+id/encodingPickAVideoButton" />
 	<EditText
 		android:layout_width="match_parent"

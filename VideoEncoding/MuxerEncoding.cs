@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using BitChute.Classes;
 using Java.Nio;
 using MediaCodecHelper;
 //using static BitChute.ViewModels.VideoEncoderVM;
@@ -64,85 +65,110 @@ namespace BitChute.VideoEncoding
 
         public async Task<string> HybridMuxingTrimmer(int startMs, int endMs, string inputPath, MediaMuxer muxer, int trackIndexOverride = -1, BufferInfo bufferInfo = null, string outputPath = null, long ptOffset = 0)
         {
-            //OnAudioProcessingProgressChanged(0, endMs, "initializing audio processing");
-            if (outputPath == null) { outputPath = FileToMp4.LatestOutputPath; }
-            MediaExtractor extractor = new MediaExtractor();
-            extractor.SetDataSource(inputPath);
-            int trackCount = extractor.TrackCount;
-            Dictionary<int, int> indexDict = new Dictionary<int, int>(trackCount);
-            int bufferSize = -1;
-            for (int i = 0; i < trackCount; i++)
+            await Task.Run(() =>
             {
-                MediaFormat format = extractor.GetTrackFormat(i);
-                string mime = format.GetString(MediaFormat.KeyMime);
-                bool selectCurrentTrack = false;
-                if (mime.StartsWith("audio/")) { selectCurrentTrack = true; }
-                else if (mime.StartsWith("video/")) { selectCurrentTrack = false; } /*rerouted to gl video encoder*/
-                if (selectCurrentTrack)
+                if (outputPath == null) { outputPath = FileToMp4.LatestOutputPath; }
+                MediaExtractor extractor = new MediaExtractor();
+                
+                extractor.SetDataSource(inputPath);
+                int trackCount = extractor.TrackCount;
+                Dictionary<int, int> indexDict = new Dictionary<int, int>(trackCount);
+                int bufferSize = -1;
+                for (int i = 0; i < trackCount; i++)
                 {
-                    extractor.SelectTrack(i);
-                    if (trackIndexOverride != -1) { indexDict.Add(i, i); }
-                    if (format.ContainsKey(MediaFormat.KeyMaxInputSize))
+                    MediaFormat format = extractor.GetTrackFormat(i);
+                    string mime = format.GetString(MediaFormat.KeyMime);
+                    bool selectCurrentTrack = false;
+                    if (mime.StartsWith("audio/")) { selectCurrentTrack = true; }
+                    else if (mime.StartsWith("video/")) { selectCurrentTrack = false; } /*rerouted to gl video encoder*/
+                    if (selectCurrentTrack)
                     {
-                        int newSize = format.GetInteger(MediaFormat.KeyMaxInputSize);
-                        bufferSize = newSize > bufferSize ? newSize : bufferSize;
+                        extractor.SelectTrack(i);
+                        if (trackIndexOverride != -1) { indexDict.Add(i, i); }
+                        if (format.ContainsKey(MediaFormat.KeyMaxInputSize))
+                        {
+                            int newSize = format.GetInteger(MediaFormat.KeyMaxInputSize);
+                            bufferSize = newSize > bufferSize ? newSize : bufferSize;
+                        }
                     }
                 }
-            }
-            if (bufferSize < 0) { bufferSize = 1337; } //arbitrary value
-            MediaMetadataRetriever retrieverSrc = new MediaMetadataRetriever();
-            retrieverSrc.SetDataSource(inputPath);
-            string degreesString = retrieverSrc.ExtractMetadata(MetadataKey.VideoRotation);
-            if (degreesString != null)
-            {
-                int degrees = int.Parse(degreesString);
-                if (degrees >= 0) {  /* muxer.SetOrientationHint(degrees); */  } //muxer won't accept this param once started
-            }
-            if (startMs > 0) { extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync); }
-            int offset = 0;
-            if (bufferInfo == null) { bufferInfo = new MediaCodec.BufferInfo(); }
-            ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
-            try
-            {
-                while (true)
+                MediaMetadataRetriever retrieverSrc = new MediaMetadataRetriever();
+                retrieverSrc.SetDataSource(inputPath);
+                string degreesString = retrieverSrc.ExtractMetadata(MetadataKey.VideoRotation);
+                if (degreesString != null) // unused ATM but will be useful for stabilized videoview in streaming
                 {
-                    bufferInfo.Offset = offset;
-                    bufferInfo.Size = extractor.ReadSampleData(dstBuf, offset);
-                    if (bufferInfo.Size < 0) { bufferInfo.Size = 0; break; }
-                    else
-                    {
-                        bufferInfo.PresentationTimeUs = (extractor.SampleTime + ptOffset); // I had to add this offset to get the audio lined up with visuals
-                        if (false) { } //@DEBUG @TODO add back in the trimmer, right now I'm just trying to get the timestamps working
-                        //if (endMs > 0 && bufferInfo.PresentationTimeUs > (endMs * 1000)) { Console.WriteLine("The current sample is over the trim end time."); break; }
+                    int degrees = int.Parse(degreesString);
+                    if (degrees >= 0) {  /* muxer.SetOrientationHint(degrees); */  } //muxer won't accept this param once started
+                }
+                if (startMs > 0) { extractor.SeekTo(startMs * 1000, MediaExtractorSeekTo.ClosestSync); }
+                int offset = 0;
+                if (bufferInfo == null) { bufferInfo = new MediaCodec.BufferInfo(); }
+                ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
+                long us = endMs * 1000; //define end microseconds, using a tiny var name to reduce memory usage, since this will get used a bunch
+                long uo = us + ptOffset; // add the presentationtime offset in microseconds; I'm not exactly sure why the video encoder starts with a high PT @TODO figure out why?
+                int cf = 0;
+                try
+                {
+                    FileToMp4.AudioEncodingInProgress = true; 
+                    while (true) // @TODO I think we should trim all of these var names down as much as possible; would that reduce memory usage?
+                    {            // this loop will run many times so we need to be conscious of memory and CPU
+                        bufferInfo.Offset = offset;
+                        bufferInfo.Size = extractor.ReadSampleData(dstBuf, offset);
+                        if (bufferInfo.Size < 0) { bufferInfo.Size = 0; break; }
                         else
                         {
-                            bufferInfo.Flags = ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(extractor.SampleFlags);
-                            if (trackIndexOverride == -1) { muxer.WriteSampleData(FileToMp4.LatestAudioTrackIndex, dstBuf, bufferInfo); }
-                            else { muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo); }
-                            this.Progress.Invoke(new MuxerEventArgs(extractor.SampleTime, endMs));
+                            cf++;
+                            bufferInfo.PresentationTimeUs = (extractor.SampleTime + ptOffset); // I had to add this offset to get the audio lined up with visuals
+                                                                                               //anything in this loop using presentationtime needs the ptOffset (uo) for proper calculation
+                            if (endMs > 0 && extractor.SampleTime >= us) { break; } //out of while
+                            else
+                            {
+                                bufferInfo.Flags = ConvertMediaExtractorSampleFlagsToMediaCodecBufferFlags(extractor.SampleFlags);
+                                if (trackIndexOverride == -1) { muxer.WriteSampleData(FileToMp4.LatestAudioTrackIndex, dstBuf, bufferInfo); }
+                                else { muxer.WriteSampleData(trackIndexOverride, dstBuf, bufferInfo); }
+                                if (cf >= 30) //only send the muxer eventargs once every 30 frames to reduce CPU load
+                                {
+                                    this.Progress.Invoke(new MuxerEventArgs(extractor.SampleTime, us)); 
+                                    cf = 0;
+                                }
+                            }
+                            extractor.Advance();
                         }
-                        extractor.Advance();
                     }
                 }
-            }
-            catch (Java.Lang.IllegalStateException e) { Console.WriteLine("The source video file is malformed"); }
-            catch (Java.Lang.Exception ex) { Console.WriteLine(ex.Message); }
-            try
-            {
-                muxer.Stop();
-                muxer.Release();
-                muxer = null;
-            }
-            catch (Java.Lang.Exception ex) { Log.Debug("MuxingEncoder", ex.Message); }
-            if (outputPath != null)
-            {
-                var success = System.IO.File.Exists(outputPath);
-                if (success)
+                catch (Java.Lang.IllegalStateException e)
                 {
-                    this.Progress.Invoke(new MuxerEventArgs(endMs * 1000, endMs, outputPath, true));
-                    return outputPath;
+                    this.Progress.Invoke(new MuxerEventArgs(extractor.SampleTime, us, null, true, true));
+                    Console.WriteLine("The source video file is malformed");
                 }
-            }
+                catch (Java.Lang.Exception ex)
+                {
+                    this.Progress.Invoke(new MuxerEventArgs(extractor.SampleTime, us, null, true, true));
+                    Console.WriteLine(ex.Message);
+                }
+                if (AppSettings.Logging.SendToConsole) System.Console.WriteLine($"DrainEncoder audio finished @ {bufferInfo.PresentationTimeUs}");
+            });
+            FileToMp4.AudioEncodingInProgress = false;
+                try
+                {
+                    if (!FileToMp4.VideoEncodingInProgress)
+                    {
+                        muxer.Stop();
+                        muxer.Release();
+                        muxer = null;
+                    }
+                }
+                catch (Java.Lang.Exception ex) { Log.Debug("MuxingEncoder", ex.Message); }
+                if (outputPath != null)
+                {
+                    var success = System.IO.File.Exists(outputPath);
+                    if (success)
+                    {
+                        this.Progress.Invoke(new MuxerEventArgs(endMs * 1000, endMs, outputPath, true));
+                        return outputPath;
+                    }
+                }
+            
             return null; //nothing to look for
         }
 

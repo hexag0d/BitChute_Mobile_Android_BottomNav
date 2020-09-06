@@ -2564,6 +2564,12 @@ namespace BitChute
 			// aapt resource value: 0x7f080055
 			public const int async = 2131230805;
 			
+			// aapt resource value: 0x7f080117
+			public const int audioEncoderProgressBar = 2131230999;
+			
+			// aapt resource value: 0x7f080116
+			public const int audioEncoderStatusTextView = 2131230998;
+			
 			// aapt resource value: 0x7f080043
 			public const int auto = 2131230787;
 			
@@ -2696,14 +2702,14 @@ namespace BitChute
 			// aapt resource value: 0x7f080113
 			public const int encoderLayoutTitle = 2131230995;
 			
-			// aapt resource value: 0x7f080119
-			public const int encoderOutputFileEditText = 2131231001;
+			// aapt resource value: 0x7f08011b
+			public const int encoderOutputFileEditText = 2131231003;
 			
 			// aapt resource value: 0x7f080115
 			public const int encoderProgressBar = 2131230997;
 			
-			// aapt resource value: 0x7f080116
-			public const int encoderSourceFileEditText = 2131230998;
+			// aapt resource value: 0x7f080118
+			public const int encoderSourceFileEditText = 2131231000;
 			
 			// aapt resource value: 0x7f080114
 			public const int encoderStatusTextView = 2131230996;
@@ -2711,11 +2717,11 @@ namespace BitChute
 			// aapt resource value: 0x7f0800a8
 			public const int encoderViewSwapButton = 2131230888;
 			
-			// aapt resource value: 0x7f080118
-			public const int encodingPickAVideoButton = 2131231000;
+			// aapt resource value: 0x7f08011a
+			public const int encodingPickAVideoButton = 2131231002;
 			
-			// aapt resource value: 0x7f080117
-			public const int encodingStartButton = 2131230999;
+			// aapt resource value: 0x7f080119
+			public const int encodingStartButton = 2131231001;
 			
 			// aapt resource value: 0x7f08002f
 			public const int end = 2131230767;
@@ -2864,26 +2870,26 @@ namespace BitChute
 			// aapt resource value: 0x7f0800f6
 			public const int lowerSettingsLayout = 2131230966;
 			
-			// aapt resource value: 0x7f08011d
-			public const int masked = 2131231005;
+			// aapt resource value: 0x7f08011f
+			public const int masked = 2131231007;
 			
 			// aapt resource value: 0x7f0800b7
 			public const int media_actions = 2131230903;
 			
-			// aapt resource value: 0x7f08011e
-			public const int menu_home = 2131231006;
+			// aapt resource value: 0x7f080120
+			public const int menu_home = 2131231008;
 			
-			// aapt resource value: 0x7f080121
-			public const int menu_mychannel = 2131231009;
+			// aapt resource value: 0x7f080123
+			public const int menu_mychannel = 2131231011;
+			
+			// aapt resource value: 0x7f080124
+			public const int menu_settings = 2131231012;
 			
 			// aapt resource value: 0x7f080122
-			public const int menu_settings = 2131231010;
+			public const int menu_stream = 2131231010;
 			
-			// aapt resource value: 0x7f080120
-			public const int menu_stream = 2131231008;
-			
-			// aapt resource value: 0x7f08011f
-			public const int menu_subs = 2131231007;
+			// aapt resource value: 0x7f080121
+			public const int menu_subs = 2131231009;
 			
 			// aapt resource value: 0x7f080111
 			public const int message = 2131230993;
@@ -3176,11 +3182,11 @@ namespace BitChute
 			// aapt resource value: 0x7f0800c6
 			public const int textView1 = 2131230918;
 			
-			// aapt resource value: 0x7f08011b
-			public const int textView2 = 2131231003;
+			// aapt resource value: 0x7f08011d
+			public const int textView2 = 2131231005;
 			
-			// aapt resource value: 0x7f08011a
-			public const int textView3 = 2131231002;
+			// aapt resource value: 0x7f08011c
+			public const int textView3 = 2131231004;
 			
 			// aapt resource value: 0x7f080097
 			public const int text_input_password_toggle = 2131230871;
@@ -3263,8 +3269,8 @@ namespace BitChute
 			// aapt resource value: 0x7f0800b0
 			public const int viewpager = 2131230896;
 			
-			// aapt resource value: 0x7f08011c
-			public const int visible = 2131231004;
+			// aapt resource value: 0x7f08011e
+			public const int visible = 2131231006;
 			
 			// aapt resource value: 0x7f08010a
 			public const int webView1 = 2131230986;

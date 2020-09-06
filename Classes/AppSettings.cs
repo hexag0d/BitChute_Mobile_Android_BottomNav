@@ -148,5 +148,10 @@ namespace BitChute.Classes
             }
             return Https.URLs._homepage;
         }
+
+        public class Logging
+        {
+            public static bool SendToConsole = false;
+        }
     }
 }

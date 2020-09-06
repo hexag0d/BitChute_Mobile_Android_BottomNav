@@ -61,7 +61,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             Wv.Settings.DisplayZoomControls = false;
-            LoadUrlWithDelay(RootUrl, 2000);
+           // LoadUrlWithDelay(RootUrl, 2000);
             return _view;
         }
 

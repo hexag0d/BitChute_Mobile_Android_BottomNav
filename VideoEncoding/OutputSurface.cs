@@ -242,7 +242,7 @@ namespace MediaCodecHelper {
 
 		public bool AwaitNewImage(bool returnOnFailure = false) {
 			
-			const int TIMEOUT_MS = 1000;
+			const int TIMEOUT_MS = 20000;
 
 			System.Threading.Monitor.Enter (_frameSyncObject);
 
@@ -258,15 +258,15 @@ namespace MediaCodecHelper {
 							return false;
 						}
 						// TODO: if "spurious wakeup", continue while loop
-						throw new RuntimeException ("frame wait timed out");
+						//throw new RuntimeException ("frame wait timed out");
 					}
 				} catch (InterruptedException ie) {
 					if (returnOnFailure) {
 						return false;
 					}
 					// shouldn't happen
-					throw new RuntimeException (ie);
-				}
+					//throw new RuntimeException (ie);
+				} catch (Exception ex) { throw ex; }
 			}
 
 

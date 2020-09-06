@@ -81,6 +81,6 @@
         /// this string is sent into the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.0.0.API8Retainer.VideoEncodingMuxer";
+        public static string AppVersion = "28.1.0.API8Retainer.OpenGL.ASyncVideoProcessing";
     }
 }

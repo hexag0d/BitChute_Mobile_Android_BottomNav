@@ -19,6 +19,7 @@ using static BitChute.Classes.ViewHelpers;
 using static BitChute.Classes.ViewHelpers.Tab4;
 using static Android.Widget.TabHost;
 using System.Linq;
+using MediaCodecHelper;
 
 namespace BitChute.Fragments
 {
@@ -142,9 +143,13 @@ namespace BitChute.Fragments
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
+            ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
+
             ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
             ViewHelpers.VideoEncoder.EncoderOutputFileEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
             ViewHelpers.VideoEncoder.EncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
+            ViewHelpers.VideoEncoder.AudioEncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.audioEncoderProgressBar);
+
             ViewHelpers.VideoEncoder.EncoderSourceEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
             ViewHelpers.VideoEncoder.PickSourceButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
             ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick;
@@ -289,33 +294,49 @@ namespace BitChute.Fragments
 
         public static void OnEncoderProgress(VideoEncoding.EncoderEventArgs e)
         {
-            var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
-            if (r > 100) { r = 100; }
-            ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Encoding video:{r}% done";
-            if (e.Finished) { }
-            else { ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r; }
+            if (!e.Finished)
+            {
+                var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
+                if (r > 100) { r = 100; }
+                ViewHelpers.Main.UiHandler.Post(() =>
+                {
+                    ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Encoding video:{r}% done";
+                    ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
+                });
+            }
+            else
+            {
+                ViewHelpers.Main.UiHandler.Post(() => {
+                    ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
+                    ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = "Video finished encoding";
+                    if (!FileToMp4.AudioEncodingInProgress){ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text=e.FilePath;}
+                }); 
+            }
         }
 
         public static void OnMuxerProgress(VideoEncoding.MuxerEventArgs e)
         {
             if (!e.Finished)
             {
-                var r = (int)((((decimal)e.Time / 1000) / (decimal)e.Length) * 100);
+                var r = (int)((((decimal)e.Time) / (decimal)e.Length) * 100);
                 if (r <= 1)
                 {
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Max = 100;
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Min = 0;
+                    ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Max = 100;
+                    ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Min = 0;
                 }
-                ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = r;
-                ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"Muxing audio:{r}% done";
+
+                ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Progress = r;
+                ViewHelpers.VideoEncoder.AudioEncodingStatusTextView.Text = $"Muxing audio:{r}% done";
             }
             else
             {
                 ViewHelpers.Main.UiHandler.Post(() =>
                 {
-                    ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
-                    ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = $"File finished processing";
-                    ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text = e.Data;
+                    ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Max = 100;
+                    ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Min = 0;
+                    ViewHelpers.VideoEncoder.AudioEncodeProgressBar.Progress = 100;
+                    ViewHelpers.VideoEncoder.AudioEncodingStatusTextView.Text = $"Audio finished processing";
+                    if (!MediaCodecHelper.FileToMp4.VideoEncodingInProgress) { VideoEncoder.EncoderOutputFileEditText.Text = e.FilePath; }
                 });
             }
         }
@@ -703,17 +724,6 @@ namespace BitChute.Fragments
             {
                 SetCheckedState();
                 _firstTimeLoad = false;
-            }
-
-            if (WvLayout.Visibility == ViewStates.Visible)
-            {
-                WvLayout.Visibility = ViewStates.Gone;
-                AppSettingsLayout.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                AppSettingsLayout.Visibility = ViewStates.Gone;
-                WvLayout.Visibility = ViewStates.Visible;
             }
         }
 

@@ -106,7 +106,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            LoadUrlWithDelay(RootUrl, 3500);
+           // LoadUrlWithDelay(RootUrl, 3500);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
         

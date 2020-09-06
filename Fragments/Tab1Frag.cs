@@ -57,7 +57,7 @@ namespace BitChute.Fragments
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
             Wv.SetWebViewClient(_wvc);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            Wv.LoadUrl(RootUrl);
+           // Wv.LoadUrl(RootUrl);
             Wv.Settings.JavaScriptEnabled = true;
             if (AppSettings.ZoomControl)
             {
