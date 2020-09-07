@@ -12,7 +12,7 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*/
+*/ // thanks to @leye0 for this port
 
 /**
 * Holds state associated with a Surface used for MediaCodec decoder output.

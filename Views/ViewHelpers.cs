@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using System.Collections.Generic;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Classes
 {
@@ -32,15 +26,8 @@ namespace BitChute.Classes
             private static bool _navHidden;
             public static bool NavHidden
             {
-                get
-                {
-                    return _navHidden;
-                }
-                set
-                {
-                    _navHidden = value;
-                    OnNavBarVizChanged();
-                }
+                get { return _navHidden; }
+                set {_navHidden = value;OnNavBarVizChanged(); }
             }
 
             public static bool UpdateView(object toBeUpdated, object updateWith)
@@ -109,10 +96,49 @@ namespace BitChute.Classes
             public static View SettingsTabLayout { get; set; }
             public static LinearLayout TabFragmentLinearLayout { get; set; }
             public static LinearLayout EncoderFlexLinearLayout { get; set; }
-            public static TabHost InternalTabHost { get; set; }
-            public static TabWidget InternalTabWidget { get; set; }
+            public static LinearLayout WvLayout;
+            public static LinearLayout AppSettingsLayout;
+            public static View _view;
             public static Button ShowEncoderViewButton { get; set; }
             public static Button ShowWebViewButton { get; set; }
+            public static EditText JavascriptInjectionTextBox { get; set; }
+            //settings items
+            public static Spinner SearchOverrideSourceSpinner { get; set; }
+            public static RadioButton SearchOverrideOffRb { get; set; }
+            public static RadioButton SearchOverrideOnRb { get; set; }
+            public static RadioButton SearchOverrideWithStaticBarRb { get; set; }
+            public static RadioButton _fmoffrb;
+            public static RadioButton _fmonrb;
+            public static RadioButton _zcoffrb;
+            public static RadioButton _zconrb;
+            public static RadioButton _t3honrb;
+            public static RadioButton _t3hoffrb;
+            public static RadioButton _t1fonrb;
+            public static RadioButton _t1foffrb;
+            public static RadioButton _stoverrideoffrb;
+            public static RadioButton _stoverrideonrb;
+            public static RadioButton _notificationonrb;
+            public static RadioButton _notificationoffrb;
+            public static RadioButton _hidehorizontalnavbaronrb;
+            public static RadioButton _hidehorizontalnavbaroffrb;
+            public static RadioButton _hideverticalnavbaronrb;
+            public static RadioButton _hideverticalnavbaroffrb;
+            public static RadioButton _showdlbuttononpress;
+            public static RadioButton _showdlbuttonalways;
+            public static RadioButton _showdlbuttonnever;
+            public static RadioButton _backgroundkeyfeed;
+            public static RadioButton _backgroundkeyany;
+            public static RadioButton _autoplayminimizedon;
+            public static RadioButton _autoplayfeedonly;
+            public static RadioButton _autoplayminimizedoff;
+            public static TextView _versionTextView;
+            public static List<string> _tabOverrideStringList = new List<string>();
+            public static ArrayAdapter<string> _tab4SpinOverrideAdapter;
+            public static ArrayAdapter<string> _tab5SpinOverrideAdapter;
+            public static ServiceWebView Wv;
+            public static List<object> _settingsList = new List<object>();
+            public static Spinner _tab4OverrideSpinner;
+            public static Spinner _tab5OverrideSpinner;
         }
 
         public class VideoEncoder

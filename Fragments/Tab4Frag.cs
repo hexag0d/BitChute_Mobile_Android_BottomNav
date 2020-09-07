@@ -28,64 +28,10 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static int TNo = 4;
-
-        public static ServiceWebView Wv;
-        public static LinearLayout WvLayout;
-        public static LinearLayout AppSettingsLayout;
-        public static View _view;
-
-        public static List<object> _settingsList = new List<object>();
-        public static Spinner _tab4OverrideSpinner;
-        public static Spinner _tab5OverrideSpinner;
-
-        bool tabLoaded = false;
-
         public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
-
-        private static RadioButton _fmoffrb;
-        private static RadioButton _fmonrb;
-
-        private static RadioButton _zcoffrb;
-        private static RadioButton _zconrb;
-
-        private static RadioButton _t3honrb;
-        private static RadioButton _t3hoffrb;
-
-        private static RadioButton _t1fonrb;
-        private static RadioButton _t1foffrb;
-
-        private static RadioButton _stoverrideoffrb;
-        private static RadioButton _stoverrideonrb;
-
-        private static RadioButton _notificationonrb;
-        private static RadioButton _notificationoffrb;
-
-        private static RadioButton _hidehorizontalnavbaronrb;
-        private static RadioButton _hidehorizontalnavbaroffrb;
-
-        private static RadioButton _hideverticalnavbaronrb;
-        private static RadioButton _hideverticalnavbaroffrb;
-
-        private static RadioButton _showdlbuttononpress;
-        private static RadioButton _showdlbuttonalways;
-        private static RadioButton _showdlbuttonnever;
-
-        private static RadioButton _backgroundkeyfeed;
-        private static RadioButton _backgroundkeyany;
-
-        private static RadioButton _autoplayminimizedon;
-        private static RadioButton _autoplayfeedonly;
-        private static RadioButton _autoplayminimizedoff;
-
-        public static TextView _versionTextView;
-        public static List<string> _tabOverrideStringList = new List<string>();
-        ArrayAdapter<string> _tab4SpinOverrideAdapter;
-        ArrayAdapter<string> _tab5SpinOverrideAdapter;
-
         public static ExtStickyService StickyService = new ExtStickyService();
         private static CookieCollection cookies = new CookieCollection();
-
         public static Tab4Frag Fm4;
 
         public static Tab4Frag NewInstance(string title, string icon)
@@ -109,9 +55,7 @@ namespace BitChute.Fragments
             _tabOverrideStringList.Add("WatchL8r");
             _tabOverrideStringList.Add("Playlists");
             _tabOverrideStringList.Add("Downloader");
-
             base.OnCreate(savedInstanceState);
-
             if (Arguments != null)
             {
                 if (Arguments.ContainsKey("title"))
@@ -144,27 +88,21 @@ namespace BitChute.Fragments
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
             ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
-
             ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
             ViewHelpers.VideoEncoder.EncoderOutputFileEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
             ViewHelpers.VideoEncoder.EncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
             ViewHelpers.VideoEncoder.AudioEncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.audioEncoderProgressBar);
-
             ViewHelpers.VideoEncoder.EncoderSourceEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
             ViewHelpers.VideoEncoder.PickSourceButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
             ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick;
             Tab4.ShowEncoderViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.encoderViewSwapButton);
             Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
-
             Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
             Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
-
             EncoderFlexLinearLayout = InternalTabbedLayout.FindViewById<LinearLayout>(Resource.Id.encoderFlexLinearLayout);
             ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
-
             AppSettings.Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
             AppSettings.PrefEditor = AppSettings.Prefs.Edit();
-
             _zcoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
             _zconrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
             _fmoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
@@ -186,9 +124,7 @@ namespace BitChute.Fragments
             _showdlbuttononpress = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.showDlFabOnPress);
             _showdlbuttonalways = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.alwaysShowDlFab);
             _showdlbuttonnever = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.dlFabOff);
-
             _versionTextView = SettingsTabLayout.FindViewById<TextView>(Resource.Id.versionTextView);
-
             _zcoffrb.CheckedChange += ExtSettingChanged;
             _fmonrb.CheckedChange += ExtSettingChanged;
             _fmonrb.CheckedChange += OnFanModeRbCheckChanged;
@@ -202,7 +138,11 @@ namespace BitChute.Fragments
             _showdlbuttonalways.CheckedChange += ExtSettingChanged;
             _showdlbuttonnever.CheckedChange += ExtSettingChanged;
             _showdlbuttononpress.CheckedChange += ExtSettingChanged;
-
+            ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
+            Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
+            Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
+            Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
+            Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
             _tab4OverrideSpinner.ItemSelected += ExtSettingChanged;
             _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSpinnerSelectionChanged;
             _tab5OverrideSpinner.ItemSelected += ExtSettingChanged;
@@ -214,7 +154,6 @@ namespace BitChute.Fragments
                     Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
             _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
             _versionTextView.Text = AppState.AppVersion;
-            tabLoaded = true;
 
             if (AppSettings.ZoomControl)
             {
@@ -857,7 +796,29 @@ namespace BitChute.Fragments
                     //WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
                     //return w;
                 }
+                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
+                {
+                    if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                    { //Return immediately to optimize the ux
+                        return base.ShouldInterceptRequest(view, request);
+                    }
+                    if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                    {
+                        SearchOverride.SearchOverrideInProg = true;
+                        MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
+                        var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
+                        SearchOverride.UI.WvSearchOverride(view, ro);
+                        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                        return w;
+                    }
+                }
                 return base.ShouldInterceptRequest(view, request);
+            }
+
+            public static async void SelectSubscribedTab(int delay)
+            {
+                await Task.Delay(delay);
+                Wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
             }
 
             public override void OnPageFinished(WebView view, string url)
@@ -876,7 +837,7 @@ namespace BitChute.Fragments
 
                         if (Wv.Url == "https://www.bitchute.com/")
                         {
-                            //TheFragment4.SelectSubscribedTab(2000);
+                            Tab4Frag.SelectSubscribedTab(2000);
                         }
                     }
                 }

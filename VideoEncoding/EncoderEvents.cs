@@ -34,7 +34,7 @@ namespace BitChute.VideoEncoding
         private string _filepath;
         public EncoderEventArgs(long encoded, long total, bool finished = false, bool error = false, string filepath = null)
         {
-            if (finished) { _finished = true; }
+            _finished = finished;
             _encodedData = encoded;
             _totalData = total;
             _error = error;
@@ -45,6 +45,6 @@ namespace BitChute.VideoEncoding
         public long TotalData { get { return _totalData; } }
         public bool Finished { get { return _finished; } }
         public bool Error { get { return _error; } }
-        public string FilePath{get{if(!_error){return _filepath;}else{return "an error occured processing video data";}}}
+        public string FilePath{get{if(!_error){return _filepath;}else{ return "error occured during video encoding"; }}}
     }
 }

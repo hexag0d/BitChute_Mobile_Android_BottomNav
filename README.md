@@ -1,5 +1,5 @@
 # BitChute_Mobile_Android_BottomNav
-A new version of the BitChute android app which uses bottomnavigation tabs and a viewpager.
+BitChute classic Android with OpenGL video encoding
 
 /* App by:
     Ray Vahey
@@ -24,7 +24,7 @@ gab.ai @hexagod
 ```
 based off the template by hnabbasi
 https://github.com/hnabbasi/BottomNavigationViewPager
-OpenGL video encoding heavily ported but courtesy of leye0 (sorry, I forgot to include you):
+OpenGL video encoding heavily ported but courtesy of leye0
 https://github.com/leye0/XamarinAndroidMediaCodecSurfaceToSurface
 ```
  */

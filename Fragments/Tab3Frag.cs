@@ -1,5 +1,4 @@
-﻿
-using Android.Graphics.Drawables;
+﻿using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
@@ -13,21 +12,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static StartServices.Servicesclass.ExtStickyService;
 
-
 namespace BitChute.Fragments
 {
     public class Tab3Frag : Fragment
     {
         string _title;
         string _icon;
-
         public static ServiceWebView Wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
-
         public static string RootUrl = "https://www.bitchute.com/profile";
         public static int TNo = 3;
-        
-        public static Tab3Frag NewInstance(string title, string icon) {
+        public static Tab3Frag NewInstance(string title, string icon)
+        {
             var fragment = new Tab3Frag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
@@ -40,7 +36,7 @@ namespace BitChute.Fragments
             base.OnCreate(savedInstanceState);
             if (Arguments != null)
             {
-                if(Arguments.ContainsKey("title"))
+                if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
 
                 if (Arguments.ContainsKey("icon"))
@@ -55,18 +51,10 @@ namespace BitChute.Fragments
         }
 
         static bool _wvRl = true;
-
         public void Pop2Root()
         {
-            if (_wvRl)
-            {
-                Wv.Reload();
-                _wvRl = false;
-            }
-            else
-            {
-                Wv.LoadUrl(RootUrl);
-            }
+            if (_wvRl) { Wv.Reload(); _wvRl = false; }
+            else { Wv.LoadUrl(RootUrl); }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -94,9 +82,7 @@ namespace BitChute.Fragments
             ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
             ViewHelpers.Main.DownloadFAB.Clickable = true;
             ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
-
             if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
-
             Wv.SetWebViewClient(new ExtWebViewClient());
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
             Wv.Settings.DisplayZoomControls = false;
@@ -106,10 +92,11 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-           // LoadUrlWithDelay(RootUrl, 3500);
+            //CustomSetTouchListener(AppState.Display.Horizontal);
+            LoadUrlWithDelay(RootUrl, 4000);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
-        
+
         /// <summary>
         /// swaps the view for the downloader layout
         /// </summary>
@@ -135,23 +122,47 @@ namespace BitChute.Fragments
         public static void SwapView(View v)
         {
             ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-            try
-            {
-                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v);
-            }
-            catch
-            {
-            }
+            try { ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v); }
+            catch { }
         }
-        
+
+        public void CustomSetTouchListener(bool landscape)
+        {
+            if (landscape) { Wv.SetOnTouchListener(new ExtTouchListener()); }
+            else { Wv.SetOnTouchListener(null); }
+        }
+
         public static async void LoadUrlWithDelay(string url, int delay)
         {
-            await Task.Delay(delay);
-            Wv.LoadUrl(url);
+            await Task.Delay(delay); Wv.LoadUrl(url);
         }
-        
-        public static bool _wvRling = false;
 
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
+        {
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                MainActivity.CustomOnTouch();
+                CustomOnTouch();
+                return false;
+            }
+        }
+
+        private static async void CustomOnTouch()
+        {
+            _scrollY += Wv.ScrollY;
+            if (AppState.Display.Horizontal)
+            {
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
+
+        private static int _scrollY = 0;
+        public static bool _wvRling = false;
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
@@ -178,16 +189,12 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsSelectTab3);
                 Wv.LoadUrl(JavascriptCommands._jsHideLabel);
             }
-
             if (AppSettings.ZoomControl)
             {
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            else
-            {
-                Wv.Settings.BuiltInZoomControls = false;
-            }
+            else { Wv.Settings.BuiltInZoomControls = false; }
         }
 
         /// <summary>
@@ -201,7 +208,7 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
             Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
         }
-        
+
         public void LoadCustomUrl(string url)
         {
             Wv.LoadUrl(url);
@@ -238,15 +245,26 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
-        
+
         private class ExtWebViewClient : WebViewClient
         {
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("pest."))
+                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg) 
                 {
-                    WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-                    return w;
+                    if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                    { 
+                        return base.ShouldInterceptRequest(view, request);
+                    }
+                    if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
+                    {
+                        SearchOverride.SearchOverrideInProg = true;
+                        MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
+                        var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
+                        SearchOverride.UI.WvSearchOverride(view, ro);
+                        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
+                        return w;
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
@@ -256,7 +274,6 @@ namespace BitChute.Fragments
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
-
                 if (TabStates.T4Is == "Feed")
                 {
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
@@ -264,25 +281,14 @@ namespace BitChute.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideTab2);
                     Wv.LoadUrl(JavascriptCommands._jsSelectTab3);
                     Wv.LoadUrl(JavascriptCommands._jsHideTrending);
-                    //_wv.LoadUrl(JavascriptCommands._jsHideLabel);
                 }
-
-                if (!AppSettings.Tab1FeaturedOn)
-                {
-                    Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                }
-
-                if (AppState.Display.Horizontal)
-                {
-                    HidePageTitle(5000);
-                }
-                
+                if (!AppSettings.Tab1FeaturedOn) { Wv.LoadUrl(JavascriptCommands._jsHideCarousel); }
+                if (AppState.Display.Horizontal) { HidePageTitle(5000); }
                 Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
                 HideLinkOverflow();
                 SetReload();
                 Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                 Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                //AdBlock.RemoveDiscusIFrame(TNo);
                 base.OnPageFinished(view, url);
             }
         }
