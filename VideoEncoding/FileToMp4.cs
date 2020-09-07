@@ -345,13 +345,11 @@ namespace MediaCodecHelper {
 		private void drainEncoder(bool endOfStream) {
 			int TIMEOUT_USEC = 10000;
 			if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")");
-
 			if (endOfStream) {
 				if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
 				mEncoder.SignalEndOfInputStream();
                 this.Progress.Invoke(new EncoderEventArgs(_encodedBits, _estimatedTotalSize, true));
             }
-
             ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
 			while (true) {
 				int encoderStatus = mEncoder.DequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
@@ -403,8 +401,7 @@ namespace MediaCodecHelper {
                         {
                             throw new RuntimeException("muxer hasn't started");
                         }
-
-                        // adjust the ByteBuffer values to match BufferInfo (not needed?)
+                        // adjust the ByteBuffer values to match BufferInfo
                         encodedData.Position(mBufferInfo.Offset);
                         encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
                         mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);

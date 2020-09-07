@@ -83,8 +83,7 @@ namespace BitChute.Fragments
             if (landscape) { Wv.SetOnTouchListener(new ExtTouchListener()); }
             else { Wv.SetOnTouchListener(null); }
         }
-
-        public static MainActivity Main = MainActivity.Main;
+        
         public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
             public bool OnTouch(View v, MotionEvent e)
@@ -193,7 +192,7 @@ namespace BitChute.Fragments
                 if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
                 {
                     if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    { //Return immediately to optimize the ux
+                    { 
                         return base.ShouldInterceptRequest(view, request);
                     }
                     if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
@@ -232,7 +231,6 @@ namespace BitChute.Fragments
                 HideLinkOverflow();
                 ExpandVideoCards(true);
                 base.OnPageFinished(view, url);
-                //view.LoadUrl(JavascriptCommands.ExpandSearchIcon());
             }
         }
     }

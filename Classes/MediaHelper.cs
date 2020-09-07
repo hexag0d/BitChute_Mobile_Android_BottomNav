@@ -12,9 +12,9 @@ using Android.Widget;
 
 namespace BitChute.Classes
 {
-    class MediaHelper
+    public class MediaHelper
     {
-        int GetDuration(Android.Net.Uri uri)
+        public static int GetDuration(Android.Net.Uri uri)
         {
             Android.Media.MediaMetadataRetriever m = new Android.Media.MediaMetadataRetriever();
             m.SetDataSourceAsync(Android.App.Application.Context, uri);
@@ -23,10 +23,14 @@ namespace BitChute.Classes
             return millSecond;
         }
 
-        int GetDurationByBytes(Android.Net.Uri uri)
+        public static long GetDurationBitsByUri(Android.Net.Uri uri, int bitRate)
         {
-
-            return -1;
+            Android.Media.MediaMetadataRetriever m = new Android.Media.MediaMetadataRetriever();
+            m.SetDataSourceAsync(Android.App.Application.Context, uri);
+            String durationStr = m.ExtractMetadata(Android.Media.MetadataKey.Duration);
+            int millSecond = int.Parse(durationStr);
+            long db = (long)(((decimal)millSecond / (decimal)1000) * bitRate);
+            return db ;
         }
     }
 }

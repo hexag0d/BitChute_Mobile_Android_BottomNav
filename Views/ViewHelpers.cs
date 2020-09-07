@@ -135,7 +135,6 @@ namespace BitChute.Classes
             public static List<string> _tabOverrideStringList = new List<string>();
             public static ArrayAdapter<string> _tab4SpinOverrideAdapter;
             public static ArrayAdapter<string> _tab5SpinOverrideAdapter;
-            public static ServiceWebView Wv;
             public static List<object> _settingsList = new List<object>();
             public static Spinner _tab4OverrideSpinner;
             public static Spinner _tab5OverrideSpinner;

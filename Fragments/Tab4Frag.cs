@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static BitChute.Classes.AppSettings;
 using static BitChute.Classes.ExtWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
 using static StartServices.Servicesclass.ExtStickyService;
@@ -33,6 +34,7 @@ namespace BitChute.Fragments
         public static ExtStickyService StickyService = new ExtStickyService();
         private static CookieCollection cookies = new CookieCollection();
         public static Tab4Frag Fm4;
+        public static ServiceWebView Wv;
 
         public static Tab4Frag NewInstance(string title, string icon)
         {
@@ -138,11 +140,11 @@ namespace BitChute.Fragments
             _showdlbuttonalways.CheckedChange += ExtSettingChanged;
             _showdlbuttonnever.CheckedChange += ExtSettingChanged;
             _showdlbuttononpress.CheckedChange += ExtSettingChanged;
-            ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
-            Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
-            Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
-            Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
-            Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
+            //ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
+            //Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
+            //Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
+            //Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
+            //Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
             _tab4OverrideSpinner.ItemSelected += ExtSettingChanged;
             _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSpinnerSelectionChanged;
             _tab5OverrideSpinner.ItemSelected += ExtSettingChanged;
@@ -163,6 +165,72 @@ namespace BitChute.Fragments
             return FragmentContainerLayout;
         }
 
+        /// <summary>
+        /// set to true when the application is initially 
+        /// setting the checked state of the settings radiobuttons.
+        /// 
+        /// set to false after a one second delay to allow the user to change settings
+        /// manually,
+        /// 
+        /// used to prevent loops in the checkchanged event mechanism. 
+        /// 
+        /// this whole system should soon be replaced with databinding
+        /// to the android application preferences.
+        /// </summary>
+        public bool AppNowCheckingBoxes = false;
+        public async void SetCheckedState()
+        {
+            AppNowCheckingBoxes = true;
+            SearchOverride.UI.SetupSearchOverrideControls(); // populate the search override controls
+            if (AppSettings.ZoomControl) { _zconrb.Checked = true; }
+            else { _zcoffrb.Checked = true; }
+            if (AppSettings.FanMode) { _fmonrb.Checked = true; }
+            else { _fmoffrb.Checked = true; }
+            if (AppSettings.Tab1FeaturedOn) { _t1fonrb.Checked = true; }
+            else { _t1foffrb.Checked = true; }
+            if (AppSettings.Tab3Hide) { _t3honrb.Checked = true; }
+            else { _t3hoffrb.Checked = true; }
+            if (AppSettings.FanMode) { _fmonrb.Checked = true; }
+            else { _fmoffrb.Checked = true; }
+            switch (AppSettings.Tab4OverridePreference)
+            {
+                case "Home": _tab4OverrideSpinner.SetSelection(0); break;
+                case "Subs": _tab4OverrideSpinner.SetSelection(1); break;
+                case "Feed": _tab4OverrideSpinner.SetSelection(2); break;
+                case "Explore": _tab4OverrideSpinner.SetSelection(3); break;
+                case "Settings": _tab4OverrideSpinner.SetSelection(4); break;
+                case "MyChannel": _tab4OverrideSpinner.SetSelection(5); break;
+                case "Downloader": _tab4OverrideSpinner.SetSelection(6); break;
+            }
+            if (AppSettings.SettingsTabOverride) { _stoverrideonrb.Checked = true; }
+            else { _stoverrideoffrb.Checked = true; }
+            switch (AppSettings.Tab5OverridePreference)
+            {
+                case "Home": _tab5OverrideSpinner.SetSelection(0); break;
+                case "Subs": _tab5OverrideSpinner.SetSelection(1); break;
+                case "Feed": _tab5OverrideSpinner.SetSelection(2); break;
+                case "Explore": _tab5OverrideSpinner.SetSelection(3); break;
+                case "Settings": _tab5OverrideSpinner.SetSelection(4); break;
+                case "MyChannel": _tab5OverrideSpinner.SetSelection(5); break;
+                case "Downloader": _tab4OverrideSpinner.SetSelection(6); break;
+            }
+            if (AppSettings.Notifying) { _notificationonrb.Checked = true; }
+            else { _notificationoffrb.Checked = true; }
+            if (AppSettings.HideHorizontalNavBar) { _hidehorizontalnavbaronrb.Checked = true; }
+            else { _hidehorizontalnavbaroffrb.Checked = true; }
+            if (AppSettings.HideVerticalNavBar) { _hideverticalnavbaronrb.Checked = true; }
+            else { _hideverticalnavbaroffrb.Checked = true; }
+            try // something weird going on here.. dl fab setting selector is throwing resource error @TODO fix it
+            {
+                if (AppSettings.DlFabShowSetting == "onpress") { _showdlbuttononpress.Checked = true; }
+                else if (AppSettings.DlFabShowSetting == "never") { _showdlbuttonnever.Checked = true; }
+                else if (AppSettings.DlFabShowSetting == "always") { _showdlbuttonalways.Checked = true; }
+            }
+            catch { }
+            await Task.Delay(1000);
+            AppNowCheckingBoxes = false;
+        }
+
         public static bool WebsiteSettingsVisible = true;
 
         /// <summary>
@@ -171,6 +239,7 @@ namespace BitChute.Fragments
         /// <param name="v">nullable, the view to swap for</param>
         public static void SwapSettingView()
         {
+            
             if (!WebsiteSettingsVisible)
             {
                 ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
@@ -182,6 +251,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
             }
             WebsiteSettingsVisible = !WebsiteSettingsVisible;
+            if (_firstTimeLoad) { Fm4.SetCheckedState(); _firstTimeLoad = false; }
         }
 
         public static bool EncoderViewIsVisible = false;
@@ -340,163 +410,6 @@ namespace BitChute.Fragments
         }
 
         /// <summary>
-        /// set to true when the application is initially 
-        /// setting the checked state of the settings radiobuttons.
-        /// 
-        /// set to false after a one second delay to allow the user to change settings
-        /// manually,
-        /// 
-        /// used to prevent loops in the checkchanged event mechanism. 
-        /// 
-        /// this whole system should soon be replaced with databinding
-        /// to the android application preferences.
-        /// </summary>
-        public bool AppNowCheckingBoxes = false;
-
-        public async void SetCheckedState()
-        {
-            AppNowCheckingBoxes = true;
-
-            if (AppSettings.ZoomControl)
-            {
-                _zconrb.Checked = true;
-            }
-            else
-            {
-                _zcoffrb.Checked = true;
-            }
-            if (AppSettings.FanMode)
-            {
-                _fmonrb.Checked = true;
-            }
-            else
-            {
-                _fmoffrb.Checked = true;
-            }
-            if (AppSettings.Tab1FeaturedOn)
-            {
-                _t1fonrb.Checked = true;
-            }
-            else
-            {
-                _t1foffrb.Checked = true;
-            }
-            if (AppSettings.Tab3Hide)
-            {
-                _t3honrb.Checked = true;
-            }
-            else
-            {
-                _t3hoffrb.Checked = true;
-            }
-            if (AppSettings.FanMode)
-            {
-                _fmonrb.Checked = true;
-            }
-            else
-            {
-                _fmoffrb.Checked = true;
-            }
-
-            switch (AppSettings.Tab4OverridePreference)
-            {
-                case "Home":
-                    _tab4OverrideSpinner.SetSelection(0);
-                    break;
-                case "Subs":
-                    _tab4OverrideSpinner.SetSelection(1);
-                    break;
-                case "Feed":
-                    _tab4OverrideSpinner.SetSelection(2);
-                    break;
-                case "Explore":
-                    _tab4OverrideSpinner.SetSelection(3);
-                    break;
-                case "Settings":
-                    _tab4OverrideSpinner.SetSelection(4);
-                    break;
-                case "MyChannel":
-                    _tab4OverrideSpinner.SetSelection(5);
-                    break;
-                case "Downloader":
-                    _tab4OverrideSpinner.SetSelection(6);
-                    break;
-            }
-
-            if (AppSettings.SettingsTabOverride)
-            {
-                _stoverrideonrb.Checked = true;
-            }
-            else
-            {
-                _stoverrideoffrb.Checked = true;
-            }
-
-            switch (AppSettings.Tab5OverridePreference)
-            {
-                case "Home":
-                    _tab5OverrideSpinner.SetSelection(0);
-                    break;
-                case "Subs":
-                    _tab5OverrideSpinner.SetSelection(1);
-                    break;
-                case "Feed":
-                    _tab5OverrideSpinner.SetSelection(2);
-                    break;
-                case "Explore":
-                    _tab5OverrideSpinner.SetSelection(3);
-                    break;
-                case "Settings":
-                    _tab5OverrideSpinner.SetSelection(4);
-                    break;
-                case "MyChannel":
-                    _tab5OverrideSpinner.SetSelection(5);
-                    break;
-                case "Downloader":
-                    _tab4OverrideSpinner.SetSelection(6);
-                    break;
-            }
-            if (AppSettings.Notifying)
-            {
-                _notificationonrb.Checked = true;
-            }
-            else
-            {
-                _notificationoffrb.Checked = true;
-            }
-            if (AppSettings.HideHorizontalNavBar)
-            {
-                _hidehorizontalnavbaronrb.Checked = true;
-            }
-            else
-            {
-                _hidehorizontalnavbaroffrb.Checked = true;
-            }
-            if (AppSettings.HideVerticalNavBar)
-            {
-                _hideverticalnavbaronrb.Checked = true;
-            }
-            else
-            {
-                _hideverticalnavbaroffrb.Checked = true;
-            }
-            if (AppSettings.DlFabShowSetting == "onpress")
-            {
-                _showdlbuttononpress.Checked = true;
-            }
-            else if (AppSettings.DlFabShowSetting == "never")
-            {
-                _showdlbuttonnever.Checked = true;
-            }
-            else if (AppSettings.DlFabShowSetting == "always")
-            {
-                _showdlbuttonalways.Checked = true;
-            }
-            await Task.Delay(1000);
-            AppNowCheckingBoxes = false;
-        }
-
-        /// <summary>
         /// called when the .Checked state of radio buttons in the app settings fragment is changed
         /// sets the settings when this event occurs and calls a method to notify all fragments via mainactivity.
         ///writes the values to android preferences aswell using the api
@@ -507,67 +420,21 @@ namespace BitChute.Fragments
         {
             if (!AppNowCheckingBoxes)
             {
-                if (_notificationonrb.Checked)
-                {
-                    AppSettings.Notifying = true;
-                }
-                else
-                {
-                    AppSettings.Notifying = false;
-                }
-                if (_zconrb.Checked)
-                {
-                    AppSettings.ZoomControl = true;
-                }
-                else
-                {
-                    AppSettings.ZoomControl = false;
-                }
-                if (_t3honrb.Checked)
-                {
-                    AppSettings.Tab3Hide = true;
-                }
-                else
-                {
-                    AppSettings.Tab3Hide = false;
-                }
-                if (!_t1foffrb.Checked)
-                {
-                    AppSettings.Tab1FeaturedOn = true;
-                }
-                else
-                {
-                    AppSettings.Tab1FeaturedOn = false;
-                }
-                if (_fmonrb.Checked)
-                {
-                    AppSettings.FanMode = true;
-                }
-                else
-                {
-                    AppSettings.FanMode = false;
-                }
-                if (_stoverrideonrb.Checked)
-                {
-                    AppSettings.SettingsTabOverride = true;
-                }
-                else
-                {
-                    AppSettings.SettingsTabOverride = false;
-                }
-                if (_showdlbuttononpress.Checked)
-                {
-                    AppSettings.DlFabShowSetting = "onpress";
-                }
-                else if (_showdlbuttonalways.Checked)
-                {
-                    AppSettings.DlFabShowSetting = "always";
-                }
-                else if (_showdlbuttonnever.Checked)
-                {
-                    AppSettings.DlFabShowSetting = "never";
-                }
-                //write the android prefs
+                if (_notificationonrb.Checked) { AppSettings.Notifying = true; }
+                else { AppSettings.Notifying = false; }
+                if (_zconrb.Checked) { AppSettings.ZoomControl = true; }
+                else { AppSettings.ZoomControl = false; }
+                if (_t3honrb.Checked) { AppSettings.Tab3Hide = true; }
+                else { AppSettings.Tab3Hide = false; }
+                if (!_t1foffrb.Checked) { AppSettings.Tab1FeaturedOn = true; }
+                else { AppSettings.Tab1FeaturedOn = false; }
+                if (_fmonrb.Checked) { AppSettings.FanMode = true; }
+                else { AppSettings.FanMode = false; }
+                if (_stoverrideonrb.Checked) { AppSettings.SettingsTabOverride = true; }
+                else { AppSettings.SettingsTabOverride = false; }
+                if (_showdlbuttononpress.Checked) { AppSettings.DlFabShowSetting = "onpress"; }
+                else if (_showdlbuttonalways.Checked) { AppSettings.DlFabShowSetting = "always"; }
+                else if (_showdlbuttonnever.Checked) { AppSettings.DlFabShowSetting = "never"; }
                 AppSettings.PrefEditor.PutBoolean("zoomcontrol", AppSettings.ZoomControl);
                 AppSettings.PrefEditor.PutBoolean("fanmode", AppSettings.FanMode);
                 AppSettings.PrefEditor.PutBoolean("tab3hide", AppSettings.Tab3Hide);
@@ -576,15 +443,12 @@ namespace BitChute.Fragments
                 AppSettings.PrefEditor.PutBoolean("notificationson", AppSettings.Notifying);
                 AppSettings.PrefEditor.PutString("dlfabshowsetting", AppSettings.DlFabShowSetting);
                 AppSettings.PrefEditor.Commit();
-
                 _settingsList.Clear();
-                //then add the settings app settings list
                 _settingsList.Add(AppSettings.ZoomControl);
                 _settingsList.Add(AppSettings.FanMode);
                 _settingsList.Add(AppSettings.Tab3Hide);
                 _settingsList.Add(AppSettings.Tab1FeaturedOn);
                 _settingsList.Add(AppSettings.SettingsTabOverride);
-
                 MainActivity.Main.OnSettingsChanged(_settingsList);
             }
         }
@@ -623,14 +487,8 @@ namespace BitChute.Fragments
 
         private void OnSettingsRbCheckChanged(object sender, EventArgs e)
         {
-            if (_stoverrideonrb.Checked)
-            {
-                MainActivity.TabDetailChanger(4, AppSettings.Tab5OverridePreference);
-            }
-            else
-            {
-                MainActivity.TabDetailChanger(4, "Settings");
-            }
+            if (_stoverrideonrb.Checked){MainActivity.TabDetailChanger(4,Tab5OverridePreference);}
+            else {  MainActivity.TabDetailChanger(4, "Settings"); }
         }
 
         private void OnSettingsTabOverrideSpinnerSelectionChanged(object sender, EventArgs e)
@@ -653,48 +511,14 @@ namespace BitChute.Fragments
 
         static bool _firstTimeLoad = true;
 
-        /// <summary>
-        /// shows the app specific settings menu
-        /// when user long presses "settings" tab
-        /// </summary>
-        public void ShowAppSettingsMenu()
-        {
-            if (_firstTimeLoad)
-            {
-                SetCheckedState();
-                _firstTimeLoad = false;
-            }
-        }
-
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack())
-                Wv.GoBack();
-        }
-
-        public static int mysteryInt = 0;
+        public static void WebViewGoBack() {if (Wv.CanGoBack()) Wv.GoBack();}
         static bool _wvRl = true;
-
         public void Pop2Root()
         {
-            if (_wvRl)
-            {
-                try
-                {
-                    Wv.Reload();
-                    _wvRl = false;
-                }
-                catch
-                { }
-            }
-            else
-            {
-                Wv.LoadUrl(RootUrl);
-            }
+            if(_wvRl){try{Wv.Reload();_wvRl=false;}catch{}}
+            else { Wv.LoadUrl(RootUrl); }
         }
-
         public static bool _wvRling = false;
-
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
@@ -708,7 +532,6 @@ namespace BitChute.Fragments
                 await Task.Delay(AppSettings.TabDelay);
                 _wvRl = true;
                 await Task.Delay(6);
-                mysteryInt = 0;
                 _wvRling = false;
             }
         }
@@ -726,10 +549,7 @@ namespace BitChute.Fragments
         {
             if (!AppNowCheckingBoxes)
             {
-                if (_fmonrb.Checked)
-                {
-                    AppSettings.FanMode = true;
-                }
+                if (_fmonrb.Checked) {  AppSettings.FanMode = true; }
                 else
                 {
                     MainActivity.TabDetailChanger(3, "MyChannel");
@@ -780,9 +600,12 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
 
-        public void LoadCustomUrl(string url)
+        public void LoadCustomUrl(string url){ Wv.LoadUrl(url); }
+
+        public static async void SelectSubscribedTab(int delay)
         {
-            Wv.LoadUrl(url);
+            await Task.Delay(delay);
+            Wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
         }
 
         public static bool UserRequestedVideoPreProcessing = false;
@@ -799,7 +622,7 @@ namespace BitChute.Fragments
                 if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
                 {
                     if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    { //Return immediately to optimize the ux
+                    { 
                         return base.ShouldInterceptRequest(view, request);
                     }
                     if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
@@ -814,13 +637,7 @@ namespace BitChute.Fragments
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
-
-            public static async void SelectSubscribedTab(int delay)
-            {
-                await Task.Delay(delay);
-                Wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
-            }
-
+            
             public override void OnPageFinished(WebView view, string url)
             {
                 WebViewHelpers.DelayedScrollToTop(TNo);
