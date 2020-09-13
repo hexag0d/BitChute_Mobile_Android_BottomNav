@@ -9,7 +9,7 @@ using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
-    public class Tab2Frag : Fragment
+    public class FeedFrag : Fragment
     {
         string _title;
         string _icon;
@@ -18,9 +18,9 @@ namespace BitChute.Fragments
         public static int TNo = 2;
         public static string RootUrl = "https://www.bitchute.com/";
 
-        public static Tab2Frag NewInstance(string title, string icon)
+        public static FeedFrag NewInstance(string title, string icon)
         {
-            var fragment = new Tab2Frag();
+            var fragment = new FeedFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -45,7 +45,6 @@ namespace BitChute.Fragments
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
             Wv.SetWebViewClient(_wvc);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            Wv.LoadUrl(RootUrl);
             Wv.Settings.JavaScriptEnabled = true;
             if (AppSettings.ZoomControl)
             {
@@ -53,7 +52,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             Wv.Settings.DisplayZoomControls = false;
-            LoadUrlWithDelay(RootUrl, 2000);
+            //LoadUrlWithDelay(RootUrl, 2000);
             return _view;
         }
 
@@ -219,7 +218,7 @@ namespace BitChute.Fragments
                     Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                     if (Wv.Url == "https://www.bitchute.com/")
                     {
-                        Tab2Frag.SelectSubscribedTab(2000);
+                        FeedFrag.SelectSubscribedTab(2000);
                     }
                 }
                 SelectSubscribedTab(4000);

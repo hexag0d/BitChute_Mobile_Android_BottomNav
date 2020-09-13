@@ -54,13 +54,13 @@ using Android.Views;
 using BitChute.Adapters;
 using BitChute.Classes;
 using BitChute.Fragments;
-
+using BitChute.Ui;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BitChute.Fragments.Tab4Frag;
+using static BitChute.Fragments.SettingsFrag;
 
 namespace BitChute
 {
@@ -111,6 +111,7 @@ namespace BitChute
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AppSettings.LoadAllPrefsFromSettings();
+            CssHelper.GetCommonCss(true);
             _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
@@ -134,7 +135,7 @@ namespace BitChute
                 {
                     var _tempUrl = _sentIntent.Extras?.GetString("URL");
                     if (_tempUrl != "" && _tempUrl != null)
-                        Tab0Frag.RootUrl = _tempUrl;
+                        HomePageFrag.RootUrl = _tempUrl;
                     AppState.NotificationStartedApp = true;
                 }
                 catch
@@ -167,11 +168,11 @@ namespace BitChute
             //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
         }
 
-        public static Tab0Frag Fm0 = Tab0Frag.NewInstance("Home", "tab_home");
-        public static Tab1Frag Fm1 = Tab1Frag.NewInstance("Subs", "tab_subs");
-        public static Tab2Frag Fm2 = Tab2Frag.NewInstance("Feed", "tab_playlist");
-        public static Tab3Frag Fm3 = Tab3Frag.NewInstance("MyChannel", "tab_mychannel");
-        public static Tab4Frag Fm4 = Tab4Frag.NewInstance("Settings", "tab_settings");
+        public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
+        public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
+        public static FeedFrag Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
+        public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
+        public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
 
         void InitializeTabs()
         {
@@ -271,19 +272,19 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        Tab0Frag.WebViewGoBack();
+                        HomePageFrag.WebViewGoBack();
                         break;
                     case 1:
-                        Tab1Frag.WebViewGoBack();
+                        SubscriptionFrag.WebViewGoBack();
                         break;
                     case 2:
-                        Tab2Frag.WebViewGoBack();
+                        FeedFrag.WebViewGoBack();
                         break;
                     case 3:
-                        Tab3Frag.WebViewGoBack();
+                        MyChannelFrag.WebViewGoBack();
                         break;
                     case 4:
-                        Tab4Frag.WebViewGoBack();
+                        SettingsFrag.WebViewGoBack();
                         break;
                 }
             }
@@ -330,24 +331,7 @@ namespace BitChute
             NavigationView.SelectedItemId = _menu.ItemId;
 
             _tabSelected = ViewPager.CurrentItem;
-
-            if (AppSettings.FanMode)
-            {
-                if (AppSettings.Tab4OverridePreference != null && _tab4Icon != null)
-                {
-                    NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
-                    NavViewItemList[3].SetIcon(_tab4Icon);
-                }
-            }
-            if (AppSettings.SettingsTabOverride)
-            {
-                if (AppSettings.Tab5OverridePreference != null && _tab5Icon != null)
-                {
-                    NavViewItemList[4].SetTitle(AppSettings.Tab5OverridePreference);
-                    NavViewItemList[4].SetIcon(_tab5Icon);
-                }
-            }
-
+            
             CustomOnSwipe();
         }
     
@@ -464,56 +448,56 @@ namespace BitChute
                             NavViewItemList[tab].SetTitle("MyChannel");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            Tab3Frag.RootUrl = Https.URLs._myChannel;
+                            MyChannelFrag.RootUrl = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
                             NavViewItemList[tab].SetTitle("Home");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_home);
-                            Tab3Frag.RootUrl = Https.URLs._homepage;
+                            MyChannelFrag.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             NavViewItemList[tab].SetTitle("Subs");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
-                            Tab3Frag.RootUrl = Https.URLs._subspage;
+                            MyChannelFrag.RootUrl = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             NavViewItemList[tab].SetTitle("Feed");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
-                            Tab3Frag.RootUrl = Https.URLs._homepage;
+                            MyChannelFrag.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "MyChannel")
                         {
                             NavViewItemList[tab].SetTitle("MyChannel");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            Tab3Frag.RootUrl = Https.URLs._myChannel;
+                            MyChannelFrag.RootUrl = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Explore")
                         {
                             NavViewItemList[tab].SetTitle("Explore");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
-                            Tab3Frag.RootUrl = Https.URLs._explore;
+                            MyChannelFrag.RootUrl = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
                             NavViewItemList[tab].SetTitle("Settings");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-                            Tab3Frag.RootUrl = Https.URLs._settings;
+                            MyChannelFrag.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
                             NavViewItemList[tab].SetTitle("WatchL8r");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            Tab3Frag.RootUrl = Https.URLs._watchLater;
+                            MyChannelFrag.RootUrl = Https.URLs._watchLater;
                         }
                         if (changeDetails == "Downloader")
                         {
@@ -522,7 +506,7 @@ namespace BitChute
                              _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
                              
                         }
-                    Tab3Frag.LoadUrlWithDelay(Tab3Frag.RootUrl, 0);
+                    MyChannelFrag.LoadUrlWithDelay(MyChannelFrag.RootUrl, 0);
                     break;
                 case 4:
 
@@ -531,51 +515,51 @@ namespace BitChute
                             NavViewItemList[tab].SetTitle("Settings");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-                            Tab4Frag.RootUrl = Https.URLs._settings;
+                            SettingsFrag.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
                             NavViewItemList[tab].SetTitle("Home");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_home);
-                            Tab4Frag.RootUrl = Https.URLs._homepage;
+                            SettingsFrag.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             NavViewItemList[tab].SetTitle("Subs");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
-                            Tab4Frag.RootUrl = Https.URLs._subspage;
+                            SettingsFrag.RootUrl = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             NavViewItemList[tab].SetTitle("Feed");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
-                            Tab4Frag.RootUrl = Https.URLs._homepage;
+                            SettingsFrag.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             NavViewItemList[tab].SetTitle("Explore");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
-                            Tab4Frag.RootUrl = Https.URLs._explore;
+                            SettingsFrag.RootUrl = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
                             NavViewItemList[tab].SetTitle("Settings");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-                            Tab4Frag.RootUrl = Https.URLs._settings;
+                            SettingsFrag.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
                             NavViewItemList[tab].SetTitle("WatchL8r");
                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                             _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                            Tab4Frag.RootUrl = Https.URLs._watchLater;
+                            SettingsFrag.RootUrl = Https.URLs._watchLater;
                         }
-                        Tab4Frag.LoadUrlWithDelay(Tab4Frag.RootUrl, 0);
+                        SettingsFrag.LoadUrlWithDelay(SettingsFrag.RootUrl, 0);
                     
                     break;
             }
@@ -616,7 +600,7 @@ namespace BitChute
             {
                 ViewPager.CurrentItem = 4;
             }
-            Tab4Frag.SwapSettingView();
+            SettingsFrag.SwapSettingView();
             //Fm4.ShowAppSettingsMenu();
         }
 
@@ -735,19 +719,19 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        Tab0Frag.Wv.LoadUrl(url);
+                        HomePageFrag.Wv.LoadUrl(url);
                         break;
                     case 1:
-                        Tab1Frag.Wv.LoadUrl(url);
+                        SubscriptionFrag.Wv.LoadUrl(url);
                         break;
                     case 2:
-                        Tab2Frag.Wv.LoadUrl(url);
+                        FeedFrag.Wv.LoadUrl(url);
                         break;
                     case 3:
-                        Tab3Frag.Wv.LoadUrl(url);
+                        MyChannelFrag.Wv.LoadUrl(url);
                         break;
                     case 4:
-                        Tab4Frag.Wv.LoadUrl(url);
+                        SettingsFrag.Wv.LoadUrl(url);
                         break;
                 }
             }
@@ -769,41 +753,41 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        if (Tab0Frag.Wv.Url != "https://www.bitchute.com/")
+                        if (HomePageFrag.Wv.Url != "https://www.bitchute.com/")
                         {
                             Fm0.LoadCustomUrl(JavascriptCommands._jsHideTitle);
                             Fm0.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                             Fm0.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
                             Fm0.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
-                        Tab0Frag.ExpandVideoCards(false);
+                        HomePageFrag.ExpandVideoCards(false);
                         break;
                     case 1:
-                        if (Tab1Frag.Wv.Url != "https://www.bitchute.com/")
+                        if (SubscriptionFrag.Wv.Url != "https://www.bitchute.com/")
                         {
-                            Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                            Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                            Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                            Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                         }
-                        Tab1Frag.ExpandVideoCards(false);
+                        SubscriptionFrag.ExpandVideoCards(false);
                         break;
                     case 2:
-                        if (Tab2Frag.Wv.Url != "https://www.bitchute.com/")
+                        if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
                         {
                             Fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
                             Fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                             Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
                             Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
                         }
-                        Tab2Frag.ExpandVideoCards(false);
+                        FeedFrag.ExpandVideoCards(false);
                         break;
                     case 3:
                         Fm3.LoadCustomUrl(JavascriptCommands._jsHideTitle);
                         Fm3.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
                         Fm3.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
                         Fm3.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        Tab3Frag.ExpandVideoCards(false);
+                        MyChannelFrag.ExpandVideoCards(false);
                         break;
                     case 4:
                         Fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
@@ -828,9 +812,9 @@ namespace BitChute
                         Fm0.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
-                        Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
+                        SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
                         //_fm2.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
+                        SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
                         Fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);

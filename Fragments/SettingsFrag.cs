@@ -24,7 +24,7 @@ using MediaCodecHelper;
 
 namespace BitChute.Fragments
 {
-    public class Tab4Frag : Android.Support.V4.App.Fragment
+    public class SettingsFrag : Android.Support.V4.App.Fragment
     {
         string _title;
         string _icon;
@@ -33,12 +33,12 @@ namespace BitChute.Fragments
         public static string RootUrl = "https://www.bitchute.com/settings/";
         public static ExtStickyService StickyService = new ExtStickyService();
         private static CookieCollection cookies = new CookieCollection();
-        public static Tab4Frag Fm4;
+        public static SettingsFrag Fm4;
         public static ServiceWebView Wv;
 
-        public static Tab4Frag NewInstance(string title, string icon)
+        public static SettingsFrag NewInstance(string title, string icon)
         {
-            var fragment = new Tab4Frag();
+            var fragment = new SettingsFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -85,7 +85,7 @@ namespace BitChute.Fragments
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            LoadUrlWithDelay(RootUrl, 3000);
+            //LoadUrlWithDelay(RootUrl, 3000);
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
@@ -640,6 +640,7 @@ namespace BitChute.Fragments
             
             public override void OnPageFinished(WebView view, string url)
             {
+                base.OnPageFinished(view, url);
                 WebViewHelpers.DelayedScrollToTop(TNo);
                 if (AppSettings.SettingsTabOverride)
                 {
@@ -654,7 +655,7 @@ namespace BitChute.Fragments
 
                         if (Wv.Url == "https://www.bitchute.com/")
                         {
-                            Tab4Frag.SelectSubscribedTab(2000);
+                            SettingsFrag.SelectSubscribedTab(2000);
                         }
                     }
                 }
@@ -705,7 +706,6 @@ namespace BitChute.Fragments
                 }
                 catch{  }
                 HideLinkOverflow();
-                base.OnPageFinished(view, url);
             }
         }
     }

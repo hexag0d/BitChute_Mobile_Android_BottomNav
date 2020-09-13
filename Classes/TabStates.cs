@@ -29,7 +29,7 @@ namespace BitChute.Classes
                     if (_videoDownloaderViewEnabled != value)
                     {
                         _videoDownloaderViewEnabled = value;
-                        Tab3Frag.SwapDownloaderView(_videoDownloaderViewEnabled);
+                        MyChannelFrag.SwapDownloaderView(_videoDownloaderViewEnabled);
                     }
                 }
             }

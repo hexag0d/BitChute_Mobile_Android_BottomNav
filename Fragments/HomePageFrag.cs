@@ -10,19 +10,22 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
+using BitChute.Ui;
+using BitChute.Web;
 using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using static Android.Views.View;
-using static BitChute.Fragments.Tab4Frag;
+using static BitChute.Fragments.SettingsFrag;
+using static BitChute.Web.ViewClients;
 using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
     [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
-    public class Tab0Frag : Fragment
+    public class HomePageFrag : Fragment
     {
         string _title;
         string _icon;
@@ -30,34 +33,34 @@ namespace BitChute.Fragments
         protected static View _view;
         public static string RootUrl = "https://www.bitchute.com/";
         public static string LastLoadedUrl = "";
-        readonly ExtWebViewClient Wvc = new ExtWebViewClient();
-        private static ExtNotifications _extNotifications = MainActivity.notifications;
-        private static ExtWebInterface _extWebInterface = MainActivity.ExtWebInterface;
+        Home Wvc = new Home();
         public static int TNo = 0;
-        public static Tab0Frag NewInstance(string title, string icon)
+        public static HomePageFrag NewInstance(string title, string icon)
         {
-            var fragment = new Tab0Frag();
+            var fragment = new HomePageFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
             return fragment;
         }
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             if (Arguments != null)
             {
-                if (Arguments.ContainsKey("title"))
-                    _title = (string)Arguments.Get("title");
+                if (Arguments.ContainsKey("title")) { _title = (string)Arguments.Get("title"); }
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
             Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
             Wv.SetWebViewClient(Wvc);
+            
             if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
@@ -67,29 +70,22 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            //CustomSetTouchListener(AppState.Display.Horizontal);
             return _view;
         }
+
         public static async void SetAutoPlayWithDelay(int delay)
         {
             await Task.Delay(delay);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
         }
+
         public static void SwapView(View v) { }
         public override void OnResume()
         {
             base.OnResume();
         }
-        /// <summary>
-        /// sets the touch listener when device is in landscape mode
-        /// sets it to null when the device goes back into portrait mode
-        /// </summary>
-        /// <param name="landscape"></param>
-        public void CustomSetTouchListener(bool landscape)
-        {
-            if (landscape) { Wv.SetOnTouchListener(new ExtTouchListener()); }
-            else { Wv.SetOnTouchListener(null); }
-        }
+        
+
         public void OnSettingsChanged(List<object> settings)
         {
             Wv.Settings.SetSupportZoom(AppSettings.ZoomControl);
@@ -98,29 +94,7 @@ namespace BitChute.Fragments
             if (AppSettings.ZoomControl) { Wv.Settings.BuiltInZoomControls = true; }
             else { Wv.Settings.BuiltInZoomControls = false; }
         }
-        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
-        {
-            public bool OnTouch(View v, MotionEvent e)
-            {
-                MainActivity.CustomOnTouch();
-                CustomOnTouch();
-                return false;
-            }
-        }
-        private static async void CustomOnTouch()
-        {
-            _scrollY += Wv.ScrollY;
-            if (AppState.Display.Horizontal)
-            {
-                await Task.Delay(500);
-                if (_scrollY >= 4000)
-                {
-                    ExpandVideoCards(false);
-                    _scrollY = 0;
-                }
-            }
-        }
-        private static int _scrollY = 0;
+        
         /// <summary>
         /// tells the webview to GoBack, if it can
         /// </summary>
@@ -129,6 +103,7 @@ namespace BitChute.Fragments
             if (Wv.CanGoBack())
                 Wv.GoBack();
         }
+
         static bool WvRl = true;
         /// <summary>
         /// one press refreshes the page; two presses pops back to the root
@@ -142,6 +117,7 @@ namespace BitChute.Fragments
             }
             else { Wv.LoadUrl(@"https://bitchute.com/"); }
         }
+
         public static bool WvRling = false;
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
@@ -158,6 +134,7 @@ namespace BitChute.Fragments
                 WvRling = false;
             }
         }
+
         static int _autoInt = 0;
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
@@ -169,6 +146,7 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
             Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
         }
+
         public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
         public static async void HidePageTitle()
         {
@@ -182,12 +160,14 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
             }
         }
+
         private static async void HideWatchLabel()
         {
             await Task.Delay(4000);
             if (Wv.Url != "https://www.bitchute.com/")
                 Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
+
         public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
         public static async void ExpandVideoCards(bool delayed)
         {
@@ -198,6 +178,7 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
+
         private static async void ExpandFeaturedChannels(bool delayed)
         {
             if (delayed)
@@ -207,13 +188,11 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsFeaturedRemoveMaxWidth);
             Wv.LoadUrl(JavascriptCommands._jsExpandFeatured);
         }
+
         private static async void ExpandPage(bool delayed)
         {
             if (delayed) { await Task.Delay(3000); }
         }
-
-
-
 
         private class ExtWebViewClient : WebViewClient
         {
@@ -240,6 +219,7 @@ namespace BitChute.Fragments
 
             public override void OnPageFinished(WebView view, string url)
             {
+                //Wv.LoadUrl(JavascriptCommands.AppendToHead(""))
                 //Wv.LoadUrl(JavascriptCommands.ExpandSearchIcon());
                 _autoInt++;
                 if (_autoInt == 1 || AppState.NotificationStartedApp)
@@ -247,8 +227,6 @@ namespace BitChute.Fragments
                     Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
                 WebViewHelpers.DelayedScrollToTop(TNo);
-                Wv.LoadUrl(JavascriptCommands._jsHideBanner);
-                Wv.LoadUrl(JavascriptCommands._jsHideBuff);
                 HideWatchLabel();
                 if (!AppSettings.Tab1FeaturedOn)
                 {

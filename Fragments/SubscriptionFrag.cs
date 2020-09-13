@@ -12,20 +12,21 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static StartServices.Servicesclass.ExtStickyService;
+using BitChute.Web;
 
 namespace BitChute.Fragments
 {
-    public class Tab1Frag : Fragment
+    public class SubscriptionFrag : Fragment
     {
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        readonly ExtWebViewClient _wvc = new ExtWebViewClient();
+        readonly ViewClients.Subs _wvc = new ViewClients.Subs();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         public static int TNo = 1;
-        public static Tab1Frag NewInstance(string title, string icon)
+        public static SubscriptionFrag NewInstance(string title, string icon)
         {
-            var fragment = new Tab1Frag();
+            var fragment = new SubscriptionFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -55,32 +56,10 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            //CustomSetTouchListener(AppState.Display.Horizontal);
+
             return _view;
         }
-        public void CustomSetTouchListener(bool landscape)
-        {
-            if (landscape) { Wv.SetOnTouchListener(new ExtTouchListener()); }
-            else { Wv.SetOnTouchListener(null); }
-        }
-        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
-        {
-            public bool OnTouch(View v, MotionEvent e)
-            {
-                MainActivity.CustomOnTouch();
-                CustomOnTouch();
-                return false;
-            }
-        }
-        private static async void CustomOnTouch()
-        {
-            _scrollY += Wv.ScrollY;
-            if (AppState.Display.Horizontal)
-            {
-                await Task.Delay(500);
-                if (_scrollY >= 4000) { ExpandVideoCards(false); _scrollY = 0; }
-            }
-        }
+        
         public void OnSettingsChanged(List<object> settings)
         {
             if (AppSettings.ZoomControl)
@@ -130,23 +109,13 @@ namespace BitChute.Fragments
         }
 
         public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
-
-        public static async void HidePageTitle(int delay)
-        {
-            await Task.Delay(delay);
-            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
-            {
-                Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-            }
-        }
+        
         public static async void HideWatchTab(int delay)
         {
             if (delay != 0) { await Task.Delay(delay); }
             if (Wv.Url != "https://www.bitchute.com/") { Wv.LoadUrl(JavascriptCommands._jsHideWatchTab); }
         }
+
         public static async void ExpandVideoCards(bool delayed)
         {
             if (delayed)
@@ -165,6 +134,7 @@ namespace BitChute.Fragments
         }
         private class ExtWebViewClient : WebViewClient
         {
+
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
                 if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
@@ -192,7 +162,7 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideBanner);
                 Wv.LoadUrl(JavascriptCommands._jsHideBuff);
                 Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
-                if (AppState.Display.Horizontal) { HidePageTitle(5000); }
+                //if (AppState.Display.Horizontal) { HidePageTitle(5000); }
                 SetReload();
                 HideLinkOverflow();
                 HideWatchTab(5000);

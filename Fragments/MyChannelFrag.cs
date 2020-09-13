@@ -14,7 +14,7 @@ using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Fragments
 {
-    public class Tab3Frag : Fragment
+    public class MyChannelFrag : Fragment
     {
         string _title;
         string _icon;
@@ -22,9 +22,9 @@ namespace BitChute.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
         public static string RootUrl = "https://www.bitchute.com/profile";
         public static int TNo = 3;
-        public static Tab3Frag NewInstance(string title, string icon)
+        public static MyChannelFrag NewInstance(string title, string icon)
         {
-            var fragment = new Tab3Frag();
+            var fragment = new MyChannelFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -93,7 +93,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             //CustomSetTouchListener(AppState.Display.Horizontal);
-            LoadUrlWithDelay(RootUrl, 4000);
+            //LoadUrlWithDelay(RootUrl, 4000);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
 

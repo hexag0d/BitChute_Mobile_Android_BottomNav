@@ -97,13 +97,14 @@
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\UriDecoder.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
+    <Compile Include="Css\CssHelper.cs" />
     <Compile Include="Views\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />
-    <Compile Include="Fragments\Tab0Frag.cs" />
-    <Compile Include="Fragments\Tab4Frag.cs" />
-    <Compile Include="Fragments\Tab3Frag.cs" />
-    <Compile Include="Fragments\Tab2Frag.cs" />
-    <Compile Include="Fragments\Tab1Frag.cs" />
+    <Compile Include="Fragments\HomePageFrag.cs" />
+    <Compile Include="Fragments\SettingsFrag.cs" />
+    <Compile Include="Fragments\MyChannelFrag.cs" />
+    <Compile Include="Fragments\FeedFrag.cs" />
+    <Compile Include="Fragments\SubscriptionFrag.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\CreatorModel.cs" />
     <Compile Include="Models\VideoModel.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="VideoEncoding\MuxerEncoding.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
+    <Compile Include="Web\StyleInjectionWebViewClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -350,6 +352,12 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Css\homepage.css" />
+    <Content Include="Css\main.css" />
+    <Content Include="Css\main.html" />
+    <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

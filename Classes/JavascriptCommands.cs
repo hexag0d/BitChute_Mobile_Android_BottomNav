@@ -1,4 +1,5 @@
-﻿using static StartServices.Servicesclass.ExtStickyService;
+﻿using Android.Webkit;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BitChute.Classes
 {
@@ -275,6 +276,33 @@ namespace BitChute.Classes
         public static string RemoveDisqusIframeTwo = "javascript:(function() { "
             +  @"})()";
 
+        public static string AppendToHead (string text)
+        {
+            return @"javascript:(function() { " + $"$('head').append('{text}');"
+            + @"})()";
+        }
+
+        public static string GetInjectable(string js)
+        {
+            return @"javascript:(function(){" + js + @"})()";
+        }
+
+        public class Display
+        {
+            public static string GetForAllTabs()
+            {
+                return RemoveTooltipAttr + RemoveAdvertHeight;
+            }
+
+            public static string RemoveTooltipAttr = @"document.getElementById('video-like').removeAttribute('data-original-title');"
+                    + @"document.getElementById('video-dislike').removeAttribute('data-original-title');";
+
+            public static string ShowTabScrollInner = @"$('.tab-scroll-inner')[0].style.height='50px';";
+
+            public static string RemoveAdvertHeight = @"$('.advert-container-inner')[0].style.height='';";
+        }
+
+
         //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
         //     + @"$('#disqus_thread').children('iframe')[0].display = none;" + @"})()";
 
@@ -286,9 +314,9 @@ namespace BitChute.Classes
         //public static string RemoveDisqusIframeTwo = "javascript:(function() { "
         //    + @"if ($('#disqus_thread').children('iframe').length > 2){ $('#disqus_thread').children('iframe')[2].remove(); }" + @"})()";
 
-            /// <summary>
-            /// javascript/jquery commands that add observable callbacks into the webview
-            /// </summary>
+        /// <summary>
+        /// javascript/jquery commands that add observable callbacks into the webview
+        /// </summary>
         public class CallBackInjection
         {
             //public static string AddFullScreenCallback = @"javascript:(" + @"function() { " +

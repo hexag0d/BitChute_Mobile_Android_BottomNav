@@ -66,14 +66,9 @@ namespace BitChute.Classes
                 HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
                 try
                 {
-                    //Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
-                    //var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-                    var check = CookieHeader;
+
                     using (HttpClient _client = new HttpClient(handler))
                     {
-                        _client.DefaultRequestHeaders.Add("Cookie", check);
-                        //_notificationHttpRequestInProgress = true;
-
                         var getRequest = _client.GetAsync(url).Result;
                         var resultContent = getRequest.Content.ReadAsStringAsync().Result;
                         _htmlCode = resultContent;

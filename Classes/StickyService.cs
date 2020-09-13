@@ -14,7 +14,7 @@ using BitChute.Fragments;
 using Android.Net.Wifi;
 using Android.Media;
 using static BitChute.Models.VideoModel;
-using static BitChute.Fragments.Tab4Frag;
+using static BitChute.Fragments.SettingsFrag;
 
 
 namespace StartServices.Servicesclass
@@ -55,7 +55,7 @@ namespace StartServices.Servicesclass
 
         public static bool NotificationsHaveBeenSent = false;
         private static ExtNotifications _extNotifications = new ExtNotifications();
-        private static Tab4Frag _fm5;
+        private static SettingsFrag _fm5;
         private static ActivityManager.RunningAppProcessInfo _dProcess = new ActivityManager.RunningAppProcessInfo();
         private static int _startForegroundNotificationId = 6666;
 
@@ -197,11 +197,11 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: Tab0Frag.WebViewGoBack(); break;
-                    case 1: Tab1Frag.WebViewGoBack(); break;
-                    case 2: Tab2Frag.WebViewGoBack(); break;
-                    case 3: Tab3Frag.WebViewGoBack(); break;
-                    case 4: Tab4Frag.WebViewGoBack(); break;
+                    case 0: HomePageFrag.WebViewGoBack(); break;
+                    case 1: SubscriptionFrag.WebViewGoBack(); break;
+                    case 2: FeedFrag.WebViewGoBack(); break;
+                    case 3: MyChannelFrag.WebViewGoBack(); break;
+                    case 4: SettingsFrag.WebViewGoBack(); break;
                 }
             }
             else
@@ -218,11 +218,11 @@ namespace StartServices.Servicesclass
         {
             switch (tab)
             {
-                case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 0: HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 1: SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 2: FeedFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 3: MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
+                case 4: SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
             }
         }
 
@@ -260,7 +260,7 @@ namespace StartServices.Servicesclass
             }
 
             //StopForeground(false);
-            //_paused = true;
+            _paused = true;
         }
 
         public static void Stop()
@@ -307,32 +307,22 @@ namespace StartServices.Servicesclass
             string url = "";
             if (intent != null)
             {
-                try
-                {
-                    url = intent.Extras.GetString("URL");
-                }
-                catch
-                {   }
+                try { url = intent.Extras.GetString("URL"); }
+                catch {   }
             }
-            if (url == "" || url == null)
-                return;
-
+            if (url == "" || url == null) { return; }
             try
             {
                 switch (MainActivity.ViewPager.CurrentItem)
                 {
-                    case 0: Tab0Frag.Wv.LoadUrl(url); break;
-                    case 1: Tab1Frag.Wv.LoadUrl(url); break;
-                    case 2: Tab2Frag.Wv.LoadUrl(url); break;
-                    case 3: Tab3Frag.Wv.LoadUrl(url);
-                        break;
-                    case 4:
-                        Tab4Frag.Wv.LoadUrl(url);
-                        break;
+                    case 0: HomePageFrag.Wv.LoadUrl(url); break;
+                    case 1: SubscriptionFrag.Wv.LoadUrl(url); break;
+                    case 2: FeedFrag.Wv.LoadUrl(url); break;
+                    case 3: MyChannelFrag.Wv.LoadUrl(url); break;
+                    case 4: SettingsFrag.Wv.LoadUrl(url); break;
                 }
             }
-            catch
-            {   }
+            catch {   }
         }
 
         /// <summary>
@@ -385,11 +375,11 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: Tab0Frag.Wv.LoadUrl(url); break;
-                    case 1: Tab1Frag.Wv.LoadUrl(url); break;
-                    case 2: Tab2Frag.Wv.LoadUrl(url); break;
-                    case 3: Tab3Frag.Wv.LoadUrl(url); break;
-                    case 4: Tab4Frag.Wv.LoadUrl(url); break;
+                    case 0: HomePageFrag.Wv.LoadUrl(url); break;
+                    case 1: SubscriptionFrag.Wv.LoadUrl(url); break;
+                    case 2: FeedFrag.Wv.LoadUrl(url); break;
+                    case 3: MyChannelFrag.Wv.LoadUrl(url); break;
+                    case 4: SettingsFrag.Wv.LoadUrl(url); break;
                 }
             }
             else
@@ -677,19 +667,19 @@ namespace StartServices.Servicesclass
             {
                 switch (tab)
                 {
-                    case 0: Tab0Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 0: HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 1: Tab1Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 1: SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 2: Tab2Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 2: FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 3: Tab3Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 3: MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
-                    case 4: Tab4Frag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
+                    case 4: SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
                         AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
                         break;
                 }

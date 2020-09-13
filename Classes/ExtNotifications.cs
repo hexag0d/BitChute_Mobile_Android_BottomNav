@@ -19,7 +19,7 @@ namespace BitChute.Classes
     {
         //internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
-        public static Tab4Frag Fm4 = new Tab4Frag();
+        public static SettingsFrag Fm4 = new SettingsFrag();
 
         public static List<string> NotificationTextList = new List<string>();
         public static List<string> NotificationTypes = new List<string>();
@@ -288,7 +288,7 @@ namespace BitChute.Classes
                 {
                     if (Fm4 == null)
                     {
-                        Fm4 = Tab4Frag.Fm4;
+                        Fm4 = SettingsFrag.Fm4;
                     }
                      
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -364,7 +364,7 @@ namespace BitChute.Classes
                         }
                         CustomNoteList.Reverse();
                     }
-                    Fm4 = Tab4Frag.Fm4;
+                    Fm4 = SettingsFrag.Fm4;
                 }
                 catch (Exception ex)
                 {

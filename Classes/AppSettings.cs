@@ -121,6 +121,8 @@ namespace BitChute.Classes
 
         public static int ScrollToTopDelay = 30;
 
+        public static int HidePageTitleDelay = 5000;
+
         /// <summary>
         /// this int controls the delay in ms of notifications being 
         /// parsed and then sent out.  It should be set to a high int

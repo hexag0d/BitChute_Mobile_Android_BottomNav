@@ -25,9 +25,10 @@ using BitChute.VideoEncoding;
 using static Android.Media.MediaCodec;
 using BitChute.Fragments;
 using BitChute.Classes;
+using Android.App;
 
 namespace MediaCodecHelper {
-
+    [Service]
 	public class FileToMp4  {
 
 		private Context _context;
@@ -323,11 +324,9 @@ namespace MediaCodecHelper {
 
         public void StartAudioEncoder(long calculatedOffset)
         {
-           
-
-                MuxerEncoding mxe = new MuxerEncoding();
-                mxe.Progress += Tab4Frag.OnMuxerProgress;
-                mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, LatestInputPath, mMuxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset);
+            MuxerEncoding mxe = new MuxerEncoding();
+            mxe.Progress += SettingsFrag.OnMuxerProgress;
+            mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, LatestInputPath, mMuxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset);
         }
 
         private static long _firstKnownBuffer;

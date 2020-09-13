@@ -1,0 +1,10 @@
+﻿.channel-card {
+    max-width: none;
+}
+
+.mg-responsive hidden-md hidden-lg lazyloaded {
+    max-width: none;
+    width:100%;
+}
+
+@media(max-width:3000px){.subscription-container{max-width: none}}
