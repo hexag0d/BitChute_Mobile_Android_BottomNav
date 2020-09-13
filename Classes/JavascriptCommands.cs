@@ -300,6 +300,8 @@ namespace BitChute.Classes
             public static string ShowTabScrollInner = @"$('.tab-scroll-inner')[0].style.height='50px';";
 
             public static string RemoveAdvertHeight = @"$('.advert-container-inner')[0].style.height='';";
+
+            public static string SelectSubscribedTab = @"$(" + "\"" + @"a[href*='#listing-subscribed']" + "\"" + @").click();"; 
         }
 
 

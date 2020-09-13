@@ -104,7 +104,7 @@ namespace BitChute.Fragments
                 Wv.GoBack();
         }
 
-        static bool WvRl = true;
+        public static bool WvRl = true;
         /// <summary>
         /// one press refreshes the page; two presses pops back to the root
         /// </summary>

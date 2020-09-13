@@ -156,28 +156,32 @@ namespace BitChute.Classes
         /// Loads the stored android preferences for app
         /// and puts them into the static AppSettings class
         /// </summary>
-        public static async void LoadAllPrefsFromSettings()
+        public static async Task<bool> LoadAllPrefsFromSettings()
         {
-            AppSettingsLoadingFromAndroid = true;
-            GetAppSharedPrefs();
-            Notifying = Prefs.GetBoolean("notificationson", true);
-            Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
-            Tab5OverridePreference = Prefs.GetString("tab5overridestring", "Settings");
-            ZoomControl = Prefs.GetBoolean("zoomcontrol", false);
-            FanMode = Prefs.GetBoolean("fanmode", false);
-            Tab3Hide = Prefs.GetBoolean("tab3hide", true);
-            Tab1FeaturedOn = Prefs.GetBoolean("t1featured", true);
-            SettingsTabOverride = Prefs.GetBoolean("settingstaboverride", false);
-            HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
-            HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
-            DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
-            AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
-            BackgroundKey = Prefs.GetString("backgroundkey", "feed");
-            SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
-            SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+            try
+            {
+                AppSettingsLoadingFromAndroid = true;
+                GetAppSharedPrefs();
+                Notifying = Prefs.GetBoolean("notificationson", true);
+                Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
+                Tab5OverridePreference = Prefs.GetString("tab5overridestring", "Settings");
+                ZoomControl = Prefs.GetBoolean("zoomcontrol", false);
+                FanMode = Prefs.GetBoolean("fanmode", false);
+                Tab3Hide = Prefs.GetBoolean("tab3hide", true);
+                Tab1FeaturedOn = Prefs.GetBoolean("t1featured", true);
+                SettingsTabOverride = Prefs.GetBoolean("settingstaboverride", false);
+                HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
+                HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
+                DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
+                AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
+                BackgroundKey = Prefs.GetString("backgroundkey", "feed");
+                SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
+                SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+            }
+            catch { return false; }
             await Task.Delay(2000);
             AppSettingsLoadingFromAndroid = false;
-            return;
+            return true;
         }
         /// <summary>
         /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"

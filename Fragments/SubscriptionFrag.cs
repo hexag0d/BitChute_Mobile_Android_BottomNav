@@ -24,6 +24,7 @@ namespace BitChute.Fragments
         readonly ViewClients.Subs _wvc = new ViewClients.Subs();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         public static int TNo = 1;
+
         public static SubscriptionFrag NewInstance(string title, string icon)
         {
             var fragment = new SubscriptionFrag();
@@ -32,6 +33,7 @@ namespace BitChute.Fragments
             fragment.Arguments.PutString("icon", icon);
             return fragment;
         }
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,6 +45,7 @@ namespace BitChute.Fragments
                     _icon = (string)Arguments.Get("icon");
             }
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.Tab1FragLayout, container, false);
@@ -74,14 +77,15 @@ namespace BitChute.Fragments
         {
             if (Wv.CanGoBack()) { Wv.GoBack(); }
         }
-        static bool _wvRl = true;
+        public static bool WvRl = true;
         public void Pop2Root()
         {
-            if (_wvRl) { Wv.Reload(); _wvRl = false; }
+            if (WvRl) { Wv.Reload(); WvRl = false; }
             else { Wv.LoadUrl(RootUrl); }
         }
+
         public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
-        public static bool _wvRling = false;
+        public static bool WvRling = false;
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
@@ -89,14 +93,15 @@ namespace BitChute.Fragments
         /// </summary>
         public static async void SetReload()
         {
-            if (!_wvRling)
+            if (!WvRling)
             {
-                _wvRling = true;
+                WvRling = true;
                 await Task.Delay(AppSettings.TabDelay);
-                _wvRl = true;
-                _wvRling = false;
+                WvRl = true;
+                WvRling = false;
             }
         }
+
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
         /// </summary>
@@ -126,12 +131,14 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
+
         public static void StartVideo() { Wv.LoadUrl(JavascriptCommands._jsPlayVideo); }
         public static string GetHtmlText()
         {
             string innerHtml = "";
             return innerHtml;
         }
+
         private class ExtWebViewClient : WebViewClient
         {
 

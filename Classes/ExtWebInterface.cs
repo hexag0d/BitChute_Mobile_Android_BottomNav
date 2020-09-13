@@ -10,6 +10,7 @@ namespace BitChute.Classes
         public static System.Net.CookieContainer CookieCon = new CookieContainer();
         public static string NotificationRawText;
         public static string HtmlCode = "";
+        public static CookieCollection Cookies = new CookieCollection();
 
         public static string CookieHeader;
 

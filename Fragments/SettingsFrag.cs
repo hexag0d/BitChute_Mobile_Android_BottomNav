@@ -31,9 +31,7 @@ namespace BitChute.Fragments
         public static int TNo = 4;
         public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
-        public static ExtStickyService StickyService = new ExtStickyService();
         private static CookieCollection cookies = new CookieCollection();
-        public static SettingsFrag Fm4;
         public static ServiceWebView Wv;
 
         public static SettingsFrag NewInstance(string title, string icon)
@@ -42,7 +40,6 @@ namespace BitChute.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
-            Fm4 = fragment;
             return fragment;
         }
 
@@ -70,7 +67,6 @@ namespace BitChute.Fragments
         
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            Fm4 = this;
             FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
             WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
             InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
@@ -80,12 +76,12 @@ namespace BitChute.Fragments
             ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
             Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
             if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
-            Wv.SetWebViewClient(new ExtWebViewClient());
+            Wv.SetWebViewClient(new Web.ViewClients.Settings());
             Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            //LoadUrlWithDelay(RootUrl, 3000);
+            LoadUrlWithDelay(RootUrl, 2500);
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
@@ -251,7 +247,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
             }
             WebsiteSettingsVisible = !WebsiteSettingsVisible;
-            if (_firstTimeLoad) { Fm4.SetCheckedState(); _firstTimeLoad = false; }
+            if (_firstTimeLoad) { MainActivity.Fm4.SetCheckedState(); _firstTimeLoad = false; }
         }
 
         public static bool EncoderViewIsVisible = false;
@@ -391,11 +387,6 @@ namespace BitChute.Fragments
             }
         }
 
-        public void CustomLoadUrl(string url)
-        {
-            Wv.LoadUrl(url);
-        }
-
         public void OnSettingsChanged(List<object> settings)
         {
             if (AppSettings.ZoomControl)
@@ -512,13 +503,13 @@ namespace BitChute.Fragments
         static bool _firstTimeLoad = true;
 
         public static void WebViewGoBack() {if (Wv.CanGoBack()) Wv.GoBack();}
-        static bool _wvRl = true;
+        public static bool WvRl = true;
         public void Pop2Root()
         {
-            if(_wvRl){try{Wv.Reload();_wvRl=false;}catch{}}
+            if(WvRl){try{Wv.Reload();WvRl=false;}catch{}}
             else { Wv.LoadUrl(RootUrl); }
         }
-        public static bool _wvRling = false;
+        public static bool WvRling = false;
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
@@ -526,13 +517,13 @@ namespace BitChute.Fragments
         /// </summary>
         public static async void SetReload()
         {
-            if (!_wvRling)
+            if (!WvRling)
             {
-                _wvRling = true;
+                WvRling = true;
                 await Task.Delay(AppSettings.TabDelay);
-                _wvRl = true;
+                WvRl = true;
                 await Task.Delay(6);
-                _wvRling = false;
+                WvRling = false;
             }
         }
 
@@ -600,113 +591,6 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
         }
 
-        public void LoadCustomUrl(string url){ Wv.LoadUrl(url); }
-
-        public static async void SelectSubscribedTab(int delay)
-        {
-            await Task.Delay(delay);
-            Wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
-        }
-
         public static bool UserRequestedVideoPreProcessing = false;
-
-        private class ExtWebViewClient : WebViewClient
-        {
-            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
-            {
-                if (request.Url.ToString().StartsWith("https://www.bitchute.com/myupload"))
-                {
-                    //WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-                    //return w;
-                }
-                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
-                {
-                    if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    { 
-                        return base.ShouldInterceptRequest(view, request);
-                    }
-                    if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    {
-                        SearchOverride.SearchOverrideInProg = true;
-                        MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
-                        var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
-                        SearchOverride.UI.WvSearchOverride(view, ro);
-                        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-                        return w;
-                    }
-                }
-                return base.ShouldInterceptRequest(view, request);
-            }
-            
-            public override void OnPageFinished(WebView view, string url)
-            {
-                base.OnPageFinished(view, url);
-                WebViewHelpers.DelayedScrollToTop(TNo);
-                if (AppSettings.SettingsTabOverride)
-                {
-                    //if (AppSettings._tab5OverridePreference != "Settings") // these js commands are disabled because settings tab uses the banner
-                    //{
-                    ////    _wv.LoadUrl(JavascriptCommands._jsHideBanner);
-                    ////    _wv.LoadUrl(JavascriptCommands._jsHideBuff);
-                    //}
-                    if (AppSettings.Tab5OverridePreference == "Feed" && AppSettings.SettingsTabOverride)
-                    {
-                        Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-
-                        if (Wv.Url == "https://www.bitchute.com/")
-                        {
-                            SettingsFrag.SelectSubscribedTab(2000);
-                        }
-                    }
-                }
-
-                //if (AppState.Display._horizontal)
-                //{
-                //    _wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                //    _wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                //}
-
-                Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-
-                SetReload();
-
-                try
-                {
-                    ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
-
-                    Https.CookieString = ExtWebInterface.CookieHeader.ToString();
-                    var cookiePairs = ExtWebInterface.CookieHeader.Split('&');
-
-                    Https.CookieString = "";
-
-                    foreach (var cookiePair in cookiePairs)
-                    {
-                        var cookiePieces = cookiePair.Split('=');
-                        if (cookiePieces[0].Contains(":"))
-                            cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
-                        cookies.Add(new Cookie
-                        {
-                            Name = cookiePieces[0],
-                            Value = cookiePieces[1]
-                        });
-                    }
-
-                    foreach (Cookie c in cookies)
-                    {
-                        c.Domain = "https://bitchute.com/";
-                        if (Https.CookieString == "")
-                        {
-                            Https.CookieString = c.ToString();
-                        }
-                        else
-                        {
-                            Https.CookieString += c.ToString();
-                        }
-                    }
-                }
-                catch{  }
-                HideLinkOverflow();
-            }
-        }
     }
 }

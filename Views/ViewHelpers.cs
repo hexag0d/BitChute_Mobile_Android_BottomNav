@@ -18,6 +18,7 @@ namespace BitChute.Classes
         public class Main
         {
             public static FloatingActionButton DownloadFAB { get; set; }
+            public static int FabHeight { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutBottom { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutOrig { get; set; }
             //public static int LayoutAbove { get; set; }

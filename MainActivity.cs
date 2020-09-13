@@ -91,7 +91,6 @@ namespace BitChute
         public static MainActivity Main;
         public static Bundle _bundle;
         
-        public static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -102,7 +101,6 @@ namespace BitChute
         public static Window _window;
         public static View MainView;
         
-        public static ExtStickyService _service = new ExtStickyService();
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
@@ -110,8 +108,7 @@ namespace BitChute
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            AppSettings.LoadAllPrefsFromSettings();
-            CssHelper.GetCommonCss(true);
+            StartUp();
             _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
@@ -143,13 +140,11 @@ namespace BitChute
             }
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
             InitializeTabs();
             ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             ViewPager.PageSelected += ViewPager_PageSelected;
             ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-            //can probably eventually set this back to Resource.Id.bottom_navigation but xamarin is whacked out atm so using the int
             NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(NavigationView);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
@@ -157,6 +152,7 @@ namespace BitChute
             CreateNotificationChannel();
             ExtStickyService.StartNotificationLoop(90000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
+            ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
             //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
             //mFab.setRippleColor(your color in int);
             if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
@@ -166,6 +162,12 @@ namespace BitChute
 
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
             //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
+        }
+
+        public static async void StartUp()
+        {
+            AppSettings.LoadAllPrefsFromSettings();
+            CssHelper.GetCommonCss(true);
         }
 
         public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
@@ -185,25 +187,24 @@ namespace BitChute
             };
         }
 
-        internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
        // public static bool NavHidden = false;
         public static bool NavTimeout = true;
         public static int NavTimer = 0;
 
         public async void CustomOnSwipe()
         {
-            await Task.Delay(1);
 
-            if (NavTimer != 0)
-                NavTimer = 0;
+               if (NavTimer != 0)
+                   NavTimer = 0;
 
-            if (!NavTimeout || AppState.Display.Horizontal)
-            {
-                NavigationView.Visibility = ViewStates.Visible;
-                ViewHelpers.Main.NavHidden = false;
-                NavBarRemove();
-                NavTimeout = true;
-            }
+               if (!NavTimeout || AppState.Display.Horizontal)
+               {
+                   NavigationView.Visibility = ViewStates.Visible;
+                   ViewHelpers.Main.NavHidden = false;
+                   NavBarRemove();
+                   NavTimeout = true;
+               }
+
         }
 
         /// <summary>
@@ -380,33 +381,33 @@ namespace BitChute
             {
                 System.Console.WriteLine((ex.InnerException ?? ex).Message);
             }
-            try
-            {
-                if (!AppSettings.FanMode)
-                {
-                    _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                }
-                else
-                {
-                    NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
-                    NavViewItemList[3].SetIcon(GetTabIconFromString(AppSettings.Tab4OverridePreference));
-                    _tab4Icon = GetTabIconFromString(AppSettings.Tab4OverridePreference);
-                }
-                if (!AppSettings.SettingsTabOverride)
-                {
-                    _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-                }
-                else
-                {
-                    NavViewItemList[4].SetTitle(AppSettings.Tab5OverridePreference);
-                    NavViewItemList[4].SetIcon(GetTabIconFromString(AppSettings.Tab5OverridePreference));
-                    _tab5Icon = GetTabIconFromString(AppSettings.Tab5OverridePreference);
-                }
-            }
-            catch
-            {
+            //try @TODO convert the fragment array instead of setting title and icon
+            //{
+            //    if (!AppSettings.FanMode)
+            //    {
+            //        _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+            //    }
+            //    else
+            //    {
+            //        NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
+            //        NavViewItemList[3].SetIcon(GetTabIconFromString(AppSettings.Tab4OverridePreference));
+            //        _tab4Icon = GetTabIconFromString(AppSettings.Tab4OverridePreference);
+            //    }
+            //    if (!AppSettings.SettingsTabOverride)
+            //    {
+            //        _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
+            //    }
+            //    else
+            //    {
+            //        NavViewItemList[4].SetTitle(AppSettings.Tab5OverridePreference);
+            //        NavViewItemList[4].SetIcon(GetTabIconFromString(AppSettings.Tab5OverridePreference));
+            //        _tab5Icon = GetTabIconFromString(AppSettings.Tab5OverridePreference);
+            //    }
+            //}
+            //catch
+            //{
 
-            }
+            //}
         }
 
         /// <summary>
@@ -573,6 +574,9 @@ namespace BitChute
                 if (AppSettings.DlFabShowSetting == "onpress")
                 {
                     ViewHelpers.Main.DownloadFAB.Show();
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                    ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
+                    //ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
                 }
             }
             else
@@ -580,7 +584,10 @@ namespace BitChute
                 TabStates.Tab3.VideoDownloaderViewEnabled = false;
                 if (AppSettings.DlFabShowSetting == "onpress")
                 {
+                    //ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
+                    //ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                     ViewHelpers.Main.DownloadFAB.Hide();
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
                 }
             }
             if (ViewPager.CurrentItem != 3)
@@ -627,8 +634,6 @@ namespace BitChute
         public static int ServiceTimer = 0;
         public static int BackgroundTimeoutInt = 0;
         public static int BackgroundLoopMsDelayInt = 3600;
-        public static ExtWebInterface ExtWebInterface = new ExtWebInterface();
-        public static ExtNotifications ExtNotifications = new ExtNotifications();
         
         void CreateNotificationChannel()
         {
@@ -783,15 +788,14 @@ namespace BitChute
                         FeedFrag.ExpandVideoCards(false);
                         break;
                     case 3:
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
                         MyChannelFrag.ExpandVideoCards(false);
                         break;
                     case 4:
-                        Fm4.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                        //Fm4.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
                         break;
                 }
                 if (AppSettings.DlFabShowSetting != "always")
@@ -817,19 +821,19 @@ namespace BitChute
                         SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
-                        Fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                        FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
                         //_fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        Fm2.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
+                        FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        Fm3.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowWatchTab);
+                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 4:
-                        Fm4.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        Fm4.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
-                        Fm4.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
+                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
+                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowWatchTab);
+                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                 }
                 if (AppSettings.DlFabShowSetting != "never" ||
@@ -896,7 +900,7 @@ namespace BitChute
             try  {  ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
             catch { }
         }
-
+        
         protected override void OnResume()
         {
             AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
@@ -904,17 +908,31 @@ namespace BitChute
             {
                 if (AppSettings.DlFabShowSetting != "always")
                 {
+                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                     ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                    ViewHelpers.Main.DownloadFAB.Hide();
                 }
-                else { ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible; }
+                else
+                {
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
+                    ViewHelpers.Main.DownloadFAB.Show();
+                }
             }
             else if (TabStates.Tab3.VideoDownloaderViewEnabled)
             {
                 if (AppSettings.DlFabShowSetting != "never")
                 {
                     ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                    ViewHelpers.Main.DownloadFAB.Show();
+                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
                 }
-                else { ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone; }
+                else
+                {
+                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                    ViewHelpers.Main.DownloadFAB.Hide();
+                }
             }
             try {
                 IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);

@@ -30,15 +30,37 @@ namespace BitChute.Ui
             return new Android.Webkit.WebResourceResponse("text/css", "UTF-8", stream);
         }
 
-        public async static Task<string> GetCommonCss(bool process, bool setNext = false)
+        public static async Task<string> GetCommonCss(bool process, bool setNext = true)
         {
             string c = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/static/v123/css/common.css");
             if (process) { c = await GetOverrideCss(c); }
-            if (setNext) { }
+            if (setNext) { GetFeedCommonCss(); GetMyChannelCommonCss(); GetSettingsCommonCss(); }
             return c;
         }
 
+        public static async Task<string> GetFeedCommonCss(string bCss = null)
+        {
+            if (bCss == null) { bCss = CommonCss; }
+            Task<string> fct = Task.FromResult<string>(bCss.Replace(Strings.CarouselOrg(true), Strings.CarouselNew));
+            CommonCssFeed = await fct; return CommonCssFeed;
+        }
 
+        public static async Task<string> GetMyChannelCommonCss(string bCss = null)
+        {
+            if (bCss == null) { bCss = CommonCss; }
+            Task<string> fct = Task.FromResult<string>(bCss.Replace(Strings.TabScrollInnerNew, Strings.TabScrollInnerOrg));
+            CommonCssMyChannel = await fct; return CommonCssMyChannel;
+        }
+
+        public static async Task<string> GetSettingsCommonCss(string bCss = null)
+        {
+            if (bCss == null) { bCss = CommonCss; }
+            Task<string> fct = Task.FromResult<string>(bCss.Replace(Strings.TabScrollInnerNew, Strings.TabScrollInnerOrg)
+                .Replace(Strings.TopNavBuffNew, Strings.TopNavBuffOrg)
+                .Replace(Strings.TopNavNew, Strings.TopNavOrg));
+            CommonCssSettings = await fct; return CommonCssSettings;
+        }
+        
         public static async Task<string> GetOverrideCss(string css, string tabType = null)
         {
             Task<string> gC;
@@ -47,51 +69,40 @@ namespace BitChute.Ui
                 case null:
                     gC = Task.FromResult<string>(css.Replace("#nav-top-menu{", "#nav-top-menu{display:none;")
                         .Replace("#nav-menu-buffer{", "#nav-menu-buffer{display:none;")
-                        .Replace(Strings.TabScrollInner, Strings.TabScrollInnerNew)
+                        .Replace(Strings.TabScrollInnerOrg, Strings.TabScrollInnerNew)
                         .Replace(Strings.OriginalVideoCard, Strings.VideoCardLazy + Strings.NewVideoCard)
                         .Replace(Strings.ChannelCardOriginal, Strings.ChannelCardNew)
                         .Replace(Strings.SubContainerOrg, Strings.SubContainerNew)
-                        .Replace(Strings.ChannelBannerOrg, Strings.ChannelBannerNew)
-                        .Replace(Strings.ChannelBannerImgOrg, Strings.ChannelBannerImgNew) +
-                        Strings.LinkOverflowHide + Strings.ExpandAd + Strings.ExpandFeatured + Strings.HideFeatured(AppSettings.Tab1FeaturedOn)
-                        );
-
+                        //.Replace(Strings.ChannelBannerOrg, Strings.ChannelBannerNew)
+                        //.Replace(Strings.ChannelBannerImgOrg, Strings.ChannelBannerImgNew)
+                        //.Replace(Strings.CarouselOrg(!AppSettings.Tab1FeaturedOn), Strings.CarouselNew)
+                        + Strings.LinkOverflowHide + Strings.ExpandAd + Strings.ExpandFeatured)
+                        ;
                     CommonCss = await gC;
                     break;
-                    
             }
             return CommonCss;
-        }
-        
-        public static string GetEmbeddedCssHtml(string css)
-        {
-            return AddStyleTag(css);
-        }
-
-        public static string AddStyleTag(string css)
-        {
-            return $"<style>{css}</style>";
-        }
-
-        public static string GetStyles(string type = "general")
-        {
-            return AddStyleTag(Strings.HideTopNav + Strings.ExpandFeatured);
         }
 
         public class Strings
         {
-            public static string HideTopNav = @"#nav-top-menu{display:none;}#nav-menu-buffer{display:none;}";
+            public static string TopNavNew = @"#nav-top-menu{display:none;";
+            public static string TopNavOrg = @"#nav-top-menu{";
+            public static string TopNavBuffNew = @"#nav-menu-buffer{display:none;";
+            public static string TopNavBuffOrg = @"#nav-menu-buffer{";
             public static string ExpandFeatured = @".img-responsive.hidden-md.hidden-lg.lazyloaded{width:100%}";
             public static string OriginalVideoCard = @".video-card{position:relative;display:inline-block;text-align:left;width:100%;max-width:320px;margin:10px auto;overflow:hidden;-webkit-backface-visibility:hidden}";
             public static string NewVideoCard = @".video-card{position:relative;display:inline-block;text-align:left;width:100%;margin:10px auto;overflow:hidden;-webkit-backface-visibility:hidden}";
             public static string VideoCardLazy = @".video-card .lazyloaded{box-sizing:border-box;width:100%}";
-            public static string TabScrollInner = @".tab-scroll-inner{position:relative;height:50px;overflow:hidden}";
+            public static string TabScrollInnerOrg = @".tab-scroll-inner{position:relative;height:50px;overflow:hidden}";
             public static string TabScrollInnerNew = @".tab-scroll-inner{position:relative;overflow:hidden}";
             public static string LinkOverflowHide = @"#video-description{overflow:hidden}";
             public static string ExpandAd = @".img-responsive.lazyloaded{width:100%}";
             public static string ChannelCardOriginal = @".channel-card{position:relative;background-color:#fff;display:inline-block;width:100%;max-width:570px;overflow:hidden}";
             public static string ChannelCardNew = @".channel-card{position:relative;background-color:#fff;display:inline-block;width:100%;overflow:hidden}";
-            public static string HideFeatured(bool t1f) { if (t1f) { return ""; } else { return @"#carousel{display:none}"; } }
+            public static string CarouselOrg(bool hide = false) { if (hide) { return @"#carousel{"; } else { return ""; } }
+            public static string CarouselNew = @"#carousel{display:none;";
+            public static string ShowFeatured = @"#carousel{";
             public static string SubContainerOrg = @".subscription-container{display:inline-block;text-align:left;width:100%;max-width:400px;margin:10px 0 20px;padding:90px 0 0 10px;position:relative;overflow:hidden}";
             public static string SubContainerNew = @".subscription-container{display:inline-block;text-align:left;width:100%;margin:10px 0 20px;padding:90px 0 0 10px;position:relative;overflow:hidden}";
             public static string ChannelBannerOrg = @".channel-banner .image-container{position:absolute;top:0;left:0;height:106px;width:106px;border-radius:30px;overflow:hidden}";
@@ -101,19 +112,3 @@ namespace BitChute.Ui
         }
     }
 }
-
-
-
-/*
-
- #nav-top-menu {
-display: none;
-}
-
-#nav-menu-buffer {
-display: none;
-}
-
-
-
- */

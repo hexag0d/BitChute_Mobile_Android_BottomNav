@@ -19,8 +19,6 @@ namespace BitChute.Classes
     {
         //internal static ExtNotifications ExtNotifications { get => _extNotifications; set => _extNotifications = value; }
 
-        public static SettingsFrag Fm4 = new SettingsFrag();
-
         public static List<string> NotificationTextList = new List<string>();
         public static List<string> NotificationTypes = new List<string>();
         public static List<string> NotificationLinks = new List<string>();
@@ -286,11 +284,6 @@ namespace BitChute.Classes
             {
                 try
                 {
-                    if (Fm4 == null)
-                    {
-                        Fm4 = SettingsFrag.Fm4;
-                    }
-                     
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(html);
 
@@ -364,7 +357,7 @@ namespace BitChute.Classes
                         }
                         CustomNoteList.Reverse();
                     }
-                    Fm4 = SettingsFrag.Fm4;
+                    
                 }
                 catch (Exception ex)
                 {
@@ -375,33 +368,6 @@ namespace BitChute.Classes
                 //_fm5.SendNotifications();
             });
             return CustomNoteList;
-        }
-        
-        public async Task<string> GetBitChuteChannelLinkFromDiscus(string html)
-        {
-            string profileLink = "";
-
-            await Task.Run(() =>
-            {
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                int _nCount = 0;
-
-                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
-                {
-                    var _tagContents = "https://bitchute.com/profile" + link.Attributes["href"].Value.ToString();
-
-                    if (_nCount == 0)
-                    {
-                        profileLink = _tagContents;
-                    }
-
-
-                    _nCount++;
-                }
-            });
-
-            return profileLink;
         }
     }
 }

@@ -7,7 +7,6 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Android.Webkit;
 using System.IO;
@@ -15,11 +14,36 @@ using Android.Graphics;
 using System.Threading.Tasks;
 using BitChute.Classes;
 using BitChute.Ui;
+using System.Net;
+using BitChute.Fragments;
+using static BitChute.Classes.JavascriptCommands;
 
 namespace BitChute.Web
 {
     public class ViewClients
     {
+        public static async void SetReload(int tab)
+        {
+            tab = MainActivity.ViewPager.CurrentItem;
+            switch (tab)
+            {
+                case 0: if (!HomePageFrag.WvRling) { HomePageFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); HomePageFrag.WvRl = true; HomePageFrag.WvRling = false; }
+                    break;
+                case 1:
+                    if (!SubscriptionFrag.WvRling) { SubscriptionFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); SubscriptionFrag.WvRl = true; SubscriptionFrag.WvRling = false; }
+                    break;
+                case 2:
+                    if (!FeedFrag.WvRling) { FeedFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); FeedFrag.WvRl = true; FeedFrag.WvRling = false; }
+                    break;
+                case 3:
+                    if (!MyChannelFrag.WvRling) { MyChannelFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); MyChannelFrag.WvRl = true; MyChannelFrag.WvRling = false; }
+                    break;
+                case 4:
+                    if (!SettingsFrag.WvRling) { SettingsFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); SettingsFrag.WvRl = true; SettingsFrag.WvRling = false; }
+                    break;
+            }
+        }
+
         public static async void RunAfterDelay(WebView wv, string command, int delay = 10)
         {
             await Task.Delay(delay);
@@ -94,20 +118,21 @@ namespace BitChute.Web
             }
         }
 
-        public class WebViewClientFeed : WebViewClient
+        public class Feed : WebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
                 await Task.Delay(d);
                 if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/")
-                { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner)); }
+                { w.LoadUrl(GetInjectable(Display.ShowTabScrollInner +  Display.GetForAllTabs())); w.LoadUrl(_jsSelectSubscribed); }
+                HidePageTitle(w, AppSettings.HidePageTitleDelay);
             }
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
                 if (request.Url.ToString().Contains("common.css"))
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    return CssHelper.GetCssResponse(CssHelper.CommonCssFeed);
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
@@ -119,45 +144,78 @@ namespace BitChute.Web
             }
         }
 
-        public class WebViewClientMyChannel : WebViewClient
+        public class MyChannel : WebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
                 await Task.Delay(d);
                 if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/")
                 { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner)); }
+                try
+                {
+                    ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
+
+                    Https.CookieString = ExtWebInterface.CookieHeader.ToString();
+                    var cookiePairs = ExtWebInterface.CookieHeader.Split('&');
+
+                    Https.CookieString = "";
+
+                    foreach (var cookiePair in cookiePairs)
+                    {
+                        var cookiePieces = cookiePair.Split('=');
+                        if (cookiePieces[0].Contains(":"))
+                            cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
+                        ExtWebInterface.Cookies.Add(new Cookie
+                        {
+                            Name = cookiePieces[0],
+                            Value = cookiePieces[1]
+                        });
+                    }
+
+                    foreach (Cookie c in ExtWebInterface.Cookies)
+                    {
+                        c.Domain = "https://bitchute.com/";
+                        if (Https.CookieString == "")
+                        {
+                            Https.CookieString = c.ToString();
+                        }
+                        else
+                        {
+                            Https.CookieString += c.ToString();
+                        }
+                    }
+                }
+                catch { }
             }
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
                 if (request.Url.ToString().Contains("common.css"))
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    return CssHelper.GetCssResponse(CssHelper.CommonCssMyChannel);
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override void OnPageFinished(WebView view, string url)
             {
-                RunPageCommands(view);
                 base.OnPageFinished(view, url);
+                RunPageCommands(view);
             }
         }
 
-        public class WebViewClientSettings : WebViewClient
+        public class Settings : WebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
-                await Task.Delay(d);
-                if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/" || w.Url.Contains("bitchute.com/video/"))
-                { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner)); }
+
             }
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
                 if (request.Url.ToString().Contains("common.css"))
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    return CssHelper.GetCssResponse(CssHelper.CommonCssSettings);
                 }
                 return base.ShouldInterceptRequest(view, request);
             }

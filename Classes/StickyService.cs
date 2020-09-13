@@ -51,11 +51,10 @@ namespace StartServices.Servicesclass
         public static WifiManager WifiManager;
         public static WifiManager.WifiLock WifiLock;
         public static AudioManager AudioMan;
-        
 
         public static bool NotificationsHaveBeenSent = false;
         private static ExtNotifications _extNotifications = new ExtNotifications();
-        private static SettingsFrag _fm5;
+        
         private static ActivityManager.RunningAppProcessInfo _dProcess = new ActivityManager.RunningAppProcessInfo();
         private static int _startForegroundNotificationId = 6666;
 
@@ -460,11 +459,6 @@ namespace StartServices.Servicesclass
             //httprequest for the notifications
             await Task.Delay(delay);
 
-            if (_fm5 == null)
-            {
-                await Task.Run(() => _fm5 = MainActivity.Fm4);
-            }
-
             //use a while loop to start the notifications
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings.Notifying)
@@ -540,10 +534,6 @@ namespace StartServices.Servicesclass
             {
                 if (AppSettings.Notifying)
                 {
-                    if (_fm5 == null)
-                    {
-                        await Task.Run(() => _fm5 = MainActivity.Fm4);
-                    }
                     try
                     {
                         if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
