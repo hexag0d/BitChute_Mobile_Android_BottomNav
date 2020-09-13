@@ -608,7 +608,6 @@ namespace BitChute
                 ViewPager.CurrentItem = 4;
             }
             SettingsFrag.SwapSettingView();
-            //Fm4.ShowAppSettingsMenu();
         }
 
         /// <summary>
@@ -620,7 +619,6 @@ namespace BitChute
         {
             AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
             ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
-            //ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotificationTest());
             Main.MoveTaskToBack(true);
         }
 
