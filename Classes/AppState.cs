@@ -78,9 +78,9 @@
         public static Android.App.Notification ForeNote = new Android.App.Notification();
 
         /// <summary>
-        /// this string is sent into the app settings fragment to notify user 
+        /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.2.6.API8.OpenGL.ASyncVideoProcessing.NotificationBackground";
+        public static string AppVersion = "28.2.7.API8.OpenGL.ASyncVideoProcessing.NotificationBackground";
     }
 }

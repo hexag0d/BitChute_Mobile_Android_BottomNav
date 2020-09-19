@@ -85,7 +85,7 @@ namespace BitChute.Classes
                                     .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                                     .SetContentTitle(note.NoteText) 
                                     .SetNumber(1)       
-                                    .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                     .SetContentText(note.NoteType)
                                     .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMin);
 
@@ -104,7 +104,7 @@ namespace BitChute.Classes
                                 .SetContentTitle(note.NoteText) // Set the title
                                 .SetNumber(1) // Display the count in the Content Info
                                               //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                 .SetContentText(note.NoteType)
                                 .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
 
@@ -165,7 +165,7 @@ namespace BitChute.Classes
                                     .SetContentTitle(note.NoteText) // Set the title
                                     .SetNumber(1) // Display the count in the Content Info
                                                   //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                    .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                     .SetContentText(note.NoteType)
                                     .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMin);
 
@@ -185,7 +185,7 @@ namespace BitChute.Classes
                                 .SetContentTitle(note.NoteText) // Set the title
                                 .SetNumber(1) // Display the count in the Content Info
                                               //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                 .SetContentText(note.NoteType)
                                 .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
 
@@ -256,7 +256,7 @@ namespace BitChute.Classes
             var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming in background")
-                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                 .SetOngoing(true)
                 .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMax);
 
@@ -264,7 +264,7 @@ namespace BitChute.Classes
             status.ContentView = views;
             status.BigContentView = bigViews;
             status.Flags = NotificationFlags.OngoingEvent;
-            status.Icon = Resource.Drawable.bitchute_notification;
+            status.Icon = Resource.Drawable.bitchute_notification2;
             status.ContentIntent = pendingIntent;
             return status;
         }

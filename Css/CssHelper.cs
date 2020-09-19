@@ -14,6 +14,7 @@ namespace BitChute.Web.Ui
     {
         public static bool CustomCssReadyForRead = false;
         public static string CommonCss = "";
+        public static string SearchCss = "";
         public static string CommonCssSubs = "";
         public static string CommonCssFeed = "";
         public static string CommonCssMyChannel = "";
@@ -31,7 +32,20 @@ namespace BitChute.Web.Ui
                 }
             }
         }
-        
+        private static string _searchCssUrl;
+        public static string SearchCssUrl
+        {
+            get { return _searchCssUrl; }
+            set
+            {
+                if (value != null)
+                {
+                    _searchCssUrl = value;
+                    GetSearchCss(_searchCssUrl);
+                }
+            }
+        }
+
         public static void DuplicateCss(){ CommonCss = CommonCssSubs = CommonCssFeed = CommonCssMyChannel = CommonCssSettings; }
 
         public static Android.Webkit.WebResourceResponse GetCssResponse(string c = null)
@@ -50,6 +64,7 @@ namespace BitChute.Web.Ui
             if (process) { c = await GetOverrideCss(c); }
             if (setNext)
             {
+                await GetSearchCss();
                 await GetFeedCommonCss();
                 await GetMyChannelCommonCss();
                 await GetSettingsCommonCss();
@@ -58,9 +73,19 @@ namespace BitChute.Web.Ui
             return c;
         }
 
+        public static async Task<string> GetSearchCss(string hCss = null)
+        {
+            if (hCss == null) { hCss = SearchCss; }
+            Task<string> fct = Task.FromResult<string>(hCss
+                .Replace(Strings.VidResultImageOrg, Strings.VidResultImageNew)
+                .Replace(Strings.VidResultImageContOrg, Strings.VidResultImageContNew)
+                );
+            CommonCssFeed = await fct; return CommonCssFeed;
+        }
+        
         public static async Task<string> GetFeedCommonCss(string bCss = null)
         {
-            if (bCss == null) { bCss = CommonCss; }
+            if (bCss == null) { bCss = CommonCss; } 
             Task<string> fct = Task.FromResult<string>(bCss.Replace(Strings.CarouselOrg(true), Strings.CarouselNew));
             CommonCssFeed = await fct; return CommonCssFeed;
         }
@@ -129,6 +154,10 @@ namespace BitChute.Web.Ui
             public static string ChannelBannerNew = @".channel-banner .image-container{position:absolute;top:0;left:0;height:100%;border-radius:30px;overflow:hidden}";
             public static string ChannelBannerImgOrg = @".channel-banner .image{width:100px;height:100px}";
             public static string ChannelBannerImgNew = @".channel-banner .image{height:100%}";
+            public static string VidResultImageOrg = @".video-result-image img{max-width:270px}";
+            public static string VidResultImageNew = @".video-result-image img{max-width:none}";
+            public static string VidResultImageContOrg = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:270px}";
+            public static string VidResultImageContNew = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:none}";
         }
     }
 }

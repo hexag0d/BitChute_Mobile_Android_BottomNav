@@ -51,8 +51,6 @@
 		android:max="100"
 		android:scaleY="3"
 		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
-
-	
 	<EditText
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

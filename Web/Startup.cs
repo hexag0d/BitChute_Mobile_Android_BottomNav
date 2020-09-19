@@ -1,6 +1,5 @@
 ﻿using BitChute.Classes;
 using BitChute.Web.Ui;
-using BitChute.Web.Ui;
 using HtmlAgilityPack;
 using System;
 using System.Threading.Tasks;
@@ -37,6 +36,10 @@ namespace BitChute.Web
                             if (node.OuterHtml.Contains("/common.css"))
                             {
                                 CssHelper.CommonCssUrl = "https://www.bitchute.com" + node.Attributes["href"].Value;
+                            }
+                            if (node.OuterHtml.Contains("/search.css"))
+                            {
+                                CssHelper.SearchCssUrl = "https://www.bitchute.com" + node.Attributes["href"].Value;
                             }
                         }
                     }

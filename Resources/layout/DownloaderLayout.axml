@@ -25,8 +25,11 @@
 				android:indeterminateTintMode="src_atop"
 				android:indeterminateTint="@android:color/holo_blue_light"
 				android:id="@+id/downloadProgressBar"
-				android:progress="1"
-				style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+				style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+				android:min="0"
+				android:progress="0"
+				android:max="100"
+				android:scaleY="3"/>
 			<TextView
 				android:text=""
 				android:textAppearance="?android:attr/textAppearanceLarge"

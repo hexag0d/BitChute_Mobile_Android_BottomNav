@@ -92,7 +92,11 @@ namespace BitChute.Web
             
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("common.css"))
+                if (request.Url.ToString().Contains($"/common.css"))
+                {
+                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                }
+                if (request.Url.ToString().Contains($"/search.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
                 }

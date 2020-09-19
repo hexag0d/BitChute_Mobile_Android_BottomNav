@@ -260,7 +260,6 @@ namespace BitChute.Classes
         public async Task<bool> DownloadAndSaveVideoWebRequest(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            //_wc = new System.Net.WebClient();
             _wc = new ExtWebClient();
             _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             _wc.DownloadFileCompleted += OnVideoDownloadFinished;
@@ -295,7 +294,6 @@ namespace BitChute.Classes
                 {
                     await Task.Run(() =>
                     {
-                        //_wc.DownloadFileAsync(vc.VideoUri, filePath);
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
@@ -343,7 +341,6 @@ namespace BitChute.Classes
         public async Task<bool> DownloadAndSaveVideo(VideoCard vc)
         {
             ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            //_wc = new System.Net.WebClient();
             _wc = new ExtWebClient();
             _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
             _wc.DownloadFileCompleted += OnVideoDownloadFinished;
@@ -379,7 +376,6 @@ namespace BitChute.Classes
                 {
                     await Task.Run(() =>
                     {
-                       // _wc.DownloadFileAsync(vc.VideoUri, filePath);
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
@@ -459,8 +455,8 @@ namespace BitChute.Classes
 
                 var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                                 .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                .SetContentTitle("BitChute streaming in background")
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetContentTitle("BitChute video download started")
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                 .SetPriority(NotificationCompat.PriorityLow);
 
                 StartForeground(-6666, builder.Build());
