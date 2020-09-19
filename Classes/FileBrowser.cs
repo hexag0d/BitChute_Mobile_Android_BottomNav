@@ -61,15 +61,18 @@ namespace BitChute.Classes
             private string _path;
             private bool _cancelled;
             private string _sendTo;
-            public FileChooserArgs(string path, string sendTo = null, bool cancelled = false)
+            private Android.Net.Uri _uri;
+            public FileChooserArgs(string path = null, string sendTo = null, bool cancelled = false, Android.Net.Uri uri = null)
             {
-                _path = path;
+                if (path != null) { _path = path; }
                 _cancelled = cancelled;
                 if (sendTo != null) { _sendTo = sendTo; }
+                if (uri != null) { _uri = uri; }
             }
             public string Path { get { return _path; } }
             public bool Cancelled { get { return _cancelled; } }
             public string SendTo { get { return _sendTo; } }
+            public Android.Net.Uri Uri { get { return _uri; } }
         }
 
         public static void OnFileSelected(FileChooserArgs e)
@@ -77,17 +80,27 @@ namespace BitChute.Classes
             if (e.Path != null || e.Path != "") { LatestFilePath = e.Path; }
             if (e.SendTo != null)
             {
-                if (e.SendTo == "encoder") { ViewHelpers.VideoEncoder.EncoderSourceEditText.Text = e.Path; }
+                if (e.SendTo == "encoder") {
+                    ViewHelpers.VideoEncoder.EncoderSourceEditText.Text = e?.Path;
+                    ViewHelpers.VideoEncoder.EncoderSourceEditText.Text = e?.Uri.Path;
+                    MediaCodecHelper.FileToMp4.InputUriToEncode = e?.Uri;
+                }
                 else if (e.SendTo == "uploader") {  }
             }
         }
         
-        public static string ImportFile(Android.Net.Uri uri, string sendToIntent, Context ctx)
+        public static string ImportFileToString(Android.Net.Uri uri, string sendToIntent, Context ctx)
         {
             string decodedPath = "";
             decodedPath = UriDecoder.ConvertUriToString(uri);
             StatBrowser.Selected.Invoke(new FileChooserArgs(decodedPath, sendToIntent));
             return decodedPath;
+        }
+
+        public static Android.Net.Uri ImportFileToUri(Android.Net.Uri uri, string sendToIntent, Context ctx)
+        {
+            StatBrowser.Selected.Invoke(new FileChooserArgs(null, sendToIntent, false, uri));
+            return uri;
         }
 
         public static void SaveFileToStorage(Java.IO.File f)

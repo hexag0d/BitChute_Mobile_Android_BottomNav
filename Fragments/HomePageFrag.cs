@@ -9,7 +9,6 @@ using static BitChute.Services.ExtSticky;
 
 namespace BitChute.Fragments
 {
-    [Android.Runtime.Register("onWindowVisibilityChanged", "(I)V", "GetOnWindowVisibilityChanged_IHandler")]
     public class HomePageFrag : Fragment
     {
         string _title;
@@ -104,7 +103,7 @@ namespace BitChute.Fragments
                 Wv.Reload();
                 WvRl = false;
             }
-            else { Wv.LoadUrl(@"https://bitchute.com/"); }
+            else { Wv.LoadUrl(RootUrl); }
         }
 
         public static bool WvRling = false;

@@ -19,7 +19,7 @@ using static BitChute.Fragments.SettingsFrag;
 
 namespace BitChute.Services
 {
-    [Service(Exported = true)]
+    //[Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
         ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
     public class ExtSticky : Service, AudioManager.IOnAudioFocusChangeListener,
@@ -38,9 +38,8 @@ namespace BitChute.Services
         public const string ActionBkgrdNote = "com.xamarin.action.NOTIFICATIONSHOULDBKGRD";
         public const string ActionResumeNote = "com.xamarin.action.NOTIFICATIONSHOULDRESUME";
 
-        public static bool NotificationShouldPlayInBkgrd = true;
-
-        public static MainActivity Main;
+        public static bool NotificationShouldPlayInBkgrd = false;
+        
         private static Java.Util.Timer _timer = new Java.Util.Timer();
         private static ExtTimerTask _timerTask = new ExtTimerTask();
 
@@ -417,7 +416,6 @@ namespace BitChute.Services
             catch
             {
             }
-                Main = MainActivity.Main;
                 ExtStickyServ = this;
             
             try

@@ -79,6 +79,7 @@ namespace BitChute.Web.Ui
             Task<string> fct = Task.FromResult<string>(hCss
                 .Replace(Strings.VidResultImageOrg, Strings.VidResultImageNew)
                 .Replace(Strings.VidResultImageContOrg, Strings.VidResultImageContNew)
+                .Replace(Strings.ResultListImgContOrg, Strings.ResultListImgContNew)
                 );
             CommonCssFeed = await fct; return CommonCssFeed;
         }
@@ -158,6 +159,8 @@ namespace BitChute.Web.Ui
             public static string VidResultImageNew = @".video-result-image img{max-width:none}";
             public static string VidResultImageContOrg = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:270px}";
             public static string VidResultImageContNew = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:none}";
+            public static string ResultListImgContOrg = @".results-list[max-width~=""592px""] .video-result-container{flex-direction:column;max-width:270px;max-height:100%}";
+            public static string ResultListImgContNew = @".results-list[max-width~=""592px""] .video-result-container{flex-direction:column;max-width:none;max-height:100%}";
         }
     }
 }

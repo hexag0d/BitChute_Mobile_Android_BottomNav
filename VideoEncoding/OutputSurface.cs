@@ -240,9 +240,9 @@ namespace MediaCodecHelper {
 		_textureRender.ChangeFragmentShader(fragmentShader);
 	}
 
-		public bool AwaitNewImage(bool returnOnFailure = false) {
+        const int TIMEOUT_MS = 20000;
+        public bool AwaitNewImage(bool returnOnFailure = false) {
 			
-			const int TIMEOUT_MS = 20000;
 
 			System.Threading.Monitor.Enter (_frameSyncObject);
 

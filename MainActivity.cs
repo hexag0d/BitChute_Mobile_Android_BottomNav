@@ -684,7 +684,9 @@ namespace BitChute
                 {
                     if (data.Data != null)
                     {
-                        var path = FileBrowser.ImportFile(data.Data, _chooserIntentStr, this.ApplicationContext);
+                        //var path = FileBrowser.ImportFileToString(data.Data, _chooserIntentStr, this.ApplicationContext);
+                        var path = FileBrowser.ImportFileToUri(data.Data, _chooserIntentStr, this.ApplicationContext);
+
                     }
                 }
                 catch { }
@@ -952,12 +954,14 @@ namespace BitChute
                 //UnregisterReceiver(ForegroundReceiver); //@TODO check what this does
                 //
                 AppState.NotificationStartedApp = false;
+                ExtSticky.NotificationShouldPlayInBkgrd = false; // set this to false if user closes the app so that future notification clicks will restart the app
             }
             catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             //ExtSticky.ExternalStopForeground();
             base.OnDestroy();
+
         }
 
         public static Context GetMainContext() {   return Main.ApplicationContext; }

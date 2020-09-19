@@ -21,6 +21,7 @@ using static BitChute.Classes.ViewHelpers.Tab4;
 using static Android.Widget.TabHost;
 using System.Linq;
 using MediaCodecHelper;
+using static BitChute.Classes.FileBrowser;
 
 namespace BitChute.Fragments
 {
@@ -277,17 +278,34 @@ namespace BitChute.Fragments
         
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
-            FileBrowser.GetExternalPermissions();
-            var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
             Task.Run(() => {
                 try
                 {
+                    FileBrowser.GetExternalPermissions();
+                    var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
                     codec.Progress += OnEncoderProgress;
-                    string inputPath = ViewHelpers.VideoEncoder.EncoderSourceEditText.Text;
-                    Android.Net.Uri tempuri = Android.Net.Uri.Parse(inputPath);
-                    var fileName = tempuri.LastPathSegment.Split(@"/").ToList<string>().Last();
-                    string outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName.Replace(".mp4", "")}_encoded{new System.Random().Next(0, 66666666)}.mp4";
-                    codec.Start(inputPath, outputPath);
+                    string inputPath = "";
+                    string outputPath = "";
+                    var fileName = "";
+                    Android.Net.Uri tempuri = null;
+                    if (MediaCodecHelper.FileToMp4.InputUriToEncode == null)
+                    {
+                        inputPath = ViewHelpers.VideoEncoder.EncoderSourceEditText.Text;
+                        tempuri = Android.Net.Uri.Parse(inputPath);
+                        fileName = tempuri.LastPathSegment.Split(@"/").ToList<string>().Last();
+                        //I had to trim this because bitchute will actually completely drop files that have long names into a 404 hole
+                        outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName.Replace(".mp4", "")}_cp_{new System.Random().Next(0, 777)}.mp4";
+                    }
+                    else
+                    {
+                        tempuri = MediaCodecHelper.FileToMp4.InputUriToEncode;
+                        fileName = MediaCodecHelper.FileToMp4.InputUriToEncode.LastPathSegment.Replace(":","");
+
+                        outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName?.Replace(".mp4", "")}_cp_{new System.Random().Next(0, 777)}.mp4";
+                        
+                    }
+
+                    codec.Start(MediaCodecHelper.FileToMp4.InputUriToEncode, outputPath, inputPath);
                 }
                 catch (Exception ex) { Console.WriteLine(ex); }
             });
