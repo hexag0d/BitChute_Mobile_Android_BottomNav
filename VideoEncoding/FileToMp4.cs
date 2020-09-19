@@ -70,7 +70,7 @@ namespace MediaCodecHelper {
 			_secondPerIFrame = secondPerIFrame;
 			_fps = fps;
 			_bitRate = bitRate;
-			_workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path  + "/download/" ;
+			
 		}
         
 		private const string TAG = "CameraToMpegTest";

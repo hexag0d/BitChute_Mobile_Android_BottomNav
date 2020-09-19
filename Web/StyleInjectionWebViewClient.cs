@@ -98,7 +98,7 @@ namespace BitChute.Web
                 }
                 if (request.Url.ToString().Contains($"/search.css"))
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    return CssHelper.GetCssResponse(CssHelper.SearchCss);
                 }
                 return base.ShouldInterceptRequest(view, request);
             }

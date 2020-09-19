@@ -392,7 +392,7 @@ namespace BitChute.Services
         public bool ToggleNotificationShouldPlayInBkgrd(bool bkgrd = true)
         {
             NotificationShouldPlayInBkgrd = bkgrd;
-            return true;
+            return NotificationShouldPlayInBkgrd;
         }
 
 
