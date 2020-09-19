@@ -6,7 +6,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
-using StartServices.Servicesclass;
+using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using static BitChute.Classes.AppSettings;
 using static BitChute.Classes.ExtWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 using static BitChute.Classes.ViewHelpers;
 using static BitChute.Classes.ViewHelpers.Tab4;
 using static Android.Widget.TabHost;
@@ -81,7 +81,7 @@ namespace BitChute.Fragments
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            LoadUrlWithDelay(RootUrl, 2500);
+            //LoadUrlWithDelay(RootUrl, 2500);
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
@@ -158,6 +158,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
+            BitChute.Web.ViewClients.LoadInitialUrls(1000);
             return FragmentContainerLayout;
         }
 

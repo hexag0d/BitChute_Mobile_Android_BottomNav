@@ -5,7 +5,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using StartServices.Servicesclass;
+using BitChute.Services;
 
 namespace BitChute.Classes
 {
@@ -65,7 +65,7 @@ namespace BitChute.Classes
     {
         public void OnClick(View v)
         {
-            ExtStickyService.SkipToPrev(MainActivity.ViewPager.CurrentItem);
+            ExtSticky.SkipToPrev(MainActivity.ViewPager.CurrentItem);
         }
 
         public bool OnLongClick(View v)
@@ -78,7 +78,7 @@ namespace BitChute.Classes
     {
         public void OnClick(View v)
         {
-            ExtStickyService.SkipToNext(null);
+            ExtSticky.SkipToNext(null);
         }
 
         public bool OnLongClick(View v)

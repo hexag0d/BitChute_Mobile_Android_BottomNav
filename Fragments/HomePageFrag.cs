@@ -1,26 +1,11 @@
-﻿using Android;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
+﻿using Android.OS;
 using Android.Support.V4.App;
-using Android.Util;
 using Android.Views;
-using Android.Webkit;
-using Android.Widget;
 using BitChute.Classes;
-using BitChute.Ui;
-using BitChute.Web;
-using StartServices.Servicesclass;
-using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using static Android.Views.View;
-using static BitChute.Fragments.SettingsFrag;
 using static BitChute.Web.ViewClients;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 
 namespace BitChute.Fragments
 {
@@ -57,19 +42,23 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
-            Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
-            Wv.SetWebViewClient(Wvc);
-            
-            if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
-            Wv.Settings.JavaScriptEnabled = true;
-            Wv.Settings.DisplayZoomControls = false;
-            Wv.LoadUrl(RootUrl);
-            if (AppSettings.ZoomControl)
+            try
             {
-                Wv.Settings.BuiltInZoomControls = true;
+                _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
+                Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
+                Wv.SetWebViewClient(Wvc);
+
+                if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
+                Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
+                //Wv.LoadUrl(RootUrl); //moved this to await after processed css loads
+                if (AppSettings.ZoomControl)
+                {
+                    Wv.Settings.BuiltInZoomControls = true;
+                    Wv.Settings.DisplayZoomControls = false;
+                }
             }
+            catch { }
             return _view;
         }
 
@@ -192,66 +181,6 @@ namespace BitChute.Fragments
         private static async void ExpandPage(bool delayed)
         {
             if (delayed) { await Task.Delay(3000); }
-        }
-
-        private class ExtWebViewClient : WebViewClient
-        {
-            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
-            {
-                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
-                {
-                    if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    { //Return immediately to optimize the ux
-                        return base.ShouldInterceptRequest(view, request);
-                    }
-                    if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    {
-                        SearchOverride.SearchOverrideInProg = true;
-                        MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
-                        var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
-                        SearchOverride.UI.WvSearchOverride(view, ro);
-                        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-                        return w;
-                    }
-                }
-                return base.ShouldInterceptRequest(view, request);
-            }
-
-            public override void OnPageFinished(WebView view, string url)
-            {
-                //Wv.LoadUrl(JavascriptCommands.AppendToHead(""))
-                //Wv.LoadUrl(JavascriptCommands.ExpandSearchIcon());
-                _autoInt++;
-                if (_autoInt == 1 || AppState.NotificationStartedApp)
-                {
-                    Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                }
-                WebViewHelpers.DelayedScrollToTop(TNo);
-                HideWatchLabel();
-                if (!AppSettings.Tab1FeaturedOn)
-                {
-                    Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
-                }
-                if (AppState.Display.Horizontal)
-                {
-                    if (url != "https://www.bitchute.com/")
-                    {
-                        Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                        Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                        Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                        Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                    }
-                    HidePageTitle();
-                }
-                Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-                SetReload();
-                HideLinkOverflow();
-                ExpandFeaturedChannels(true);
-                ExpandVideoCards(true);
-                Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                base.OnPageFinished(view, url);
-            }
         }
     }
 }

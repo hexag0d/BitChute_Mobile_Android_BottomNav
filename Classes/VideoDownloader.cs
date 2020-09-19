@@ -8,7 +8,7 @@ using Android.Support.V4.App;
 using Android.Widget;
 using BitChute.Fragments;
 using HtmlAgilityPack;
-using StartServices.Servicesclass;
+using BitChute.Services;
 using static BitChute.Models.VideoModel;
 
 namespace BitChute.Classes
@@ -431,11 +431,11 @@ namespace BitChute.Classes
         {
             try
             {
-                if (ExtStickyService.Pm == null)
+                if (ExtSticky.Pm == null)
                 {
-                    ExtStickyService.Pm = (PowerManager)GetSystemService(Context.PowerService);
+                    ExtSticky.Pm = (PowerManager)GetSystemService(Context.PowerService);
                 }
-                PowerManager.WakeLock _wl = ExtStickyService.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock _wl = ExtSticky.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                 _wl.Acquire();
             }
             catch (Exception ex)

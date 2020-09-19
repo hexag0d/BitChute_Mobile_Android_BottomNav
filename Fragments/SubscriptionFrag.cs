@@ -7,11 +7,11 @@ using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
 using BitChute;
-using StartServices.Servicesclass;
+using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 using BitChute.Web;
 
 namespace BitChute.Fragments
@@ -52,7 +52,7 @@ namespace BitChute.Fragments
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
             Wv.SetWebViewClient(_wvc);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            Wv.LoadUrl(RootUrl);
+            //Wv.LoadUrl(RootUrl);
             Wv.Settings.JavaScriptEnabled = true;
             if (AppSettings.ZoomControl)
             {

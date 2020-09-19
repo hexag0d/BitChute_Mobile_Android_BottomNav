@@ -3,7 +3,7 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 
 namespace BitChute.Classes
 {
@@ -59,6 +59,12 @@ namespace BitChute.Classes
                     UiHandler.Post(() => DownloadFAB.LayoutParameters = FabLayoutBottom);
                 }
             }
+        }
+
+        public class PlayStateNotification
+        {
+            public static RadioButton NoteShouldPlayInBackgroundOnRb { get; set; }
+            public static RadioButton NoteShouldPlayInBackgroundOffRb { get; set; }
         }
 
         public class Tab0

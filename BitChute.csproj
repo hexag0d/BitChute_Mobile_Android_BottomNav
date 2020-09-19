@@ -119,6 +119,7 @@
     <Compile Include="VideoEncoding\MuxerEncoding.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
+    <Compile Include="Web\Startup.cs" />
     <Compile Include="Web\StyleInjectionWebViewClient.cs" />
   </ItemGroup>
   <ItemGroup>

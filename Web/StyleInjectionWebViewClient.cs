@@ -13,7 +13,7 @@ using System.IO;
 using Android.Graphics;
 using System.Threading.Tasks;
 using BitChute.Classes;
-using BitChute.Ui;
+using BitChute.Web.Ui;
 using System.Net;
 using BitChute.Fragments;
 using static BitChute.Classes.JavascriptCommands;
@@ -22,6 +22,20 @@ namespace BitChute.Web
 {
     public class ViewClients
     {
+        public static async void LoadInitialUrls(int delay = 400)
+        {
+            while (!CssHelper.CustomCssReadyForRead)
+            {
+                await Task.Delay(delay);
+            }
+
+            HomePageFrag.Wv.LoadUrl(HomePageFrag.RootUrl);
+            SubscriptionFrag.Wv.LoadUrl(SubscriptionFrag.RootUrl);
+            FeedFrag.Wv.LoadUrl(FeedFrag.RootUrl);
+            MyChannelFrag.Wv.LoadUrl(MyChannelFrag.RootUrl);
+            SettingsFrag.Wv.LoadUrl(SettingsFrag.RootUrl);
+        }
+        
         public static async void SetReload(int tab)
         {
             tab = MainActivity.ViewPager.CurrentItem;

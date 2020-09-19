@@ -67,7 +67,6 @@ namespace BitChute.Classes
                 HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
                 try
                 {
-
                     using (HttpClient _client = new HttpClient(handler))
                     {
                         var getRequest = _client.GetAsync(url).Result;

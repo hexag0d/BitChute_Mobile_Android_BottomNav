@@ -54,8 +54,8 @@ using Android.Views;
 using BitChute.Adapters;
 using BitChute.Classes;
 using BitChute.Fragments;
-using BitChute.Ui;
-using StartServices.Servicesclass;
+using BitChute.Web.Ui;
+using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -121,7 +121,7 @@ namespace BitChute
                 AppState.Display.Horizontal = false;
             }
             Main = this;
-            var mServiceIntent = new Intent(this, typeof(ExtStickyService));
+            var mServiceIntent = new Intent(this, typeof(ExtSticky));
             StartService(mServiceIntent);
             //get the intent incase a notification started the activity
             Intent _sentIntent = Intent;
@@ -150,7 +150,7 @@ namespace BitChute
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
             ViewPager.OffscreenPageLimit = 4;
             CreateNotificationChannel();
-            ExtStickyService.StartNotificationLoop(90000);
+            ExtSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
             ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
             //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
@@ -166,8 +166,8 @@ namespace BitChute
 
         public static async void StartUp()
         {
-            AppSettings.LoadAllPrefsFromSettings();
-            CssHelper.GetCommonCss(true);
+            await AppSettings.LoadAllPrefsFromSettings();
+            await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
         }
 
         public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
@@ -193,18 +193,16 @@ namespace BitChute
 
         public async void CustomOnSwipe()
         {
+            if (NavTimer != 0)
+                NavTimer = 0;
 
-               if (NavTimer != 0)
-                   NavTimer = 0;
-
-               if (!NavTimeout || AppState.Display.Horizontal)
-               {
-                   NavigationView.Visibility = ViewStates.Visible;
-                   ViewHelpers.Main.NavHidden = false;
-                   NavBarRemove();
-                   NavTimeout = true;
-               }
-
+            if (!NavTimeout || AppState.Display.Horizontal)
+            {
+                NavigationView.Visibility = ViewStates.Visible;
+                ViewHelpers.Main.NavHidden = false;
+                NavBarRemove();
+                NavTimeout = true;
+            }
         }
 
         /// <summary>
@@ -357,8 +355,6 @@ namespace BitChute
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
                     item.SetShiftingMode(false);
-                    // set once again checked value, so view will be updated
-                    item.SetChecked(item.ItemData.IsChecked);
                     if (i == 2)
                     {
                         item.LongClick += FeedTabLongClickListener;
@@ -618,7 +614,7 @@ namespace BitChute
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
             AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
-            ExtStickyService.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
+            ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
             Main.MoveTaskToBack(true);
         }
 
@@ -701,22 +697,23 @@ namespace BitChute
                 _chooserIntentStr = null;
             }
         }
-
-
-
-
+        
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
-            base.OnNewIntent(intent);
             if (intent != null)
             {
-                try {url = intent.Extras.GetString("URL");}
+                try
+                {
+                    url = intent.GetStringExtra("URL");
+                    if ((url != null || url != "") && ExtSticky.NotificationShouldPlayInBkgrd)
+                    {
+                        Main.MoveTaskToBack(true);
+                    }
+                }
                 catch { }
             }
-            if (url == "" || url == null)
-                return;
-
+            if (url == "" || url == null) { return; }
             try
             {
                 switch (ViewPager.CurrentItem)
@@ -738,9 +735,8 @@ namespace BitChute
                         break;
                 }
             }
-            catch 
-            {
-            }
+            catch { }
+            base.OnNewIntent(intent);
         }
 
         readonly WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
@@ -895,43 +891,48 @@ namespace BitChute
         protected override void OnPause()
         {
             base.OnPause();
-            try  {  ExtStickyService.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
+            try  {  ExtSticky.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
             catch { }
         }
         
         protected override void OnResume()
         {
-            AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
-            if (!TabStates.Tab3.VideoDownloaderViewEnabled)
+            try
             {
-                if (AppSettings.DlFabShowSetting != "always")
+
+                AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                if (!TabStates.Tab3.VideoDownloaderViewEnabled)
                 {
-                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
-                    ViewHelpers.Main.DownloadFAB.Hide();
+                    if (AppSettings.DlFabShowSetting != "always")
+                    {
+                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
+                        ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                        ViewHelpers.Main.DownloadFAB.Hide();
+                    }
+                    else
+                    {
+                        ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
+                        ViewHelpers.Main.DownloadFAB.Show();
+                    }
                 }
-                else
+                else if (TabStates.Tab3.VideoDownloaderViewEnabled)
                 {
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
-                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
-                    ViewHelpers.Main.DownloadFAB.Show();
+                    if (AppSettings.DlFabShowSetting != "never")
+                    {
+                        ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                        ViewHelpers.Main.DownloadFAB.Show();
+                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
+                    }
+                    else
+                    {
+                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
+                        ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                        ViewHelpers.Main.DownloadFAB.Hide();
+                    }
                 }
             }
-            else if (TabStates.Tab3.VideoDownloaderViewEnabled)
-            {
-                if (AppSettings.DlFabShowSetting != "never")
-                {
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
-                    ViewHelpers.Main.DownloadFAB.Show();
-                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
-                }
-                else
-                {
-                    ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
-                    ViewHelpers.Main.DownloadFAB.Hide();
-                }
-            }
+            catch { }
             try {
                 IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
                 RegisterReceiver(ForegroundReceiver, filter);
@@ -955,7 +956,7 @@ namespace BitChute
             catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
-            ExtStickyService.ExternalStopForeground();
+            //ExtSticky.ExternalStopForeground();
             base.OnDestroy();
         }
 

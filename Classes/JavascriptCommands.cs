@@ -1,5 +1,5 @@
 ﻿using Android.Webkit;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 
 namespace BitChute.Classes
 {

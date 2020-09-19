@@ -5,7 +5,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using BitChute.Classes;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 using BitChute.Web;
 
 namespace BitChute.Fragments
@@ -53,7 +53,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             Wv.Settings.DisplayZoomControls = false;
-            LoadUrlWithDelay(RootUrl, 2000);
+            //LoadUrlWithDelay(RootUrl, 2000);
             return _view;
         }
 

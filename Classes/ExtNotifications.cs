@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
 using HtmlAgilityPack;
-using StartServices.Servicesclass;
+using BitChute.Services;
 
 namespace BitChute.Classes
 {
@@ -46,18 +46,85 @@ namespace BitChute.Classes
             public bool Equals(CustomNotification other)
             {
                 if (this.NoteType == other.NoteType && this.NoteText == other.NoteText
-                    && this.NoteLink == other.NoteLink)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    && this.NoteLink == other.NoteLink) { return true; }
+                else  {return false; }
             }
         }
         
         public static async void SendNotifications(List<CustomNotification> notificationList)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    if (_notificationManager == null)
+                    {
+                        _notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(Android.App.Application.Context);
+                    }
+                    if (notificationList.Count == 0) { return; }
+                    int notePos = 0;
+
+                    foreach (var note in notificationList)
+                    {
+                        var resultIntent = new Intent(Android.App.Application.Context, typeof(MainActivity));
+                        var valuesForActivity = new Bundle();
+                        valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                        valuesForActivity.PutString("URL", note.NoteLink);
+                        resultIntent.SetAction(ExtSticky.ActionLoadUrl);
+                        resultIntent.PutExtras(valuesForActivity);
+                        var resultPendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
+                        resultIntent.AddFlags(ActivityFlags.SingleTop);
+                        var alarmAttributes = new Android.Media.AudioAttributes.Builder()
+                                .SetContentType(Android.Media.AudioContentType.Sonification)
+                                .SetUsage(Android.Media.AudioUsageKind.Notification).Build();
+
+                        if (!_sentNotificationList.Contains(note) && notePos == 0)
+                        {
+                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID + 1)
+                                    .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                    .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                    .SetContentTitle(note.NoteText) 
+                                    .SetNumber(1)       
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                    .SetContentText(note.NoteType)
+                                    .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMin);
+
+                            MainActivity.NOTIFICATION_ID++;
+                            // publish the notification:
+                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                            _sentNotificationList.Add(note);
+                            notePos++;
+                        }
+                        else if (!_sentNotificationList.Contains(note))
+                        {
+                            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+                                .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                .SetContentTitle(note.NoteText) // Set the title
+                                .SetNumber(1) // Display the count in the Content Info
+                                              //.SetLargeIcon(_notificationBMP) // This is the icon to display
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
+                                .SetContentText(note.NoteType)
+                                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
+
+                            MainActivity.NOTIFICATION_ID++;
+
+                            // publish the notification:
+                            //var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                            _notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                            _sentNotificationList.Add(note);
+                            notePos++;
+                        }
+                        ExtSticky.NotificationsHaveBeenSent = true;
+                    }
+                }
+                catch { }
+            });
+        }
+
+
+        public static async void SendMainActivityNotifications(List<CustomNotification> notificationList)
         {
             await Task.Run(() =>
             {
@@ -98,7 +165,7 @@ namespace BitChute.Classes
                                     .SetContentTitle(note.NoteText) // Set the title
                                     .SetNumber(1) // Display the count in the Content Info
                                                   //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                    .SetSmallIcon(Resource.Drawable.bitchute_notification)
                                     .SetContentText(note.NoteType)
                                     .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMin);
 
@@ -118,7 +185,7 @@ namespace BitChute.Classes
                                 .SetContentTitle(note.NoteText) // Set the title
                                 .SetNumber(1) // Display the count in the Content Info
                                               //.SetLargeIcon(_notificationBMP) // This is the icon to display
-                                .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                                .SetSmallIcon(Resource.Drawable.bitchute_notification)
                                 .SetContentText(note.NoteType)
                                 .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityLow);
 
@@ -130,11 +197,10 @@ namespace BitChute.Classes
                             _sentNotificationList.Add(note);
                             notePos++;
                         }
-                        ExtStickyService.NotificationsHaveBeenSent = true;
+                        ExtSticky.NotificationsHaveBeenSent = true;
                     }
                 }
-                catch
-                { }
+                catch { }
             });
         }
 
@@ -150,31 +216,29 @@ namespace BitChute.Classes
             RemoteViews views = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
             RemoteViews bigViews = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
 
-            // showing default album image
-            //views.SetViewVisibility(R.id.status_bar_icon, ViewStates.Visible);
-            //views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
-            //bigViews.setImageViewBitmap(R.id.status_bar_album_art,
-            //Constants.getDefaultAlbumArt(this));
+
 
             Intent notificationIntent = new Intent(Android.App.Application.Context, typeof(MainActivity));
-            //notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
-            //notificationIntent.AddFlags(
-            //| Intent.Flag);
 
-            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-            Intent previousIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            previousIntent.SetAction(ExtStickyService.ActionPrevious);
+            Intent previousIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            previousIntent.SetAction(ExtSticky.ActionPrevious);
             PendingIntent ppreviousIntent = PendingIntent.GetService(Android.App.Application.Context, 0, previousIntent, 0);
-            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            playIntent.SetAction(ExtStickyService.ActionPlay);
+            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            playIntent.SetAction(ExtSticky.ActionPlay);
             PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
-            Intent nextIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            nextIntent.SetAction(ExtStickyService.ActionNext);
+            Intent nextIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            nextIntent.SetAction(ExtSticky.ActionNext);
             PendingIntent pnextIntent = PendingIntent.GetService(Android.App.Application.Context, 0, nextIntent, 0);
-            Intent pauseIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            pauseIntent.SetAction(ExtStickyService.ActionPause);
+            Intent pauseIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            pauseIntent.SetAction(ExtSticky.ActionPause);
             PendingIntent ppauseIntent = PendingIntent.GetService(Android.App.Application.Context, 0, pauseIntent, 0);
+            Intent playNoteInBkgrdIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            playNoteInBkgrdIntent.SetAction(ExtSticky.ActionBkgrdNote);
+            PendingIntent pplayNoteInBkgrdIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playNoteInBkgrdIntent, 0);
+            Intent playNoteResumeIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            playNoteResumeIntent.SetAction(ExtSticky.ActionResumeNote);
+            PendingIntent pplayNoteResumeIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playNoteResumeIntent, 0);
+
 
             views.SetOnClickPendingIntent(Resource.Id.notificationPlay, pplayIntent);
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationPlay , pplayIntent);
@@ -184,84 +248,27 @@ namespace BitChute.Classes
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationNext, pnextIntent);
             views.SetOnClickPendingIntent(Resource.Id.notificationPrevious, ppreviousIntent);
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationPrevious, ppreviousIntent);
-
-            //views.setImageViewResource(R.id.status_bar_play,
-            //R.drawable.apollo_holo_dark_pause);
-            //bigViews.setImageViewResource(R.id.status_bar_play,
-            //R.drawable.apollo_holo_dark_pause);
-            //views.setTextViewText(R.id.status_bar_track_name, "Song Title");
-            //bigViews.setTextViewText(R.id.status_bar_track_name, "Song Title");
-            //views.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
-            //bigViews.setTextViewText(R.id.status_bar_artist_name, "Artist Name");
-            //bigViews.setTextViewText(R.id.status_bar_album_name, "Album Name");
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOnRb, pplayNoteInBkgrdIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOnRb, pplayNoteInBkgrdIntent);
+            bigViews.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOffRb, pplayNoteResumeIntent);
+            views.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOffRb, pplayNoteResumeIntent);
 
             var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming in background")
                 .SetSmallIcon(Resource.Drawable.bitchute_notification)
                 .SetOngoing(true)
-                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
+                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityMax);
 
             var status = builder.Build();
             status.ContentView = views;
             status.BigContentView = bigViews;
             status.Flags = NotificationFlags.OngoingEvent;
-            status.Icon = Resource.Drawable.bitchute_notification2;
+            status.Icon = Resource.Drawable.bitchute_notification;
             status.ContentIntent = pendingIntent;
             return status;
         }
-
-        public static Notification BuildPlayControlNotificationTest()
-        {
-            var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0,
-                new Intent(Android.App.Application.Context, typeof(ExtStickyService)),
-                PendingIntentFlags.UpdateCurrent);
-
-            // Using RemoteViews to bind custom layouts into Notification
-            RemoteViews views = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
-            RemoteViews bigViews = new RemoteViews(Android.App.Application.Context.PackageName, Resource.Layout.PlaystateNotification);
-
-            // showing default album image
-            //views.SetViewVisibility(R.id.status_bar_icon, ViewStates.Visible);
-            //views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
-            //bigViews.setImageViewBitmap(R.id.status_bar_album_art,
-            //Constants.getDefaultAlbumArt(this));
-
-            Intent notificationIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            //notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
-            //notificationIntent.AddFlags(
-            //| Intent.Flag);
-
-            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
-            playIntent.SetAction(ExtStickyService.ActionLoadUrl);
-            PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
-
-            views.SetOnClickPendingIntent(Resource.Layout.PlaystateNotification, pplayIntent);
-            bigViews.SetOnClickPendingIntent(Resource.Layout.PlaystateNotification, pplayIntent);
-            views.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
-            bigViews.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
-            views.SetOnClickPendingIntent(Resource.Id.playControlNotification, pplayIntent);
-            bigViews.SetOnClickPendingIntent(Resource.Id.notificationNext, pplayIntent);
-            views.SetOnClickPendingIntent(Resource.Id.notificationNext, pplayIntent);
-
-            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
-                //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                .SetContentTitle("BitChute streaming test")
-                .SetSmallIcon(Resource.Drawable.bitchute_notification)
-                .SetOngoing(true)
-                .SetPriority(Android.Support.V4.App.NotificationCompat.PriorityHigh);
-
-            var status = builder.Build();
-            
-            status.ContentView = views;
-            status.BigContentView = bigViews;
-            status.Flags = NotificationFlags.OngoingEvent;
-            status.Icon = Resource.Drawable.bitchute_notification2;
-            status.ContentIntent = pendingIntent;
-
-            return status;
-        }
-
+        
         /// <summary>
         /// takes an intent and turns it into a notification that won't bring the app to forefront.
         /// this is useful for when a user wants to play a new video from the notification
@@ -271,10 +278,11 @@ namespace BitChute.Classes
         /// <returns>background intent</returns>
         public static Intent SwapToBackgroundNotification(Intent original)
         {
-            Intent newIntent = new Intent(Android.App.Application.Context, typeof(ExtStickyService));
+            Intent newIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
             newIntent.AddFlags(original.Flags);
             newIntent.PutExtras(original.Extras);
-            newIntent.SetAction(ExtStickyService.ActionLoadUrl);
+            
+            newIntent.SetAction(ExtSticky.ActionLoadUrl);
             return newIntent;
         }
 
@@ -325,16 +333,6 @@ namespace BitChute.Classes
                             NotificationTypes.Add(_tagContents.Split('-')[0]);
                         }
 
-                        //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
-                        //{
-                        //    var _tagContents = node.InnerText;
-
-                        //    if (!_previousNotificationTypeList.Contains(_tagContents))
-                        //    {
-                        //        _notificationTypes.Add(_tagContents);
-                        //    }
-                        //}
-
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
                         {
                             var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
@@ -357,15 +355,10 @@ namespace BitChute.Classes
                         }
                         CustomNoteList.Reverse();
                     }
-                    
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                catch (Exception ex) { Console.WriteLine(ex.Message);
                 }
                 ExtNotifications.NotificationHttpRequestInProgress = false;
-
-                //_fm5.SendNotifications();
             });
             return CustomNoteList;
         }

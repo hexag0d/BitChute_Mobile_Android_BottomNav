@@ -6,18 +6,32 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using BitChute.Classes;
-using StartServices.Servicesclass;
+using BitChute.Services;
 
-namespace BitChute.Ui
+namespace BitChute.Web.Ui
 {
     public class CssHelper
     {
+        public static bool CustomCssReadyForRead = false;
         public static string CommonCss = "";
         public static string CommonCssSubs = "";
         public static string CommonCssFeed = "";
         public static string CommonCssMyChannel = "";
         public static string CommonCssSettings = "";
-
+        private static string _commonCssUrl;
+        public static string CommonCssUrl
+        {
+            get { return _commonCssUrl; }
+            set
+            {
+                if (value != null)
+                {
+                    _commonCssUrl = value;
+                    GetCommonCss(_commonCssUrl, true, true);
+                }
+            }
+        }
+        
         public static void DuplicateCss(){ CommonCss = CommonCssSubs = CommonCssFeed = CommonCssMyChannel = CommonCssSettings; }
 
         public static Android.Webkit.WebResourceResponse GetCssResponse(string c = null)
@@ -30,11 +44,17 @@ namespace BitChute.Ui
             return new Android.Webkit.WebResourceResponse("text/css", "UTF-8", stream);
         }
 
-        public static async Task<string> GetCommonCss(bool process, bool setNext = true)
+        public static async Task<string> GetCommonCss(string sourceUrl, bool process, bool setNext = true)
         {
-            string c = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/static/v123/css/common.css");
+            string c = await ExtWebInterface.GetHtmlTextFromUrl(sourceUrl); 
             if (process) { c = await GetOverrideCss(c); }
-            if (setNext) { GetFeedCommonCss(); GetMyChannelCommonCss(); GetSettingsCommonCss(); }
+            if (setNext)
+            {
+                await GetFeedCommonCss();
+                await GetMyChannelCommonCss();
+                await GetSettingsCommonCss();
+            }
+            CustomCssReadyForRead = true;
             return c;
         }
 
@@ -73,11 +93,11 @@ namespace BitChute.Ui
                         .Replace(Strings.OriginalVideoCard, Strings.VideoCardLazy + Strings.NewVideoCard)
                         .Replace(Strings.ChannelCardOriginal, Strings.ChannelCardNew)
                         .Replace(Strings.SubContainerOrg, Strings.SubContainerNew)
-                        //.Replace(Strings.ChannelBannerOrg, Strings.ChannelBannerNew)
-                        //.Replace(Strings.ChannelBannerImgOrg, Strings.ChannelBannerImgNew)
+                        //.Replace(Strings.ChannelBannerOrg, Strings.ChannelBannerNew) // @TODO these need to be tweaked because they don't look right
+                        //.Replace(Strings.ChannelBannerImgOrg, Strings.ChannelBannerImgNew)                    //on the video detail page
                         //.Replace(Strings.CarouselOrg(!AppSettings.Tab1FeaturedOn), Strings.CarouselNew)
                         + Strings.LinkOverflowHide + Strings.ExpandAd + Strings.ExpandFeatured)
-                        ;
+                        ; 
                     CommonCss = await gC;
                     break;
             }

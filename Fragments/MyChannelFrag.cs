@@ -6,11 +6,11 @@ using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
 using BitChute;
-using StartServices.Servicesclass;
+using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static StartServices.Servicesclass.ExtStickyService;
+using static BitChute.Services.ExtSticky;
 using BitChute.Web;
 
 namespace BitChute.Fragments
@@ -20,7 +20,7 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        readonly ViewClients.Feed _wvc = new ViewClients.Feed();
+        readonly ViewClients.MyChannel _wvc = new ViewClients.MyChannel();
         public static string RootUrl = "https://www.bitchute.com/profile";
         public static int TNo = 3;
         public static bool WvRling;
@@ -94,7 +94,7 @@ namespace BitChute.Fragments
                 Wv.Settings.BuiltInZoomControls = true;
                 Wv.Settings.DisplayZoomControls = false;
             }
-            LoadUrlWithDelay(RootUrl, 4000);
+            //LoadUrlWithDelay(RootUrl, 4000);
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
 

@@ -17,12 +17,12 @@ using static BitChute.Models.VideoModel;
 using static BitChute.Fragments.SettingsFrag;
 
 
-namespace StartServices.Servicesclass
+namespace BitChute.Services
 {
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
-        ActionNext, ActionPrevious, ActionLoadUrl })]
-    public class ExtStickyService : Service, AudioManager.IOnAudioFocusChangeListener,
+        ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
+    public class ExtSticky : Service, AudioManager.IOnAudioFocusChangeListener,
         MediaController.IMediaPlayerControl
     {
         #region members
@@ -35,17 +35,16 @@ namespace StartServices.Servicesclass
         public const string ActionNext = "com.xamarin.action.NEXT";
         public const string ActionPrevious = "com.xamarin.action.PREVIOUS";
         public const string ActionLoadUrl = "com.xamarin.action.LOADURL";
+        public const string ActionBkgrdNote = "com.xamarin.action.NOTIFICATIONSHOULDBKGRD";
+        public const string ActionResumeNote = "com.xamarin.action.NOTIFICATIONSHOULDRESUME";
 
+        public static bool NotificationShouldPlayInBkgrd = true;
 
-        private static bool _serviceIsLooping = false;
         public static MainActivity Main;
-
-
-
         private static Java.Util.Timer _timer = new Java.Util.Timer();
         private static ExtTimerTask _timerTask = new ExtTimerTask();
 
-        public static ExtStickyService ExtStickyServ;
+        public static ExtSticky ExtStickyServ;
         public static PowerManager Pm;
 
         public static WifiManager WifiManager;
@@ -69,7 +68,6 @@ namespace StartServices.Servicesclass
         //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
 
         #endregion
-
 
         /// <summary>
         /// initializes the mediaplayer object on tab of your choice.  
@@ -96,9 +94,9 @@ namespace StartServices.Servicesclass
 
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
-            if (!ExtStickyService.MediaPlayerDictionary.ContainsKey(tab))
+            if (!ExtSticky.MediaPlayerDictionary.ContainsKey(tab))
             {
-                ExtStickyService.MediaPlayerDictionary.Add(tab, new MediaPlayer());
+                ExtSticky.MediaPlayerDictionary.Add(tab, new MediaPlayer());
             }
             else if (MediaPlayerDictionary[tab] == null)
             {
@@ -141,7 +139,7 @@ namespace StartServices.Servicesclass
             };
 
             if (!tbo)
-                ExtStickyService.MediaPlayerDictionary[tab].Prepare();
+                ExtSticky.MediaPlayerDictionary[tab].Prepare();
 
             return MediaPlayerDictionary[tab];
         }
@@ -253,7 +251,6 @@ namespace StartServices.Servicesclass
             {
                 if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
                     return;
-
                 if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                     MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
             }
@@ -272,8 +269,8 @@ namespace StartServices.Servicesclass
 
             MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
             _paused = false;
-            ExtStickyServ.StopForeground(true);
-            ReleaseWifiLock();
+            //ExtStickyServ.StopForeground(true);
+            //ReleaseWifiLock();
             //AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
         }
 
@@ -341,16 +338,16 @@ namespace StartServices.Servicesclass
         }
 
         #region StickyServiceMethods
-        public ExtStickyService(Context applicationContext)
+        public ExtSticky(Context applicationContext)
         {
 
         }
-        public ExtStickyService()
+        public ExtSticky()
         {
 
         }
 
-        public ExtStickyService GetStickyNotificationService()
+        public ExtSticky GetStickyNotificationService()
         {
             return this;
         }
@@ -368,8 +365,16 @@ namespace StartServices.Servicesclass
             return null;
         }
 
-        public static void LoadVideoFromUrl(int tab, string url)
+        public static void LoadVideoFromUrl(Intent i = null, int tab = -1, string url = null)
         {
+            string u = "";
+            if (i != null)
+            {
+                try { u = i.GetStringExtra("URL"); }
+                catch{ }
+                if (u == null || u== "") { return;  }
+                else { url = u; }
+            }
             if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
             {
                 switch (tab)
@@ -381,9 +386,15 @@ namespace StartServices.Servicesclass
                     case 4: SettingsFrag.Wv.LoadUrl(url); break;
                 }
             }
-            else
-            { }
+            else{ }
         }
+
+        public bool ToggleNotificationShouldPlayInBkgrd(bool bkgrd = true)
+        {
+            
+            return true;
+        }
+
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -394,8 +405,9 @@ namespace StartServices.Servicesclass
                 case ActionPause: Pause(); break;
                 case ActionNext: SkipToNext(null); break;
                 case ActionPrevious: SkipToPrev(MainActivity.ViewPager.CurrentItem); break;
-                case ActionLoadUrl: LoadVideoFromUrl(MainActivity.ViewPager.CurrentItem,
-                    intent.Extras.GetString("URL")); break; 
+                case ActionLoadUrl: LoadVideoFromUrl(intent); break;
+                case ActionBkgrdNote: ToggleNotificationShouldPlayInBkgrd(true); break;
+                case ActionResumeNote: ToggleNotificationShouldPlayInBkgrd(false); break;
             }    
 
             try
@@ -471,10 +483,10 @@ namespace StartServices.Servicesclass
                     ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
-                if (ExtStickyService.NotificationsHaveBeenSent)
+                if (ExtSticky.NotificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
-                    if (!ExtStickyService._notificationLongTimerSet)
+                    if (!ExtSticky._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
                         _timer.ScheduleAtFixedRate(_extTimerTask, 500000, 780000); // 780000
@@ -484,12 +496,12 @@ namespace StartServices.Servicesclass
                 }
                 else if (!AppState.UserIsLoggedIn)
                 {
-                    await Task.Delay(380000);
+                    await Task.Delay(180000);
                 }
                 //user is logged in but has not yet received a notification
                 else
                 {
-                    await Task.Delay(380000);
+                    await Task.Delay(180000);
                 }
             }
         }
@@ -498,14 +510,11 @@ namespace StartServices.Servicesclass
         {
             try
             {
-                WifiLock?.Release();
-                AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
-                ExtStickyServ.StopForeground(true);
+                //WifiLock?.Release();
+                //AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
+                //ExtStickyServ.StopForeground(true);
             }
-            catch
-            {
-
-            }
+            catch{ }
         }
 
         public override void OnDestroy()
@@ -545,8 +554,7 @@ namespace StartServices.Servicesclass
                             _notificationStackExecutionInProgress = false;
                         }
                     }
-                    catch
-                    {   }
+                    catch {   }
                 }
             }
         }
