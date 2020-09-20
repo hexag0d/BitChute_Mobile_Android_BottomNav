@@ -140,9 +140,10 @@ namespace MediaCodecHelper {
 		// Configure EGL for pbuffer and OpenGL ES 2.0. We want enough RGB bits
 		// to be able to tell if the frame is reasonable.
 		int[] attribList = {
-				EGL10.EglRedSize, 8,
-				EGL10.EglGreenSize, 8,
-				EGL10.EglBlueSize, 8,
+				EGL10.EglRedSize, 16,
+				EGL10.EglGreenSize, 16,
+				EGL10.EglBlueSize, 16,
+                EGL10.EglAlphaSize, 16,
 				EGL10.EglSurfaceType, EGL10.EglPbufferBit,
 				EGL10.EglRenderableType, EGL_OPENGL_ES2_BIT,
 				EGL10.EglNone

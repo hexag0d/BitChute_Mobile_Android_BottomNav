@@ -81,6 +81,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.2.8.API8.OpenGL.ASyncVideoProcessing.NotificationBackground";
+        public static string AppVersion = "28.2.9.API8.OpenGL.VideoProcessing.MemoryRed";
     }
 }

@@ -43,6 +43,9 @@ namespace MediaCodecHelper {
 		private int _fps;
 		private int _secondPerIFrame;
 		private static int _bitRate;
+        /// <summary>
+        /// frame count
+        /// </summary>
         private static int _fC;
         public static string LatestOutputPath = "";
         public static string LatestInputPath = "";
@@ -96,7 +99,7 @@ namespace MediaCodecHelper {
 
 		// parameters for the encoder
 		const string MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
-		const int FRAME_RATE = 24;               // 30fps
+		const int FRAME_RATE = 30;               // 30fps
 		const int IFRAME_INTERVAL = 1;           // 1 seconds between I-frames
 
 		// Fragment shader that swaps color channels around.
@@ -141,6 +144,15 @@ namespace MediaCodecHelper {
         /// encoded bits so far
         /// </summary>
         private static long _ebt = 0;
+
+        /// <summary>
+        /// Returns the total number of encoded bits, takes Bytes
+        /// as argument because the bufferInfo size
+        /// is in Bytes and that's where we're reading
+        /// from
+        /// </summary>
+        /// <param name="encoded"></param>
+        /// <returns></returns>
         public static long EncodedBits(int encoded)
         {
             _ebt += encoded * 8; 
@@ -155,6 +167,13 @@ namespace MediaCodecHelper {
         {
             _eTS = ((length/1000 * bitrate));
             return _eTS;
+        }
+
+        public static long CorrectForStartTime(int firstBlockBits, long firstBlockTimeStamp)
+        {
+            var startingTime = ((decimal)firstBlockBits / (decimal)_bitRate); /* start time in ms */
+            var startTimeLong = (long)(startingTime * 1000 /*ms*/ * 1000 /*us*/ * 1000 /*ns*/);
+            return (firstBlockTimeStamp - startTimeLong);
         }
 
 		public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null) {
@@ -231,6 +250,10 @@ namespace MediaCodecHelper {
                 releaseSurfaceTexture();
             }catch { }
             _firstKnownBuffer = 0; //this stores the audio encoder offset long
+            _eTS = 0;
+            _fC = 0;
+            _ebt = 0;
+            _bfi = new BufferInfo();
             if (!AudioEncodingInProgress)
             {
                 _muxer.Stop(); // if the audio encoding isn't still running then we'll stop everything and return
@@ -244,7 +267,133 @@ namespace MediaCodecHelper {
             return null; //file isn't finished processing yet
         }
 
-		private void prepareMediaPlayer(string inputPath = null, Android.Net.Uri inputUri = null) {
+        /**
+ * Extracts all pending data from the encoder and forwards it to the muxer.
+ * <p>
+ * If endOfStream is not set, this returns when there is no more data to drain.  If it
+ * is set, we send EOS to the encoder, and then iterate until we see EOS on the output.
+ * Calling this with endOfStream set should be done once, right before stopping the muxer.
+ * <p>
+ * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
+ * not recording audio.
+ */
+        private void D(bool es)
+        {
+
+            //if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")"); @DEBUG, disabled to optimize performance
+            if (es)
+            {
+                if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
+                mEncoder.SignalEndOfInputStream();
+                this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true));
+            }
+            ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
+            while (true)
+            {
+                int encoderStatus = mEncoder.DequeueOutputBuffer(_bfi, TIMEOUT_USEC);
+                if (encoderStatus == (int)MediaCodec.InfoTryAgainLater)
+                {
+                    // no output available yet
+                    if (!es)
+                    {
+                        break;      // out of while
+                    }
+                    else
+                    {
+                        if (VERBOSE) Log.Debug(TAG, "no output available, spinning to await EOS");
+                    }
+                }
+                else if (encoderStatus == (int)MediaCodec.InfoOutputBuffersChanged)
+                {
+                    // not expected for an encoder
+                    encoderOutputBuffers = mEncoder.GetOutputBuffers();
+                }
+                else if (encoderStatus == (int)MediaCodec.InfoOutputFormatChanged)
+                {
+                    // should happen before receiving buffers, and should only happen once
+                    if (MuxerStarted)
+                    {
+                        throw new RuntimeException("format changed twice");
+                    }
+                    MediaFormat newFormat = mEncoder.OutputFormat;
+                    if (VERBOSE) Log.Debug(TAG, "encoder output format changed: " + newFormat);
+
+                    mTrackIndex = _muxer.AddTrack(newFormat);
+                    LatestAudioTrackIndex = _muxer.AddTrack(LatestAudioInputFormat); // @TODO No processing on this yet
+                    _muxer.Start();
+                    MuxerStarted = true;
+                }
+                else if (encoderStatus < 0)
+                {
+                    Log.Warn(TAG, "unexpected result from encoder.dequeueOutputBuffer: " +
+                        encoderStatus);
+                    // let's ignore it
+                }
+                else
+                {
+                    ByteBuffer ed = encoderOutputBuffers[encoderStatus];
+                    if (ed == null)
+                    {
+                        throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
+                            " was null");
+                    }
+
+                    if ((_bfi.Flags & MediaCodec.BufferFlagCodecConfig) != 0)
+                    {
+                        // The codec config data was pulled out and fed to the muxer when we got
+                        // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
+                        if (VERBOSE) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                        _bfi.Size = 0;
+                    }
+
+                    if (_bfi.Size != 0)
+                    {
+                        if (!MuxerStarted)
+                        {
+                            throw new RuntimeException("muxer hasn't started");
+                        }
+                        // adjust the ByteBuffer values to match BufferInfo
+                        ed.Position(_bfi.Offset);
+                        ed.Limit(_bfi.Offset + _bfi.Size);
+                        _bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
+                        _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        //System.Console.WriteLine($"Drain {_bfi.Size} @ {_bfi.PresentationTimeUs}");
+                        
+                        if (_firstKnownBuffer == 0)
+                        {
+                            _firstKnownBuffer = _bfi.PresentationTimeUs;
+                            //var cst = CorrectForStartTime(fbit, _firstKnownBuffer);
+                            //Don't take these as arguments because it'll use up more memory; they should remain static while video encodes
+                            if (InputUriToEncode != null) { this.StartAudioEncoder(_firstKnownBuffer, null, InputUriToEncode); }
+                            else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
+                            System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
+                        } //we don't want to flood the system with EventArgs so only send once every 120 frames
+                        if (_fC >= 120) { Notify(_ebt, _eTS); _fC = 0; }
+                        /*
+                     disabled when not debugging because this is locking up if the file is too big    @DEBUG
+                     */
+                        //if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
+                    }
+
+                    mEncoder.ReleaseOutputBuffer(encoderStatus, false);
+
+                    if ((_bfi.Flags & MediaCodec.BufferFlagEndOfStream) != 0)
+                    {
+                        if (!es) { Log.Warn(TAG, "reached end of stream unexpectedly"); }
+                        else { if (VERBOSE) Log.Debug(TAG, "end of stream reached"); }
+                        this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true, false));
+                        break;      // out of while
+                    }
+                }
+            }
+        }
+
+        public static long CalculateTimeStamp(long bits)
+        {
+            return (long)((bits / (decimal)_bitRate) * 1000 * 1000);
+        }
+
+        private void prepareMediaPlayer(string inputPath = null, Android.Net.Uri inputUri = null) {
 			_mediaPlayer = new MediaPlayer ();
             if (inputPath == null && inputUri == null) { return; }
             if (!System.String.IsNullOrWhiteSpace(inputPath)) { _mediaPlayer.SetDataSource(inputPath); }
@@ -304,9 +453,11 @@ namespace MediaCodecHelper {
             LatestOutputPath = outputPath;
 			MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, _width, _height);
 
-			// Set some properties.  Failing to specify some of these can cause the MediaCodec
-			// configure() call to throw an unhelpful exception.
-			format.SetInteger(MediaFormat.KeyColorFormat, (int) MediaCodecCapabilities.Formatsurface);
+            // Set some properties.  Failing to specify some of these can cause the MediaCodec
+            // configure() call to throw an unhelpful exception.
+            //format.SetInteger(MediaFormat.KeyColorFormat, (int) MediaCodecCapabilities.Formatsurface);
+
+            format.SetInteger(MediaFormat.KeyColorFormat, (int)MediaCodecCapabilities.Formatsurface);
 			format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
 			format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
 			format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
@@ -360,6 +511,7 @@ namespace MediaCodecHelper {
 
         public void StartAudioEncoder(long calculatedOffset, string inputPath = null, Android.Net.Uri inputUri = null)
         {
+
             MuxerEncoding mxe = new MuxerEncoding();
             mxe.Progress += SettingsFrag.OnMuxerProgress;
             if (inputUri != null) { mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, null, _muxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset, inputUri); }
@@ -369,106 +521,7 @@ namespace MediaCodecHelper {
         private static long _firstKnownBuffer;
 
         static int TIMEOUT_USEC = 10000;
-        /**
-	     * Extracts all pending data from the encoder and forwards it to the muxer.
-	     * <p>
-	     * If endOfStream is not set, this returns when there is no more data to drain.  If it
-	     * is set, we send EOS to the encoder, and then iterate until we see EOS on the output.
-	     * Calling this with endOfStream set should be done once, right before stopping the muxer.
-	     * <p>
-	     * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
-	     * not recording audio.
-	     */
-        private void D(bool es) {
 
-			//if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")"); @DEBUG, disabled to optimize performance
-			if (es) {
-				if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
-				mEncoder.SignalEndOfInputStream();
-                this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true));
-            }
-            ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
-			while (true) {
-				int encoderStatus = mEncoder.DequeueOutputBuffer(_bfi, TIMEOUT_USEC);
-				if (encoderStatus == (int) MediaCodec.InfoTryAgainLater) {
-					// no output available yet
-					if (!es) {
-						break;      // out of while
-					} else {
-						if (VERBOSE) Log.Debug(TAG, "no output available, spinning to await EOS");
-					}
-				} else if (encoderStatus == (int) MediaCodec.InfoOutputBuffersChanged) {
-					// not expected for an encoder
-					encoderOutputBuffers = mEncoder.GetOutputBuffers();
-				} else if (encoderStatus == (int) MediaCodec.InfoOutputFormatChanged) {
-					// should happen before receiving buffers, and should only happen once
-					if (MuxerStarted) {
-						throw new RuntimeException("format changed twice");
-					}
-					MediaFormat newFormat = mEncoder.OutputFormat;
-					if (VERBOSE) Log.Debug(TAG, "encoder output format changed: " + newFormat);
-                    
-					mTrackIndex = _muxer.AddTrack(newFormat);
-                    LatestAudioTrackIndex = _muxer.AddTrack(LatestAudioInputFormat); // @TODO No processing on this yet
-					_muxer.Start();
-					MuxerStarted = true;
-                }
-                else if (encoderStatus < 0) {
-					Log.Warn(TAG, "unexpected result from encoder.dequeueOutputBuffer: " +
-						encoderStatus);
-					// let's ignore it
-				} else {
-					ByteBuffer ed = encoderOutputBuffers[encoderStatus];
-					if (ed == null) {
-						throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
-							" was null");
-					}
-
-					if ((_bfi.Flags & MediaCodec.BufferFlagCodecConfig) != 0) {
-						// The codec config data was pulled out and fed to the muxer when we got
-						// the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-						if (VERBOSE) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
-						_bfi.Size = 0;
-					}
-
-                    if (_bfi.Size != 0)
-                    {
-                        if (!MuxerStarted)
-                        {
-                            throw new RuntimeException("muxer hasn't started");
-                        }
-                        // adjust the ByteBuffer values to match BufferInfo
-                        ed.Position(_bfi.Offset);
-                        ed.Limit(_bfi.Offset + _bfi.Size);
-                        _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
-                        EncodedBits(_bfi.Size);
-                        if (_firstKnownBuffer == 0)
-                        {
-                            _firstKnownBuffer = _bfi.PresentationTimeUs;
-                            
-                            //Don't take these as arguments because it'll use up more memory; they should remain static while video encodes
-                            if (InputUriToEncode != null) { this.StartAudioEncoder(_firstKnownBuffer, null, InputUriToEncode); }
-                            else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
-                            System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
-                        } //we don't want to flood the system with EventArgs so only send once every 120 frames
-                        if (_fC >= 120) { Notify(_ebt, _eTS); _fC = 0; }
-                        /*
-                     disabled when not debugging because this is locking up if the file is too big    @DEBUG
-                     */
-                        //if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
-					}
-
-					mEncoder.ReleaseOutputBuffer(encoderStatus, false);
-
-					if ((_bfi.Flags & MediaCodec.BufferFlagEndOfStream) != 0) {
-						if (!es) { Log.Warn(TAG, "reached end of stream unexpectedly");}
-                        else { if (VERBOSE) Log.Debug(TAG, "end of stream reached"); }
-                        this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true, false));
-                        break;      // out of while
-                    }
-				}
-			}
-        }
 
         private async void Notify(long eb, long ets)
         {

@@ -139,7 +139,7 @@ namespace BitChute.VideoEncoding
                         else
                         {
                             cf++;
-                            bufferInfo.PresentationTimeUs = (ext.SampleTime + ptOffset); // I had to add this offset to get the audio lined up with visuals
+                            bufferInfo.PresentationTimeUs = ext.SampleTime; // I had to add this offset to get the audio lined up with visuals
                                                                                                //anything in this loop using presentationtime needs the ptOffset (uo) for proper calculation
                             if (endMs > 0 && ext.SampleTime >= us) { break; } //out of while
                             else

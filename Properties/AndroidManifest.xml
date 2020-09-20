@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.BitChute.API8.VideoEncoder" android:installLocation="auto" android:versionCode="28" android:versionName="28">
 	<uses-sdk android:minSdkVersion="18" android:targetSdkVersion="27" />
-	<uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<application android:allowBackup="true" android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light.DarkActionBar" android:icon="@drawable/xamarin"></application>
@@ -10,7 +10,7 @@
 		<action android:name="android.intent.action.VIEW" />
 		<category android:name="android.intent.category.DEFAULT" />
 		<category android:name="android.intent.category.BROWSABLE" />
-		<activity android:name="com.xamarin.example.Bitchute" android:launchMode="singleTask">
+		<activity android:name="com.xamarin.example.Bitchute" android:colorMode="wideColorGamut" android:launchMode="singleTask">
 			<data android:scheme="https" android:host="bitchute.com" />
 			<!--android:pathPrefix="@string/branch_io_path_prefix"/-->
 			<action android:name="android.intent.action.VIEW" />
