@@ -49,6 +49,7 @@ using GL = Javax.Microedition.Khronos.Opengles.IGL;
 using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
 using Android.Runtime;
+using Android.Opengl;
 
 namespace MediaCodecHelper {	
 	
@@ -57,6 +58,7 @@ namespace MediaCodecHelper {
 		private const bool VERBOSE = false;
 		private const int EGL_OPENGL_ES2_BIT = 4;
 		private IEGL10 mEGL;
+        private EGL14 _iEGL;
 		private EGLDisplay mEGLDisplay;
 		private EGLContext mEGLContext;
 		private EGLSurface mEGLSurface;
@@ -132,7 +134,8 @@ namespace MediaCodecHelper {
 */
 
 	private void eglSetup(int width, int height) {
-			mEGL = (IEGL10)EGLContext.EGL;
+            //mEGL = (EGL14)EGLContext.EGL;
+            _iEGL = (EGL14)EGLContext.EGL;
 		mEGLDisplay = mEGL.EglGetDisplay(EGL10.EglDefaultDisplay);
 		if (!mEGL.EglInitialize(mEGLDisplay, null)) {
 			throw new RuntimeException("unable to initialize EGL10");

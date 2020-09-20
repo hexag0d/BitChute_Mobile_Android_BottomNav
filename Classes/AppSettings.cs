@@ -206,7 +206,8 @@ namespace BitChute.Classes
 
         public class Logging
         {
-            public static bool SendToConsole = false;
+            public static bool SendToConsole = true;
+            public static bool SendToLogCat = true;
         }
     }
 }
