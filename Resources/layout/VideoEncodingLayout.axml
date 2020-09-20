@@ -1,97 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:background="@android:color/black"
-	android:id="@+id/videoEncoderMainLayout"
-	android:layout_height="match_parent">
-	<TextView
-		android:text="Video Encoder (pre-processing)"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:textColor="@android:color/white"
-		android:layout_height="wrap_content"
-		android:id="@+id/encoderLayoutTitle" />
-	<TextView
-		android:text=""
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/white"
-		android:id="@+id/encoderStatusTextView" />
-	<ProgressBar
-		android:layout_width="match_parent"
-		android:layout_height="100px"
-		android:progressBackgroundTint="@android:color/holo_purple"
-		android:indeterminateTintMode="src_atop"
-		android:indeterminateTint="@android:color/holo_blue_light"
-		android:id="@+id/encoderProgressBar"
-		android:min="0"
-		android:progress="0"
-		android:max="100"
-		android:scaleY="3"
-		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
-		<TextView
-		android:text=""
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/white"
-		android:id="@+id/audioEncoderStatusTextView" />	
-	<ProgressBar
-		android:layout_width="match_parent"
-		android:layout_height="100px"
-		android:progressBackgroundTint="@android:color/holo_purple"
-		android:indeterminateTintMode="src_atop"
-		android:indeterminateTint="@android:color/holo_blue_light"
-		android:id="@+id/audioEncoderProgressBar"
-		android:min="0"
-		android:progress="0"
-		android:max="100"
-		android:scaleY="3"
-		style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
-	<EditText
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textSize="@dimen/abc_text_size_medium_material"
-		android:text="your file here"
-		android:textColor="@android:color/white"
-		android:id="@+id/encoderSourceFileEditText" />
-	<Button
-		android:text="Encode"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/white"
-		android:minWidth="25px"
-		android:minHeight="300px"
-		android:background="#404040"
-		android:id="@+id/encodingStartButton" />
-	<Button
-		android:text="Pick a Video"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:minHeight="250px"
-		android:id="@+id/encodingPickAVideoButton" />
-	<EditText
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textSize="@dimen/abc_text_size_medium_material"
-		android:text="output file"
-		android:textColor="@android:color/white"
-		android:lines="3"
-		android:id="@+id/encoderOutputFileEditText" />
-	<TextView
-		android:text=""
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView3" />
-	<TextView
-		android:text="Testing status is: experimental"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView2" />
 
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:background="@android:color/black"
+  android:layout_height="match_parent">
+<LinearLayout
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/black"
+  android:id="@+id/videoEncoderMainLayout">
+  <TextView
+    android:text="Video Encoder (pre-processing)"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:textColor="@android:color/white"
+    android:layout_height="wrap_content"
+    android:id="@+id/encoderLayoutTitle" />
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:id="@+id/encoderStatusTextView" />
+  <ProgressBar
+    android:layout_width="match_parent"
+    android:layout_height="100px"
+    android:progressBackgroundTint="@android:color/holo_purple"
+    android:indeterminateTintMode="src_atop"
+    android:indeterminateTint="@android:color/holo_blue_light"
+    android:id="@+id/encoderProgressBar"
+    android:min="0"
+    android:progress="0"
+    android:max="100"
+    android:scaleY="3"
+    style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:id="@+id/audioEncoderStatusTextView" />
+  <ProgressBar
+    android:layout_width="match_parent"
+    android:layout_height="100px"
+    android:progressBackgroundTint="@android:color/holo_purple"
+    android:indeterminateTintMode="src_atop"
+    android:indeterminateTint="@android:color/holo_blue_light"
+    android:id="@+id/audioEncoderProgressBar"
+    android:min="0"
+    android:progress="0"
+    android:max="100"
+    android:scaleY="3"
+    style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+  <RelativeLayout
+    android:orientation="vertical"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+      android:orientation="horizontal"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:id="@+id/linearLayout2"
+      android:layout_height="200px">
+				<TextView
+					android:text="   "
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/textView5" />
+      <EditText
+        android:text="   600   "
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+					android:inputType="number"
+        android:lines="1"
+        android:layout_height="match_parent"
+        android:id="@+id/videoEncoderBitRateEditText"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"/>
+      <TextView
+        android:text=" kbps/  @"
+					
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/holo_blue_light"
+								android:layout_width="100px"
+				android:layout_height="match_parent"
+        android:id="@+id/textView4"
+        />
+      <EditText
+        android:text="854"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:lines="1"
+					android:inputType="number"
+        android:layout_height="match_parent"
+        android:id="@+id/videoEncoderWidthEditText"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"/>
+      <TextView
+        android:text=" x "
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/holo_blue_light"
+				android:layout_width="50px"
+				android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:textAlignment="center" />
+      <EditText
+        android:text="480"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:lines="1"
+					android:inputType="number"
+        android:layout_height="match_parent"
+        android:id="@+id/videoEncoderHeightEditText"
+        android:textColor="@android:color/white"
+        android:textAlignment="center" />
+    </LinearLayout>
+  </RelativeLayout>
+  <EditText
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/abc_text_size_medium_material"
+    android:text="your file here"
+    android:textColor="@android:color/white"
+    android:id="@+id/encoderSourceFileEditText"
+    android:lines="1" />
+  <Button
+    android:text="Encode"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:minWidth="25px"
+    android:minHeight="300px"
+			
+    android:background="#303030"
+    android:id="@+id/encodingStartButton" />
+  <Button
+    android:text="Pick a Video"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="250px"
+    android:textColor="@android:color/white"
+			android:backgroundTint="#404040"
+			
+    android:id="@+id/encodingPickAVideoButton"
+    android:shadowColor="#ff0c00ff" />
+  <EditText
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/abc_text_size_medium_material"
+    android:text="output file"
+    android:textColor="@android:color/white"
+    android:lines="2"
+    android:id="@+id/encoderOutputFileEditText"
+    android:shadowColor="#ff0061ff" />
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/textView3" />
+  <TextView
+    android:text="Testing status is: experimental"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/textView2" />
 </LinearLayout>
+</ScrollView>

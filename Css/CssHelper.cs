@@ -28,7 +28,6 @@ namespace BitChute.Web.Ui
                 if (value != null)
                 {
                     _commonCssUrl = value;
-                    GetCommonCss(_commonCssUrl, true, true);
                 }
             }
         }
@@ -41,7 +40,6 @@ namespace BitChute.Web.Ui
                 if (value != null)
                 {
                     _searchCssUrl = value;
-                    GetSearchCss(_searchCssUrl);
                 }
             }
         }
@@ -64,7 +62,7 @@ namespace BitChute.Web.Ui
             if (process) { c = await GetOverrideCss(c); }
             if (setNext)
             {
-                await GetSearchCss();
+                await GetSearchCss(SearchCssUrl);
                 await GetFeedCommonCss();
                 await GetMyChannelCommonCss();
                 await GetSettingsCommonCss();
@@ -73,15 +71,21 @@ namespace BitChute.Web.Ui
             return c;
         }
 
-        public static async Task<string> GetSearchCss(string hCss = null)
+        public static async Task<string> GetSearchCss(string url = null)
         {
-            if (hCss == null) { hCss = SearchCss; }
-            Task<string> fct = Task.FromResult<string>(hCss
+            if (SearchCss == "" || SearchCss == null){ SearchCss = await ExtWebInterface.GetHtmlTextFromUrl(url); }
+
+            Task<string> fct = Task.FromResult<string>(SearchCss
+                .Replace(@"""",@"'")
                 .Replace(Strings.VidResultImageOrg, Strings.VidResultImageNew)
                 .Replace(Strings.VidResultImageContOrg, Strings.VidResultImageContNew)
                 .Replace(Strings.ResultListImgContOrg, Strings.ResultListImgContNew)
+                .Replace(Strings.VidResultTextOrg, Strings.VidResultTextNew)
+                .Replace(Strings.VidResultTextContainerOrg, Strings.VidResultTextContainerNew)
+                .Replace("270px", "100%")
+                .Replace(@"[max-width~='592px']", "")
                 );
-            CommonCssFeed = await fct; return CommonCssFeed;
+            SearchCss = await fct; return SearchCss;
         }
         
         public static async Task<string> GetFeedCommonCss(string bCss = null)
@@ -156,11 +160,16 @@ namespace BitChute.Web.Ui
             public static string ChannelBannerImgOrg = @".channel-banner .image{width:100px;height:100px}";
             public static string ChannelBannerImgNew = @".channel-banner .image{height:100%}";
             public static string VidResultImageOrg = @".video-result-image img{max-width:270px}";
-            public static string VidResultImageNew = @".video-result-image img{max-width:none}";
+            public static string VidResultImageNew = @".video-result-image img{max-width:100%}";
             public static string VidResultImageContOrg = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:270px}";
             public static string VidResultImageContNew = @".video-result-image-container,.video-result-image,.video-result-image img{max-width:none}";
-            public static string ResultListImgContOrg = @".results-list[max-width~=""592px""] .video-result-container{flex-direction:column;max-width:270px;max-height:100%}";
-            public static string ResultListImgContNew = @".results-list[max-width~=""592px""] .video-result-container{flex-direction:column;max-width:none;max-height:100%}";
+            public static string ResultListImgContOrg = @".results-list[max-width~='592px'] .video-result-container{flex-direction:column;max-width:270px;max-height:100%}";
+            public static string ResultListImgContNew = @".results-list[max-width~='592px'] .video-result-container{flex-direction:column;max-width:100%}";
+            public static string VidResultTextOrg = @".video-result-text{margin:5px 0;display:block;display:-webkit-box;min-height:8em;max-height:8em;line-height:1.2em;-webkit-line-clamp:8;-webkit-box-orient:vertical;-moz-box-orient:vertical;-ms-box-orient:vertical;overflow:hidden}";
+            public static string VidResultTextNew = @".video-result-text{margin:5px 0;display:none;display:none;max-height:100px;max-width:100%;line-height:1.2em;-webkit-line-clamp:8;-webkit-box-orient:vertical;-moz-box-orient:vertical;-ms-box-orient:vertical;overflow:hidden}";
+            public static string VidResultTextContainerOrg = @".video-result-text-container{margin:0;min-width:100%}";
+            public static string VidResultTextContainerNew = @".video-result-text-container{margin:0;min-width:100%;max-height:100px;overflow:hidden}";
+
         }
     }
 }

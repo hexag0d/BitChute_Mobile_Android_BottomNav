@@ -22,8 +22,6 @@ namespace BitChute.Web
         {
             string h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/");
 
-            await Task.Run(() =>
-            {
                 try
                 {
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -35,17 +33,17 @@ namespace BitChute.Web
                         {
                             if (node.OuterHtml.Contains("/common.css"))
                             {
-                                CssHelper.CommonCssUrl = "https://www.bitchute.com" + node.Attributes["href"].Value;
+                                CssHelper.CommonCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                             }
                             if (node.OuterHtml.Contains("/search.css"))
                             {
-                                CssHelper.SearchCssUrl = "https://www.bitchute.com" + node.Attributes["href"].Value;
+                                CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                             }
                         }
                     }
+                    CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
-            });
             return false;
         }
 

@@ -158,6 +158,9 @@ namespace BitChute.Classes
             public static ProgressBar AudioEncodeProgressBar { get; set; }
             public static Button PickSourceButton { get; set; }
             public static EditText EncoderSourceEditText { get; set; }
+            public static EditText EncoderBitRateEditText { get; set; }
+            public static EditText EncoderWidthEditText { get; set; }
+            public static EditText EncoderHeightEditText { get; set; }
         }
     }
 }

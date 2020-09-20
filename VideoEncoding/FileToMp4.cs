@@ -67,15 +67,16 @@ namespace MediaCodecHelper {
             return _workingDirectory;
         }
 
-        public FileToMp4(Context context, int fps, int secondPerIFrame, System.Drawing.Size? outputSize, int bitRate = 600000) {
+        public static void GetValuesFromLayout()
+        {
+
+        }
+
+        public FileToMp4(Context context, int fps, int secondPerIFrame, int width = 854, int height = 480, int bitRate = 600000) {
 			_context = context;
 
-			if (outputSize.HasValue) {
-				_width = outputSize.Value.Width;
-				_height = outputSize.Value.Height;
-			}
-            _width = 854;
-            _height = 480;
+            _width = width;
+            _height = height;
 			_secondPerIFrame = secondPerIFrame;
 			_fps = fps;
 			_bitRate = bitRate;

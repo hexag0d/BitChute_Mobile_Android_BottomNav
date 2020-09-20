@@ -84,6 +84,9 @@ namespace BitChute.Fragments
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
             //LoadUrlWithDelay(RootUrl, 2500);
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
+            ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
+            ViewHelpers.VideoEncoder.EncoderWidthEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderWidthEditText);
+            ViewHelpers.VideoEncoder.EncoderHeightEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderHeightEditText);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
             ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
@@ -282,7 +285,12 @@ namespace BitChute.Fragments
                 try
                 {
                     FileBrowser.GetExternalPermissions();
-                    var codec = new MediaCodecHelper.FileToMp4(Android.App.Application.Context, 24, 1, null);
+                    VideoEncoder.EncodeProgressBar.Progress = 0;
+                    var codec = new MediaCodecHelper
+                    .FileToMp4(Android.App.Application.Context, 24, 1, 
+                    Convert.ToInt32(VideoEncoder.EncoderWidthEditText.Text),
+                    Convert.ToInt32(VideoEncoder.EncoderHeightEditText.Text),
+                    Convert.ToInt32(VideoEncoder.EncoderBitRateEditText.Text /*int*/) * 1000 /* = kbps */);
                     codec.Progress += OnEncoderProgress;
                     string inputPath = "";
                     string outputPath = "";
@@ -293,18 +301,15 @@ namespace BitChute.Fragments
                         inputPath = ViewHelpers.VideoEncoder.EncoderSourceEditText.Text;
                         tempuri = Android.Net.Uri.Parse(inputPath);
                         fileName = tempuri.LastPathSegment.Split(@"/").ToList<string>().Last();
-                        //I had to trim this because bitchute will actually completely drop files that have long names into a 404 hole
+                        //I had to trim this because bitchute will actually completely drop files that have long names into a 404 khole
                         outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName.Replace(".mp4", "")}_cp_{new System.Random().Next(0, 777)}.mp4";
                     }
                     else
                     {
                         tempuri = MediaCodecHelper.FileToMp4.InputUriToEncode;
                         fileName = MediaCodecHelper.FileToMp4.InputUriToEncode.LastPathSegment.Replace(":","");
-
                         outputPath = $"{MediaCodecHelper.FileToMp4.GetWorkingDirectory()}{fileName?.Replace(".mp4", "")}_cp_{new System.Random().Next(0, 777)}.mp4";
-                        
                     }
-
                     codec.Start(MediaCodecHelper.FileToMp4.InputUriToEncode, outputPath, inputPath);
                 }
                 catch (Exception ex) { Console.WriteLine(ex); }
@@ -320,7 +325,9 @@ namespace BitChute.Fragments
         {
             if (!e.Finished)
             {
-                var r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
+                int r = 0;
+                if (e.TotalData!=0)
+                r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
                 if (r > 100) { r = 100; }
                 ViewHelpers.Main.UiHandler.Post(() =>
                 {

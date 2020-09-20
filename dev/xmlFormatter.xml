@@ -1,114 +1,155 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:id="@+id/playControlTotal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-  <LinearLayout
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/black"
+  android:id="@+id/videoEncoderMainLayout">
+  <TextView
+    android:text="Video Encoder (pre-processing)"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:textColor="@android:color/white"
+    android:layout_height="wrap_content"
+    android:id="@+id/encoderLayoutTitle" />
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:id="@+id/encoderStatusTextView" />
+  <ProgressBar
+    android:layout_width="match_parent"
+    android:layout_height="100px"
+    android:progressBackgroundTint="@android:color/holo_purple"
+    android:indeterminateTintMode="src_atop"
+    android:indeterminateTint="@android:color/holo_blue_light"
+    android:id="@+id/encoderProgressBar"
+    android:min="0"
+    android:progress="0"
+    android:max="100"
+    android:scaleY="3"
+    style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:id="@+id/audioEncoderStatusTextView" />
+  <ProgressBar
+    android:layout_width="match_parent"
+    android:layout_height="100px"
+    android:progressBackgroundTint="@android:color/holo_purple"
+    android:indeterminateTintMode="src_atop"
+    android:indeterminateTint="@android:color/holo_blue_light"
+    android:id="@+id/audioEncoderProgressBar"
+    android:min="0"
+    android:progress="0"
+    android:max="100"
+    android:scaleY="3"
+    style="@android:style/Widget.Holo.ProgressBar.Horizontal"/>
+  <RelativeLayout
     android:orientation="vertical"
     android:minWidth="25px"
     android:minHeight="25px"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/black"
-    android:id="@+id/playControlNotification" >
+    android:id="@+id/linearLayout1">
     <LinearLayout
       android:orientation="horizontal"
       android:minWidth="25px"
       android:minHeight="25px"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout3" >
-      <TextView
-        android:text="BitChute Player"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+      android:id="@+id/linearLayout2"
+      android:layout_height="200px">
+      <EditText
+        android:text="600"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="wrap_content"
+        android:lines="1"
+        android:layout_height="match_parent"
+        android:id="@+id/videoEncoderBitRateEditText"
         android:textColor="@android:color/white"
-        android:layout_height="match_parent"
-        android:id="@+id/textView1" />
-      <RadioGroup
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:orientation="horizontal"
+        android:textAlignment="center"/>
+      <TextView
+        android:text="kbps"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:id="@+id/textView4"
+        android:textAlignment="center"/>
+      <EditText
+        android:text="854"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
+        android:lines="1"
         android:layout_height="match_parent"
-        android:id="@+id/backgroundNoteGroup">
-        <RadioButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:checked="true"
-          android:textColor="#3498db"
-          android:buttonTint="#3498db"
-          android:text="Resume"
-          android:id="@+id/useBackgroundForNotificationsOffRb"/>
-        <RadioButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="#3498db"
-          android:buttonTint="#3498db"
-          android:text="Background"
-          android:id="@+id/useBackgroundForNotificationsOnRb" />
-      </RadioGroup>
+        android:id="@+id/videoEncoderWidthEditText"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"/>
+      <TextView
+        android:text="x"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:id="@+id/textView4"
+        android:textAlignment="center" />
+      <EditText
+        android:text="480"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:lines="1"
+        android:layout_height="match_parent"
+        android:id="@+id/videoEncoderHeightEditText"
+        android:textColor="@android:color/white"
+        android:textAlignment="center" />
     </LinearLayout>
-    <LinearLayout
-      android:orientation="horizontal"
-      android:minWidth="50px"
-      android:minHeight="30px"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/spaceLayout" >
-    </LinearLayout>
-    <LinearLayout
-      android:orientation="horizontal"
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout2">
-      <Button
-        android:text="Prev"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textColor="#3498db"
-        android:buttonTint="#3498db"
-        android:id="@+id/notificationPrevious" />
-      <Button
-        android:text="||"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textColor="#3498db"
-        android:buttonTint="#3498db"
-        android:id="@+id/notificationPause" />
-      <Button
-        android:text="play"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textColor="#3498db"
-        android:buttonTint="#3498db"
-        android:id="@+id/notificationPlay" />
-      <Button
-        android:text="Next>>"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-				
-        android:textColor="#3498db"
-        android:buttonTint="#3498db"
-        android:id="@+id/notificationNext" />
-    </LinearLayout>
-  </LinearLayout>
-  <LinearLayout
-    android:orientation="horizontal"
-    android:minWidth="25px"
-    android:minHeight="25px"
+  </RelativeLayout>
+  <EditText
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:visibility="gone"
-    android:id="@+id/linearLayout4" >
-    <Button
-      android:text="Reload"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:id="@+id/notificationReload" />
-  </LinearLayout>
-
+    android:textSize="@dimen/abc_text_size_medium_material"
+    android:text="your file here"
+    android:textColor="@android:color/white"
+    android:id="@+id/encoderSourceFileEditText"
+    android:lines="1" />
+  <Button
+    android:text="Encode"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/white"
+    android:minWidth="25px"
+    android:minHeight="300px"
+    android:background="#404040"
+    android:id="@+id/encodingStartButton" />
+  <Button
+    android:text="Pick a Video"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="250px"
+    android:textColor="@android:color/white"
+    android:id="@+id/encodingPickAVideoButton"
+    android:shadowColor="#ff0c00ff" />
+  <EditText
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/abc_text_size_medium_material"
+    android:text="output file"
+    android:textColor="@android:color/white"
+    android:lines="2"
+    android:id="@+id/encoderOutputFileEditText"
+    android:shadowColor="#ff0061ff" />
+  <TextView
+    android:text=""
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/textView3" />
+  <TextView
+    android:text="Testing status is: experimental"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/textView2" />
 </LinearLayout>
