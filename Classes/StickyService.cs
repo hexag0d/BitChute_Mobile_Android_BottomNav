@@ -328,12 +328,14 @@ namespace BitChute.Services
         {
             try
             {
-                ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
+                ExtStickyServ.StartForeground(new System.Random().Next(0, 9999), startNote);
                 AppState.ForeNote = startNote;
                 //MainActivity.NOTIFICATION_ID++;
             }
             catch
-            {  }
+            {
+
+            }
         }
 
         #region StickyServiceMethods

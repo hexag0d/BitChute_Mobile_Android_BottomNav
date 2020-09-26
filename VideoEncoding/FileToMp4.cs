@@ -188,7 +188,6 @@ namespace MediaCodecHelper {
             LatestInputVideoLength = MuxerEncoding.GetVideoLength(inputPath, inputUri);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath, inputUri);
             EstimateTotalSize(LatestInputVideoLength, _bitRate);
-            Android.Graphics.SurfaceTexture st = null;
             try
             {
                 prepareMediaPlayer(inputPath, inputUri);
@@ -199,7 +198,6 @@ namespace MediaCodecHelper {
                 _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                 _mediaPlayer.SetVolume(0, 0);
                 _fC = 0;
-                st = _outputSurface.SurfaceTexture;
             }
             catch (System.Exception ex) { Log.Debug("VideoEncoder", ex.Message); }
             VideoEncodingInProgress = true;
@@ -210,10 +208,10 @@ namespace MediaCodecHelper {
                 /*
                  Disabled this to make it faster when not debugging
                  */
-                //if (_frameCount >= 30 && AppSettings.Logging.SendToConsole)  
-                //System.Console.WriteLine($"FileToMp4 while @ {_firstKnownBuffer} exited @ {st.Timestamp}  | encoded bits {_encodedBits} of estimated {_estimatedTotalSize}");
-                
-                
+                if (_fC >= 30 && AppSettings.Logging.SendToConsole)
+                    System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+
+
                 // Acquire a new frame of input, and render it to the Surface.  If we had a
                 // GLSurfaceView we could switch EGL contexts and call drawImage() a second
                 // time to render it on screen.  The texture can be shared between contexts by
@@ -228,7 +226,7 @@ namespace MediaCodecHelper {
                     // Set the presentation time stamp from the SurfaceTexture's time stamp.  This
                     // will be used by MediaMuxer to set the PTS in the video.
 
-                    _inputSurface.SetPresentationTime(st.Timestamp);
+                    _inputSurface.SetPresentationTime(_outputSurface.SurfaceTexture.Timestamp);
                     
                     //if (VERBOSE) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
                     // Submit it to the encoder.  The eglSwapBuffers call will block if the input
@@ -243,7 +241,7 @@ namespace MediaCodecHelper {
                D(true);
             VideoEncodingInProgress = false;
             if (AppSettings.Logging.SendToConsole)
-                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {st.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
             try
             {
                 releaseMediaPlayer();
@@ -358,13 +356,17 @@ namespace MediaCodecHelper {
                         ed.Limit(_bfi.Offset + _bfi.Size);
                         _bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        if (AppSettings.Logging.SendToConsole)
+                        {
+                            System.Console.WriteLine($"Media player @ " +
+                                $"{_mediaPlayer.Timestamp.AnchorMediaTimeUs} us while sT @ " +
+                                $"{_outputSurface.SurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
+                        }
                         //System.Console.WriteLine($"Drain {_bfi.Size} @ {_bfi.PresentationTimeUs}");
                         
                         if (_firstKnownBuffer == 0)
                         {
                             _firstKnownBuffer = _bfi.PresentationTimeUs;
-                            //var cst = CorrectForStartTime(fbit, _firstKnownBuffer);
-                            //Don't take these as arguments because it'll use up more memory; they should remain static while video encodes
                             if (InputUriToEncode != null) { this.StartAudioEncoder(_firstKnownBuffer, null, InputUriToEncode); }
                             else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
@@ -427,9 +429,8 @@ namespace MediaCodecHelper {
 	     */
 		private void prepareSurfaceTexture() {
 			_outputSurface = new OutputSurface();
-			var st = _outputSurface.Surface;
 			try {
-				_mediaPlayer.SetSurface(st);
+				_mediaPlayer.SetSurface(_outputSurface.Surface);
 			} catch (System.Exception e) {
 				throw new System.Exception("setPreviewTexture failed:" + e.Message);
 			}
