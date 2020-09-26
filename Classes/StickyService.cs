@@ -19,7 +19,7 @@ using static BitChute.Fragments.SettingsFrag;
 
 namespace BitChute.Services
 {
-    //[Service(Exported = true)]
+    [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
         ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
     public class ExtSticky : Service, AudioManager.IOnAudioFocusChangeListener,
@@ -65,7 +65,6 @@ namespace BitChute.Services
 
         private static bool _paused;
         //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
-
         #endregion
 
         /// <summary>
@@ -328,11 +327,11 @@ namespace BitChute.Services
         {
             try
             {
-                ExtStickyServ.StartForeground(new System.Random().Next(0, 9999), startNote);
-                AppState.ForeNote = startNote;
+                ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
+                //AppState.ForeNote = startNote;
                 //MainActivity.NOTIFICATION_ID++;
             }
-            catch
+            catch (Exception ex)
             {
 
             }
@@ -355,11 +354,12 @@ namespace BitChute.Services
 
         public override void OnCreate()
         {
+            ExtStickyServ = this;
             base.OnCreate();
             //Find our audio and notificaton managers
             AudioMan = (AudioManager)GetSystemService(AudioService);
             WifiManager = (WifiManager)GetSystemService(WifiService);
-            ExtStickyServ = this;
+            
         }
         public override IBinder OnBind(Intent intent)
         {

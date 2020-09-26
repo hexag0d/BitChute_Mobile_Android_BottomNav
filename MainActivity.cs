@@ -168,6 +168,7 @@ namespace BitChute
         {
             await AppSettings.LoadAllPrefsFromSettings();
             await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            
         }
 
         public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
