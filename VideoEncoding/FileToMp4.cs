@@ -37,7 +37,6 @@ namespace MediaCodecHelper {
 
 		private Context _context;
         private static string _workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
-        bool VERBOSE = false;
 		private int _width;
 		private int _height;
 		private int _fps;
@@ -163,7 +162,7 @@ namespace MediaCodecHelper {
         /// <summary>
         /// estimated total size of output video track
         /// </summary>
-        private static long _eTS = 0; //trimmed for memory conservation
+        private static long _eTS = 0; 
         public static long EstimateTotalSize(int length, int bitrate)
         {
             _eTS = ((length/1000 * bitrate));
@@ -179,7 +178,7 @@ namespace MediaCodecHelper {
 
 		public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null) {
             BitChute.Classes.FileBrowser.GetExternalPermissions();
-             EncodeCameraToMp4(inputPath, outputPath, true, inputUri); 
+             EncodeFileToMp4(inputPath, outputPath, true, inputUri); 
 		}
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
@@ -191,7 +190,7 @@ namespace MediaCodecHelper {
         public static int TexturesInstantiatedSoFar = 0;
         public static long MediaPlayerPositionBeforeGC = 0;
 
-        private string EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
+        private string EncodeFileToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
             LatestInputVideoLength = MuxerEncoding.GetVideoLength(inputPath, inputUri);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath, inputUri);
             EstimateTotalSize(LatestInputVideoLength, _bitRate);
@@ -217,7 +216,6 @@ namespace MediaCodecHelper {
                         GarbageIsBeingCollected = true;
                         _mediaPlayer.Pause();
                         MediaPlayerPositionBeforeGC = _mediaPlayer.Timestamp.AnchorMediaTimeUs;
-                        //GC.TryStartNoGCRegion(100000000);
                         GC.Collect(0);
                         System.Threading.Thread.Sleep(100);
                         prepareMediaPlayer(inputPath, inputUri);
@@ -265,13 +263,13 @@ namespace MediaCodecHelper {
 
                     _inputSurface.SetPresentationTime(_outputSurface.WeakSurfaceTexture.Timestamp);
 
-                    //if (VERBOSE) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
+                    //if (AppSettings.Logging.SendToConsole) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
                     // Submit it to the encoder.  The eglSwapBuffers call will block if the input
                     // is full, which would be bad if it stayed full until we dequeued an output
                     // buffer (which we can't do, since we're stuck here).  So long as we fully drain
                     // the encoder before supplying additional input, the system guarantees that we
                     // can supply another frame without blocking.
-                    //if (VERBOSE) Log.Debug(TAG, "sending frame to encoder:");
+                    //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
                     if (_ebt >= _eTS) { break; }
                     
@@ -287,7 +285,7 @@ namespace MediaCodecHelper {
                 releaseEncoder();
                 releaseWeakSurfaceTexture();
             }catch { }
-            _firstKnownBuffer = 0; //this stores the audio encoder offset long
+            _firstKnownBuffer = 0; //this stores the audio encoder offset long, not needed? The video starts with a really high  PT so this was the offset, fixed now?
             _eTS = 0;
             _fC = 0;
             _ebt = 0;
@@ -318,10 +316,10 @@ namespace MediaCodecHelper {
         private void D(bool es)
         {
 
-            //if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")"); @DEBUG, disabled to optimize performance
+            //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")"); @DEBUG, disabled to optimize performance
             if (es)
             {
-                if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
+                if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");
                 mEncoder.SignalEndOfInputStream();
                 this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true));
             }
@@ -338,7 +336,7 @@ namespace MediaCodecHelper {
                     }
                     else
                     {
-                        if (VERBOSE) Log.Debug(TAG, "no output available, spinning to await EOS");
+                        if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "no output available, spinning to await EOS");
                     }
                 }
                 else if (encoderStatus == (int)MediaCodec.InfoOutputBuffersChanged)
@@ -354,7 +352,7 @@ namespace MediaCodecHelper {
                         throw new RuntimeException("format changed twice");
                     }
                     MediaFormat newFormat = mEncoder.OutputFormat;
-                    if (VERBOSE) Log.Debug(TAG, "encoder output format changed: " + newFormat);
+                    if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "encoder output format changed: " + newFormat);
 
                     mTrackIndex = _muxer.AddTrack(newFormat);
                     LatestAudioTrackIndex = _muxer.AddTrack(LatestAudioInputFormat); // @TODO No processing on this yet
@@ -380,7 +378,7 @@ namespace MediaCodecHelper {
                     {
                         // The codec config data was pulled out and fed to the muxer when we got
                         // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-                        if (VERBOSE) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                        if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
                         _bfi.Size = 0;
                     }
 
@@ -414,7 +412,7 @@ namespace MediaCodecHelper {
                         /*
                      disabled when not debugging because this is locking up if the file is too big    @DEBUG
                      */
-                        //if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
+                        //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
                     }
 
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -422,7 +420,7 @@ namespace MediaCodecHelper {
                     if ((_bfi.Flags & MediaCodec.BufferFlagEndOfStream) != 0)
                     {
                         if (!es) { Log.Warn(TAG, "reached end of stream unexpectedly"); }
-                        else { if (VERBOSE) Log.Debug(TAG, "end of stream reached"); }
+                        else { if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "end of stream reached"); }
                         this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true, false));
                         break;      // out of while
                     }
@@ -453,7 +451,7 @@ namespace MediaCodecHelper {
 	     * Stops camera preview, and releases the camera to the system.
 	     */
 		private void releaseMediaPlayer() {
-			if (VERBOSE) Log.Debug(TAG, "releasing camera");
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "releasing camera");
 			if (_mediaPlayer != null) {
 				_mediaPlayer.Stop();
 				_mediaPlayer.Release();
@@ -504,7 +502,7 @@ namespace MediaCodecHelper {
 			format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
 			format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
 			format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-			if (VERBOSE) Log.Debug(TAG, "format: " + format);
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "format: " + format);
 
 			// Create a MediaCodec encoder, and configure it with our format.  Get a Surface
 			// we can use for input and wrap it with a class that handles the EGL work.
@@ -540,7 +538,7 @@ namespace MediaCodecHelper {
 	     * Releases encoder resources.
 	     */
 		private void releaseEncoder() {
-			if (VERBOSE) Log.Debug(TAG, "releasing encoder objects");
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "releasing encoder objects");
 			if (mEncoder != null) {
 				mEncoder.Stop();
 				mEncoder.Release();

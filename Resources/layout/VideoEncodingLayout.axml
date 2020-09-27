@@ -71,13 +71,13 @@
       android:id="@+id/linearLayout2"
       android:layout_height="200px">
 				<TextView
-					android:text="   "
+					android:text=" "
 					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
 					android:id="@+id/textView5" />
       <EditText
-        android:text="   600   "
+        android:text=" 600   "
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
 					android:inputType="number"
@@ -123,15 +123,44 @@
         android:id="@+id/videoEncoderHeightEditText"
         android:textColor="@android:color/white"
         android:textAlignment="center" />
+				      <TextView
+        android:text=" |"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:lines="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/atFpsTextView"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textAlignment="center"/>
+				<EditText
+					android:text="24"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_width="wrap_content"
+					android:lines="1"
+					android:inputType="number"
+					android:layout_height="match_parent"
+					android:id="@+id/videoEncoderFpsEditText"
+					android:textColor="@android:color/white"
+					android:textAlignment="center" />
+				      <TextView
+        android:text="fps"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:lines="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/fpsLabel"
+        android:textColor="#ff00ffff"
+        android:textAlignment="center"/>
     </LinearLayout>
   </RelativeLayout>
   <EditText
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/abc_text_size_medium_material"
-    android:text="your file here"
+    android:text=""
     android:textColor="@android:color/white"
     android:id="@+id/encoderSourceFileEditText"
+				android:hint="input file"
     android:lines="1" />
   <Button
     android:text="Encode"
@@ -157,7 +186,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/abc_text_size_medium_material"
-    android:text="output file"
+    android:text=""
+			android:hint="output file"
+			
+			
     android:textColor="@android:color/white"
     android:lines="2"
     android:id="@+id/encoderOutputFileEditText"

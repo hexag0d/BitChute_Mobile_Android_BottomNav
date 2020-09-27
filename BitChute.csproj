@@ -92,12 +92,15 @@
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
     <Compile Include="Classes\MediaHelper.cs" />
+    <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Classes\SearchOverride.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\UriDecoder.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Css\CssHelper.cs" />
+    <Compile Include="Fragments\CommonFrag.cs" />
+    <Compile Include="Views\ExtView.cs" />
     <Compile Include="Views\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />
     <Compile Include="Fragments\HomePageFrag.cs" />

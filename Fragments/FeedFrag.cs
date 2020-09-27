@@ -10,7 +10,7 @@ using BitChute.Web;
 
 namespace BitChute.Fragments
 {
-    public class FeedFrag : Fragment
+    public class FeedFrag : CommonWebViewFrag
     {
         string _title;
         string _icon;
@@ -53,7 +53,6 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             Wv.Settings.DisplayZoomControls = false;
-            //LoadUrlWithDelay(RootUrl, 2000);
             return _view;
         }
 

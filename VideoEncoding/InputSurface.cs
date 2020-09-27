@@ -32,7 +32,6 @@ namespace MediaCodecHelper {
 
 	public class InputSurface {
 		private const string TAG = "InputSurface";
-		private const bool VERBOSE = false;
 		private const int EGL_RECORDABLE_ANDROID = 0x3142;
 		private const int EGL_OPENGL_ES2_BIT = 4;
 		private EGLDisplay _EGLDisplay;

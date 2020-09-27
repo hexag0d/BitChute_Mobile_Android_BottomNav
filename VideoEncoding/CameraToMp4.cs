@@ -18,6 +18,7 @@ using Android.Media;
 using System.IO;
 using MediaCodecHelper;
 using Android.Content;
+using BitChute.Classes;
 
 namespace MediaCodecHelper {
 
@@ -25,7 +26,6 @@ namespace MediaCodecHelper {
 		
 		private Context _context;
 		private string _workingDirectory;
-        bool VERBOSE = true;
 		public CameraToMpegTest(Context context) {
 			_context = context;
 			_workingDirectory = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
@@ -129,7 +129,7 @@ namespace MediaCodecHelper {
 
 					// Set the presentation time stamp from the SurfaceTexture's time stamp.  This
 					// will be used by MediaMuxer to set the PTS in the video.
-					if (VERBOSE) {
+					if (AppSettings.Logging.SendToConsole) {
 						Log.Debug(TAG, "present: " +
 							((st.Timestamp - startWhen) / 1000000.0) + "ms");
 					}
@@ -140,7 +140,7 @@ namespace MediaCodecHelper {
 					// buffer (which we can't do, since we're stuck here).  So long as we fully drain
 					// the encoder before supplying additional input, the system guarantees that we
 					// can supply another frame without blocking.
-					if (VERBOSE) Log.Debug(TAG, "sending frame to encoder");
+					if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending frame to encoder");
 					_inputSurface.SwapBuffers();
 				}
 
@@ -199,7 +199,7 @@ namespace MediaCodecHelper {
 			// We should make sure that the requested MPEG size is less than the preferred
 			// size, and has the same aspect ratio.
 			Camera.Size ppsfv = parms.PreferredPreviewSizeForVideo;
-			if (VERBOSE && ppsfv != null) {
+			if (AppSettings.Logging.SendToConsole && ppsfv != null) {
 				Log.Debug(TAG, "Camera preferred preview size for video is " +
 					ppsfv.Width + "x" + ppsfv.Height);
 			}
@@ -221,7 +221,7 @@ namespace MediaCodecHelper {
 	     * Stops camera preview, and releases the camera to the system.
 	     */
 		private void releaseCamera() {
-			if (VERBOSE) Log.Debug(TAG, "releasing camera");
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "releasing camera");
 			if (_camera != null) {
 				_camera.StopPreview();
 				_camera.Release();
@@ -270,7 +270,7 @@ namespace MediaCodecHelper {
 			format.SetInteger(MediaFormat.KeyBitRate, bitRate);
 			format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
 			format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-			if (VERBOSE) Log.Debug(TAG, "format: " + format);
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "format: " + format);
 
 			// Create a MediaCodec encoder, and configure it with our format.  Get a Surface
 			// we can use for input and wrap it with a class that handles the EGL work.
@@ -309,7 +309,7 @@ namespace MediaCodecHelper {
 	     * Releases encoder resources.
 	     */
 		private void releaseEncoder() {
-			if (VERBOSE) Log.Debug(TAG, "releasing encoder objects");
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "releasing encoder objects");
 			if (mEncoder != null) {
 				mEncoder.Stop();
 				mEncoder.Release();
@@ -338,10 +338,10 @@ namespace MediaCodecHelper {
 	     */
 		private void drainEncoder(bool endOfStream) {
 			int TIMEOUT_USEC = 10000;
-			if (VERBOSE) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")");
+			if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")");
 
 			if (endOfStream) {
-				if (VERBOSE) Log.Debug(TAG, "sending EOS to encoder");
+				if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");
 				mEncoder.SignalEndOfInputStream();
 			}
 
@@ -353,7 +353,7 @@ namespace MediaCodecHelper {
 					if (!endOfStream) {
 						break;      // out of while
 					} else {
-						if (VERBOSE) Log.Debug(TAG, "no output available, spinning to await EOS");
+						if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "no output available, spinning to await EOS");
 					}
 				} else if (encoderStatus == (int) MediaCodec.InfoOutputBuffersChanged) {
 					// not expected for an encoder
@@ -384,7 +384,7 @@ namespace MediaCodecHelper {
 					if ((mBufferInfo.Flags & MediaCodec.BufferFlagCodecConfig) != 0) {
 						// The codec config data was pulled out and fed to the muxer when we got
 						// the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-						if (VERBOSE) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+						if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
 						mBufferInfo.Size = 0;
 					}
 
@@ -398,7 +398,7 @@ namespace MediaCodecHelper {
 						encodedData.Limit(mBufferInfo.Offset + mBufferInfo.Size);
 
 						mMuxer.WriteSampleData(mTrackIndex, encodedData, mBufferInfo);
-						if (VERBOSE) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
+						if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer");
 					}
 
 					mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -407,7 +407,7 @@ namespace MediaCodecHelper {
 						if (!endOfStream) {
 							Log.Warn(TAG, "reached end of stream unexpectedly");
 						} else {
-							if (VERBOSE) Log.Debug(TAG, "end of stream reached");
+							if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "end of stream reached");
 						}
 						break;      // out of while
 					}

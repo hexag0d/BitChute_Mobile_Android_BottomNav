@@ -1,39 +1,34 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Views;
-using Android.Webkit;
 using Android.Widget;
 using BitChute.Classes;
-using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using static BitChute.Classes.AppSettings;
 using static BitChute.Classes.ExtWebChromeClient;
 using static BitChute.Classes.ExtNotifications;
 using static BitChute.Services.ExtSticky;
 using static BitChute.Classes.ViewHelpers;
+using static BitChute.Classes.ViewHelpers.VideoEncoder;
 using static BitChute.Classes.ViewHelpers.Tab4;
-using static Android.Widget.TabHost;
+
 using System.Linq;
 using MediaCodecHelper;
-using static BitChute.Classes.FileBrowser;
 
 namespace BitChute.Fragments
 {
-    public class SettingsFrag : Android.Support.V4.App.Fragment
+    public class SettingsFrag : CommonWebViewFrag
     {
         string _title;
         string _icon;
+        public static ServiceWebView Wv;
         public static int TNo = 4;
         public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
         private static CookieCollection cookies = new CookieCollection();
-        public static ServiceWebView Wv;
 
         public static SettingsFrag NewInstance(string title, string icon)
         {
@@ -82,11 +77,11 @@ namespace BitChute.Fragments
             Wv.Settings.JavaScriptEnabled = true;
             Wv.Settings.DisplayZoomControls = false;
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            //LoadUrlWithDelay(RootUrl, 2500);
             ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
             ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
             ViewHelpers.VideoEncoder.EncoderWidthEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderWidthEditText);
             ViewHelpers.VideoEncoder.EncoderHeightEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderHeightEditText);
+            EncoderFpsEditText = VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderFpsEditText);
             ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
             ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
             ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
@@ -287,7 +282,7 @@ namespace BitChute.Fragments
                     FileBrowser.GetExternalPermissions();
                     VideoEncoder.EncodeProgressBar.Progress = 0;
                     var codec = new MediaCodecHelper
-                    .FileToMp4(Android.App.Application.Context, 24, 1, 
+                    .FileToMp4(Android.App.Application.Context, Convert.ToInt32(EncoderFpsEditText.Text), 1, 
                     Convert.ToInt32(VideoEncoder.EncoderWidthEditText.Text),
                     Convert.ToInt32(VideoEncoder.EncoderHeightEditText.Text),
                     Convert.ToInt32(VideoEncoder.EncoderBitRateEditText.Text /*int*/) * 1000 /* = kbps */);

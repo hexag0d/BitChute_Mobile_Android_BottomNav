@@ -1,14 +1,7 @@
-﻿using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Support.V4.App;
+﻿using Android.OS;
 using Android.Views;
 using Android.Webkit;
-using Android.Widget;
 using BitChute.Classes;
-using BitChute;
-using BitChute.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static BitChute.Services.ExtSticky;
@@ -16,11 +9,10 @@ using BitChute.Web;
 
 namespace BitChute.Fragments
 {
-    public class SubscriptionFrag : Fragment
+    public class SubscriptionFrag : CommonWebViewFrag
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
         readonly ViewClients.Subs _wvc = new ViewClients.Subs();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         public static int TNo = 1;
@@ -52,7 +44,6 @@ namespace BitChute.Fragments
             Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
             Wv.SetWebViewClient(_wvc);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            //Wv.LoadUrl(RootUrl);
             Wv.Settings.JavaScriptEnabled = true;
             if (AppSettings.ZoomControl)
             {

@@ -17,11 +17,15 @@ using BitChute.Web.Ui;
 using System.Net;
 using BitChute.Fragments;
 using static BitChute.Classes.JavascriptCommands;
+using static BitChute.Classes.PlaystateManagement;
 
 namespace BitChute.Web
 {
     public class ViewClients
     {
+        public delegate void PlaystateEventDelegate(PlaystateEventArgs _args);
+        public static event PlaystateEventDelegate PlaystateChanged;
+
         public static async void LoadInitialUrls(int delay = 400)
         {
             while (!CssHelper.CustomCssReadyForRead)
@@ -74,32 +78,86 @@ namespace BitChute.Web
                 w.LoadUrl(JavascriptCommands._jsPageBarDelete);
             }
         }
-        
-        //These classes are static rather than differentiating on the fly because 
-        //I don't want too much checking what tab we're on.  I think this will run faster
-        //if each class is pre-specialized to it's purpose
-        //the point here is to add styling and other customized html for android webview specifically
 
-        public class Home : WebViewClient
+
+        public static void ReRouteToAppPlaystate(string url)
+        {
+            switch (url)
+            {
+                case @"https://_%26app_play_invoked/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, true));
+                    break;
+                case @"https://_%26app_pause_invoke/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, false, true));
+                    break;
+                case @"https://_%26app_play_isplaying/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, false, false, true));
+                    break;
+            }
+        }
+
+        public static void OnPlaystateChanged(PlaystateEventArgs e)
+        {
+
+        }
+
+        public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
+        {
+            public BaseWebViewClient()
+            {
+                if (PlaystateChanged == null) PlaystateChanged += OnPlaystateChanged;
+            }
+
+            public static async void RunBaseCommands(WebView w, int d = 2000)
+            {
+                await Task.Delay(d);
+                HidePageTitle(w, AppSettings.HidePageTitleDelay);
+                
+                w.LoadUrl(GetInjectable(
+                    JavascriptCommands.CallBackInjection.IsPlayingCallback + 
+                    JavascriptCommands.CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
+            }
+
+            public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().Contains(@"https://_%26app"))
+                {
+                    ReRouteToAppPlaystate(request.Url.ToString());
+                    request = null;
+                    return true;
+                }
+                return base.ShouldOverrideUrlLoading(view, request);
+            }
+
+            public override void OnPageFinished(WebView view, string url)
+            {
+                RunBaseCommands(view);
+                base.OnPageFinished(view, url);
+            }
+        }
+
+        //more specialized webview overrides
+
+        public class Home : BaseWebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
                 await Task.Delay(d);
                 if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/")
                 { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner + JavascriptCommands.Display.GetForAllTabs())); }
-                HidePageTitle(w, AppSettings.HidePageTitleDelay);
             }
-            
+
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
                 if (request.Url.ToString().Contains($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
                 }
-                if (request.Url.ToString().Contains($"/search.css"))
-                {
-                    return CssHelper.GetCssResponse(CssHelper.SearchCss);
-                }
+                //if (request.Url.ToString().Contains($"/search.css")) // this doesn't look right
+                //{
+                //    return CssHelper.GetCssResponse(CssHelper.SearchCss);
+                //}
+
                 return base.ShouldInterceptRequest(view, request);
             }
             

@@ -9,12 +9,11 @@ using static BitChute.Services.ExtSticky;
 
 namespace BitChute.Fragments
 {
-    public class HomePageFrag : Fragment
+    public class HomePageFrag : CommonWebViewFrag
     {
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        protected static View _view;
         public static string RootUrl = "https://www.bitchute.com/";
         public static string LastLoadedUrl = "";
         Home Wvc = new Home();
@@ -43,22 +42,25 @@ namespace BitChute.Fragments
         {
             try
             {
-                _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
+
+                var _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
+                
                 Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
                 Wv.SetWebViewClient(Wvc);
 
                 if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
-                //Wv.LoadUrl(RootUrl); //moved this to await after processed css loads
                 if (AppSettings.ZoomControl)
                 {
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
+
+                return _view;
             }
             catch { }
-            return _view;
+            return null;
         }
 
         public static async void SetAutoPlayWithDelay(int delay)

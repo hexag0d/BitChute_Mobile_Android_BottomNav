@@ -161,6 +161,7 @@ namespace BitChute.Classes
             public static EditText EncoderBitRateEditText { get; set; }
             public static EditText EncoderWidthEditText { get; set; }
             public static EditText EncoderHeightEditText { get; set; }
+            public static EditText EncoderFpsEditText { get; set; }
         }
     }
 }

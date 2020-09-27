@@ -49,13 +49,13 @@ using GL = Javax.Microedition.Khronos.Opengles.IGL;
 using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
 using Android.Runtime;
+using BitChute.Classes;
 
 namespace MediaCodecHelper {	
 	
 	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener, System.IDisposable
     {
 		private const string TAG = "OutputSurface";
-		private const bool VERBOSE = false;
 		private const int EGL_OPENGL_ES2_BIT = 4;
 		private IEGL10 mEGL;
 		private EGLDisplay mEGLDisplay;
@@ -308,7 +308,7 @@ namespace MediaCodecHelper {
 	}
 	
 	public void OnFrameAvailable(SurfaceTexture st) {
-		if (VERBOSE) Log.Debug(TAG, "new frame available");
+		if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "new frame available");
 		lock (_frameSyncObject) {
 			if (IsFrameAvailable) {
 				throw new RuntimeException("mFrameAvailable already set, frame could be dropped");

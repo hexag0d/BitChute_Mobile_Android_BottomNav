@@ -272,7 +272,7 @@ namespace BitChute
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
-                        HomePageFrag.WebViewGoBack();
+                        HomePageFrag.WebViewGoBack(); 
                         break;
                     case 1:
                         SubscriptionFrag.WebViewGoBack();
@@ -430,7 +430,7 @@ namespace BitChute
         /// </summary>
         /// <param name="tab"></param>
         /// <param name="changeDetails"></param>
-        public static void TabDetailChanger(int tab, string changeDetails)
+        public static void TabDetailChanger(int tab, string changeDetails) // this needs to get changed into a fragment swapper, not use SetTitle
         {
             switch (tab)
             {
@@ -573,7 +573,6 @@ namespace BitChute
                     ViewHelpers.Main.DownloadFAB.Show();
                     ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
                     ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
-                    //ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
                 }
             }
             else
@@ -581,8 +580,6 @@ namespace BitChute
                 TabStates.Tab3.VideoDownloaderViewEnabled = false;
                 if (AppSettings.DlFabShowSetting == "onpress")
                 {
-                    //ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
-                    //ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                     ViewHelpers.Main.DownloadFAB.Hide();
                     ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
                 }
@@ -614,7 +611,7 @@ namespace BitChute
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
+            PlaystateManagement.UserRequestedBackgroundPlayback = true;
             ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
             Main.MoveTaskToBack(true);
         }
@@ -685,7 +682,7 @@ namespace BitChute
                 {
                     if (data.Data != null)
                     {
-                        //var path = FileBrowser.ImportFileToString(data.Data, _chooserIntentStr, this.ApplicationContext);
+                        //var path = FileBrowser.ImportFileToString(data.Data, _chooserIntentStr, this.ApplicationContext); // for importing strings, not used ATM as URI is more universal
                         var path = FileBrowser.ImportFileToUri(data.Data, _chooserIntentStr, this.ApplicationContext);
 
                     }
@@ -809,17 +806,14 @@ namespace BitChute
                 {
                     case 0:
                         Fm0.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        //_fm1.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
                         Fm0.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 1:
                         SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        //_fm2.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
                         SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
                         FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        //_fm3.LoadCustomUrl(JavascriptCommands._jsShowWatchTab);
                         FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 3:
@@ -889,21 +883,23 @@ namespace BitChute
             }
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
-
-
+        
         protected override void OnPause()
         {
             base.OnPause();
-            try  {  ExtSticky.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
-            catch { }
+            if (PlaystateManagement.WebViewPlayerIsStreaming)
+            {
+                ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
+                try { ExtSticky.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
+                catch { }
+            }
         }
         
         protected override void OnResume()
         {
             try
             {
-
-                AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                
                 if (!TabStates.Tab3.VideoDownloaderViewEnabled)
                 {
                     if (AppSettings.DlFabShowSetting != "always")
@@ -960,7 +956,7 @@ namespace BitChute
             catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
-            //ExtSticky.ExternalStopForeground();
+            //ExtSticky.ExternalStopForeground(); // this is so that when the app stops the playstate notification will become cancellable
             base.OnDestroy();
 
         }
