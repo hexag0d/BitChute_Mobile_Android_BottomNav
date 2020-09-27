@@ -184,6 +184,13 @@ namespace MediaCodecHelper {
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
+        public static bool GarbageShouldBeCollected = false;
+        public static bool GarbageIsBeingCollected = false;
+        public static bool GarbageHasBeenCollected = false;
+        public static long EncodedBitsSinceLastCollection = 0;
+        public static int TexturesInstantiatedSoFar = 0;
+        public static long MediaPlayerPositionBeforeGC = 0;
+
         private string EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
             LatestInputVideoLength = MuxerEncoding.GetVideoLength(inputPath, inputUri);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath, inputUri);
@@ -193,7 +200,7 @@ namespace MediaCodecHelper {
                 prepareMediaPlayer(inputPath, inputUri);
                 prepareEncoder(outputPath);
                 _inputSurface.MakeCurrent();
-                prepareSurfaceTexture();
+                prepareWeakSurfaceTexture();
                 _mediaPlayer.Start();
                 _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                 _mediaPlayer.SetVolume(0, 0);
@@ -203,31 +210,61 @@ namespace MediaCodecHelper {
             VideoEncodingInProgress = true;
             while (true)
                {
+                if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected)
+                {
+                    try
+                    {
+                        GarbageIsBeingCollected = true;
+                        _mediaPlayer.Pause();
+                        MediaPlayerPositionBeforeGC = _mediaPlayer.Timestamp.AnchorMediaTimeUs;
+                        //GC.TryStartNoGCRegion(100000000);
+                        GC.Collect(0);
+                        System.Threading.Thread.Sleep(100);
+                        prepareMediaPlayer(inputPath, inputUri);
+                        releaseWeakSurfaceTexture();
+                        prepareWeakSurfaceTexture();
+                        _mediaPlayer.SeekTo(MediaPlayerPositionBeforeGC, MediaPlayerSeekMode.Closest);
+                        _mediaPlayer.Start();
+                        _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
+                        _mediaPlayer.SetVolume(0, 0);
+                        GarbageHasBeenCollected = true;
+                        GarbageIsBeingCollected = false;
+                        EncodedBitsSinceLastCollection = (_eTS - (100000000 * TexturesInstantiatedSoFar) - 100000000);
+                    }
+                    catch (System.Exception ex)
+                    {
+
+                    }
+                }
+
+                if (!GarbageIsBeingCollected)
+                {
+
                     D(false);
                     _fC++;
-                /*
-                 Disabled this to make it faster when not debugging
-                 */
-                if (_fC >= 30 && AppSettings.Logging.SendToConsole)
-                    System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                    /*
+                     Disabled this to make it faster when not debugging
+                     */
+                    if (_fC >= 30 && AppSettings.Logging.SendToConsole)
+                        System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
 
 
-                // Acquire a new frame of input, and render it to the Surface.  If we had a
-                // GLSurfaceView we could switch EGL contexts and call drawImage() a second
-                // time to render it on screen.  The texture can be shared between contexts by
-                // passing the GLSurfaceView's EGLContext as eglCreateContext()'s share_context
-                // argument.
-                if (!_outputSurface.AwaitNewImage(true))
-                   {
-                       break;
-                   }
-                   _outputSurface.DrawImage();
+                    // Acquire a new frame of input, and render it to the Surface.  If we had a
+                    // GLSurfaceView we could switch EGL contexts and call drawImage() a second
+                    // time to render it on screen.  The texture can be shared between contexts by
+                    // passing the GLSurfaceView's EGLContext as eglCreateContext()'s share_context
+                    // argument.
+                    if (!_outputSurface.AwaitNewImage(true))
+                    {
+                        break;
+                    }
+                    _outputSurface.DrawImage();
 
-                    // Set the presentation time stamp from the SurfaceTexture's time stamp.  This
+                    // Set the presentation time stamp from the WeakSurfaceTexture's time stamp.  This
                     // will be used by MediaMuxer to set the PTS in the video.
 
-                    _inputSurface.SetPresentationTime(_outputSurface.SurfaceTexture.Timestamp);
-                    
+                    _inputSurface.SetPresentationTime(_outputSurface.WeakSurfaceTexture.Timestamp);
+
                     //if (VERBOSE) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
                     // Submit it to the encoder.  The eglSwapBuffers call will block if the input
                     // is full, which would be bad if it stayed full until we dequeued an output
@@ -236,17 +273,19 @@ namespace MediaCodecHelper {
                     // can supply another frame without blocking.
                     //if (VERBOSE) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
-                if (_ebt >= _eTS) { break; }
+                    if (_ebt >= _eTS) { break; }
+                    
+                }
                }
                D(true);
             VideoEncodingInProgress = false;
             if (AppSettings.Logging.SendToConsole)
-                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
             try
             {
                 releaseMediaPlayer();
                 releaseEncoder();
-                releaseSurfaceTexture();
+                releaseWeakSurfaceTexture();
             }catch { }
             _firstKnownBuffer = 0; //this stores the audio encoder offset long
             _eTS = 0;
@@ -360,7 +399,7 @@ namespace MediaCodecHelper {
                         {
                             System.Console.WriteLine($"Media player @ " +
                                 $"{_mediaPlayer.Timestamp.AnchorMediaTimeUs} us while sT @ " +
-                                $"{_outputSurface.SurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
+                                $"{_outputSurface.WeakSurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
                         }
                         //System.Console.WriteLine($"Drain {_bfi.Size} @ {_bfi.PresentationTimeUs}");
                         
@@ -397,7 +436,8 @@ namespace MediaCodecHelper {
         }
 
         private void prepareMediaPlayer(string inputPath = null, Android.Net.Uri inputUri = null) {
-			_mediaPlayer = new MediaPlayer ();
+            if (_mediaPlayer != null) { releaseMediaPlayer(); }
+            _mediaPlayer = new MediaPlayer ();
             if (inputPath == null && inputUri == null) { return; }
             if (!System.String.IsNullOrWhiteSpace(inputPath)) { _mediaPlayer.SetDataSource(inputPath); }
             else if (inputUri != null) { _mediaPlayer.SetDataSource(MainActivity.GetMainContext(), inputUri); }
@@ -422,13 +462,14 @@ namespace MediaCodecHelper {
 		}
 
 		/**
-	     * Configures SurfaceTexture for camera preview.  Initializes mStManager, and sets the
-	     * associated SurfaceTexture as the Camera's "preview texture".
+	     * Configures WeakSurfaceTexture for camera preview.  Initializes mStManager, and sets the
+	     * associated WeakSurfaceTexture as the Camera's "preview texture".
 	     * <p>
 	     * Configure the EGL surface that will be used for output before calling here.
 	     */
-		private void prepareSurfaceTexture() {
+		private void prepareWeakSurfaceTexture() {
 			_outputSurface = new OutputSurface();
+            TexturesInstantiatedSoFar++;
 			try {
 				_mediaPlayer.SetSurface(_outputSurface.Surface);
 			} catch (System.Exception e) {
@@ -437,9 +478,9 @@ namespace MediaCodecHelper {
 		}
 
 		/**
-	     * Releases the SurfaceTexture.
+	     * Releases the WeakSurfaceTexture.
 	     */
-		private void releaseSurfaceTexture() {
+		private void releaseWeakSurfaceTexture() {
 			if (_outputSurface != null) {
 				_outputSurface.Release();
 				_outputSurface = null;

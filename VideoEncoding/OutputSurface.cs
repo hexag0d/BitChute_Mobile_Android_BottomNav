@@ -52,7 +52,8 @@ using Android.Runtime;
 
 namespace MediaCodecHelper {	
 	
-	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener {
+	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener, System.IDisposable
+    {
 		private const string TAG = "OutputSurface";
 		private const bool VERBOSE = false;
 		private const int EGL_OPENGL_ES2_BIT = 4;
@@ -65,12 +66,22 @@ namespace MediaCodecHelper {
 		private object _frameSyncObject = new object(); // guards mFrameAvailable
 		public bool IsFrameAvailable;
 		private TextureRender _textureRender;
-		/**
+        public System.WeakReference weakParent;
+        private OutputSurface Parent
+        {
+            get
+            {
+                if (weakParent == null || !weakParent.IsAlive)
+                    return null;
+                return weakParent.Target as OutputSurface;
+            }
+        }
+        /**
 		* Creates an OutputSurface backed by a pbuffer with the specifed dimensions. The new
 		* EGL context and surface will be made current. Creates a Surface that can be passed
 		* to MediaCodec.configure().
 		*/
-		public OutputSurface(int width, int height) {
+        public OutputSurface(int width, int height) {
 			if (width <= 0 || height <= 0) {
 				throw new IllegalArgumentException ();
 			}
@@ -83,7 +94,8 @@ namespace MediaCodecHelper {
 * passed to MediaCodec.configure().
 */
 	public OutputSurface() {
-		setup();
+            weakParent = new System.WeakReference(this);
+            setup();
 	}
 	/**
 * Creates instances of TextureRender and SurfaceTexture, and a Surface associated
@@ -110,8 +122,8 @@ namespace MediaCodecHelper {
 		// Java language note: passing "this" out of a constructor is generally unwise,
 		// but we should be able to get away with it here.
 		//_surfaceTexture.SetOnFrameAvailableListener(this);
-		_surfaceTexture.FrameAvailable += FrameAvailable;
-		_surface = new Surface(_surfaceTexture);
+		Parent.WeakSurfaceTexture.FrameAvailable += FrameAvailable;
+		_surface = new Surface(Parent.WeakSurfaceTexture);
 
 	}
 	
@@ -234,10 +246,18 @@ namespace MediaCodecHelper {
 			}
 		}
 
-	/**
-* Replaces the fragment shader.
+        public SurfaceTexture WeakSurfaceTexture
+        {
+            get
+            {
+                return Parent.SurfaceTexture;
+            }
+        }
+
+        /**
+    * Replaces the fragment shader.
 */
-	public void ChangeFragmentShader(string fragmentShader) {
+        public void ChangeFragmentShader(string fragmentShader) {
 		_textureRender.ChangeFragmentShader(fragmentShader);
 	}
 
@@ -277,14 +297,14 @@ namespace MediaCodecHelper {
 
 			var curDisplay = EGLContext.EGL.JavaCast<IEGL10>().EglGetCurrentDisplay();
 			_textureRender.CheckGlError ("before updateTexImage");
-			_surfaceTexture.UpdateTexImage ();
+			Parent.WeakSurfaceTexture.UpdateTexImage ();
 			return true;
 		}
 	/**
 * Draws the data from SurfaceTexture onto the current EGL surface.
 */
 	public void DrawImage() {
-			_textureRender.DrawFrame(_surfaceTexture);
+			_textureRender.DrawFrame(Parent.WeakSurfaceTexture);
 	}
 	
 	public void OnFrameAvailable(SurfaceTexture st) {
