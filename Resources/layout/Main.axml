@@ -7,10 +7,6 @@
   android:id="@+id/activityMain"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-  <VideoView
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:id="@+id/videoView" />
   <FrameLayout
     android:id="@+id/fragment_content"
     android:layout_width="match_parent"

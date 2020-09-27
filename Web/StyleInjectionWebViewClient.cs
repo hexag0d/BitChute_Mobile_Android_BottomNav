@@ -17,11 +17,16 @@ using BitChute.Web.Ui;
 using System.Net;
 using BitChute.Fragments;
 using static BitChute.Classes.JavascriptCommands;
+using static BitChute.Classes.PlaystateManagement;
 
 namespace BitChute.Web
 {
     public class ViewClients
     {
+        private static List<string> _urlsToOverride;
+        public delegate void PlaystateEventDelegate(PlaystateEventArgs _args);
+        public static event PlaystateEventDelegate PlaystateChanged;
+
         public static async void LoadInitialUrls(int delay = 400)
         {
             while (!CssHelper.CustomCssReadyForRead)
@@ -74,6 +79,36 @@ namespace BitChute.Web
                 w.LoadUrl(JavascriptCommands._jsPageBarDelete);
             }
         }
+
+        public static List<string> GetUrlsToOverride()
+        {
+            if (_urlsToOverride == null)
+            {
+                List<string> urlsToOverride = new List<string>();
+                urlsToOverride.Add($"/common.css");
+                urlsToOverride.Add($"/search.css");
+                urlsToOverride.Add($"bitchute.com/channel/");
+                urlsToOverride.Add("");
+
+            }
+            return _urlsToOverride;
+        }
+
+        public static bool ContainsOverride(string url)
+        {
+
+            return false;
+        }
+
+        public static void ReRouteToAppPlaystate(string url)
+        {
+            switch (url)
+            {
+                case @"https://_&app_play_invoked":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, true));
+                    break;
+            }
+        }
         
         //These classes are static rather than differentiating on the fly because 
         //I don't want too much checking what tab we're on.  I think this will run faster
@@ -84,10 +119,12 @@ namespace BitChute.Web
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
+                w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.PlayCallback)); // set the playstate callback so we know when the webview player is running
                 await Task.Delay(d);
                 if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/")
                 { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner + JavascriptCommands.Display.GetForAllTabs())); }
                 HidePageTitle(w, AppSettings.HidePageTitleDelay);
+                
             }
             
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
@@ -99,6 +136,11 @@ namespace BitChute.Web
                 if (request.Url.ToString().Contains($"/search.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.SearchCss);
+                }
+                if (request.Url.ToString().Contains(@"https://_&app"))
+                {
+                    ReRouteToAppPlaystate(request.Url.ToString());
+                    return null;
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
@@ -204,6 +246,10 @@ namespace BitChute.Web
                     }
                 }
                 catch { }
+                CookieManager.Instance.SetCookie("https://www.bitchute.com/", Https.CookieString);
+                CookieCollection cc; ;
+                WebView wv;
+                
             }
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)

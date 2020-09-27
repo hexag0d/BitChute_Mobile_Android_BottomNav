@@ -301,7 +301,6 @@ namespace BitChute.Classes
 
                     if (doc != null)
                     {
-                        var check = doc.DocumentNode;
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
                         {
                             var _tagContents = node.InnerText;

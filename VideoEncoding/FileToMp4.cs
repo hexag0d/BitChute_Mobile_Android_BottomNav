@@ -31,18 +31,20 @@ using Android.Runtime;
 using System;
 using Android.OS;
 
-namespace MediaCodecHelper {
+namespace MediaCodecHelper
+{
     [Service]
-	public class FileToMp4 : Service {
+    public class FileToMp4 : Service
+    {
 
-		private Context _context;
+        private Context _context;
         private static string _workingDirectory = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
         bool VERBOSE = false;
-		private int _width;
-		private int _height;
-		private int _fps;
-		private int _secondPerIFrame;
-		private static int _bitRate;
+        private int _width;
+        private int _height;
+        private int _fps;
+        private int _secondPerIFrame;
+        private static int _bitRate;
         /// <summary>
         /// frame count
         /// </summary>
@@ -72,16 +74,17 @@ namespace MediaCodecHelper {
 
         }
 
-        public FileToMp4(Context context, int fps, int secondPerIFrame, int width = 854, int height = 480, int bitRate = 600000) {
-			_context = context;
+        public FileToMp4(Context context, int fps, int secondPerIFrame, int width = 854, int height = 480, int bitRate = 600000)
+        {
+            _context = context;
 
             _width = width;
             _height = height;
-			_secondPerIFrame = secondPerIFrame;
-			_fps = fps;
-			_bitRate = bitRate;
-			
-		}
+            _secondPerIFrame = secondPerIFrame;
+            _fps = fps;
+            _bitRate = bitRate;
+
+        }
 
         public FileToMp4(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
@@ -98,48 +101,48 @@ namespace MediaCodecHelper {
 
         private const string TAG = "CameraToMpegTest";
 
-		// parameters for the encoder
-		const string MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
-		const int FRAME_RATE = 30;               // 30fps
-		const int IFRAME_INTERVAL = 1;           // 1 seconds between I-frames
+        // parameters for the encoder
+        const string MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
+        const int FRAME_RATE = 30;               // 30fps
+        const int IFRAME_INTERVAL = 1;           // 1 seconds between I-frames
 
-		// Fragment shader that swaps color channels around.
-		const string FRAGMENT_SHADER1 =
-			"#extension GL_OES_EGL_image_external : require\n" +
-			"precision mediump float;\n" +
-			"varying vec2 vTextureCoord;\n" +
-			"uniform samplerExternalOES sTexture;\n" +
-			"void main() {\n" +
-			"  vec4 color1 = texture2D(sTexture, vTextureCoord).rgba;\n" +
-			"  gl_FragColor = color1;\n" +
-			"}\n";
+        // Fragment shader that swaps color channels around.
+        const string FRAGMENT_SHADER1 =
+            "#extension GL_OES_EGL_image_external : require\n" +
+            "precision mediump float;\n" +
+            "varying vec2 vTextureCoord;\n" +
+            "uniform samplerExternalOES sTexture;\n" +
+            "void main() {\n" +
+            "  vec4 color1 = texture2D(sTexture, vTextureCoord).rgba;\n" +
+            "  gl_FragColor = color1;\n" +
+            "}\n";
 
-		//const string FRAGMENT_SHADER2 = //not needed ATM but syntax looks complicated so leaving here for now
-		//	"#extension GL_OES_EGL_image_external : require\n" +
-		//	"precision mediump float;\n" +
-		//	"varying vec2 vTextureCoord;\n" +
-		//	"uniform samplerExternalOES sTexture;\n" +
-		//	"void main() {\n" +
-		//	"  vec4 color1 = texture2D(sTexture, vTextureCoord).gbra;\n" +
-		//	"  gl_FragColor = color1;\n" +
-		//	"}\n";
+        //const string FRAGMENT_SHADER2 = //not needed ATM but syntax looks complicated so leaving here for now
+        //	"#extension GL_OES_EGL_image_external : require\n" +
+        //	"precision mediump float;\n" +
+        //	"varying vec2 vTextureCoord;\n" +
+        //	"uniform samplerExternalOES sTexture;\n" +
+        //	"void main() {\n" +
+        //	"  vec4 color1 = texture2D(sTexture, vTextureCoord).gbra;\n" +
+        //	"  gl_FragColor = color1;\n" +
+        //	"}\n";
 
-		// encoder / muxer state
-		private MediaCodec mEncoder;
-		private InputSurface _inputSurface;
-		private MediaMuxer _muxer;
-		private int mTrackIndex;
-		public static bool MuxerStarted;
+        // encoder / muxer state
+        private MediaCodec mEncoder;
+        private InputSurface _inputSurface;
+        private MediaMuxer _muxer;
+        private int mTrackIndex;
+        public static bool MuxerStarted;
 
-		// camera state
-		private MediaPlayer _mediaPlayer;
-		private OutputSurface _outputSurface;
+        // camera state
+        private MediaPlayer _mediaPlayer;
+        private OutputSurface _outputSurface;
 
-		// allocate one of these up front so we don't need to do it every time
+        // allocate one of these up front so we don't need to do it every time
         /// <summary>
         /// MediaCodec bufferinfo 
         /// </summary>
-		private MediaCodec.BufferInfo _bfi;
+        private MediaCodec.BufferInfo _bfi;
 
         /// <summary>
         /// encoded bits so far
@@ -156,7 +159,7 @@ namespace MediaCodecHelper {
         /// <returns></returns>
         public static long EncodedBits(int encoded)
         {
-            _ebt += encoded * 8; 
+            _ebt += encoded * 8;
             return _ebt;
         }
 
@@ -166,7 +169,7 @@ namespace MediaCodecHelper {
         private static long _eTS = 0; //trimmed for memory conservation
         public static long EstimateTotalSize(int length, int bitrate)
         {
-            _eTS = ((length/1000 * bitrate));
+            _eTS = ((length / 1000 * bitrate));
             return _eTS;
         }
 
@@ -177,18 +180,26 @@ namespace MediaCodecHelper {
             return (firstBlockTimeStamp - startTimeLong);
         }
 
-		public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null) {
+        public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null)
+        {
             BitChute.Classes.FileBrowser.GetExternalPermissions();
-             EncodeCameraToMp4(inputPath, outputPath, true, inputUri); 
-		}
+            EncodeCameraToMp4(inputPath, outputPath, true, inputUri);
+        }
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
-        private string EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
+        public static bool GarbageShouldBeCollected = false;
+        public static bool GarbageIsBeingCollected = false;
+        public static bool GarbageHasBeenCollected = false;
+        public static long EncodedBitsSinceLastCollection = 0;
+        public static int TexturesInstantiatedSoFar = 0;
+        public static long MediaPlayerPositionBeforeGC = 0;
+
+        private string EncodeCameraToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null)
+        {
             LatestInputVideoLength = MuxerEncoding.GetVideoLength(inputPath, inputUri);
             LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath, inputUri);
             EstimateTotalSize(LatestInputVideoLength, _bitRate);
-            Android.Graphics.SurfaceTexture st = null;
             try
             {
                 prepareMediaPlayer(inputPath, inputUri);
@@ -199,37 +210,61 @@ namespace MediaCodecHelper {
                 _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                 _mediaPlayer.SetVolume(0, 0);
                 _fC = 0;
-                st = _outputSurface.SurfaceTexture;
             }
             catch (System.Exception ex) { Log.Debug("VideoEncoder", ex.Message); }
             VideoEncodingInProgress = true;
             while (true)
-               {
+            {
+                if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected)
+                {
+                    try
+                    {
+                        GarbageIsBeingCollected = true;
+                        MediaPlayerPositionBeforeGC = _mediaPlayer.Timestamp.AnchorMediaTimeUs;
+                        prepareMediaPlayer();
+                        _outputSurface.Dispose();
+                        //GC.TryStartNoGCRegion(100000000);
+                        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                        prepareSurfaceTexture();
+                        _mediaPlayer.Start();
+                        GarbageHasBeenCollected = true;
+                        GarbageIsBeingCollected = false;
+                        EncodedBitsSinceLastCollection = (_eTS - (100000000 * TexturesInstantiatedSoFar) - 100000000);
+                    }
+                    catch (System.Exception ex)
+                    {
+
+                    }
+                }
+
+                if (!GarbageIsBeingCollected)
+                {
+
                     D(false);
                     _fC++;
-                /*
-                 Disabled this to make it faster when not debugging
-                 */
-                //if (_frameCount >= 30 && AppSettings.Logging.SendToConsole)  
-                //System.Console.WriteLine($"FileToMp4 while @ {_firstKnownBuffer} exited @ {st.Timestamp}  | encoded bits {_encodedBits} of estimated {_estimatedTotalSize}");
-                
-                
-                // Acquire a new frame of input, and render it to the Surface.  If we had a
-                // GLSurfaceView we could switch EGL contexts and call drawImage() a second
-                // time to render it on screen.  The texture can be shared between contexts by
-                // passing the GLSurfaceView's EGLContext as eglCreateContext()'s share_context
-                // argument.
-                if (!_outputSurface.AwaitNewImage(true))
-                   {
-                       break;
-                   }
-                   _outputSurface.DrawImage();
+                    /*
+                     Disabled this to make it faster when not debugging
+                     */
+                    if (_fC >= 30 && AppSettings.Logging.SendToConsole)
+                        System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+
+
+                    // Acquire a new frame of input, and render it to the Surface.  If we had a
+                    // GLSurfaceView we could switch EGL contexts and call drawImage() a second
+                    // time to render it on screen.  The texture can be shared between contexts by
+                    // passing the GLSurfaceView's EGLContext as eglCreateContext()'s share_context
+                    // argument.
+                    if (!_outputSurface.AwaitNewImage(true))
+                    {
+                        break;
+                    }
+                    _outputSurface.DrawImage();
 
                     // Set the presentation time stamp from the SurfaceTexture's time stamp.  This
                     // will be used by MediaMuxer to set the PTS in the video.
 
-                    _inputSurface.SetPresentationTime(st.Timestamp);
-                    
+                    _inputSurface.SetPresentationTime(_outputSurface.WeakSurfaceTexture.Timestamp);
+
                     //if (VERBOSE) Log.Debug("MediaLoop", "Set Time " + st.Timestamp);
                     // Submit it to the encoder.  The eglSwapBuffers call will block if the input
                     // is full, which would be bad if it stayed full until we dequeued an output
@@ -238,18 +273,21 @@ namespace MediaCodecHelper {
                     // can supply another frame without blocking.
                     //if (VERBOSE) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
-                if (_ebt >= _eTS) { break; }
-               }
-               D(true);
+                    if (_ebt >= _eTS) { break; }
+
+                }
+            }
+            D(true);
             VideoEncodingInProgress = false;
             if (AppSettings.Logging.SendToConsole)
-                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {st.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.SurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
             try
             {
                 releaseMediaPlayer();
                 releaseEncoder();
                 releaseSurfaceTexture();
-            }catch { }
+            }
+            catch { }
             _firstKnownBuffer = 0; //this stores the audio encoder offset long
             _eTS = 0;
             _fC = 0;
@@ -260,9 +298,11 @@ namespace MediaCodecHelper {
                 _muxer.Stop(); // if the audio encoding isn't still running then we'll stop everything and return
                 _muxer.Release();
                 _muxer = null;
-                if (File.Exists(outputPath)) {
+                if (File.Exists(outputPath))
+                {
                     this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _eTS, true, false, outputPath));
-                    return outputPath; }
+                    return outputPath;
+                }
             }
             this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _eTS, false, false, null));
             return null; //file isn't finished processing yet
@@ -358,13 +398,17 @@ namespace MediaCodecHelper {
                         ed.Limit(_bfi.Offset + _bfi.Size);
                         _bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        if (AppSettings.Logging.SendToConsole)
+                        {
+                            System.Console.WriteLine($"Media player @ " +
+                                $"{_mediaPlayer.Timestamp.AnchorMediaTimeUs} us while sT @ " +
+                                $"{_outputSurface.SurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
+                        }
                         //System.Console.WriteLine($"Drain {_bfi.Size} @ {_bfi.PresentationTimeUs}");
-                        
+
                         if (_firstKnownBuffer == 0)
                         {
                             _firstKnownBuffer = _bfi.PresentationTimeUs;
-                            //var cst = CorrectForStartTime(fbit, _firstKnownBuffer);
-                            //Don't take these as arguments because it'll use up more memory; they should remain static while video encodes
                             if (InputUriToEncode != null) { this.StartAudioEncoder(_firstKnownBuffer, null, InputUriToEncode); }
                             else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
@@ -394,121 +438,141 @@ namespace MediaCodecHelper {
             return (long)((bits / (decimal)_bitRate) * 1000 * 1000);
         }
 
-        private void prepareMediaPlayer(string inputPath = null, Android.Net.Uri inputUri = null) {
-			_mediaPlayer = new MediaPlayer ();
+        private void prepareMediaPlayer(string inputPath = null, Android.Net.Uri inputUri = null)
+        {
+            if (_mediaPlayer != null) { releaseMediaPlayer(); }
+            _mediaPlayer = new MediaPlayer();
             if (inputPath == null && inputUri == null) { return; }
             if (!System.String.IsNullOrWhiteSpace(inputPath)) { _mediaPlayer.SetDataSource(inputPath); }
             else if (inputUri != null) { _mediaPlayer.SetDataSource(MainActivity.GetMainContext(), inputUri); }
             LatestInputPath = inputPath; //for tracking purposes but can probably be axed eventually @TODO 
-            _mediaPlayer.Prepare ();
-			if (_width == 0 || _height == 0) {
-				_width = _mediaPlayer.VideoWidth;
-				_height = _mediaPlayer.VideoHeight;
-			}
-		}
+            _mediaPlayer.Prepare();
+            if (_width == 0 || _height == 0)
+            {
+                _width = _mediaPlayer.VideoWidth;
+                _height = _mediaPlayer.VideoHeight;
+            }
+        }
 
-		/**
+        /**
 	     * Stops camera preview, and releases the camera to the system.
 	     */
-		private void releaseMediaPlayer() {
-			if (VERBOSE) Log.Debug(TAG, "releasing camera");
-			if (_mediaPlayer != null) {
-				_mediaPlayer.Stop();
-				_mediaPlayer.Release();
-				_mediaPlayer = null;
-			}
-		}
+        private void releaseMediaPlayer()
+        {
+            if (VERBOSE) Log.Debug(TAG, "releasing camera");
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Stop();
+                _mediaPlayer.Release();
+                _mediaPlayer = null;
+            }
+        }
 
-		/**
+
+        /**
 	     * Configures SurfaceTexture for camera preview.  Initializes mStManager, and sets the
 	     * associated SurfaceTexture as the Camera's "preview texture".
 	     * <p>
 	     * Configure the EGL surface that will be used for output before calling here.
 	     */
-		private void prepareSurfaceTexture() {
-			_outputSurface = new OutputSurface();
-			var st = _outputSurface.Surface;
-			try {
-				_mediaPlayer.SetSurface(st);
-			} catch (System.Exception e) {
-				throw new System.Exception("setPreviewTexture failed:" + e.Message);
-			}
-		}
+        private void prepareSurfaceTexture()
+        {
+            _outputSurface = new OutputSurface();
+            
+            TexturesInstantiatedSoFar++;
+            try
+            {
+                _mediaPlayer.SetSurface(_outputSurface.Surface);
+            }
+            catch (System.Exception e)
+            {
+                throw new System.Exception("setPreviewTexture failed:" + e.Message);
+            }
+        }
 
-		/**
+        /**
 	     * Releases the SurfaceTexture.
 	     */
-		private void releaseSurfaceTexture() {
-			if (_outputSurface != null) {
-				_outputSurface.Release();
-				_outputSurface = null;
-			}
-		}
+        private void releaseSurfaceTexture()
+        {
+            if (_outputSurface != null)
+            {
+                _outputSurface.Release();
+                _outputSurface = null;
+            }
+        }
 
-		/**
+        /**
 	     * Configures encoder and muxer state, and prepares the input Surface.  Initializes
 	     * mEncoder, mMuxer, mInputSurface, mBufferInfo, mTrackIndex, and mMuxerStarted.
 	     */
-		private void prepareEncoder(string outputPath) {
-			_bfi = new MediaCodec.BufferInfo();
+        private void prepareEncoder(string outputPath)
+        {
+            _bfi = new MediaCodec.BufferInfo();
             LatestOutputPath = outputPath;
-			MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, _width, _height);
+            MediaFormat format = MediaFormat.CreateVideoFormat(MIME_TYPE, _width, _height);
 
             // Set some properties.  Failing to specify some of these can cause the MediaCodec
             // configure() call to throw an unhelpful exception.
             //format.SetInteger(MediaFormat.KeyColorFormat, (int) MediaCodecCapabilities.Formatsurface);
 
             format.SetInteger(MediaFormat.KeyColorFormat, (int)MediaCodecCapabilities.Formatsurface);
-			format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
-			format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
-			format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
-			if (VERBOSE) Log.Debug(TAG, "format: " + format);
+            format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
+            format.SetInteger(MediaFormat.KeyFrameRate, FRAME_RATE);
+            format.SetInteger(MediaFormat.KeyIFrameInterval, IFRAME_INTERVAL);
+            if (VERBOSE) Log.Debug(TAG, "format: " + format);
 
-			// Create a MediaCodec encoder, and configure it with our format.  Get a Surface
-			// we can use for input and wrap it with a class that handles the EGL work.
-			//
-			// If you want to have two EGL contexts -- one for display, one for recording --
-			// you will likely want to defer instantiation of CodecInputSurface until after the
-			// "display" EGL context is created, then modify the eglCreateContext call to
-			// take eglGetCurrentContext() as the share_context argument.
-			mEncoder = MediaCodec.CreateEncoderByType(MIME_TYPE);
-			mEncoder.Configure(format, null, null, MediaCodec.ConfigureFlagEncode);
-			_inputSurface = new InputSurface(mEncoder.CreateInputSurface());
-			mEncoder.Start();
+            // Create a MediaCodec encoder, and configure it with our format.  Get a Surface
+            // we can use for input and wrap it with a class that handles the EGL work.
+            //
+            // If you want to have two EGL contexts -- one for display, one for recording --
+            // you will likely want to defer instantiation of CodecInputSurface until after the
+            // "display" EGL context is created, then modify the eglCreateContext call to
+            // take eglGetCurrentContext() as the share_context argument.
+            mEncoder = MediaCodec.CreateEncoderByType(MIME_TYPE);
+            mEncoder.Configure(format, null, null, MediaCodec.ConfigureFlagEncode);
+            _inputSurface = new InputSurface(mEncoder.CreateInputSurface());
+            mEncoder.Start();
 
-			Log.Info(TAG, "Output file is " + outputPath);
+            Log.Info(TAG, "Output file is " + outputPath);
 
-			// Create a MediaMuxer.  We can't add the video track and start() the muxer here,
-			// because our MediaFormat doesn't have the Magic Goodies.  These can only be
-			// obtained from the encoder after it has started processing data.
-			//
-			// We're not actually interested in multiplexing audio.  We just want to convert
-			// the raw H.264 elementary stream we get from MediaCodec into a .mp4 file.
-			try {
-				_muxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MuxerOutputMpeg4);
-			} catch(System.Exception e) {
-				throw new System.Exception (e.Message);
-			}
+            // Create a MediaMuxer.  We can't add the video track and start() the muxer here,
+            // because our MediaFormat doesn't have the Magic Goodies.  These can only be
+            // obtained from the encoder after it has started processing data.
+            //
+            // We're not actually interested in multiplexing audio.  We just want to convert
+            // the raw H.264 elementary stream we get from MediaCodec into a .mp4 file.
+            try
+            {
+                _muxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MuxerOutputMpeg4);
+            }
+            catch (System.Exception e)
+            {
+                throw new System.Exception(e.Message);
+            }
 
-			mTrackIndex = -1;
-			MuxerStarted = false;
-		}
+            mTrackIndex = -1;
+            MuxerStarted = false;
+        }
 
-		/**
+        /**
 	     * Releases encoder resources.
 	     */
-		private void releaseEncoder() {
-			if (VERBOSE) Log.Debug(TAG, "releasing encoder objects");
-			if (mEncoder != null) {
-				mEncoder.Stop();
-				mEncoder.Release();
-				mEncoder = null;
-			}
-			if (_inputSurface != null) {
-				_inputSurface.Release();
-				_inputSurface = null;
-			}
-		}
+        private void releaseEncoder()
+        {
+            if (VERBOSE) Log.Debug(TAG, "releasing encoder objects");
+            if (mEncoder != null)
+            {
+                mEncoder.Stop();
+                mEncoder.Release();
+                mEncoder = null;
+            }
+            if (_inputSurface != null)
+            {
+                _inputSurface.Release();
+                _inputSurface = null;
+            }
+        }
 
         public void StartAudioEncoder(long calculatedOffset, string inputPath = null, Android.Net.Uri inputUri = null)
         {

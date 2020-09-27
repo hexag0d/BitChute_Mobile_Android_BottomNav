@@ -61,6 +61,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.SettingsFrag;
+using Android.Util;
+using System.IO;
 
 namespace BitChute
 {
@@ -106,8 +108,26 @@ namespace BitChute
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
         public static CustomIntent.BackgroundIntentReceiver BackgroundReceiver;
 
+        public string GetSplash()
+        {
+            string splash = "";
+            AssetManager assets = this.Assets;
+            using (StreamReader sr = new StreamReader(assets.Open("splash.html")))
+            {
+                splash = sr.ReadToEnd();
+            }
+            return splash;
+        }
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
+            Main = this;
+            SetContentView(Resource.Layout.Splash);
+            var splash = FindViewById(Resource.Layout.Splash);
+            Android.Webkit.WebView wv = (Android.Webkit.WebView)FindViewById(Resource.Id.splashWebView);
+            wv.LoadUrl("file:///android_asset/html/splash.html");
             StartUp();
             _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
@@ -138,30 +158,35 @@ namespace BitChute
                 catch
                 { }
             }
-            base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
-            SetContentView(Resource.Layout.Main);
-            InitializeTabs();
-            ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            ViewPager.PageSelected += ViewPager_PageSelected;
-            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-            NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
-            RemoveShiftMode(NavigationView);
-            NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
-            ViewPager.OffscreenPageLimit = 4;
-            CreateNotificationChannel();
-            ExtSticky.StartNotificationLoop(30000);
-            ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
-            ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
-            //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
-            //mFab.setRippleColor(your color in int);
-            if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
-            {
-                ViewHelpers.Main.DownloadFAB.Hide();
-            }
+            
 
-            ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
-            //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
+
+            InitializeTabs();
+            try
+            {
+                ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+                ViewPager.PageSelected += ViewPager_PageSelected;
+                ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
+                NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
+                RemoveShiftMode(NavigationView);
+                NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+                ViewPager.OffscreenPageLimit = 4;
+                CreateNotificationChannel();
+                ExtSticky.StartNotificationLoop(30000);
+                ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
+                ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
+                if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Hide();
+                }
+
+                ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public static async void StartUp()
@@ -169,6 +194,8 @@ namespace BitChute
             await AppSettings.LoadAllPrefsFromSettings();
             await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
         }
+
+        
 
         public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
         public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
@@ -342,7 +369,7 @@ namespace BitChute
             
             try
             {
-                //view.ScaleY = (float)1.1;
+                //view.ScaleY = (float)1.1; //
                 var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
                 shiftingMode.Accessible = true;
                 shiftingMode.SetBoolean(menuView, false);
@@ -613,7 +640,7 @@ namespace BitChute
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
+            PlaystateManagement.UserRequestedBackgroundPlayback = true;
             ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
             Main.MoveTaskToBack(true);
         }
@@ -901,13 +928,12 @@ namespace BitChute
         {
             try
             {
-
-                AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                
                 if (!TabStates.Tab3.VideoDownloaderViewEnabled)
                 {
                     if (AppSettings.DlFabShowSetting != "always")
                     {
-                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
+                         ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                         ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
                         ViewHelpers.Main.DownloadFAB.Hide();
                     }

@@ -91,7 +91,9 @@
     <Compile Include="Classes\Https.cs" />
     <Compile Include="Classes\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
+    <Compile Include="Web\Login.cs" />
     <Compile Include="Classes\MediaHelper.cs" />
+    <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Classes\SearchOverride.cs" />
     <Compile Include="Classes\StickyService.cs" />
     <Compile Include="Classes\TabStates.cs" />
@@ -119,14 +121,14 @@
     <Compile Include="VideoEncoding\MuxerEncoding.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
-    <Compile Include="Web\Startup.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Web\StyleInjectionWebViewClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
-    <None Include="Assets\AboutAssets.txt" />
+    <AndroidAsset Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -255,6 +257,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dev\" />
+    <Folder Include="Resources\raw\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\download_grey_round.png" />
@@ -335,9 +338,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\raw\mylastvidd.mp4" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\SettingsTabLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -355,9 +355,19 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\html\bitchute_splash.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AndroidAsset>
     <Content Include="Css\homepage.css" />
     <Content Include="Css\main.css" />
     <Content Include="Css\main.html" />
+    <AndroidResource Include="Resources\layout\Splash.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidAsset Include="Assets\html\splash.html">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AndroidAsset>
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

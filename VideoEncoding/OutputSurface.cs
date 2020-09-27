@@ -50,6 +50,7 @@ using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
 using Android.Runtime;
 
+
 namespace MediaCodecHelper {	
 	
 	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener {
@@ -65,12 +66,22 @@ namespace MediaCodecHelper {
 		private object _frameSyncObject = new object(); // guards mFrameAvailable
 		public bool IsFrameAvailable;
 		private TextureRender _textureRender;
-		/**
+        public System.WeakReference weakParent;
+        private OutputSurface Parent
+        {
+            get
+            {
+                if (weakParent == null || !weakParent.IsAlive)
+                    return null;
+                return weakParent.Target as OutputSurface;
+            }
+        }
+        /**
 		* Creates an OutputSurface backed by a pbuffer with the specifed dimensions. The new
 		* EGL context and surface will be made current. Creates a Surface that can be passed
 		* to MediaCodec.configure().
 		*/
-		public OutputSurface(int width, int height) {
+        public OutputSurface(int width, int height) {
 			if (width <= 0 || height <= 0) {
 				throw new IllegalArgumentException ();
 			}
@@ -83,7 +94,8 @@ namespace MediaCodecHelper {
 * passed to MediaCodec.configure().
 */
 	public OutputSurface() {
-		setup();
+            weakParent = new System.WeakReference(this);
+            setup();
 	}
 	/**
 * Creates instances of TextureRender and SurfaceTexture, and a Surface associated
@@ -96,6 +108,7 @@ namespace MediaCodecHelper {
 		// still need to keep a reference to it. The Surface doesn't retain a reference
 		// at the Java level, so if we don't either then the object can get GCed, which
 		// causes the native finalizer to run.
+        
 		
 		_surfaceTexture = new SurfaceTexture(_textureRender.TextureId);
 		// This doesn't work if OutputSurface is created on the thread that CTS started for
@@ -111,8 +124,9 @@ namespace MediaCodecHelper {
 		// but we should be able to get away with it here.
 		//_surfaceTexture.SetOnFrameAvailableListener(this);
 		_surfaceTexture.FrameAvailable += FrameAvailable;
+            
 		_surface = new Surface(_surfaceTexture);
-
+            
 	}
 	
 
@@ -123,6 +137,7 @@ namespace MediaCodecHelper {
 			throw new RuntimeException("mFrameAvailable already set, frame could be dropped");
 		}
 		IsFrameAvailable = true;
+            
 		System.Threading.Monitor.PulseAll (_frameSyncObject);
 		System.Threading.Monitor.Exit (_frameSyncObject);
 	}
@@ -234,6 +249,13 @@ namespace MediaCodecHelper {
 			}
 		}
 
+        public SurfaceTexture WeakSurfaceTexture
+        {
+            get
+            {
+                return Parent.SurfaceTexture;
+            }
+        }
 	/**
 * Replaces the fragment shader.
 */
@@ -284,7 +306,7 @@ namespace MediaCodecHelper {
 * Draws the data from SurfaceTexture onto the current EGL surface.
 */
 	public void DrawImage() {
-			_textureRender.DrawFrame(_surfaceTexture);
+			_textureRender.DrawFrame(Parent.WeakSurfaceTexture);
 	}
 	
 	public void OnFrameAvailable(SurfaceTexture st) {

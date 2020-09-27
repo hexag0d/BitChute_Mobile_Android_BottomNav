@@ -119,7 +119,7 @@ namespace BitChute.Services
             }
 
             if (tab != 1)
-                AppState.MediaPlayback.MediaPlayerNumberIsStreaming = tab;
+                PlaystateManagement.MediaPlayerNumberIsStreaming = tab;
 
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
@@ -152,7 +152,7 @@ namespace BitChute.Services
 
         private async void Play()
         {
-            if (AppState.MediaPlayback.MediaPlayerIsStreaming)
+            if (PlaystateManagement.MediaPlayerIsStreaming)
             {
                 await Task.Run(() =>
                 {
@@ -176,20 +176,20 @@ namespace BitChute.Services
 
                     if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                     {
-                        AppState.MediaPlayback.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
+                        PlaystateManagement.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
                     }
                 });
             }
             else
             {
-                AppState.MediaPlayback.UserRequestedBackgroundPlayback = true;
+                PlaystateManagement.UserRequestedBackgroundPlayback = true;
                 StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
             }
         }
 
         public static void SkipToPrev(int tab)
         {
-            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
                 switch (tab)
                 {
@@ -224,7 +224,7 @@ namespace BitChute.Services
 
         public static void SkipToNext(VideoCard vc)
         {
-            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
                 SendWebViewNextVideoCommand(MainActivity.ViewPager.CurrentItem);
             }
@@ -242,7 +242,7 @@ namespace BitChute.Services
 
         private void Pause()
         {
-            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
                 CustomIntent.ControlIntentReceiver.SendPauseVideoCommand();
             }
@@ -270,7 +270,7 @@ namespace BitChute.Services
             _paused = false;
             //ExtStickyServ.StopForeground(true);
             //ReleaseWifiLock();
-            //AppState.MediaPlayback.MediaPlayerNumberIsStreaming = -1;
+            //PlaystateManagement.MediaPlayerNumberIsStreaming = -1;
         }
 
         public static bool OnVideoFinished(bool overide, int tab)
@@ -374,7 +374,7 @@ namespace BitChute.Services
                 if (u == null || u== "") { return;  }
                 else { url = u; }
             }
-            if (!AppState.MediaPlayback.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
                 switch (tab)
                 {
@@ -604,27 +604,27 @@ namespace BitChute.Services
         {
             get
             {
-                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].CurrentPosition;
+                return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].CurrentPosition;
             }
             set
             {
-                MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].SeekTo(value);
+                MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].SeekTo(value);
             }
         }
 
-        public int Duration { get { return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].Duration; } }
+        public int Duration { get { return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].Duration; } }
 
         public bool IsPlaying
         {
             get
             {
-                return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+                return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
             }
         }
 
         public bool CanPause()
         {
-            return MediaPlayerDictionary[AppState.MediaPlayback.MediaPlayerNumberIsStreaming].IsPlaying;
+            return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
         }
 
         public bool CanSeekBackward()
@@ -659,24 +659,24 @@ namespace BitChute.Services
         public static async void StartVideoInBkgrd(int tab)
         {
             await Task.Delay(1);
-            if (AppState.MediaPlayback.UserRequestedBackgroundPlayback)
+            if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
                 switch (tab)
                 {
                     case 0: HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        PlaystateManagement.UserRequestedBackgroundPlayback = false;
                         break;
                     case 1: SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        PlaystateManagement.UserRequestedBackgroundPlayback = false;
                         break;
                     case 2: FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        PlaystateManagement.UserRequestedBackgroundPlayback = false;
                         break;
                     case 3: MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        PlaystateManagement.UserRequestedBackgroundPlayback = false;
                         break;
                     case 4: SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        AppState.MediaPlayback.UserRequestedBackgroundPlayback = false;
+                        PlaystateManagement.UserRequestedBackgroundPlayback = false;
                         break;
                 }
             }
@@ -697,6 +697,7 @@ namespace BitChute.Services
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
             {
+                
             }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)

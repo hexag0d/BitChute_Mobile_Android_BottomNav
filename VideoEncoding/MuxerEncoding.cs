@@ -19,7 +19,7 @@ using static Android.Media.MediaCodec;
 
 namespace BitChute.VideoEncoding
 {
-    public class MuxerEncoding : Service
+    public class MuxerEncoding : Service, IDisposable
     {
         public delegate void MuxerEventDelegate(MuxerEventArgs _args);
         public event MuxerEventDelegate Progress;
@@ -189,7 +189,7 @@ namespace BitChute.VideoEncoding
                         return outputPath;
                     }
                 }
-            
+            this.Dispose();
             return null; //nothing to look for
         }
 

@@ -19,6 +19,6 @@
     <item name="colorAccent">#8B3298</item>
      <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
-    
+    <item name="android:windowDisablePreview">true</item>
   </style>
 </resources>
