@@ -160,21 +160,12 @@ namespace BitChute.Services
                 await Task.Run(() =>
                 {
                     if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
-                    {=
-                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
-=
-                    return;
-                    }
-
-                    try
                     {
-                        AquireWifiLock();
+                        MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
+                        return;
                     }
-                    catch (Exception ex)
-                    {
-                    Console.WriteLine("Unable to start playback: " + ex);
-                    }
-
+                    try  { AquireWifiLock(); }
+                    catch (Exception ex) { Console.WriteLine("Unable to start playback: " + ex); }
                     if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                     {
                         PlaystateManagement.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;

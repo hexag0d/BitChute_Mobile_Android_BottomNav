@@ -100,7 +100,6 @@
     <Compile Include="Classes\VideoDownloader.cs" />
     <Compile Include="Css\CssHelper.cs" />
     <Compile Include="Fragments\CommonFrag.cs" />
-    <Compile Include="Views\ExtView.cs" />
     <Compile Include="Views\ViewHelpers.cs" />
     <Compile Include="Classes\WebViewHelpers.cs" />
     <Compile Include="Fragments\HomePageFrag.cs" />
