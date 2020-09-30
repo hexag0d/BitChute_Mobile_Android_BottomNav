@@ -52,7 +52,7 @@ using Android.Runtime;
 
 namespace MediaCodecHelper {	
 	
-	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener, System.IDisposable
+	public class OutputSurface
     {
 		private const string TAG = "OutputSurface";
 		private const bool VERBOSE = false;
@@ -103,13 +103,13 @@ namespace MediaCodecHelper {
 */
 	private void setup() {
 		_textureRender = new TextureRender();
-		_textureRender.SurfaceCreated();
+		Parent.WeakTextureRender.SurfaceCreated();
 		// Even if we don't access the SurfaceTexture after the constructor returns, we
 		// still need to keep a reference to it. The Surface doesn't retain a reference
 		// at the Java level, so if we don't either then the object can get GCed, which
 		// causes the native finalizer to run.
 		
-		_surfaceTexture = new SurfaceTexture(_textureRender.TextureId);
+		_surfaceTexture = new SurfaceTexture(Parent.WeakTextureRender.TextureId);
 		// This doesn't work if OutputSurface is created on the thread that CTS started for
 		// these test cases.
 		//
@@ -254,6 +254,14 @@ namespace MediaCodecHelper {
             }
         }
 
+        public TextureRender WeakTextureRender
+        {
+            get
+            {
+                return Parent._textureRender;
+            }
+        }
+
         /**
     * Replaces the fragment shader.
 */
@@ -262,6 +270,7 @@ namespace MediaCodecHelper {
 	}
 
         const int TIMEOUT_MS = 20000;
+        static int _framesSinceLastGC = 0;
         public bool AwaitNewImage(bool returnOnFailure = false) {
 			
 
@@ -271,6 +280,7 @@ namespace MediaCodecHelper {
 			while (!IsFrameAvailable) {
 				try {
 					// Wait for onFrameAvailable() to signal us.  Use a timeout to avoid
+
 					// stalling the test if it doesn't arrive.
 					System.Threading.Monitor.Wait (_frameSyncObject, TIMEOUT_MS);
 
@@ -279,7 +289,7 @@ namespace MediaCodecHelper {
 							return false;
 						}
 						// TODO: if "spurious wakeup", continue while loop
-						//throw new RuntimeException ("frame wait timed out");
+						throw new RuntimeException ("frame wait timed out");
 					}
 				} catch (InterruptedException ie) {
 					if (returnOnFailure) {
@@ -290,21 +300,23 @@ namespace MediaCodecHelper {
 				} catch (Exception ex) { throw ex; }
 			}
 
+            if (_framesSinceLastGC >= 2000) { System.GC.Collect(0); _framesSinceLastGC = 0; }
 
-			IsFrameAvailable = false;
+            IsFrameAvailable = false;
 
 			System.Threading.Monitor.Exit (_frameSyncObject);
-
-			var curDisplay = EGLContext.EGL.JavaCast<IEGL10>().EglGetCurrentDisplay();
-			_textureRender.CheckGlError ("before updateTexImage");
+            //System.GC.Collect(0);
+            var curDisplay = EGLContext.EGL.JavaCast<IEGL10>().EglGetCurrentDisplay();
+			Parent.WeakTextureRender.CheckGlError ("before updateTexImage");
 			Parent.WeakSurfaceTexture.UpdateTexImage ();
+            _framesSinceLastGC++;
 			return true;
 		}
 	/**
 * Draws the data from SurfaceTexture onto the current EGL surface.
 */
 	public void DrawImage() {
-			_textureRender.DrawFrame(Parent.WeakSurfaceTexture);
+			Parent.WeakTextureRender.DrawFrame(Parent.WeakSurfaceTexture);
 	}
 	
 	public void OnFrameAvailable(SurfaceTexture st) {

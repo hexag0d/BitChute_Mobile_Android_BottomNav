@@ -159,6 +159,28 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
+#if DEBUG
+            Task.Run(async () =>
+            {
+                const int seconds = 30;
+                const string grefTag = "monodroid-gref";
+                const string grefsFile = "grefs.txt";
+                while (true)
+                {
+                    var appDir = Application.ApplicationInfo.DataDir;
+                    var grefFile = System.IO.Path.Combine("/data/data", PackageName, "files/.__override__", grefsFile);
+                    var grefFilePublic = System.IO.Path.Combine(Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "download", grefsFile);
+                    if (System.IO.File.Exists(grefFile))
+                    {
+                        System.IO.File.Copy(grefFile, grefFilePublic, true);
+                        System.Console.Write(grefTag, $"adb pull {grefFilePublic} {grefsFile}");
+                    }
+                    else
+                        System.Console.Write(grefTag, "no grefs.txt found, gref logging enabled? (adb shell setprop debug.mono.log gref)");
+                    await Task.Delay(seconds * 1000);
+                }
+            });
+#endif
 
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
             //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();

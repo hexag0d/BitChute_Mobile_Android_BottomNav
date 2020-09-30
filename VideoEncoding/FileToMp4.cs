@@ -188,6 +188,7 @@ namespace MediaCodecHelper {
         public static bool GarbageIsBeingCollected = false;
         public static bool GarbageHasBeenCollected = false;
         public static long EncodedBitsSinceLastCollection = 0;
+        public static long EncodedBitsGCollected = 0;
         public static int TexturesInstantiatedSoFar = 0;
         public static long MediaPlayerPositionBeforeGC = 0;
 
@@ -211,25 +212,31 @@ namespace MediaCodecHelper {
             while (true)
                {
                 if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected)
-                {
-                    try
+                    //if (EncodedBitsSinceLastCollection >= 20000000 && !GarbageIsBeingCollected)
+
+                    {
+                        try
                     {
                         GarbageIsBeingCollected = true;
                         _mediaPlayer.Pause();
                         MediaPlayerPositionBeforeGC = _mediaPlayer.Timestamp.AnchorMediaTimeUs;
                         //GC.TryStartNoGCRegion(100000000);
-                        GC.Collect(0);
-                        System.Threading.Thread.Sleep(100);
+                        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                        System.Threading.Thread.Sleep(10);
                         prepareMediaPlayer(inputPath, inputUri);
+                        System.Threading.Thread.Sleep(10);
                         releaseWeakSurfaceTexture();
+                        System.Threading.Thread.Sleep(10);
                         prepareWeakSurfaceTexture();
-                        _mediaPlayer.SeekTo(MediaPlayerPositionBeforeGC, MediaPlayerSeekMode.Closest);
+                        System.Threading.Thread.Sleep(10);
+                        _mediaPlayer.SeekTo(MediaPlayerPositionBeforeGC / 1000, MediaPlayerSeekMode.ClosestSync);
                         _mediaPlayer.Start();
                         _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                         _mediaPlayer.SetVolume(0, 0);
+                        EncodedBitsGCollected += EncodedBitsSinceLastCollection;
+                        EncodedBitsSinceLastCollection = 0;
                         GarbageHasBeenCollected = true;
                         GarbageIsBeingCollected = false;
-                        EncodedBitsSinceLastCollection = (_eTS - (100000000 * TexturesInstantiatedSoFar) - 100000000);
                     }
                     catch (System.Exception ex)
                     {
@@ -395,6 +402,7 @@ namespace MediaCodecHelper {
                         ed.Limit(_bfi.Offset + _bfi.Size);
                         _bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        
                         if (AppSettings.Logging.SendToConsole)
                         {
                             System.Console.WriteLine($"Media player @ " +
@@ -411,6 +419,9 @@ namespace MediaCodecHelper {
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
                         } //we don't want to flood the system with EventArgs so only send once every 120 frames
                         if (_fC >= 120) { Notify(_ebt, _eTS); _fC = 0; }
+                        
+                        if (!GarbageIsBeingCollected) { EncodedBitsSinceLastCollection = _ebt - EncodedBitsGCollected; }
+                           
                         /*
                      disabled when not debugging because this is locking up if the file is too big    @DEBUG
                      */
