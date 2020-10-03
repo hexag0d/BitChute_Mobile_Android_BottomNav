@@ -63,6 +63,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.3.4.API8.OpenGL.VideoProcessing.LargeFileSupport";
+        public static string AppVersion = "28.6.0.API8.OpenGL.VideoProcessing.PtOffsetRedux_";
     }
 }

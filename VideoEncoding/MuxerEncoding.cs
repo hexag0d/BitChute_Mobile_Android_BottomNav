@@ -125,21 +125,21 @@ namespace BitChute.VideoEncoding
                 int offset = 0;
                 if (bufferInfo == null) { bufferInfo = new MediaCodec.BufferInfo(); }
                 ByteBuffer dstBuf = ByteBuffer.Allocate(bufferSize);
-                long us = endMs * 1000; //define end microseconds, using a tiny var name to reduce memory usage, since this will get used a bunch
-                long uo = us + ptOffset; // add the presentationtime offset in microseconds; I'm not exactly sure why the video encoder starts with a high PT @TODO figure out why?
+                long us = endMs * 1000; 
+                long uo = us + ptOffset;
                 int cf = 0;
                 try
                 {
                     FileToMp4.AudioEncodingInProgress = true; 
-                    while (true) // @TODO I think we should trim all of these var names down as much as possible; would that reduce memory usage?
-                    {            // this loop will run many times so we need to be conscious of memory and CPU
+                    while (true) 
+                    {            
                         bufferInfo.Offset = offset;
                         bufferInfo.Size = ext.ReadSampleData(dstBuf, offset);
                         if (bufferInfo.Size < 0) { bufferInfo.Size = 0; break; }
                         else
                         {
                             cf++;
-                            bufferInfo.PresentationTimeUs = ext.SampleTime; // I had to add this offset to get the audio lined up with visuals
+                            bufferInfo.PresentationTimeUs = ext.SampleTime + ptOffset; // I had to add this offset to get the audio lined up with visuals
                                                                                                //anything in this loop using presentationtime needs the ptOffset (uo) for proper calculation
                             if (endMs > 0 && ext.SampleTime >= us) { break; } //out of while
                             else

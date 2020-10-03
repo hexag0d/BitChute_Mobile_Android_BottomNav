@@ -208,7 +208,7 @@ namespace MediaCodecHelper {
             catch (System.Exception ex) { Log.Debug("VideoEncoder", ex.Message); }
             VideoEncodingInProgress = true;
             while (true)
-               {
+            {
                 if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected)
                 {
                     try
@@ -237,7 +237,6 @@ namespace MediaCodecHelper {
 
                 if (!GarbageIsBeingCollected)
                 {
-
                     D(false);
                     _fC++;
                     /*
@@ -245,7 +244,6 @@ namespace MediaCodecHelper {
                      */
                     if (_fC >= 30 && AppSettings.Logging.SendToConsole)
                         System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
-
 
                     // Acquire a new frame of input, and render it to the Surface.  If we had a
                     // GLSurfaceView we could switch EGL contexts and call drawImage() a second
@@ -272,10 +270,9 @@ namespace MediaCodecHelper {
                     //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
                     if (_ebt >= _eTS) { break; }
-                    
                 }
-               }
-               D(true);
+            }
+            D(true);
             VideoEncodingInProgress = false;
             if (AppSettings.Logging.SendToConsole)
                 System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
@@ -304,15 +301,15 @@ namespace MediaCodecHelper {
         }
 
         /**
- * Extracts all pending data from the encoder and forwards it to the muxer.
- * <p>
- * If endOfStream is not set, this returns when there is no more data to drain.  If it
- * is set, we send EOS to the encoder, and then iterate until we see EOS on the output.
- * Calling this with endOfStream set should be done once, right before stopping the muxer.
- * <p>
- * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
- * not recording audio.
- */
+          * Extracts all pending data from the encoder and forwards it to the muxer.
+          * <p>
+          * If endOfStream is not set, this returns when there is no more data to drain.  If it
+          * is set, we send EOS to the encoder, and then iterate until we see EOS on the output.
+          * Calling this with endOfStream set should be done once, right before stopping the muxer.
+          * <p>
+          * We're just using the muxer to get a .mp4 file (instead of a raw H.264 stream).  We're
+          * not recording audio.
+          */
         private void D(bool es)
         {
 
@@ -384,14 +381,12 @@ namespace MediaCodecHelper {
 
                     if (_bfi.Size != 0)
                     {
-                        if (!MuxerStarted)
-                        {
-                            throw new RuntimeException("muxer hasn't started");
-                        }
+                        if (!MuxerStarted) { throw new RuntimeException("muxer hasn't started"); }
                         // adjust the ByteBuffer values to match BufferInfo
                         ed.Position(_bfi.Offset);
                         ed.Limit(_bfi.Offset + _bfi.Size);
-                        _bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
+                        //_bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
+                        EncodedBits(_bfi.Size);
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
                         if (AppSettings.Logging.SendToConsole)
                         {
