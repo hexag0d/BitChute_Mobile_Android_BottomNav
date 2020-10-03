@@ -209,8 +209,8 @@ namespace MediaCodecHelper {
             VideoEncodingInProgress = true;
             while (true)
             {
-                if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected)
-                {
+                if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected) // this is disabled (because nothing sets the first var) right now because it was causing lags
+                {                                                                            //I'm not sure if we need to pause the video and dump all the GREFs mid process?
                     try
                     {
                         GarbageIsBeingCollected = true;

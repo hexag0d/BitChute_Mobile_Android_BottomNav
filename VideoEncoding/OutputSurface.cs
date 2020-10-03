@@ -53,7 +53,7 @@ using BitChute.Classes;
 
 namespace MediaCodecHelper {	
 	
-	public class OutputSurface : Java.Lang.Object, SurfaceTexture.IOnFrameAvailableListener, System.IDisposable
+	public class OutputSurface 
     {
 		private const string TAG = "OutputSurface";
 		private const int EGL_OPENGL_ES2_BIT = 4;
