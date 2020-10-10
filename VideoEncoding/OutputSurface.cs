@@ -295,8 +295,8 @@ namespace MediaCodecHelper {
 
 			System.Threading.Monitor.Exit (_frameSyncObject);
 
-			var curDisplay = EGLContext.EGL.JavaCast<IEGL10>().EglGetCurrentDisplay();
-			_textureRender.CheckGlError ("before updateTexImage");
+			//var curDisplay = EGLContext.EGL.JavaCast<IEGL10>().EglGetCurrentDisplay();
+			//_textureRender.CheckGlError ("before updateTexImage");
 			Parent.WeakSurfaceTexture.UpdateTexImage ();
 			return true;
 		}

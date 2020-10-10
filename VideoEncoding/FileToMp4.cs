@@ -45,7 +45,7 @@ namespace MediaCodecHelper {
         /// <summary>
         /// frame count
         /// </summary>
-        private static int _fC;
+        private static long _fC;
         public static string LatestOutputPath = "";
         public static string LatestInputPath = "";
         public static int LatestAudioTrackIndex;
