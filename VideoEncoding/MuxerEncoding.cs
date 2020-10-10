@@ -11,7 +11,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using BitChute.Classes;
+using BitChute;
 using Java.Nio;
 using MediaCodecHelper;
 //using static BitChute.ViewModels.VideoEncoderVM;

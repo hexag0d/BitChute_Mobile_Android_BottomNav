@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Webkit;
 
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class ExtWebChromeClient
     {

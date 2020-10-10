@@ -12,12 +12,12 @@ using Android.Webkit;
 using System.IO;
 using Android.Graphics;
 using System.Threading.Tasks;
-using BitChute.Classes;
+using BitChute;
 using BitChute.Web.Ui;
 using System.Net;
 using BitChute.Fragments;
-using static BitChute.Classes.JavascriptCommands;
-using static BitChute.Classes.PlaystateManagement;
+using static BitChute.JavascriptCommands;
+using static BitChute.PlaystateManagement;
 
 namespace BitChute.Web
 {

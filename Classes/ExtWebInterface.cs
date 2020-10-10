@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class ExtWebInterface
     {

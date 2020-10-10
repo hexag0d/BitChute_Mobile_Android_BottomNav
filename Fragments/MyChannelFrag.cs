@@ -4,13 +4,13 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using BitChute.Classes;
+using BitChute;
 using BitChute;
 using BitChute.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static BitChute.Services.ExtSticky;
+using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 
 namespace BitChute.Fragments

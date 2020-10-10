@@ -3,9 +3,9 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
-using static BitChute.Services.ExtSticky;
+using static BitChute.Services.MainPlaybackSticky;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     /// <summary>
     /// static class that contains views to make UI 

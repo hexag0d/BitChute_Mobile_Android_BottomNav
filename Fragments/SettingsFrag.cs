@@ -2,18 +2,18 @@
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using BitChute.Classes;
+using BitChute;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using static BitChute.Classes.AppSettings;
-using static BitChute.Classes.ExtWebChromeClient;
-using static BitChute.Classes.ExtNotifications;
-using static BitChute.Services.ExtSticky;
-using static BitChute.Classes.ViewHelpers;
-using static BitChute.Classes.ViewHelpers.VideoEncoder;
-using static BitChute.Classes.ViewHelpers.Tab4;
+using static BitChute.AppSettings;
+using static BitChute.ExtWebChromeClient;
+using static BitChute.ExtNotifications;
+using static BitChute.Services.MainPlaybackSticky;
+using static BitChute.ViewHelpers;
+using static BitChute.ViewHelpers.VideoEncoder;
+using static BitChute.ViewHelpers.Tab4;
 
 using System.Linq;
 using MediaCodecHelper;

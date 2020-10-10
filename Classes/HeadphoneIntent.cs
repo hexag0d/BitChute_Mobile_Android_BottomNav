@@ -4,7 +4,7 @@ using Android.Runtime;
 using BitChute.Fragments;
 using BitChute.Services;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class CustomIntent
     {
@@ -27,7 +27,7 @@ namespace BitChute.Classes
                     {
                         case 0:
                             //headset unplugged
-                            SendPauseVideoCommand();
+                            PlaystateManagement.SendPauseVideoCommand();
                             break;
                         case 1:
                             //headset plugged
@@ -38,20 +38,7 @@ namespace BitChute.Classes
                 }
             }
 
-            public static void SendPauseVideoCommand()
-            {
-                try {
-                    HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                }
-                catch ( Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
+
         }
         
         public class BackgroundIntentReceiver : BroadcastReceiver

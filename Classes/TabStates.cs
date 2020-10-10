@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Fragments;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class TabStates
     {

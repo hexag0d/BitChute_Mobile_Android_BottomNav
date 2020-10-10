@@ -13,7 +13,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     class UriDecoder
     {

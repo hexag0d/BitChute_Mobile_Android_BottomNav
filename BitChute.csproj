@@ -94,7 +94,7 @@
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Classes\SearchOverride.cs" />
-    <Compile Include="Classes\StickyService.cs" />
+    <Compile Include="Services\MainPlaybackSticky.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\UriDecoder.cs" />
     <Compile Include="Classes\VideoDownloader.cs" />

@@ -13,7 +13,7 @@ using BitChute.Fragments;
 using HtmlAgilityPack;
 using BitChute.Services;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class ExtNotifications
     {
@@ -70,7 +70,7 @@ namespace BitChute.Classes
                         var valuesForActivity = new Bundle();
                         valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
                         valuesForActivity.PutString("URL", note.NoteLink);
-                        resultIntent.SetAction(ExtSticky.ActionLoadUrl);
+                        resultIntent.SetAction(MainPlaybackSticky.ActionLoadUrl);
                         resultIntent.PutExtras(valuesForActivity);
                         var resultPendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, MainActivity.NOTIFICATION_ID, resultIntent, PendingIntentFlags.UpdateCurrent);
                         resultIntent.AddFlags(ActivityFlags.SingleTop);
@@ -116,7 +116,7 @@ namespace BitChute.Classes
                             _sentNotificationList.Add(note);
                             notePos++;
                         }
-                        ExtSticky.NotificationsHaveBeenSent = true;
+                        MainPlaybackSticky.NotificationsHaveBeenSent = true;
                     }
                 }
                 catch { }
@@ -197,7 +197,7 @@ namespace BitChute.Classes
                             _sentNotificationList.Add(note);
                             notePos++;
                         }
-                        ExtSticky.NotificationsHaveBeenSent = true;
+                        MainPlaybackSticky.NotificationsHaveBeenSent = true;
                     }
                 }
                 catch { }
@@ -220,23 +220,23 @@ namespace BitChute.Classes
 
             Intent notificationIntent = new Intent(Android.App.Application.Context, typeof(MainActivity));
 
-            Intent previousIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            previousIntent.SetAction(ExtSticky.ActionPrevious);
+            Intent previousIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            previousIntent.SetAction(MainPlaybackSticky.ActionPrevious);
             PendingIntent ppreviousIntent = PendingIntent.GetService(Android.App.Application.Context, 0, previousIntent, 0);
-            Intent playIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            playIntent.SetAction(ExtSticky.ActionPlay);
+            Intent playIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            playIntent.SetAction(MainPlaybackSticky.ActionPlay);
             PendingIntent pplayIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playIntent, 0);
-            Intent nextIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            nextIntent.SetAction(ExtSticky.ActionNext);
+            Intent nextIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            nextIntent.SetAction(MainPlaybackSticky.ActionNext);
             PendingIntent pnextIntent = PendingIntent.GetService(Android.App.Application.Context, 0, nextIntent, 0);
-            Intent pauseIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            pauseIntent.SetAction(ExtSticky.ActionPause);
+            Intent pauseIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            pauseIntent.SetAction(MainPlaybackSticky.ActionPause);
             PendingIntent ppauseIntent = PendingIntent.GetService(Android.App.Application.Context, 0, pauseIntent, 0);
-            Intent playNoteInBkgrdIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            playNoteInBkgrdIntent.SetAction(ExtSticky.ActionBkgrdNote);
+            Intent playNoteInBkgrdIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            playNoteInBkgrdIntent.SetAction(MainPlaybackSticky.ActionBkgrdNote);
             PendingIntent pplayNoteInBkgrdIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playNoteInBkgrdIntent, 0);
-            Intent playNoteResumeIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
-            playNoteResumeIntent.SetAction(ExtSticky.ActionResumeNote);
+            Intent playNoteResumeIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
+            playNoteResumeIntent.SetAction(MainPlaybackSticky.ActionResumeNote);
             PendingIntent pplayNoteResumeIntent = PendingIntent.GetService(Android.App.Application.Context, 0, playNoteResumeIntent, 0);
 
 
@@ -278,11 +278,11 @@ namespace BitChute.Classes
         /// <returns>background intent</returns>
         public static Intent SwapToBackgroundNotification(Intent original)
         {
-            Intent newIntent = new Intent(Android.App.Application.Context, typeof(ExtSticky));
+            Intent newIntent = new Intent(Android.App.Application.Context, typeof(MainPlaybackSticky));
             newIntent.AddFlags(original.Flags);
             newIntent.PutExtras(original.Extras);
             
-            newIntent.SetAction(ExtSticky.ActionLoadUrl);
+            newIntent.SetAction(MainPlaybackSticky.ActionLoadUrl);
             return newIntent;
         }
 

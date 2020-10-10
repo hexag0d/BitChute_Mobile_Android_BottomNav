@@ -24,7 +24,7 @@ using Java.Lang;
 using Android.Views;
 using Android.Graphics;
 using Android.Content;
-using BitChute.Classes;
+using BitChute;
 
 namespace MediaCodecHelper {
 

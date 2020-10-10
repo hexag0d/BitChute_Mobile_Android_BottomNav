@@ -3,7 +3,7 @@ using Android.Graphics.Drawables;
 using System;
 using System.Threading.Tasks;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     class AppSettings
     {

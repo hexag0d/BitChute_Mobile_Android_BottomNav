@@ -1,4 +1,4 @@
-﻿namespace BitChute.Classes
+﻿namespace BitChute
 {
     class AppState
     {
@@ -63,6 +63,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.6.4.1.API8.OpenGL.VideoProcessing.PtOffsetRedux";
+        public static string AppVersion = "28.6.4.2.API8.OpenGL.VideoProcessing.CleanupPt1";
     }
 }

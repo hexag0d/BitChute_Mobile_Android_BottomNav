@@ -1,7 +1,7 @@
 ﻿using Android.Webkit;
-using static BitChute.Services.ExtSticky;
+using static BitChute.Services.MainPlaybackSticky;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     class JavascriptCommands
     {

@@ -7,7 +7,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Widget;
 using Android.Util;
-using BitChute.Classes;
+using BitChute;
 using BitChute;
 using System.Threading.Tasks;
 using BitChute.Fragments;
@@ -21,10 +21,14 @@ using System.ComponentModel;
 
 namespace BitChute.Services
 {
+    /// <summary>
+    /// This is the main background sticky service that controls playback
+    /// and notifications
+    /// </summary>
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
         ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
-    public class ExtSticky : Service, AudioManager.IOnAudioFocusChangeListener,
+    public class MainPlaybackSticky : Service, AudioManager.IOnAudioFocusChangeListener,
         MediaController.IMediaPlayerControl
     {
         #region members
@@ -45,7 +49,7 @@ namespace BitChute.Services
         private static Java.Util.Timer _timer = new Java.Util.Timer();
         private static ExtTimerTask _timerTask = new ExtTimerTask();
 
-        public static ExtSticky ExtStickyServ;
+        public static MainPlaybackSticky ExtStickyServ;
         public static PowerManager Pm;
 
         public static WifiManager WifiManager;
@@ -96,9 +100,9 @@ namespace BitChute.Services
 
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
-            if (!ExtSticky.MediaPlayerDictionary.ContainsKey(tab))
+            if (!MainPlaybackSticky.MediaPlayerDictionary.ContainsKey(tab))
             {
-                ExtSticky.MediaPlayerDictionary.Add(tab, new MediaPlayer());
+                MainPlaybackSticky.MediaPlayerDictionary.Add(tab, new MediaPlayer());
             }
             else if (MediaPlayerDictionary[tab] == null)
             {
@@ -141,7 +145,7 @@ namespace BitChute.Services
             };
 
             if (!tbo)
-                ExtSticky.MediaPlayerDictionary[tab].Prepare();
+                MainPlaybackSticky.MediaPlayerDictionary[tab].Prepare();
 
             return MediaPlayerDictionary[tab];
         }
@@ -231,20 +235,13 @@ namespace BitChute.Services
 
         private void Pause()
         {
-            if (!PlaystateManagement.MediaPlayerIsStreaming)
-            {
-                CustomIntent.ControlIntentReceiver.SendPauseVideoCommand();
-            }
-            else
-            {
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
-                    return;
-                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
-            }
+
+                PlaystateManagement.SendPauseVideoCommand();
+
+
+            
 
             //StopForeground(false); // Not sure if we should kill it here.. that could make the app go to sleep
-            _paused = true;
         }
 
         public static void Stop()
@@ -326,16 +323,16 @@ namespace BitChute.Services
         }
 
         #region StickyServiceMethods
-        public ExtSticky(Context applicationContext)
+        public MainPlaybackSticky(Context applicationContext)
         {
 
         }
-        public ExtSticky()
+        public MainPlaybackSticky()
         {
 
         }
 
-        public ExtSticky GetStickyNotificationService()
+        public MainPlaybackSticky GetStickyNotificationService()
         {
             return this;
         }
@@ -458,10 +455,10 @@ namespace BitChute.Services
                     ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
                     _notificationStackExecutionInProgress = false;
                 }
-                if (ExtSticky.NotificationsHaveBeenSent)
+                if (MainPlaybackSticky.NotificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
-                    if (!ExtSticky._notificationLongTimerSet)
+                    if (!MainPlaybackSticky._notificationLongTimerSet)
                     {
                         //after the initial notifications are sent, start the long running service timer task
                         _timer.ScheduleAtFixedRate(_extTimerTask, 500000, 780000); // 780000

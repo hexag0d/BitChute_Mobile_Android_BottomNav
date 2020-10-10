@@ -11,7 +11,7 @@ using HtmlAgilityPack;
 using BitChute.Services;
 using static BitChute.Models.VideoModel;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     [Service(Exported = true)]
     public class VideoDownloader : Service
@@ -427,11 +427,11 @@ namespace BitChute.Classes
         {
             try
             {
-                if (ExtSticky.Pm == null)
+                if (MainPlaybackSticky.Pm == null)
                 {
-                    ExtSticky.Pm = (PowerManager)GetSystemService(Context.PowerService);
+                    MainPlaybackSticky.Pm = (PowerManager)GetSystemService(Context.PowerService);
                 }
-                PowerManager.WakeLock _wl = ExtSticky.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock _wl = MainPlaybackSticky.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
                 _wl.Acquire();
             }
             catch (Exception ex)

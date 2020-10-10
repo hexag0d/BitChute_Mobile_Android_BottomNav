@@ -24,9 +24,9 @@ using BitChute;
 using BitChute.VideoEncoding;
 using static Android.Media.MediaCodec;
 using BitChute.Fragments;
-using BitChute.Classes;
+using BitChute;
 using Android.App;
-using static BitChute.Classes.FileBrowser;
+using static BitChute.FileBrowser;
 using Android.Runtime;
 using System;
 using Android.OS;
@@ -177,7 +177,7 @@ namespace MediaCodecHelper {
         }
 
 		public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null) {
-            BitChute.Classes.FileBrowser.GetExternalPermissions();
+            BitChute.FileBrowser.GetExternalPermissions();
              EncodeFileToMp4(inputPath, outputPath, true, inputUri); 
 		}
 

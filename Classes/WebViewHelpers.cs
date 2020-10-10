@@ -1,6 +1,6 @@
 ﻿using BitChute.Fragments;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class WebViewHelpers
     {

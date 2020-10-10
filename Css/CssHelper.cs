@@ -5,7 +5,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using BitChute.Classes;
+using BitChute;
 using BitChute.Services;
 
 namespace BitChute.Web.Ui

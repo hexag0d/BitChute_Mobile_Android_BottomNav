@@ -9,9 +9,11 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using static BitChute.Classes.PlaystateManagement;
+using BitChute.Fragments;
+using BitChute.Services;
+using static BitChute.PlaystateManagement;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class PlaystateManagement
     {
@@ -88,6 +90,38 @@ namespace BitChute.Classes
                     _webViewMediaPlayerIsStreaming = value;
                     WebViewPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
                 }
+            }
+        }
+
+        public static void SendPauseVideoCommand()
+        {
+            if (PlaystateManagement.WebViewPlayerIsStreaming)
+            {
+                try
+                {
+                    HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    PlaystateManagement.WebViewPlayerIsStreaming = false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else if (PlaystateManagement.MediaPlayerIsStreaming)
+            {
+                try
+                {
+                    if (MainPlaybackSticky.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
+                        return;
+                    if (MainPlaybackSticky.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                        MainPlaybackSticky.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Pause();
+                    PlaystateManagement.MediaPlayerIsStreaming = false;
+                }
+                catch { }
             }
         }
 

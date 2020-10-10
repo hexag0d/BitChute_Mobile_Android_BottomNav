@@ -1,4 +1,4 @@
-﻿namespace BitChute.Classes
+﻿namespace BitChute
 {
     class Https
     {

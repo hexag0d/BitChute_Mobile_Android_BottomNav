@@ -49,7 +49,7 @@ using GL = Javax.Microedition.Khronos.Opengles.IGL;
 using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
 using Android.Runtime;
-using BitChute.Classes;
+using BitChute;
 
 namespace MediaCodecHelper {	
 	

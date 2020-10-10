@@ -52,7 +52,7 @@ using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Views;
 using BitChute.Adapters;
-using BitChute.Classes;
+using BitChute;
 using BitChute.Fragments;
 using BitChute.Web.Ui;
 using BitChute.Services;
@@ -121,7 +121,7 @@ namespace BitChute
                 AppState.Display.Horizontal = false;
             }
             Main = this;
-            var mServiceIntent = new Intent(this, typeof(ExtSticky));
+            var mServiceIntent = new Intent(this, typeof(MainPlaybackSticky));
             StartService(mServiceIntent);
             //get the intent incase a notification started the activity
             Intent _sentIntent = Intent;
@@ -150,7 +150,7 @@ namespace BitChute
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
             ViewPager.OffscreenPageLimit = 4;
             CreateNotificationChannel();
-            ExtSticky.StartNotificationLoop(30000);
+            MainPlaybackSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
             ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
             //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
@@ -612,7 +612,7 @@ namespace BitChute
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
             PlaystateManagement.UserRequestedBackgroundPlayback = true;
-            ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
+            MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
             Main.MoveTaskToBack(true);
         }
 
@@ -706,7 +706,7 @@ namespace BitChute
                 try
                 {
                     url = intent.GetStringExtra("URL");
-                    if ((url != null || url != "") && ExtSticky.NotificationShouldPlayInBkgrd)
+                    if ((url != null || url != "") && MainPlaybackSticky.NotificationShouldPlayInBkgrd)
                     {
                         Main.MoveTaskToBack(true);
                     }
@@ -889,8 +889,8 @@ namespace BitChute
             base.OnPause();
             if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
-                ExtSticky.StartForeground(BitChute.Classes.ExtNotifications.BuildPlayControlNotification());
-                try { ExtSticky.StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem); }
+                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                try { MainPlaybackSticky.StartVideoInBkgrd(PlaystateManagement.WebViewPlayerNumberIsStreaming); }
                 catch { }
             }
         }
@@ -951,7 +951,7 @@ namespace BitChute
                 //UnregisterReceiver(ForegroundReceiver); //@TODO check what this does
                 //
                 AppState.NotificationStartedApp = false;
-                ExtSticky.NotificationShouldPlayInBkgrd = false; // set this to false if user closes the app so that future notification clicks will restart the app
+                MainPlaybackSticky.NotificationShouldPlayInBkgrd = false; // set this to false if user closes the app so that future notification clicks will restart the app
             }
             catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;

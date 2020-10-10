@@ -7,7 +7,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Services;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class ExtMediaController : MediaController
     {
@@ -65,7 +65,7 @@ namespace BitChute.Classes
     {
         public void OnClick(View v)
         {
-            ExtSticky.SkipToPrev(MainActivity.ViewPager.CurrentItem);
+            MainPlaybackSticky.SkipToPrev(MainActivity.ViewPager.CurrentItem);
         }
 
         public bool OnLongClick(View v)
@@ -78,7 +78,7 @@ namespace BitChute.Classes
     {
         public void OnClick(View v)
         {
-            ExtSticky.SkipToNext(null);
+            MainPlaybackSticky.SkipToNext(null);
         }
 
         public bool OnLongClick(View v)

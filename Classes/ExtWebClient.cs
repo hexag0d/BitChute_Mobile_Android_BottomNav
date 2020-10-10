@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     /// <summary>
     /// Custom WebClient with overrides

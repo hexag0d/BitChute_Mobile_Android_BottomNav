@@ -5,9 +5,9 @@ using BitChute.Fragments;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using static BitChute.Classes.ViewHelpers;
+using static BitChute.ViewHelpers;
 
-namespace BitChute.Classes
+namespace BitChute
 {
     public class SearchOverride
     {

@@ -4,8 +4,8 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
-using BitChute.Classes;
-using static BitChute.Services.ExtSticky;
+using BitChute;
+using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 
 namespace BitChute.Fragments
