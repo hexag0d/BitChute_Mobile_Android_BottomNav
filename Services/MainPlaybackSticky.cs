@@ -187,16 +187,12 @@ namespace BitChute.Services
         {
             if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
-                switch (tab)
-                {
-                    case 0: HomePageFrag.WebViewGoBack(); break;
-                    case 1: SubscriptionFrag.WebViewGoBack(); break;
-                    case 2: FeedFrag.WebViewGoBack(); break;
-                    case 3: MyChannelFrag.WebViewGoBack(); break;
-                    case 4: SettingsFrag.WebViewGoBack(); break;
-                }
+                try {
+                    if (PlaystateManagement.GetWebViewPlayerById().CanGoBack())
+                        PlaystateManagement.GetWebViewPlayerById().GoBack();
+                }catch { }
             }
-            else { ExtStickyServ.CurrentPosition = 0; }
+            else { }
         }
 
         /// <summary>
@@ -206,12 +202,12 @@ namespace BitChute.Services
         public static void SendWebViewNextVideoCommand(int id = -1)
         {
             if (id == -1) { id = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
-            PlaystateManagement.GetWebViewPlayerById(id).LoadUrl(JavascriptCommands._jsNextVideoByASpa);
+            if (id != -1) { PlaystateManagement.GetWebViewPlayerById(id).LoadUrl(JavascriptCommands._jsNextVideoByASpa); }
         }
 
         public static void SkipToNext(VideoCard vc)
         {
-            if (!PlaystateManagement.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
             {
                 SendWebViewNextVideoCommand();
             }

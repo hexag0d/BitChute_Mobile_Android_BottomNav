@@ -58,7 +58,6 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-
                 return FragmentContainerLayout;
             }
             catch { }

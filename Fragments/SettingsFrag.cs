@@ -66,13 +66,13 @@ namespace BitChute.Fragments
             try
             {
                 if (FragmentContainerLayout == null)
-                FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
+                    FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
                 if (WebViewFragmentLayout == null)
-                WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
+                    WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
                 if (InternalTabbedLayout == null)
-                InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
+                    InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
                 if (SettingsTabLayout == null)
-                SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
+                    SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
                 TabFragmentLinearLayout = (LinearLayout)ViewHelpers.Tab4.FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
                 ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
                 ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
@@ -83,7 +83,8 @@ namespace BitChute.Fragments
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-                ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
+                if (VideoEncoderLayout == null)
+                    ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
                 ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
                 ViewHelpers.VideoEncoder.EncoderWidthEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderWidthEditText);
                 ViewHelpers.VideoEncoder.EncoderHeightEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderHeightEditText);
@@ -102,8 +103,18 @@ namespace BitChute.Fragments
                 Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
                 Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
                 Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            try
+            {
                 EncoderFlexLinearLayout = InternalTabbedLayout.FindViewById<LinearLayout>(Resource.Id.encoderFlexLinearLayout);
                 ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
+            }
+            catch (Exception ex) { }
+            try { 
                 AppSettings.Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
                 AppSettings.PrefEditor = AppSettings.Prefs.Edit();
                 _zcoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
@@ -120,6 +131,9 @@ namespace BitChute.Fragments
                 _tab5OverrideSpinner = SettingsTabLayout.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
                 _notificationonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
                 _notificationoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
+            }
+            catch (Exception ex) { }
+                try { 
                 _hidehorizontalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
                 _hidehorizontalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
                 _hideverticalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOn);
@@ -163,7 +177,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                BitChute.Web.ViewClients.LoadInitialUrls(1000);
+                BitChute.Web.ViewClients.LoadInitialUrls();
             }
             catch (Exception ex) { }
             

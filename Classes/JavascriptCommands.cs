@@ -311,7 +311,10 @@ namespace BitChute
         /// </summary>
         public class CallBackInjection
         {
-            public static string PlayPauseButtonCallback = @"$(""button[data-plyr*='play']"")[0].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/'}})";
+            // the playpause callback is actually backwards. if the plyr.playing = true then we should be observing a pause event.
+            //however, that's not what's happening when I run the app.  It is backwards but just leaving for now
+            public static string PlayPauseButtonCallback = @"$(""button[data-plyr*='play']"")[0].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/';}});"
+                + @"$(""button[data-plyr*='play']"")[1].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/';}});";
             public static string IsPlayingCallback = @"if(plyr.playing||(plyr.currentTime>=plyr.duration&&plyr.autoplay)){window.location='https://_&app_play_isPlaying/'}";
             public static string FullscreenCallback = @"$(""button[data-plyr*='fullscreen']"")[0].addEventListener('click',function(){window.location='https://_&app_fullscreen_invoked/'})";
         }

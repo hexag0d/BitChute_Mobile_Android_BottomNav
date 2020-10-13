@@ -127,16 +127,17 @@ namespace BitChute
             Intent _sentIntent = Intent;
             if (_sentIntent != null)
             {
-                //if it's not null then set the fragment1 url to our intent url string
+                //if it's not null then set the fragment0 url to our intent url string
                 try
                 {
                     var _tempUrl = _sentIntent.Extras?.GetString("URL");
                     if (_tempUrl != "" && _tempUrl != null)
+                    {
                         HomePageFrag.RootUrl = _tempUrl;
-                    AppState.NotificationStartedApp = true;
+                        AppState.NotificationStartedApp = true;
+                    }
                 }
-                catch
-                { }
+                catch { }
             }
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
@@ -717,9 +718,12 @@ namespace BitChute
             if (url == "" || url == null) { return; }
             try
             {
-                if (PlaystateManagement.MediaPlayerIsStreaming || 
+                if (PlaystateManagement.MediaPlayerIsStreaming ||
                     PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
-                { PlaystateManagement.GetWebViewPlayerById().LoadUrl(url); }
+                {
+                    if (!AppState.NotificationStartedApp) 
+                    PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
+                }
             }
             catch { }
             base.OnNewIntent(intent);

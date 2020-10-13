@@ -38,6 +38,11 @@ namespace BitChute.Web
             FeedFrag.Wv.LoadUrl(FeedFrag.RootUrl);
             MyChannelFrag.Wv.LoadUrl(MyChannelFrag.RootUrl);
             SettingsFrag.Wv.LoadUrl(SettingsFrag.RootUrl);
+            if (AppState.NotificationStartedApp)
+            {
+                HomePageFrag.RootUrl = "https://www.bitchute.com/";
+                AppState.NotificationStartedApp = false;
+            }
         }
         
         public static async void SetReload(int tab = -1)
@@ -86,7 +91,7 @@ namespace BitChute.Web
                 case @"https://_%26app_play_invoked/":
                     PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, true));
                     break;
-                case @"https://_%26app_pause_invoke/":
+                case @"https://_%26app_pause_invoked/":
                     PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, false, true));
                     break;
                 case @"https://_%26app_play_isplaying/":
