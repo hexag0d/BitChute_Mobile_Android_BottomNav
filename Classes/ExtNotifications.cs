@@ -253,7 +253,7 @@ namespace BitChute
             bigViews.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOffRb, pplayNoteResumeIntent);
             views.SetOnClickPendingIntent(Resource.Id.notificationPlaysInBkgrdOffRb, pplayNoteResumeIntent);
 
-            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.CHANNEL_ID)
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(Android.App.Application.Context, MainActivity.BACKGROUND_CHANNEL_ID)
                 //.SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                 .SetContentTitle("BitChute streaming in background")
                 .SetSmallIcon(Resource.Drawable.bitchute_notification2)

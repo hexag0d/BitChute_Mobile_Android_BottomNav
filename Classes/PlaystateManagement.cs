@@ -96,7 +96,7 @@ namespace BitChute
             return webViewId;
         }
 
-        private static PlayerType _playerTypeIsQueued { get; set; }
+        private static PlayerType _playerTypeIsQueued = PlayerType.WebViewPlayer;
 
         /// <summary>
         /// Gets the player type that will be used for queueing and playing videos.
@@ -119,11 +119,24 @@ namespace BitChute
         };
 
         public static Dictionary<int, WebView> WebViewIdDictionary = new Dictionary<int, WebView>();
+        public static Dictionary<int, WebView> WebViewTabDictionary = new Dictionary<int, WebView>();
 
-        public static WebView GetWebViewPlayerById(int id = -1)
+        public static WebView GetWebViewPlayerById(int id = -1, int tabNo = -1)
         {
-            if (id == -1) { id = _webViewMediaPlayerNumberIsStreaming; }
-            return WebViewIdDictionary[id];
+            if (id == -1 && tabNo == -1)
+            {
+                id = _webViewMediaPlayerNumberIsStreaming;
+                return WebViewIdDictionary[id];
+            }
+            else if (id == -1 && tabNo != -1)
+            {
+                return WebViewTabDictionary[tabNo];
+            }
+            else if (id != -1)
+            {
+                return WebViewIdDictionary[id];
+            }
+            else { return WebViewIdDictionary?.First().Value; }
         }
 
         public static void SendPauseVideoCommand()

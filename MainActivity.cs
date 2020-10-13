@@ -96,6 +96,7 @@ namespace BitChute
         //notification items:
         public static int NOTIFICATION_ID = 1000;
         public static readonly string CHANNEL_ID = "notification";
+        public static readonly string BACKGROUND_CHANNEL_ID = "backgroundcontrols";
         public static readonly string COUNT_KEY = "count";
 
         public static Window _window;
@@ -639,6 +640,7 @@ namespace BitChute
             
             var name = "BitChute";
             var description = "BitChute for Android";
+            var nameBackgroundPlayback = "BitChute Background Streaming";
             var channelSilent = new Android.App.NotificationChannel(CHANNEL_ID, name + " Silent", Android.App.NotificationImportance.High)
             {
                 Description = description
@@ -649,11 +651,20 @@ namespace BitChute
                 Description = description
             };
 
+            var backChannel = new Android.App.NotificationChannel(BACKGROUND_CHANNEL_ID, nameBackgroundPlayback, Android.App.NotificationImportance.Max)
+            {
+                Description = description,
+                Importance = NotificationImportance.Max,
+                LockscreenVisibility = NotificationVisibility.Public
+            };
+
             channel.LockscreenVisibility = NotificationVisibility.Public;
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
             channelSilent.SetSound(null, null);
+            backChannel.SetSound(null, null);
             notificationManager.CreateNotificationChannel(channel);
             notificationManager.CreateNotificationChannel(channelSilent);
+            notificationManager.CreateNotificationChannel(backChannel);
         }
 
         private Action<int, Result, Intent> resultCallbackvalue;
@@ -721,8 +732,13 @@ namespace BitChute
                 if (PlaystateManagement.MediaPlayerIsStreaming ||
                     PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
                 {
-                    if (!AppState.NotificationStartedApp) 
-                    PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
+                    if (!AppState.NotificationStartedApp)
+                    {
+                        if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && MainPlaybackSticky.IsInBkGrd())
+                            PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
+                        else if (!MainPlaybackSticky.IsInBkGrd() || (MainPlaybackSticky.IsInBkGrd() && PlaystateManagement.WebViewPlayerNumberIsStreaming == -1))
+                            PlaystateManagement.WebViewTabDictionary[ViewPager.CurrentItem]?.LoadUrl(url); 
+                    }
                 }
             }
             catch { }

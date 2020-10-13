@@ -463,12 +463,11 @@ namespace BitChute.Services
             }
         }
 
-        public static void ExternalStopForeground() // need to re-implement this so the notificaiton can be cancelled
+        public static void ExternalStopForeground() 
         {
             try
             {
                 //WifiLock?.Release();
-                //AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
                 ExtStickyServ.StopForeground(StopForegroundFlags.Remove);
             }
             catch{ }
@@ -479,15 +478,9 @@ namespace BitChute.Services
             base.OnDestroy();
             try
             {
-                //StopForeground(true);
                 WifiLock?.Release();
             }
             catch { }
-            //try
-            //{
-            //   // AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
-            //}
-            //catch { }
         }
 
         /// <summary>
@@ -520,7 +513,7 @@ namespace BitChute.Services
         /// returns true when the app detects that it's running
         /// in background
         /// </summary>
-        /// <returns>bool</returns>
+        /// <returns>is the app in background</returns>
         public static bool IsInBkGrd()
         {
             ActivityManager.GetMyMemoryState(_dProcess);
@@ -624,6 +617,7 @@ namespace BitChute.Services
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
+            private static int tabKey = -1;
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
@@ -645,6 +639,8 @@ namespace BitChute.Services
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
             {
                 PlaystateManagement.WebViewIdDictionary.Add(this.Id, this);
+                tabKey++;
+                PlaystateManagement.WebViewTabDictionary.Add(tabKey, this);
             }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)

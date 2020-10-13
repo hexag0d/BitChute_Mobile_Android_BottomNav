@@ -50,7 +50,7 @@ namespace BitChute.Fragments
                 Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
                 Wv.SetWebViewClient(Wvc);
 
-                if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
+                SetAutoPlayWithDelay(1); 
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 if (AppSettings.ZoomControl)
