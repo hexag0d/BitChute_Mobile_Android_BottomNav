@@ -62,7 +62,7 @@ namespace BitChute.Services
         private static ExtNotifications _extNotifications = new ExtNotifications();
         
         private static ActivityManager.RunningAppProcessInfo _dProcess = new ActivityManager.RunningAppProcessInfo();
-        private static int _startForegroundNotificationId = 6666;
+        private static int StartForegroundNotificationId = 6666;
 
         private static bool _notificationStackExecutionInProgress = false;
         private static bool _notificationLongTimerSet = false;
@@ -303,9 +303,10 @@ namespace BitChute.Services
         {
             try
             {
-                ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
+                ExtStickyServ.StartForeground(StartForegroundNotificationId, startNote);
                 ServiceIsRunningInForeground = true;
                 AppState.ForeNote = startNote;
+                StartForegroundNotificationId++;
             }
             catch (Exception ex)
             {

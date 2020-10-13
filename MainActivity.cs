@@ -967,6 +967,7 @@ namespace BitChute
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             try { MainPlaybackSticky.ExternalStopForeground();
+                AppState.ForeNote = null;
             }
             catch(Exception ex) { }
             PlaystateManagement.SendPauseVideoCommand();
