@@ -191,8 +191,8 @@ namespace MediaCodecHelper {
         public static long MediaPlayerPositionBeforeGC = 0;
 
         private string EncodeFileToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
-            LatestInputVideoLength = MuxerEncoding.GetVideoLength(inputPath, inputUri);
-            LatestAudioInputFormat = MuxerEncoding.GetAudioTrackFormat(inputPath, inputUri);
+            LatestInputVideoLength = AudioEncoding.GetVideoLength(inputPath, inputUri);
+            LatestAudioInputFormat = AudioEncoding.GetAudioTrackFormat(inputPath, inputUri);
             EstimateTotalSize(LatestInputVideoLength, _bitRate);
             try
             {
@@ -548,7 +548,7 @@ namespace MediaCodecHelper {
         public void StartAudioEncoder(long calculatedOffset, string inputPath = null, Android.Net.Uri inputUri = null)
         {
 
-            MuxerEncoding mxe = new MuxerEncoding();
+            AudioEncoding mxe = new AudioEncoding();
             mxe.Progress += SettingsFrag.OnMuxerProgress;
             if (inputUri != null) { mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, null, _muxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset, inputUri); }
             else if (inputPath != null) { mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, inputPath, _muxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset); }

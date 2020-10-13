@@ -8,10 +8,12 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
+using Android.Webkit;
 using Android.Widget;
 using BitChute.Fragments;
 using BitChute.Services;
 using static BitChute.PlaystateManagement;
+using static BitChute.Services.MainPlaybackSticky;
 
 namespace BitChute
 {
@@ -24,33 +26,38 @@ namespace BitChute
         public class PlaystateEventArgs : EventArgs
         {
             public PlaystateEventArgs(
-                int webViewNumber = -1, bool webViewPlayRequested = false, bool webViewPauseRequested = false,
-                bool autoPlayDetected = false, int nativeMediaPlayerNumber = -1, bool nativeMediaPlayerPlayRequested = false,
+                int webViewId = -1, bool webViewPlayRequested = false, bool webViewPauseRequested = false,
+                bool webViewAutoPlayDetected = false, int nativeMediaPlayerNumber = -1, bool nativeMediaPlayerPlayRequested = false,
                 bool nativeMediaPlayerStopRequested = false)
             {
                 if (webViewPlayRequested)
                 {
-                    if (!WebViewPlayerIsStreaming) { WebViewPlayerIsStreaming = true;
-                        WebViewPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem; }
+                    if (!WebViewPlayerIsStreaming) {
+                        WebViewPlayerIsStreaming = true;
+                        WebViewPlayerNumberIsStreaming = webViewId;
+                        PlayerTypeQueued(PlayerType.WebViewPlayer);
+                    }
                     else { MediaPlayerIsStreaming = false; }
                 }
                 else if (webViewPauseRequested)
                 {
                     WebViewPlayerIsStreaming = false;
-                    WebViewPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
-                    MediaPlayerIsStreaming = false; 
+                    WebViewPlayerNumberIsStreaming = webViewId;
+                    MediaPlayerIsStreaming = false;
+                    PlayerTypeQueued(PlayerType.WebViewPlayer);
                 }
-                if (autoPlayDetected)
+                if (webViewAutoPlayDetected)
                 {
-                    WebViewPlayerAutoPlayDetected = autoPlayDetected;
+                    WebViewPlayerAutoPlayDetected(webViewId);
+                    PlayerTypeQueued(PlayerType.WebViewPlayer);
                 }
             }
-            public static bool WebViewMediaPlayerIsStreaming { get { return WebViewPlayerIsStreaming; } }
-            public static int WebViewMediaPlayerNumberIsStreaming { get { return WebViewPlayerNumberIsStreaming; } }
-            public static bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
-            public static int NativeMediaPlayerNumberIsStreaming { get { return MediaPlayerNumberIsStreaming; } }
+            public bool WebViewMediaPlayerIsStreaming { get { return WebViewPlayerIsStreaming; } }
+            public int WebViewMediaPlayerNumberIsStreaming { get { return WebViewPlayerNumberIsStreaming; } }
+            public bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
+            public int NativeMediaPlayerNumberIsStreaming { get { return MediaPlayerNumberIsStreaming; } }
         }
-        
+
         /// <summary>
         /// there are different media players and this keeps track of which one is playing
         /// 
@@ -73,7 +80,7 @@ namespace BitChute
         {
             get { return _webViewMediaPlayerNumberIsStreaming; }
             set { _webViewMediaPlayerNumberIsStreaming = value; }
-        } 
+        }
 
         public static bool WebViewPlayerIsStreaming
         {
@@ -81,16 +88,42 @@ namespace BitChute
             set { _webViewMediaPlayerIsStreaming = value; }
         }
 
-        public static bool WebViewPlayerAutoPlayDetected
+        public static int WebViewPlayerAutoPlayDetected(int webViewId)
         {
-            get { return _webViewMediaPlayerIsStreaming; }
-            set { _webViewMediaPlayerAutoPlayDetected = value;
-                if (_webViewMediaPlayerAutoPlayDetected)
-                {
-                    _webViewMediaPlayerIsStreaming = value;
-                    WebViewPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
-                }
-            }
+            _webViewMediaPlayerNumberIsStreaming = webViewId;
+            _webViewMediaPlayerAutoPlayDetected = true;
+            _webViewMediaPlayerIsStreaming = true;
+            return webViewId;
+        }
+
+        private static PlayerType _playerTypeIsQueued { get; set; }
+
+        /// <summary>
+        /// Gets the player type that will be used for queueing and playing videos.
+        /// 
+        ///   If passed PlayerType.None as argument returns the last known queue type
+        /// </summary>
+        /// <param name="playerType"></param>
+        /// <returns></returns>
+        public static PlayerType PlayerTypeQueued(PlayerType playerType = PlayerType.None){
+            if (playerType == PlayerType.None) { playerType = _playerTypeIsQueued; }
+            else { _playerTypeIsQueued = playerType; }
+            return _playerTypeIsQueued;
+        }
+
+        public enum PlayerType
+        {
+            None,
+            WebViewPlayer,
+            NativeMediaPlayer
+        };
+
+        public static Dictionary<int, WebView> WebViewIdDictionary = new Dictionary<int, WebView>();
+
+        public static WebView GetWebViewPlayerById(int id = -1)
+        {
+            if (id == -1) { id = _webViewMediaPlayerNumberIsStreaming; }
+            return WebViewIdDictionary[id];
         }
 
         public static void SendPauseVideoCommand()
@@ -99,12 +132,9 @@ namespace BitChute
             {
                 try
                 {
-                    HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
+                    GetWebViewPlayerById(_webViewMediaPlayerNumberIsStreaming).LoadUrl(JavascriptCommands._jsPauseVideo);
                     PlaystateManagement.WebViewPlayerIsStreaming = false;
+                    PlayerTypeQueued(PlayerType.WebViewPlayer);
                 }
                 catch (Exception ex)
                 {
@@ -113,6 +143,7 @@ namespace BitChute
             }
             else if (PlaystateManagement.MediaPlayerIsStreaming)
             {
+                PlayerTypeQueued(PlayerType.NativeMediaPlayer);
                 try
                 {
                     if (MainPlaybackSticky.MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)

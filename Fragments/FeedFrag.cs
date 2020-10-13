@@ -7,6 +7,7 @@ using Android.Webkit;
 using BitChute;
 using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
+using static BitChute.ViewHelpers.Tab2;
 
 namespace BitChute.Fragments
 {
@@ -14,6 +15,7 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
+        //public static ServiceWebView Wv;
         public static ServiceWebView Wv;
         readonly ViewClients.Feed _wvc = new ViewClients.Feed();
         public static int TNo = 2;
@@ -42,18 +44,23 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
-            Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
-            Wv.SetWebViewClient(_wvc);
-            Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            Wv.Settings.JavaScriptEnabled = true;
-            if (AppSettings.ZoomControl)
+            try
             {
-                Wv.Settings.BuiltInZoomControls = true;
+                if (FragmentContainerLayout == null )
+                FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
+                Wv = (ServiceWebView)FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView3);
+                Wv.SetWebViewClient(_wvc);
+                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                Wv.Settings.JavaScriptEnabled = true;
+                if (AppSettings.ZoomControl)
+                {
+                    Wv.Settings.BuiltInZoomControls = true;
+                    Wv.Settings.DisplayZoomControls = false;
+                }
                 Wv.Settings.DisplayZoomControls = false;
-            }
-            Wv.Settings.DisplayZoomControls = false;
-            return _view;
+                return FragmentContainerLayout;
+            }catch { }
+            return null;
         }
 
         public async void LoadUrlWithDelay(string url, int delay)
@@ -79,8 +86,8 @@ namespace BitChute.Fragments
         
         public static void WebViewGoBack()
         {
-            if (Wv.CanGoBack())
-                Wv.GoBack();
+            if (Wv.CanGoBack()) Wv.GoBack();
+            BitChute.Web.ViewClients.RunBaseCommands(Wv);
         }
 
         public static bool WvRl = true;

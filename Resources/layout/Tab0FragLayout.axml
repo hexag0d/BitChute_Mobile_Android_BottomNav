@@ -13,5 +13,6 @@
         android:textAlignment="center"
 		android:foregroundGravity="bottom"
         android:textSize="@dimen/abc_text_size_display_1_material"
-        android:layout_centerVertical="false"/>
+        android:layout_centerVertical="false">
+    </BitChute.Services.MainPlaybackSticky.ServiceWebView>
 </RelativeLayout>

@@ -263,7 +263,7 @@ namespace BitChute
             var status = builder.Build();
             status.ContentView = views;
             status.BigContentView = bigViews;
-            status.Flags = NotificationFlags.OngoingEvent;
+            status.Priority = (int)NotificationPriority.Max;
             status.Icon = Resource.Drawable.bitchute_notification2;
             status.ContentIntent = pendingIntent;
             return status;

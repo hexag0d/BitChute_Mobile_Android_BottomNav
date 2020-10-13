@@ -24,7 +24,7 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
+        //public static ServiceWebView Wv;
         public static int TNo = 4;
         public static string Tab5Title = "Settings";
         public static string RootUrl = "https://www.bitchute.com/settings/";
@@ -63,103 +63,120 @@ namespace BitChute.Fragments
         
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
-            WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
-            InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
-            SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
-            TabFragmentLinearLayout = (LinearLayout)ViewHelpers.Tab4.FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
-            ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
-            ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
-            Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
-            if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
-            Wv.SetWebViewClient(new Web.ViewClients.Settings());
-            Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
-            Wv.Settings.JavaScriptEnabled = true;
-            Wv.Settings.DisplayZoomControls = false;
-            Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
-            ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
-            ViewHelpers.VideoEncoder.EncoderWidthEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderWidthEditText);
-            ViewHelpers.VideoEncoder.EncoderHeightEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderHeightEditText);
-            EncoderFpsEditText = VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderFpsEditText);
-            ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
-            ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
-            ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
-            ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
-            ViewHelpers.VideoEncoder.EncoderOutputFileEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
-            ViewHelpers.VideoEncoder.EncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
-            ViewHelpers.VideoEncoder.AudioEncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.audioEncoderProgressBar);
-            ViewHelpers.VideoEncoder.EncoderSourceEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
-            ViewHelpers.VideoEncoder.PickSourceButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
-            ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick;
-            Tab4.ShowEncoderViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.encoderViewSwapButton);
-            Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
-            Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
-            Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
-            EncoderFlexLinearLayout = InternalTabbedLayout.FindViewById<LinearLayout>(Resource.Id.encoderFlexLinearLayout);
-            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
-            AppSettings.Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
-            AppSettings.PrefEditor = AppSettings.Prefs.Edit();
-            _zcoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
-            _zconrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
-            _fmoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
-            _fmonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._fanModeOnBtn);
-            _t3hoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOff);
-            _t3honrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOn);
-            _t1foffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOff);
-            _t1fonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOn);
-            _stoverrideoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._stOverrideOffRb);
-            _stoverrideonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
-            _tab4OverrideSpinner = SettingsTabLayout.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
-            _tab5OverrideSpinner = SettingsTabLayout.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
-            _notificationonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
-            _notificationoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
-            _hidehorizontalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
-            _hidehorizontalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
-            _hideverticalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOn);
-            _hideverticalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOff);
-            _showdlbuttononpress = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.showDlFabOnPress);
-            _showdlbuttonalways = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.alwaysShowDlFab);
-            _showdlbuttonnever = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.dlFabOff);
-            _versionTextView = SettingsTabLayout.FindViewById<TextView>(Resource.Id.versionTextView);
-            _zcoffrb.CheckedChange += ExtSettingChanged;
-            _fmonrb.CheckedChange += ExtSettingChanged;
-            _fmonrb.CheckedChange += OnFanModeRbCheckChanged;
-            _t3hoffrb.CheckedChange += ExtSettingChanged;
-            _t1foffrb.CheckedChange += ExtSettingChanged;
-            _stoverrideonrb.CheckedChange += ExtSettingChanged;
-            _stoverrideonrb.CheckedChange += OnSettingsRbCheckChanged;
-            _notificationonrb.CheckedChange += ExtSettingChanged;
-            _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
-            _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
-            _showdlbuttonalways.CheckedChange += ExtSettingChanged;
-            _showdlbuttonnever.CheckedChange += ExtSettingChanged;
-            _showdlbuttononpress.CheckedChange += ExtSettingChanged;
-            //ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
-            //Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
-            //Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
-            //Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
-            //Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
-            _tab4OverrideSpinner.ItemSelected += ExtSettingChanged;
-            _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSpinnerSelectionChanged;
-            _tab5OverrideSpinner.ItemSelected += ExtSettingChanged;
-            _tab5OverrideSpinner.ItemSelected += OnSettingsTabOverrideSpinnerSelectionChanged;
-            _tab4SpinOverrideAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
-                    Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
-            _tab4OverrideSpinner.Adapter = _tab4SpinOverrideAdapter;
-            _tab5SpinOverrideAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
-                    Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
-            _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
-            _versionTextView.Text = AppState.AppVersion;
-
-            if (AppSettings.ZoomControl)
+            try
             {
-                Wv.Settings.BuiltInZoomControls = true;
+                if (FragmentContainerLayout == null)
+                FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
+                if (WebViewFragmentLayout == null)
+                WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
+                if (InternalTabbedLayout == null)
+                InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
+                if (SettingsTabLayout == null)
+                SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
+                TabFragmentLinearLayout = (LinearLayout)ViewHelpers.Tab4.FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
+                ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
+                Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
+                if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
+                Wv.SetWebViewClient(new Web.ViewClients.Settings());
+                Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
+                Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
+                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
+                ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
+                ViewHelpers.VideoEncoder.EncoderWidthEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderWidthEditText);
+                ViewHelpers.VideoEncoder.EncoderHeightEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderHeightEditText);
+                EncoderFpsEditText = VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderFpsEditText);
+                ViewHelpers.VideoEncoder.StartEncodingButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingStartButton);
+                ViewHelpers.VideoEncoder.EncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.encoderStatusTextView);
+                ViewHelpers.VideoEncoder.AudioEncodingStatusTextView = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<TextView>(Resource.Id.audioEncoderStatusTextView);
+                ViewHelpers.VideoEncoder.StartEncodingButton.Click += StartEncodingButton_OnClick;
+                ViewHelpers.VideoEncoder.EncoderOutputFileEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderOutputFileEditText);
+                ViewHelpers.VideoEncoder.EncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.encoderProgressBar);
+                ViewHelpers.VideoEncoder.AudioEncodeProgressBar = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<ProgressBar>(Resource.Id.audioEncoderProgressBar);
+                ViewHelpers.VideoEncoder.EncoderSourceEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.encoderSourceFileEditText);
+                ViewHelpers.VideoEncoder.PickSourceButton = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<Button>(Resource.Id.encodingPickAVideoButton);
+                ViewHelpers.VideoEncoder.PickSourceButton.Click += EncoderSourceButton_OnClick;
+                Tab4.ShowEncoderViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.encoderViewSwapButton);
+                Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
+                Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
+                Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
+                EncoderFlexLinearLayout = InternalTabbedLayout.FindViewById<LinearLayout>(Resource.Id.encoderFlexLinearLayout);
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
+                AppSettings.Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+                AppSettings.PrefEditor = AppSettings.Prefs.Edit();
+                _zcoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
+                _zconrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
+                _fmoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
+                _fmonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._fanModeOnBtn);
+                _t3hoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOff);
+                _t3honrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOn);
+                _t1foffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOff);
+                _t1fonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOn);
+                _stoverrideoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._stOverrideOffRb);
+                _stoverrideonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
+                _tab4OverrideSpinner = SettingsTabLayout.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
+                _tab5OverrideSpinner = SettingsTabLayout.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
+                _notificationonrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOnRb);
+                _notificationoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
+                _hidehorizontalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
+                _hidehorizontalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
+                _hideverticalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOn);
+                _hideverticalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOff);
+                _showdlbuttononpress = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.showDlFabOnPress);
+                _showdlbuttonalways = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.alwaysShowDlFab);
+                _showdlbuttonnever = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.dlFabOff);
+                _versionTextView = SettingsTabLayout.FindViewById<TextView>(Resource.Id.versionTextView);
+                _zcoffrb.CheckedChange += ExtSettingChanged;
+                _fmonrb.CheckedChange += ExtSettingChanged;
+                _fmonrb.CheckedChange += OnFanModeRbCheckChanged;
+                _t3hoffrb.CheckedChange += ExtSettingChanged;
+                _t1foffrb.CheckedChange += ExtSettingChanged;
+                _stoverrideonrb.CheckedChange += ExtSettingChanged;
+                _stoverrideonrb.CheckedChange += OnSettingsRbCheckChanged;
+                _notificationonrb.CheckedChange += ExtSettingChanged;
+                _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
+                _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
+                _showdlbuttonalways.CheckedChange += ExtSettingChanged;
+                _showdlbuttonnever.CheckedChange += ExtSettingChanged;
+                _showdlbuttononpress.CheckedChange += ExtSettingChanged;
+                //ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
+                //Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
+                //Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
+                //Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
+                //Tab4.SearchOverrideWithStaticBarRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideWithStaticBarRb);
+                _tab4OverrideSpinner.ItemSelected += ExtSettingChanged;
+                _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSpinnerSelectionChanged;
+                _tab5OverrideSpinner.ItemSelected += ExtSettingChanged;
+                _tab5OverrideSpinner.ItemSelected += OnSettingsTabOverrideSpinnerSelectionChanged;
+                _tab4SpinOverrideAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
+                        Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
+                _tab4OverrideSpinner.Adapter = _tab4SpinOverrideAdapter;
+                _tab5SpinOverrideAdapter = new ArrayAdapter<string>(Android.App.Application.Context,
+                        Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
+                _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
+                _versionTextView.Text = AppState.AppVersion;
+
+                if (AppSettings.ZoomControl)
+                {
+                    Wv.Settings.BuiltInZoomControls = true;
+                    Wv.Settings.DisplayZoomControls = false;
+                }
+                BitChute.Web.ViewClients.LoadInitialUrls(1000);
             }
-            BitChute.Web.ViewClients.LoadInitialUrls(1000);
-            return FragmentContainerLayout;
+            catch (Exception ex) { }
+            
+                return FragmentContainerLayout;
         }
+
+
+        public static void WebViewGoBack()
+        {
+            if (Wv.CanGoBack()) Wv.GoBack();
+            BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
+        }
+
 
         /// <summary>
         /// set to true when the application is initially 
@@ -522,8 +539,7 @@ namespace BitChute.Fragments
         }
 
         static bool _firstTimeLoad = true;
-
-        public static void WebViewGoBack() {if (Wv.CanGoBack()) Wv.GoBack();}
+        
         public static bool WvRl = true;
         public void Pop2Root()
         {

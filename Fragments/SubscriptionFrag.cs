@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
+using static BitChute.ViewHelpers.Tab1;
 
 namespace BitChute.Fragments
 {
@@ -13,6 +14,7 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
+        public static ServiceWebView Wv;
         readonly ViewClients.Subs _wvc = new ViewClients.Subs();
         public static string RootUrl = "https://bitchute.com/subscriptions/";
         public static int TNo = 1;
@@ -40,18 +42,27 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.Tab1FragLayout, container, false);
-            Wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView2);
-            Wv.SetWebViewClient(_wvc);
-            Wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            Wv.Settings.JavaScriptEnabled = true;
-            if (AppSettings.ZoomControl)
+            try
             {
-                Wv.Settings.BuiltInZoomControls = true;
-                Wv.Settings.DisplayZoomControls = false;
-            }
 
-            return _view;
+                if (FragmentContainerLayout == null)
+                { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab1FragLayout, container, false); }
+
+                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
+                Wv.SetWebViewClient(_wvc);
+                
+                Wv.Settings.JavaScriptEnabled = true;
+                Wv.Settings.DisplayZoomControls = false;
+                if (AppSettings.ZoomControl)
+                {
+                    Wv.Settings.BuiltInZoomControls = true;
+                    Wv.Settings.DisplayZoomControls = false;
+                }
+
+                return FragmentContainerLayout;
+            }
+            catch { }
+            return null;
         }
         
         public void OnSettingsChanged(List<object> settings)
@@ -63,11 +74,15 @@ namespace BitChute.Fragments
             }
             else { Wv.Settings.BuiltInZoomControls = false; }
         }
-        private static int _scrollY = 0;
+
+
         public static void WebViewGoBack()
         {
-            if (Wv.CanGoBack()) { Wv.GoBack(); }
+            if (Wv.CanGoBack()) Wv.GoBack();
+            BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
         }
+
+
         public static bool WvRl = true;
         public void Pop2Root()
         {

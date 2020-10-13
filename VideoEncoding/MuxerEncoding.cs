@@ -19,11 +19,11 @@ using static Android.Media.MediaCodec;
 
 namespace BitChute.VideoEncoding
 {
-    public class MuxerEncoding : Service
+    public class AudioEncoding : Service
     {
         public delegate void MuxerEventDelegate(MuxerEventArgs _args);
         public event MuxerEventDelegate Progress;
-        public MuxerEncoding()
+        public AudioEncoding()
         {
 
         }

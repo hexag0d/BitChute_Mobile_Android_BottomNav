@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static BitChute.Web.ViewClients;
 using static BitChute.Services.MainPlaybackSticky;
+using static BitChute.ViewHelpers.Tab0;
 
 namespace BitChute.Fragments
 {
@@ -43,9 +44,10 @@ namespace BitChute.Fragments
             try
             {
 
-                var _view = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
+                if (FragmentContainerLayout == null)
+                { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false); }
                 
-                Wv = _view.FindViewById<ServiceWebView>(Resource.Id.webView1);
+                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
                 Wv.SetWebViewClient(Wvc);
 
                 if (AppState.NotificationStartedApp) { SetAutoPlayWithDelay(1); }
@@ -57,7 +59,7 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
 
-                return _view;
+                return FragmentContainerLayout;
             }
             catch { }
             return null;
@@ -74,7 +76,12 @@ namespace BitChute.Fragments
         {
             base.OnResume();
         }
-        
+
+        public static void WebViewGoBack()
+        {
+            if (Wv.CanGoBack()) Wv.GoBack();
+            BitChute.Web.ViewClients.RunBaseCommands(Wv);
+        }
 
         public void OnSettingsChanged(List<object> settings)
         {
@@ -85,15 +92,6 @@ namespace BitChute.Fragments
             else { Wv.Settings.BuiltInZoomControls = false; }
         }
         
-        /// <summary>
-        /// tells the webview to GoBack, if it can
-        /// </summary>
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack())
-                Wv.GoBack();
-        }
-
         public static bool WvRl = true;
         /// <summary>
         /// one press refreshes the page; two presses pops back to the root

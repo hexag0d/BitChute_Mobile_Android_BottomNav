@@ -179,7 +179,7 @@ namespace BitChute.Services
             else
             {
                 PlaystateManagement.UserRequestedBackgroundPlayback = true;
-                StartVideoInBkgrd(MainActivity.ViewPager.CurrentItem);
+                StartVideoInBkgrd();
             }
         }
 
@@ -203,23 +203,17 @@ namespace BitChute.Services
         /// skips to the next video on a WebView tab
         /// </summary>
         /// <param name="tab"></param>
-        public static void SendWebViewNextVideoCommand(int tab)
+        public static void SendWebViewNextVideoCommand(int id = -1)
         {
-            switch (tab)
-            {
-                case 0: HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 1: SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 2: FeedFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 3: MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-                case 4: SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsNextVideoByASpa); break;
-            }
+            if (id == -1) { id = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
+            PlaystateManagement.GetWebViewPlayerById(id).LoadUrl(JavascriptCommands._jsNextVideoByASpa);
         }
 
         public static void SkipToNext(VideoCard vc)
         {
             if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
-                SendWebViewNextVideoCommand(MainActivity.ViewPager.CurrentItem);
+                SendWebViewNextVideoCommand();
             }
             else
             {
@@ -292,14 +286,7 @@ namespace BitChute.Services
             if (url == "" || url == null) { return; }
             try
             {
-                switch (MainActivity.ViewPager.CurrentItem)
-                {
-                    case 0: HomePageFrag.Wv.LoadUrl(url); break;
-                    case 1: SubscriptionFrag.Wv.LoadUrl(url); break;
-                    case 2: FeedFrag.Wv.LoadUrl(url); break;
-                    case 3: MyChannelFrag.Wv.LoadUrl(url); break;
-                    case 4: SettingsFrag.Wv.LoadUrl(url); break;
-                }
+                PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
             }
             catch {   }
         }
@@ -314,7 +301,7 @@ namespace BitChute.Services
             {
                 ExtStickyServ.StartForeground(MainActivity.NOTIFICATION_ID, startNote);
                 ServiceIsRunningInForeground = true;
-                //AppState.ForeNote = startNote;
+                AppState.ForeNote = startNote;
             }
             catch (Exception ex)
             {
@@ -478,7 +465,7 @@ namespace BitChute.Services
             {
                 //WifiLock?.Release();
                 //AppState.ForeNote.Flags = NotificationFlags.AutoCancel;
-                //ExtStickyServ.StopForeground(true);
+                ExtStickyServ.StopForeground(StopForegroundFlags.Remove);
             }
             catch{ }
         }
@@ -523,12 +510,6 @@ namespace BitChute.Services
                     catch {   }
                 }
             }
-        }
-
-        public static bool DummyLoop()
-        {
-            var dummyVar = true;
-            return dummyVar;
         }
 
         /// <summary>
@@ -613,31 +594,25 @@ namespace BitChute.Services
         /// starts the video in background
         /// </summary>
         /// <param name="tab"></param>
-        public static async void StartVideoInBkgrd(int tab)
+        public static async void StartVideoInBkgrd(int webViewId = -1)
         {
+            if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
             
             await Task.Delay(5);
 
-                switch (tab)
-                {
-                    case 0: HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        break;
-                    case 1: SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        break;
-                    case 2: FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        break;
-                    case 3: MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        break;
-                    case 4: SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPlayVideo);
-                        break;
-                }
-            
+            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+
+            await Task.Delay(50);
+
+            // sometimes, but not always, the app doesn't start the video in background so we need to do this twice
+            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo); // it shouldn't hurt to set this twice
+
         }
-        
+
         public class ServiceWebView : Android.Webkit.WebView
         {
+
             public override string Url => base.Url;
-            
 
             public ServiceWebView(Context context) : base(context)
             {
@@ -646,6 +621,7 @@ namespace BitChute.Services
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
             {
+                PlaystateManagement.WebViewIdDictionary.Add(this.Id, this);
             }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)

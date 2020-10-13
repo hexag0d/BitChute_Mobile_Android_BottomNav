@@ -57,12 +57,12 @@
 
         public static bool NotificationStartedApp = false;
 
-        public static Android.App.Notification ForeNote = new Android.App.Notification();
+        public static Android.App.Notification ForeNote { get; set; }
 
         /// <summary>
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.6.4.2.API8.OpenGL.VideoProcessing.CleanupPt1";
+        public static string AppVersion = "28.6.4.4.API8.OpenGL.VideoProcessing.CleanupPt1_";
     }
 }

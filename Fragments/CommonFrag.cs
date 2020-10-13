@@ -16,5 +16,9 @@ namespace BitChute.Fragments
     public class CommonWebViewFrag : Android.Support.V4.App.Fragment // @TODO consolidate webview fragment shared methods, members
     {
         public static ServiceWebView Wv;
+        
+
     }
+
+
 }

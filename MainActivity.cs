@@ -167,7 +167,7 @@ namespace BitChute
         public static async void StartUp()
         {
             await AppSettings.LoadAllPrefsFromSettings();
-            await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            BitChute.Web.Startup.GetObjectsFromHtmlResponse();
             
         }
 
@@ -288,6 +288,7 @@ namespace BitChute
                         break;
                 }
             }
+            
             return false;
         }
 
@@ -716,24 +717,9 @@ namespace BitChute
             if (url == "" || url == null) { return; }
             try
             {
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0:
-                        HomePageFrag.Wv.LoadUrl(url);
-                        break;
-                    case 1:
-                        SubscriptionFrag.Wv.LoadUrl(url);
-                        break;
-                    case 2:
-                        FeedFrag.Wv.LoadUrl(url);
-                        break;
-                    case 3:
-                        MyChannelFrag.Wv.LoadUrl(url);
-                        break;
-                    case 4:
-                        SettingsFrag.Wv.LoadUrl(url);
-                        break;
-                }
+                if (PlaystateManagement.MediaPlayerIsStreaming || 
+                    PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
+                { PlaystateManagement.GetWebViewPlayerById().LoadUrl(url); }
             }
             catch { }
             base.OnNewIntent(intent);
@@ -883,14 +869,22 @@ namespace BitChute
             }
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
-        
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+        }
+
         protected override void OnPause()
         {
             base.OnPause();
             if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
-                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
-                try { MainPlaybackSticky.StartVideoInBkgrd(PlaystateManagement.WebViewPlayerNumberIsStreaming); }
+                if (AppState.ForeNote == null)
+                {
+                    MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                }
+                try { MainPlaybackSticky.StartVideoInBkgrd(); }
                 catch { }
             }
         }
@@ -956,9 +950,10 @@ namespace BitChute
             catch { }
             ViewPager.PageSelected -= ViewPager_PageSelected;
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
-            //ExtSticky.ExternalStopForeground(); // this is so that when the app stops the playstate notification will become cancellable
+            try { MainPlaybackSticky.ExternalStopForeground();
+            }
+            catch(Exception ex) { }
             base.OnDestroy();
-
         }
 
         public static Context GetMainContext() {   return Main.ApplicationContext; }

@@ -40,9 +40,9 @@ namespace BitChute.Web
             SettingsFrag.Wv.LoadUrl(SettingsFrag.RootUrl);
         }
         
-        public static async void SetReload(int tab)
+        public static async void SetReload(int tab = -1)
         {
-            tab = MainActivity.ViewPager.CurrentItem;
+            if (tab == -1) tab = MainActivity.ViewPager.CurrentItem;
             switch (tab)
             {
                 case 0: if (!HomePageFrag.WvRling) { HomePageFrag.WvRling = true; await Task.Delay(AppSettings.TabDelay); HomePageFrag.WvRl = true; HomePageFrag.WvRling = false; }
@@ -79,19 +79,18 @@ namespace BitChute.Web
             }
         }
 
-
-        public static void ReRouteToAppPlaystate(string url)
+        public static void ReRouteToAppPlaystate(string url, int playerNumber = -1)
         {
             switch (url)
             {
                 case @"https://_%26app_play_invoked/":
-                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, true));
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, true));
                     break;
                 case @"https://_%26app_pause_invoke/":
-                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, false, true));
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, false, true));
                     break;
                 case @"https://_%26app_play_isplaying/":
-                    PlaystateChanged.Invoke(new PlaystateEventArgs(MainActivity.ViewPager.CurrentItem, false, false, true));
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, false, false, true));
                     break;
             }
         }
@@ -101,6 +100,22 @@ namespace BitChute.Web
 
         }
 
+        public static async void RunBaseCommands(WebView w, int d = 2000)
+        {
+            await Task.Delay(d);
+            HidePageTitle(w, AppSettings.HidePageTitleDelay);
+
+            w.LoadUrl(GetInjectable(
+                JavascriptCommands.CallBackInjection.IsPlayingCallback +
+                JavascriptCommands.CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
+        }
+
+        public static void WebViewGoBack(WebView wv)
+        {
+            if (wv.CanGoBack()) wv.GoBack();
+            BitChute.Web.ViewClients.RunBaseCommands(wv, 2000);
+        }
+
         public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
         {
             public BaseWebViewClient()
@@ -108,27 +123,18 @@ namespace BitChute.Web
                 if (PlaystateChanged == null) PlaystateChanged += OnPlaystateChanged;
             }
 
-            public static async void RunBaseCommands(WebView w, int d = 2000)
-            {
-                await Task.Delay(d);
-                HidePageTitle(w, AppSettings.HidePageTitleDelay);
-                
-                w.LoadUrl(GetInjectable(
-                    JavascriptCommands.CallBackInjection.IsPlayingCallback + 
-                    JavascriptCommands.CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
-            }
-
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
                 if (request.Url.ToString().Contains(@"https://_%26app"))
                 {
-                    ReRouteToAppPlaystate(request.Url.ToString());
+                    
+                    ReRouteToAppPlaystate(request.Url.ToString(), view.Id);
                     request = null;
                     return true;
                 }
                 return base.ShouldOverrideUrlLoading(view, request);
             }
-
+            
             public override void OnPageFinished(WebView view, string url)
             {
                 RunBaseCommands(view);
@@ -168,7 +174,7 @@ namespace BitChute.Web
             }
         }
 
-        public class Subs : WebViewClient
+        public class Subs : BaseWebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
@@ -194,7 +200,7 @@ namespace BitChute.Web
             }
         }
 
-        public class Feed : WebViewClient
+        public class Feed : BaseWebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
@@ -220,7 +226,7 @@ namespace BitChute.Web
             }
         }
 
-        public class MyChannel : WebViewClient
+        public class MyChannel : BaseWebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {
@@ -280,7 +286,7 @@ namespace BitChute.Web
             }
         }
 
-        public class Settings : WebViewClient
+        public class Settings : BaseWebViewClient
         {
             public static async void RunPageCommands(WebView w, int d = 2000)
             {

@@ -123,9 +123,6 @@ namespace BitChute.Web.Ui
                         .Replace(Strings.OriginalVideoCard, Strings.VideoCardLazy + Strings.NewVideoCard)
                         .Replace(Strings.ChannelCardOriginal, Strings.ChannelCardNew)
                         .Replace(Strings.SubContainerOrg, Strings.SubContainerNew)
-                        //.Replace(Strings.ChannelBannerOrg, Strings.ChannelBannerNew) // @TODO these need to be tweaked because they don't look right
-                        //.Replace(Strings.ChannelBannerImgOrg, Strings.ChannelBannerImgNew)                    //on the video detail page
-                        //.Replace(Strings.CarouselOrg(!AppSettings.Tab1FeaturedOn), Strings.CarouselNew)
                         + Strings.LinkOverflowHide + Strings.ExpandAd + Strings.ExpandFeatured)
                         ; 
                     CommonCss = await gC;
@@ -146,7 +143,7 @@ namespace BitChute.Web.Ui
             public static string VideoCardLazy = @".video-card .lazyloaded{box-sizing:border-box;width:100%}";
             public static string TabScrollInnerOrg = @".tab-scroll-inner{position:relative;height:50px;overflow:hidden}";
             public static string TabScrollInnerNew = @".tab-scroll-inner{position:relative;overflow:hidden}";
-            public static string LinkOverflowHide = @"#video-description{overflow:hidden}";
+            public static string LinkOverflowHide = @".video-detail-text{overflow:hidden;}#video-description{overflow:hidden;}";
             public static string ExpandAd = @".img-responsive.lazyloaded{width:100%}";
             public static string ChannelCardOriginal = @".channel-card{position:relative;background-color:#fff;display:inline-block;width:100%;max-width:570px;overflow:hidden}";
             public static string ChannelCardNew = @".channel-card{position:relative;background-color:#fff;display:inline-block;width:100%;overflow:hidden}";

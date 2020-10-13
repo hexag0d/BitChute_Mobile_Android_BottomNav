@@ -2,6 +2,7 @@
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Views;
+using Android.Webkit;
 using Android.Widget;
 using static BitChute.Services.MainPlaybackSticky;
 
@@ -71,6 +72,24 @@ namespace BitChute
         {
             public static View FragmentContainerLayout { get; set; }
             public static View WebViewFragmentLayout { get; set; }
+            public static WebView Wv { get; set; }
+            public static View DownloaderLayout { get; set; }
+            public static RelativeLayout TabFragmentLinearLayout { get; set; }
+        }
+
+        public class Tab1
+        {
+            public static View FragmentContainerLayout { get; set; }
+            public static View WebViewFragmentLayout { get; set; }
+            public static WebView Wv { get; set; }
+            public static RelativeLayout TabFragmentLinearLayout { get; set; }
+        }
+
+        public class Tab2
+        {
+            public static View FragmentContainerLayout { get; set; }
+            public static View WebViewFragmentLayout { get; set; }
+            public static WebView Wv { get; set; }
             public static View DownloaderLayout { get; set; }
             public static Button DownloadButton { get; set; }
             public static RelativeLayout TabFragmentLinearLayout { get; set; }
@@ -82,6 +101,7 @@ namespace BitChute
             public static View WebViewFragmentLayout { get; set; }
             public static View DownloaderLayout { get; set; }
             public static View WebViewSwapable { get; set; }
+            public static WebView Wv { get; set; }
             public static Button DownloadButton { get; set; }
             public static Button GetDownloadFilesButton { get; set; }
             public static Button CancelDownloadButton { get; set; }
@@ -101,6 +121,7 @@ namespace BitChute
             public static View WebViewFragmentLayout { get; set; }
             public static View InternalTabbedLayout { get; set; }
             public static View SettingsTabLayout { get; set; }
+            public static WebView Wv { get; set; }
             public static LinearLayout TabFragmentLinearLayout { get; set; }
             public static LinearLayout EncoderFlexLinearLayout { get; set; }
             public static LinearLayout WvLayout;
