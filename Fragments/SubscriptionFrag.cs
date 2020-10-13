@@ -52,6 +52,7 @@ namespace BitChute.Fragments
                 Wv.SetWebViewClient(_wvc);
                 
                 Wv.Settings.JavaScriptEnabled = true;
+                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
                 if (AppSettings.ZoomControl)
                 {

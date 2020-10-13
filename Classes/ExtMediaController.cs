@@ -65,7 +65,7 @@ namespace BitChute
     {
         public void OnClick(View v)
         {
-            MainPlaybackSticky.SkipToPrev(MainActivity.ViewPager.CurrentItem);
+            MainPlaybackSticky.SkipToPrev();
         }
 
         public bool OnLongClick(View v)

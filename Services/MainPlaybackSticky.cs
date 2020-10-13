@@ -47,7 +47,7 @@ namespace BitChute.Services
         public static bool NotificationShouldPlayInBkgrd = false;
         
         private static Java.Util.Timer _timer = new Java.Util.Timer();
-        private static ExtTimerTask _timerTask = new ExtTimerTask();
+        private static NotificationTimerTask _timerTask = new NotificationTimerTask();
 
         public static MainPlaybackSticky ExtStickyServ;
         public static PowerManager Pm;
@@ -183,13 +183,21 @@ namespace BitChute.Services
             }
         }
 
-        public static void SkipToPrev(int tab)
+        public static void SkipToPrev(int id = -1)
         {
-            if (!PlaystateManagement.MediaPlayerIsStreaming)
+            if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
             {
                 try {
-                    if (PlaystateManagement.GetWebViewPlayerById().CanGoBack())
-                        PlaystateManagement.GetWebViewPlayerById().GoBack();
+                    if (id == -1)
+                    {
+                        if (PlaystateManagement.GetWebViewPlayerById().CanGoBack())
+                            PlaystateManagement.GetWebViewPlayerById().GoBack();
+                    }
+                    else
+                    {
+                        if (PlaystateManagement.GetWebViewPlayerById(id).CanGoBack())
+                            PlaystateManagement.GetWebViewPlayerById(id).GoBack();
+                    }
                 }catch { }
             }
             else { }
@@ -372,7 +380,7 @@ namespace BitChute.Services
                 case ActionStop: Stop(); break;
                 case ActionPause: Pause(); break;
                 case ActionNext: SkipToNext(null); break;
-                case ActionPrevious: SkipToPrev(MainActivity.ViewPager.CurrentItem); break;
+                case ActionPrevious: SkipToPrev(); break;
                 case ActionLoadUrl: LoadVideoFromUrl(intent); break;
                 case ActionBkgrdNote: ToggleNotificationShouldPlayInBkgrd(true); break;
                 case ActionResumeNote: ToggleNotificationShouldPlayInBkgrd(false); break;
@@ -390,7 +398,7 @@ namespace BitChute.Services
             catch (Exception ex){ Console.WriteLine(ex.Message);}
             return StartCommandResult.Sticky;
         }
-        public static volatile ExtTimerTask _extTimerTask = new ExtTimerTask();
+        public static volatile NotificationTimerTask _extTimerTask = new NotificationTimerTask();
 
         /// <summary>
         /// Lock the wifi so we can still stream under lock screen
@@ -486,7 +494,7 @@ namespace BitChute.Services
         /// Timer task for background notifications
         /// has to be within the service so that it's more persistent
         /// </summary>
-        public class ExtTimerTask : Java.Util.TimerTask
+        public class NotificationTimerTask : Java.Util.TimerTask
         {
             public async override void Run()
             {
@@ -586,6 +594,8 @@ namespace BitChute.Services
             Play();
         }
 
+        public static bool AppIsMovingIntoBackgroundWhileStreaming = false;
+
         /// <summary>
         /// starts the video in background
         /// </summary>
@@ -599,16 +609,33 @@ namespace BitChute.Services
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
             await Task.Delay(50);
+            
+            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
-            // sometimes, but not always, the app doesn't start the video in background so we need to do this twice
-            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo); // it shouldn't hurt to set this twice
+            while (AppIsMovingIntoBackgroundWhileStreaming)
+            {
+                await Task.Delay(50);
+            }
 
+            await Task.Delay(30);
+            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
         }
 
         public class ServiceWebView : Android.Webkit.WebView
         {
-
             public override string Url => base.Url;
+
+            public override void OnWindowFocusChanged(bool hasWindowFocus)
+            {
+                base.OnWindowFocusChanged(hasWindowFocus);
+                if (!hasWindowFocus)
+                {
+                    if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundWhileStreaming)
+                    {
+                        AppIsMovingIntoBackgroundWhileStreaming = false;
+                    }
+                }
+            }
 
             public ServiceWebView(Context context) : base(context)
             {

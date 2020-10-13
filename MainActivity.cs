@@ -874,16 +874,12 @@ namespace BitChute
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
 
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            base.OnWindowFocusChanged(hasFocus);
-        }
-
         protected override void OnPause()
         {
             base.OnPause();
             if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
+                MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = true;
                 if (AppState.ForeNote == null)
                 {
                     MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
@@ -938,7 +934,7 @@ namespace BitChute
             {
                 Console.WriteLine(ex.Message);
             }
-
+            MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = false;
             base.OnResume();
         }
         
@@ -957,6 +953,8 @@ namespace BitChute
             try { MainPlaybackSticky.ExternalStopForeground();
             }
             catch(Exception ex) { }
+            PlaystateManagement.SendPauseVideoCommand();
+            MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = false;
             base.OnDestroy();
         }
 
