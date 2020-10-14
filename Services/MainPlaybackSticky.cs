@@ -8,7 +8,6 @@ using Android.Runtime;
 using Android.Widget;
 using Android.Util;
 using BitChute;
-using BitChute;
 using System.Threading.Tasks;
 using BitChute.Fragments;
 using Android.Net.Wifi;
@@ -75,6 +74,7 @@ namespace BitChute.Services
         //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
         #endregion
 
+        #region mediaplayer
         /// <summary>
         /// initializes the mediaplayer object on tab of your choice.  
         /// if the mediaplayer is already instantiated then it gets reset for new playback
@@ -156,7 +156,9 @@ namespace BitChute.Services
             mc.SetMediaPlayer(this);
             return mc;
         }
+        #endregion
 
+        #region playback methods
         private async void Play()
         {
             if (PlaystateManagement.MediaPlayerIsStreaming)
@@ -169,7 +171,7 @@ namespace BitChute.Services
                         return;
                     }
                     try  { AquireWifiLock(); }
-                    catch (Exception ex) { Console.WriteLine("Unable to start playback: " + ex); }
+                    catch {  }
                     if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
                     {
                         PlaystateManagement.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
@@ -219,28 +221,9 @@ namespace BitChute.Services
             {
                 SendWebViewNextVideoCommand();
             }
-            else
-            {
-                if (vc == null)
-                {
-                    //TabStates.Tab1.VideoCardLoader = TabStates.Main.NextUp.NextUpVideoCard; // This is for the native player
-                    //    _vidLoader.LoadVideoFromCard(CustomViewHelpers.Main.GetDefaultVideoDetailView(
-                    //        MainActivity.ViewPager.CurrentItem), null, TabStates.Main.NextUp.NextUpVideoCard, 
-                    //        MainActivity.ViewPager.CurrentItem);
-                }
-            }
         }
 
-        private void Pause()
-        {
-
-                PlaystateManagement.SendPauseVideoCommand();
-
-
-            
-
-            //StopForeground(false); // Not sure if we should kill it here.. that could make the app go to sleep
-        }
+        private void Pause() { PlaystateManagement.SendPauseVideoCommand(); }
 
         public static void Stop()
         {
@@ -252,20 +235,19 @@ namespace BitChute.Services
 
             MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
             _paused = false;
-            //ReleaseWifiLock();
         }
 
         public static bool OnVideoFinished(bool overide, int tab)
         {
             if (AppSettings.AutoPlay && tab != -1)
             {
-                //_vidLoader.LoadVideoFromCard(ViewHelpers.Main.GetDefaultVideoDetailView(tab), null, TabStates.Main.NextUp.NextUpVideoCard, tab);
                 return overide;
             }
 
             return overide;
         }
 
+        #endregion
 
         /// <summary>
         /// This will release the wifi lock if it is no longer needed
@@ -295,6 +277,7 @@ namespace BitChute.Services
             catch {   }
         }
 
+        #region service methods
         /// <summary>
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
@@ -343,6 +326,27 @@ namespace BitChute.Services
             return null;
         }
 
+
+        public static void ExternalStopForeground()
+        {
+            try
+            {
+                //WifiLock?.Release();
+                ExtStickyServ.StopForeground(StopForegroundFlags.Remove);
+            }
+            catch { }
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            try
+            {
+                WifiLock?.Release();
+            }
+            catch { }
+        }
+        #endregion
         public static void LoadVideoFromUrl(Intent i = null, int tab = -1, string url = null)
         {
             string u = "";
@@ -464,25 +468,6 @@ namespace BitChute.Services
             }
         }
 
-        public static void ExternalStopForeground() 
-        {
-            try
-            {
-                //WifiLock?.Release();
-                ExtStickyServ.StopForeground(StopForegroundFlags.Remove);
-            }
-            catch{ }
-        }
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            try
-            {
-                WifiLock?.Release();
-            }
-            catch { }
-        }
 
         /// <summary>
         /// Timer task for background notifications
@@ -588,7 +573,7 @@ namespace BitChute.Services
             Play();
         }
 
-        public static bool AppIsMovingIntoBackgroundWhileStreaming = false;
+        public static bool AppIsMovingIntoBackgroundAndStreaming = false;
 
         /// <summary>
         /// starts the video in background
@@ -606,7 +591,7 @@ namespace BitChute.Services
             
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
-            while (AppIsMovingIntoBackgroundWhileStreaming)
+            while (AppIsMovingIntoBackgroundAndStreaming)
             {
                 await Task.Delay(50);
             }
@@ -625,9 +610,9 @@ namespace BitChute.Services
                 base.OnWindowFocusChanged(hasWindowFocus);
                 if (!hasWindowFocus)
                 {
-                    if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundWhileStreaming)
+                    if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundAndStreaming)
                     {
-                        AppIsMovingIntoBackgroundWhileStreaming = false;
+                        AppIsMovingIntoBackgroundAndStreaming = false;
                     }
                 }
             }

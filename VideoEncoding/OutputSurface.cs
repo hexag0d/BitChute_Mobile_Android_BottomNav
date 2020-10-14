@@ -36,24 +36,19 @@ using Android.Util;
 using Android.Views;
 
 using EGL14 = Android.Opengl.EGL14;
-using GLES20 = Android.Opengl.GLES20;
-using GLES11Ext = Android.Opengl.GLES11Ext;
-using GLSurfaceView = Android.Opengl.GLSurfaceView;
 using IEGL10 = Javax.Microedition.Khronos.Egl.IEGL10;
 using EGL10 = Javax.Microedition.Khronos.Egl.EGL10;
 using EGLConfig = Javax.Microedition.Khronos.Egl.EGLConfig;
 using EGLContext = Javax.Microedition.Khronos.Egl.EGLContext;
 using EGLDisplay = Javax.Microedition.Khronos.Egl.EGLDisplay;
 using EGLSurface = Javax.Microedition.Khronos.Egl.EGLSurface;
-using GL = Javax.Microedition.Khronos.Opengles.IGL;
-using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
-using Android.Runtime;
 using BitChute;
 
-namespace MediaCodecHelper {	
-	
-	public class OutputSurface 
+namespace MediaCodecHelper
+{
+
+    public class OutputSurface 
     {
 		private const string TAG = "OutputSurface";
 		private const int EGL_OPENGL_ES2_BIT = 4;

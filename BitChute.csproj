@@ -118,7 +118,7 @@
     <Compile Include="VideoEncoding\FileToMp4.cs" />
     <Compile Include="VideoEncoding\GeneratedVideoToMp4.cs" />
     <Compile Include="VideoEncoding\InputSurface.cs" />
-    <Compile Include="VideoEncoding\MuxerEncoding.cs" />
+    <Compile Include="VideoEncoding\AudioEncoding.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
     <Compile Include="Web\Startup.cs" />

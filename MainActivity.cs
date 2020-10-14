@@ -84,13 +84,13 @@ namespace BitChute
             = new List<BottomNavigationItemView>();
 
         IMenuItem _menu;
-        public static Drawable _tab4Icon;
-        public static Drawable _tab5Icon;
+        private static Drawable _tab4Icon;
+        private static Drawable _tab5Icon;
         Android.Support.V4.App.Fragment[] _fragments;
 
         public static MainActivity Main;
         public static Bundle _bundle;
-        
+
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -101,7 +101,7 @@ namespace BitChute
 
         public static Window _window;
         public static View MainView;
-        
+
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
@@ -117,10 +117,7 @@ namespace BitChute
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
-            else
-            {
-                AppState.Display.Horizontal = false;
-            }
+            else {AppState.Display.Horizontal = false; }
             Main = this;
             var mServiceIntent = new Intent(this, typeof(MainPlaybackSticky));
             StartService(mServiceIntent);
@@ -161,16 +158,13 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
-
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
-            //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
         }
 
         public static async void StartUp()
         {
             await AppSettings.LoadAllPrefsFromSettings();
             BitChute.Web.Startup.GetObjectsFromHtmlResponse();
-            
         }
 
         public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
@@ -179,18 +173,9 @@ namespace BitChute
         public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
         public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
 
-        void InitializeTabs()
-        {
-            _fragments = new Android.Support.V4.App.Fragment[] {
-                Fm0,
-                Fm1,
-                Fm2,
-                Fm3,
-                Fm4
-            };
-        }
+        void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
-       // public static bool NavHidden = false;
+        // public static bool NavHidden = false;
         public static bool NavTimeout = true;
         public static int NavTimer = 0;
 
@@ -217,8 +202,8 @@ namespace BitChute
         {
             await Task.Delay(1);
 
-                if (NavTimer != 0)
-                    NavTimer = 0;
+            if (NavTimer != 0)
+                NavTimer = 0;
 
             if (AppState.Display.Horizontal && !AppSettings.HideHorizontalNavBar)
             {
@@ -273,73 +258,47 @@ namespace BitChute
             {
                 switch (ViewPager.CurrentItem)
                 {
-                    case 0:
-                        HomePageFrag.WebViewGoBack(); 
-                        break;
-                    case 1:
-                        SubscriptionFrag.WebViewGoBack();
-                        break;
-                    case 2:
-                        FeedFrag.WebViewGoBack();
-                        break;
-                    case 3:
-                        MyChannelFrag.WebViewGoBack();
-                        break;
-                    case 4:
-                        SettingsFrag.WebViewGoBack();
-                        break;
+                    case 0: HomePageFrag.WebViewGoBack(); break;
+                    case 1: SubscriptionFrag.WebViewGoBack(); break;
+                    case 2: FeedFrag.WebViewGoBack(); break;
+                    case 3: MyChannelFrag.WebViewGoBack(); break;
+                    case 4: SettingsFrag.WebViewGoBack(); break;
                 }
             }
-            
             return false;
         }
-
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             NavTimer = 0;
-
             if (_tabSelected == e.Item.Order)
             {
                 switch (ViewPager.CurrentItem)
                 {
-                    case 0:
-                        Fm0.Pop2Root();
-                        break;
-                    case 1:
-                        Fm1.Pop2Root();
-                        break;
-                    case 2:
-                        Fm2.Pop2Root();
-                        break;
-                    case 3:
-                        Fm3.Pop2Root();
-                        break;
-                    case 4:
-                        Fm4.Pop2Root();
-                        break;
+                    case 0: Fm0.Pop2Root(); break;
+                    case 1: Fm1.Pop2Root(); break;
+                    case 2: Fm2.Pop2Root(); break;
+                    case 3: Fm3.Pop2Root(); break;
+                    case 4: Fm4.Pop2Root(); break;
                 }
             }
-            else
-            {
-                ViewPager.SetCurrentItem(e.Item.Order, true);
-            }
+            else { ViewPager.SetCurrentItem(e.Item.Order, true); }
+        }
+
+        void NavigationView_NavigationItemReSelected(object sender, BottomNavigationView.NavigationItemReselectedEventArgs e) //@TODO implement this instead of the item selected vs current
+        {
+
         }
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
             NavTimer = 0;
-
             _menu = NavigationView.Menu.GetItem(e.Position);
             NavigationView.SelectedItemId = _menu.ItemId;
-
             _tabSelected = ViewPager.CurrentItem;
-            
             CustomOnSwipe();
         }
     
-        //BottomNavigationView.NavigationItemReselectedEventArgs
-
         void RemoveShiftMode(BottomNavigationView view)
         {
             var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
@@ -359,22 +318,10 @@ namespace BitChute
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
                     item.SetShiftingMode(false);
-                    if (i == 2)
-                    {
-                        item.LongClick += FeedTabLongClickListener;
-                    }
-                    if (i == 3)
-                    {
-                        item.LongClick += MyChannelLongClickListener;
-                    }
-                    if (i == 4)
-                    {
-                        item.LongClick += SettingsTabLongClickListener; 
-                    }
-                    if (NavViewItemList != null)
-                    {
-                        NavViewItemList.Add(item);
-                    }
+                    if (i == 2)  { item.LongClick += FeedTabLongClickListener; }
+                    if (i == 3){  item.LongClick += MyChannelLongClickListener; }
+                    if (i == 4) {item.LongClick += SettingsTabLongClickListener;  }
+                    if (NavViewItemList != null) { NavViewItemList.Add(item); }
                 }
             }
             catch (System.Exception ex)
@@ -568,6 +515,11 @@ namespace BitChute
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
         {
+            SwapMyChannelVideoDownloader();
+        }
+
+        public void SwapMyChannelVideoDownloader()
+        {
             if (!TabStates.Tab3.VideoDownloaderViewEnabled)
             {
                 TabStates.Tab3.VideoDownloaderViewEnabled = true;
@@ -613,6 +565,15 @@ namespace BitChute
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
+        {
+            ForceAppIntoStickyBackground();
+        }
+
+        /// <summary>
+        /// Requests the app start sticky background playback service
+        /// and move into background, regardless of playstate 
+        /// </summary>
+        public static void ForceAppIntoStickyBackground()
         {
             PlaystateManagement.UserRequestedBackgroundPlayback = true;
             MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
@@ -729,15 +690,11 @@ namespace BitChute
             if (url == "" || url == null) { return; }
             try
             {
-                if (PlaystateManagement.MediaPlayerIsStreaming ||
-                    PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
+                if (PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
                 {
                     if (!AppState.NotificationStartedApp)
                     {
-                        if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && MainPlaybackSticky.IsInBkGrd())
-                            PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
-                        else if (!MainPlaybackSticky.IsInBkGrd() || (MainPlaybackSticky.IsInBkGrd() && PlaystateManagement.WebViewPlayerNumberIsStreaming == -1))
-                            PlaystateManagement.WebViewTabDictionary[ViewPager.CurrentItem]?.LoadUrl(url); 
+                        PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrl(url);
                     }
                 }
             }
@@ -895,7 +852,7 @@ namespace BitChute
             base.OnPause();
             if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
-                MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = true;
+                MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
                 if (AppState.ForeNote == null)
                 {
                     MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
@@ -950,7 +907,7 @@ namespace BitChute
             {
                 Console.WriteLine(ex.Message);
             }
-            MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = false;
+            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnResume();
         }
         
@@ -971,7 +928,7 @@ namespace BitChute
             }
             catch(Exception ex) { }
             PlaystateManagement.SendPauseVideoCommand();
-            MainPlaybackSticky.AppIsMovingIntoBackgroundWhileStreaming = false;
+            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnDestroy();
         }
 

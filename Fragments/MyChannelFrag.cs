@@ -56,7 +56,6 @@ namespace BitChute.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
             try
             {
                 if (FragmentContainerLayout == null)
@@ -126,13 +125,11 @@ namespace BitChute.Fragments
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }
 
-
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
             BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
         }
-
 
         /// <summary>
         /// swaps the view for this tab

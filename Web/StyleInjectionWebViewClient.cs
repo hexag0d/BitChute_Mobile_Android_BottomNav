@@ -111,8 +111,8 @@ namespace BitChute.Web
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
 
             w.LoadUrl(GetInjectable(
-                JavascriptCommands.CallBackInjection.IsPlayingCallback +
-                JavascriptCommands.CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
+                CallBackInjection.IsPlayingCallback +
+                CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
         }
 
         public static void WebViewGoBack(WebView wv)
@@ -132,8 +132,11 @@ namespace BitChute.Web
             {
                 if (request.Url.ToString().Contains(@"https://_%26app"))
                 {
-                    
-                    ReRouteToAppPlaystate(request.Url.ToString(), view.Id);
+                    //check if we're currently on a bitchute page and otherwise don't reroute
+                    if (view.Url.StartsWith("https://www.bitchute.com") || view.Url.StartsWith("https://bitchute.com"))
+                    {
+                        ReRouteToAppPlaystate(request.Url.ToString(), view.Id);
+                    }
                     request = null;
                     return true;
                 }

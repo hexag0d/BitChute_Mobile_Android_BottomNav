@@ -22,30 +22,29 @@ namespace BitChute.Web
         {
             string h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/");
 
-                try
-                {
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                    doc.LoadHtml(h);
+            try
+            {
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(h);
 
-                    if (doc != null)
+                if (doc != null)
+                {
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))
                     {
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))
+                        if (node.OuterHtml.Contains("/common.css"))
                         {
-                            if (node.OuterHtml.Contains("/common.css"))
-                            {
-                                CssHelper.CommonCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
-                            }
-                            if (node.OuterHtml.Contains("/search.css"))
-                            {
-                                CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
-                            }
+                            CssHelper.CommonCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
+                        }
+                        if (node.OuterHtml.Contains("/search.css"))
+                        {
+                            CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                         }
                     }
-                    CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.Message); }
+                CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             return false;
         }
-
     }
 }

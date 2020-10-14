@@ -24,7 +24,6 @@ using BitChute;
 using BitChute.VideoEncoding;
 using static Android.Media.MediaCodec;
 using BitChute.Fragments;
-using BitChute;
 using Android.App;
 using static BitChute.FileBrowser;
 using Android.Runtime;
@@ -169,11 +168,11 @@ namespace MediaCodecHelper {
             return _eTS;
         }
 
-        public static long CorrectForStartTime(int firstBlockBits, long firstBlockTimeStamp)
+        public static long GetMicroSecondsFromByteCount(long bufferByteCount, int bitRate = 0)
         {
-            var startingTime = ((decimal)firstBlockBits / (decimal)_bitRate); /* start time in ms */
-            var startTimeLong = (long)(startingTime * 1000 /*ms*/ * 1000 /*us*/ * 1000 /*ns*/);
-            return (firstBlockTimeStamp - startTimeLong);
+            if (bitRate == 0) { bitRate = _bitRate; if (bitRate == 0) { return -1; } }
+            long us = (long)((decimal)(bufferByteCount * 8)/*bits*/ / bitRate) /* = seconds*/ * 1000 /*ms*/* 1000/*us*/;
+            return us;
         }
 
 		public void Start(Android.Net.Uri inputUri, string outputPath, string inputPath = null) {
@@ -183,12 +182,6 @@ namespace MediaCodecHelper {
 
         // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
 
-        public static bool GarbageShouldBeCollected = false;
-        public static bool GarbageIsBeingCollected = false;
-        public static bool GarbageHasBeenCollected = false;
-        public static long EncodedBitsSinceLastCollection = 0;
-        public static int TexturesInstantiatedSoFar = 0;
-        public static long MediaPlayerPositionBeforeGC = 0;
 
         private string EncodeFileToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
             LatestInputVideoLength = AudioEncoding.GetVideoLength(inputPath, inputUri);
@@ -209,42 +202,16 @@ namespace MediaCodecHelper {
             VideoEncodingInProgress = true;
             while (true)
             {
-                if (EncodedBitsSinceLastCollection >= 100000000 && !GarbageIsBeingCollected) // this is disabled (because nothing sets the first var) right now because it was causing lags
-                {                                                                            //I'm not sure if we need to pause the video and dump all the GREFs mid process?
-                    try
-                    {
-                        GarbageIsBeingCollected = true;
-                        _mediaPlayer.Pause();
-                        MediaPlayerPositionBeforeGC = _mediaPlayer.Timestamp.AnchorMediaTimeUs;
-                        GC.Collect(0);
-                        System.Threading.Thread.Sleep(100);
-                        prepareMediaPlayer(inputPath, inputUri);
-                        releaseWeakSurfaceTexture();
-                        prepareWeakSurfaceTexture();
-                        _mediaPlayer.SeekTo(MediaPlayerPositionBeforeGC, MediaPlayerSeekMode.Closest);
-                        _mediaPlayer.Start();
-                        _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
-                        _mediaPlayer.SetVolume(0, 0);
-                        GarbageHasBeenCollected = true;
-                        GarbageIsBeingCollected = false;
-                        EncodedBitsSinceLastCollection = (_eTS - (100000000 * TexturesInstantiatedSoFar) - 100000000);
-                    }
-                    catch (System.Exception ex)
-                    {
 
-                    }
-                }
-
-                if (!GarbageIsBeingCollected)
-                {
                     D(false);
                     _fC++;
-                    /*
-                     Disabled this to make it faster when not debugging
-                     */
-                    if (_fC >= 30 && AppSettings.Logging.SendToConsole)
+                /*
+                 Disable this to make it faster when not debugging
+                 */
+#if DEBUG
+                if (_fC >= 119 && AppSettings.Logging.SendToConsole)
                         System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
-
+#endif
                     // Acquire a new frame of input, and render it to the Surface.  If we had a
                     // GLSurfaceView we could switch EGL contexts and call drawImage() a second
                     // time to render it on screen.  The texture can be shared between contexts by
@@ -270,19 +237,21 @@ namespace MediaCodecHelper {
                     //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
                     if (_ebt >= _eTS) { break; }
-                }
+                
             }
             D(true);
             VideoEncodingInProgress = false;
+#if DEBUG
             if (AppSettings.Logging.SendToConsole)
                 System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+#endif
             try
             {
                 releaseMediaPlayer();
                 releaseEncoder();
                 releaseWeakSurfaceTexture();
             }catch { }
-            _firstKnownBuffer = 0; //this stores the audio encoder offset long, not needed? The video starts with a really high  PT so this was the offset, fixed now?
+            _firstKnownBuffer = 0; 
             _eTS = 0;
             _fC = 0;
             _ebt = 0;
@@ -312,8 +281,7 @@ namespace MediaCodecHelper {
           */
         private void D(bool es)
         {
-
-            //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "drainEncoder(" + endOfStream + ")"); @DEBUG, disabled to optimize performance
+            
             if (es)
             {
                 if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");
@@ -385,29 +353,24 @@ namespace MediaCodecHelper {
                         // adjust the ByteBuffer values to match BufferInfo
                         ed.Position(_bfi.Offset);
                         ed.Limit(_bfi.Offset + _bfi.Size);
-                        //_bfi.PresentationTimeUs = CalculateTimeStamp(EncodedBits(_bfi.Size)); // the surface PT starts with a massive long so trying this instead of passing this to audio encoder
                         EncodedBits(_bfi.Size);
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+#if DEBUG
                         if (AppSettings.Logging.SendToConsole)
                         {
                             System.Console.WriteLine($"Media player @ " +
                                 $"{_mediaPlayer.Timestamp.AnchorMediaTimeUs} us while sT @ " +
                                 $"{_outputSurface.WeakSurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
                         }
-                        //System.Console.WriteLine($"Drain {_bfi.Size} @ {_bfi.PresentationTimeUs}");
-                        
+#endif
                         if (_firstKnownBuffer == 0)
                         {
-                            _firstKnownBuffer = _bfi.PresentationTimeUs;
+                            _firstKnownBuffer = (_bfi.PresentationTimeUs - GetMicroSecondsFromByteCount(_bfi.Size)); // calculate the first known buffer and use it to offset/align other tracks
                             if (InputUriToEncode != null) { this.StartAudioEncoder(_firstKnownBuffer, null, InputUriToEncode); }
                             else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
                         } //we don't want to flood the system with EventArgs so only send once every 120 frames
                         if (_fC >= 120) { Notify(_ebt, _eTS); _fC = 0; }
-                        /*
-                     disabled when not debugging because this is locking up if the file is too big    @DEBUG
-                     */
-                        //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sent " + mBufferInfo.Size + " bytes to muxer"+ @" @ pt = " + mBufferInfo.PresentationTimeUs);
                     }
 
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -434,7 +397,7 @@ namespace MediaCodecHelper {
             if (inputPath == null && inputUri == null) { return; }
             if (!System.String.IsNullOrWhiteSpace(inputPath)) { _mediaPlayer.SetDataSource(inputPath); }
             else if (inputUri != null) { _mediaPlayer.SetDataSource(MainActivity.GetMainContext(), inputUri); }
-            LatestInputPath = inputPath; //for tracking purposes but can probably be axed eventually @TODO 
+            LatestInputPath = inputPath;
             _mediaPlayer.Prepare ();
 			if (_width == 0 || _height == 0) {
 				_width = _mediaPlayer.VideoWidth;
@@ -462,7 +425,7 @@ namespace MediaCodecHelper {
 	     */
 		private void prepareWeakSurfaceTexture() {
 			_outputSurface = new OutputSurface();
-            TexturesInstantiatedSoFar++;
+
 			try {
 				_mediaPlayer.SetSurface(_outputSurface.Surface);
 			} catch (System.Exception e) {
@@ -491,7 +454,6 @@ namespace MediaCodecHelper {
 
             // Set some properties.  Failing to specify some of these can cause the MediaCodec
             // configure() call to throw an unhelpful exception.
-            //format.SetInteger(MediaFormat.KeyColorFormat, (int) MediaCodecCapabilities.Formatsurface);
 
             format.SetInteger(MediaFormat.KeyColorFormat, (int)MediaCodecCapabilities.Formatsurface);
 			format.SetInteger(MediaFormat.KeyBitRate, _bitRate);
@@ -547,7 +509,6 @@ namespace MediaCodecHelper {
 
         public void StartAudioEncoder(long calculatedOffset, string inputPath = null, Android.Net.Uri inputUri = null)
         {
-
             AudioEncoding mxe = new AudioEncoding();
             mxe.Progress += SettingsFrag.OnMuxerProgress;
             if (inputUri != null) { mxe.HybridMuxingTrimmer(0, LatestInputVideoLength, null, _muxer, LatestAudioTrackIndex, null, LatestOutputPath, calculatedOffset, inputUri); }
