@@ -17,6 +17,7 @@ using static BitChute.Fragments.SettingsFrag;
 using Android.Views;
 using System.Reflection;
 using System.ComponentModel;
+using BitChute.Web;
 
 namespace BitChute.Services
 {
@@ -583,17 +584,22 @@ namespace BitChute.Services
         {
             if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
             
-            await Task.Delay(5);
+            await Task.Delay(10);
 
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
-            await Task.Delay(50);
+            await Task.Delay(20);
             
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
+            VerifyInBackground(webViewId);
+        }
+
+        static async void VerifyInBackground(int webViewId = -1)
+        {
             while (AppIsMovingIntoBackgroundAndStreaming)
             {
-                await Task.Delay(50);
+                await Task.Delay(10);
             }
 
             await Task.Delay(30);
@@ -610,9 +616,12 @@ namespace BitChute.Services
                 base.OnWindowFocusChanged(hasWindowFocus);
                 if (!hasWindowFocus)
                 {
+
                     if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundAndStreaming)
                     {
                         AppIsMovingIntoBackgroundAndStreaming = false;
+
+                        PlaystateManagement.WebViewIdDictionary[this.Id].LoadUrl(JavascriptCommands._jsPlayVideo);
                     }
                 }
             }

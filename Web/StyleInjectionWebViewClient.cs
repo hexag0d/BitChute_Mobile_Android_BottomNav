@@ -121,6 +121,11 @@ namespace BitChute.Web
             BitChute.Web.ViewClients.RunBaseCommands(wv, 2000);
         }
 
+        public static async void ReadByteStreamToStaticText(Stream responseStream)
+        {
+            
+        }
+
         public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
         {
             public BaseWebViewClient()

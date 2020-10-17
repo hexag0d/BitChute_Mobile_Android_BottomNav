@@ -16,6 +16,7 @@ namespace BitChute
 
             public ControlIntentReceiver(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
             {
+
             }
 
             public override void OnReceive(Context context, Intent intent)

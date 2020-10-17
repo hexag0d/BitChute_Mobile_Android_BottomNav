@@ -847,21 +847,46 @@ namespace BitChute
             return Main.GetDrawable(Resource.Drawable.tab_home);
         }
 
+        //OnPause called first = app actually put in background
+        //OnWindowFocusChanged then OnPause is probably from a notification click or volume change event
+
+        static bool WindowFocusChanged = false;
+        static bool ActivityPaused = false;
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            WindowFocusChanged = true; // track that window focus changed to check if this fired before or after OnPause()
+            base.OnWindowFocusChanged(hasFocus);
+            SetFocusTrackBitAfterDelay();
+        }
+
+        static async void SetFocusTrackBitAfterDelay()
+        {
+            await Task.Delay(40);
+            WindowFocusChanged = false;
+        }
+
         protected override void OnPause()
         {
-            base.OnPause();
-            if (PlaystateManagement.WebViewPlayerIsStreaming)
-            {
-                MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
-                if (AppState.ForeNote == null)
+            if (!WindowFocusChanged) // we don't want to start the background service unless the user has minimized the app
+            {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
+                                     // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
+                                     // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
+                                     // or clicking on a notification, which shouldn't cause the background service to start
+                if (PlaystateManagement.WebViewPlayerIsStreaming)
                 {
-                    MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                    MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
+                    if (AppState.ForeNote == null)
+                    {
+                        MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                    }
+                    try { MainPlaybackSticky.StartVideoInBkgrd(); }
+                    catch { }
                 }
-                try { MainPlaybackSticky.StartVideoInBkgrd(); }
-                catch { }
             }
+            base.OnPause();
         }
-        
+
         protected override void OnResume()
         {
             try

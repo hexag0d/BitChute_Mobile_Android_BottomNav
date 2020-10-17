@@ -79,13 +79,13 @@
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
-    <Compile Include="Classes\ExtChromeClient.cs" />
+    <Compile Include="Web\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
-    <Compile Include="Classes\ExtWebClient.cs">
+    <Compile Include="Web\ExtWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Classes\ExtWebInterface.cs" />
+    <Compile Include="Web\ExtWebInterface.cs" />
     <Compile Include="Classes\FileBrowser.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
     <Compile Include="Classes\Https.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="Classes\LanguageSupport.cs" />
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\PlaystateManagement.cs" />
-    <Compile Include="Classes\SearchOverride.cs" />
+    <Compile Include="Web\SearchOverride.cs" />
     <Compile Include="Services\MainPlaybackSticky.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\UriDecoder.cs" />
@@ -121,6 +121,7 @@
     <Compile Include="VideoEncoding\AudioEncoding.cs" />
     <Compile Include="VideoEncoding\OutputSurface.cs" />
     <Compile Include="VideoEncoding\TextureRenderer.cs" />
+    <Compile Include="Web\SeedSwapping.cs" />
     <Compile Include="Web\Startup.cs" />
     <Compile Include="Web\StyleInjectionWebViewClient.cs" />
   </ItemGroup>

@@ -99,27 +99,9 @@ namespace MediaCodecHelper
 	private void setup() {
 		_textureRender = new TextureRender();
 		_textureRender.SurfaceCreated();
-		// Even if we don't access the SurfaceTexture after the constructor returns, we
-		// still need to keep a reference to it. The Surface doesn't retain a reference
-		// at the Java level, so if we don't either then the object can get GCed, which
-		// causes the native finalizer to run.
-		
 		_surfaceTexture = new SurfaceTexture(_textureRender.TextureId);
-		// This doesn't work if OutputSurface is created on the thread that CTS started for
-		// these test cases.
-		//
-		// The CTS-created thread has a Looper, and the SurfaceTexture constructor will
-		// create a Handler that uses it. The "frame available" message is delivered
-		// there, but since we're not a Looper-based thread we'll never see it. For
-		// this to do anything useful, OutputSurface must be created on a thread without
-		// a Looper, so that SurfaceTexture uses the main application Looper instead.
-		//
-		// Java language note: passing "this" out of a constructor is generally unwise,
-		// but we should be able to get away with it here.
-		//_surfaceTexture.SetOnFrameAvailableListener(this);
 		Parent.WeakSurfaceTexture.FrameAvailable += FrameAvailable;
 		_surface = new Surface(Parent.WeakSurfaceTexture);
-
 	}
 	
 
