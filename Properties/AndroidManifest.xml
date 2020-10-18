@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.BitChute.API8.Login_7j" android:installLocation="auto" android:versionCode="28" android:versionName="28">
-	<uses-sdk android:minSdkVersion="18" android:targetSdkVersion="26" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.BitChute.API9.Login_" android:installLocation="auto" android:versionCode="28" android:versionName="28">
+	<uses-sdk android:minSdkVersion="18" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

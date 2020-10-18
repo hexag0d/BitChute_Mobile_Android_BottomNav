@@ -60,6 +60,7 @@ namespace BitChute.Web
                 MainActivity.Fm0.RootUrl = "https://www.bitchute.com/";
                 AppState.NotificationStartedApp = false;
             }
+            
         }
         
         public static async void SetReload(int tab = -1)
@@ -146,11 +147,33 @@ namespace BitChute.Web
         public class LoginWebViewClient : BaseWebViewClient
         {
             public static bool LatestLoginWasSuccess;
-
+            CookieContainer _cookieCon = new CookieContainer();
+            
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
+#if DEBUG
+                //ExtWebInterface.headers = request.RequestHeaders;
+                var netUri = new Uri(request.Url.ToString());
+
+                var hed2 = _cookieCon.GetCookieHeader(netUri);
+
+                var netUri2 = new Uri(request.Url.ToString().Replace("{","").Replace("}",""));
+
+                var hed25 = _cookieCon.GetCookieHeader(netUri2);
+                var headers = request.RequestHeaders;
+                
+                foreach (var header in request.RequestHeaders)
+                {
+                    
+                    var k = header.Key;
+                    var v = header.Value;
+                }
+#endif
                 if (request.Url.ToString() == @"https://www.bitchute.com/accounts/login/")
                 {
+#if DEBUG
+                    var headers1 = request.RequestHeaders;
+#endif
                     if (request.Method == "POST")
                     {
                         AppState.UserIsLoggingIn = true;
@@ -261,6 +284,9 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
+#if DEBUG
+                var headers = request.RequestHeaders;
+#endif
                 if (request.Url.ToString().Contains($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);

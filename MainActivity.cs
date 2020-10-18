@@ -109,6 +109,14 @@ namespace BitChute
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            SetContentView(Resource.Layout.Splash);
+            SetContentView(Resource.Layout.Main);
+            ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
+            ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
+            //Android.Webkit.WebView wv = (Android.Webkit.WebView)FindViewById(Resource.Id.splashWebView);
+            //wv.SetBackgroundColor(Android.Graphics.Color.Black);
+            //wv.Settings.JavaScriptEnabled = true;
+            //wv.LoadUrl("file:///android_asset/html/splash.html");
             StartUp();
             _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
@@ -138,33 +146,55 @@ namespace BitChute
                 catch { }
             }
             base.OnCreate(savedInstanceState);
-            InitializeTabs();
+            //InitializeTabs();
             _window.AddFlags(_winFlagUseHw);
-            SetContentView(Resource.Layout.Main);
-            ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            ViewPager.PageSelected += ViewPager_PageSelected;
-            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-            NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
-            RemoveShiftMode(NavigationView);
-            NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
-            ViewPager.OffscreenPageLimit = 4;
-            CreateNotificationChannel();
-            MainPlaybackSticky.StartNotificationLoop(30000);
-            ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
-            ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
-            //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
-            //mFab.setRippleColor(your color in int);
-            if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
+
+        }
+
+        public void FinalizeStartUp()
+        {
+            //SetContentView(Resource.Layout.Main);
+            try
             {
-                ViewHelpers.Main.DownloadFAB.Hide();
+                var mainContent = FindViewById(Resource.Layout.Main);
+                var mainContent2 = FindViewById(Resource.Id.activityMain);
+                ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+                ViewPager.PageSelected += ViewPager_PageSelected;
+                ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
+                NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
+                RemoveShiftMode(NavigationView);
+                NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+                ViewPager.OffscreenPageLimit = 4;
+                CreateNotificationChannel();
+                MainPlaybackSticky.StartNotificationLoop(30000);
+
+                //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
+                //mFab.setRippleColor(your color in int);
+                if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Hide();
+                }
+                ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+                IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
+                RegisterReceiver(ForegroundReceiver, filter);
             }
-            ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+            catch
+            {
+
+            }
+#if DEBUG
+            System.Net.CookieContainer _cookieCon = new System.Net.CookieContainer();
+            var c = _cookieCon.GetCookies(new Uri("https://www.bitchute.com/"));
+            var ch = _cookieCon.GetCookieHeader(new Uri("https://www.bitchute.com/"));
+        
+#endif
         }
 
         public static async void StartUp()
         {
             await AppSettings.LoadAllPrefsFromSettings();
-            BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            InitializeFragments();
         }
 
         public static void InitializeFragments()
@@ -174,13 +204,15 @@ namespace BitChute
             Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
             Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
             Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+            Main.InitializeTabs();
+            Main.FinalizeStartUp();
         }
 
-        public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-        public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-        public static FeedFrag Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
-        public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-        public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+        public static HomePageFrag Fm0;
+        public static SubscriptionFrag Fm1;
+        public static FeedFrag Fm2;
+        public static MyChannelFrag Fm3;
+        public static SettingsFrag Fm4;
 
         void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
@@ -315,18 +347,23 @@ namespace BitChute
             try
             {
                 //view.ScaleY = (float)1.1;
-                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
-                shiftingMode.Accessible = true;
-                shiftingMode.SetBoolean(menuView, false);
-                shiftingMode.Accessible = false;
+                //var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
+                //shiftingMode.Accessible = true;
+                //shiftingMode.SetBoolean(menuView, false);
+                //shiftingMode.Accessible = false;
 
                 for (int i = 0; i < menuView.ChildCount; i++)
                 {
                     var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-                    item.SetShiftingMode(false);
+                    View label = item.FindViewById(Resource.Id.largeLabel);
+
+                        if (label != null)
+                        {
+                            ((Android.Widget.TextView)label).SetPadding(0, 0, 0, 0);
+                        }
+                        //item.SetShiftingMode(false);
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
-                    item.SetShiftingMode(false);
                     if (i == 0) { item.LongClick += HomeLongClickListener; }
                     if (i == 2) { item.LongClick += FeedTabLongClickListener; }
                     if (i == 3) { item.LongClick += MyChannelLongClickListener; }
@@ -525,9 +562,7 @@ namespace BitChute
 
         public void HomeLongClickListener(object sender, LongClickEventArgs e)
         {
-            BitChute.Web.SeedSwapping.GetNextPossibleSeed();
-            BitChute.Web.ViewClients.IsObtainingResourceFromWebView = true;
-
+            HomePageFrag.SwapLoginView();
         }
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
@@ -942,8 +977,8 @@ namespace BitChute
             }
             catch { }
             try {
-                IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
-                RegisterReceiver(ForegroundReceiver, filter);
+                //IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
+                //RegisterReceiver(ForegroundReceiver, filter);
             }
             catch(Exception ex)
             {

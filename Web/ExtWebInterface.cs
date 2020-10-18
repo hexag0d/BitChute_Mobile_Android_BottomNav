@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace BitChute.Web
@@ -11,6 +12,8 @@ namespace BitChute.Web
         public static System.Net.CookieContainer CookieCon = new CookieContainer();
         public static string NotificationRawText;
         public static string HtmlCode = "";
+        public static HttpRequestHeaders RequestHeaders;
+        public static HttpResponseHeaders ResponseHeaders;
         public static CookieCollection Cookies = new CookieCollection();
         private static Dictionary<string, string> _cookieDictionary;
         public static Dictionary<string, string> CookieDictionary {
@@ -40,10 +43,12 @@ namespace BitChute.Web
         /// <returns></returns>
         public static async Task<string> GetNotificationText(string url)
         {
+            CookieContainer _cookieContainer = new System.Net.CookieContainer();
+
             await Task.Run(() =>
             {
                 HtmlCode = "";
-                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+                HttpClientHandler handler = new HttpClientHandler() { CookieContainer = _cookieContainer };
 
                 if (!ExtNotifications.NotificationHttpRequestInProgress)
                 {
@@ -80,16 +85,25 @@ namespace BitChute.Web
         /// <returns></returns>
         public static async System.Threading.Tasks.Task<string> GetHtmlTextFromUrl(string url)
         {
+            CookieContainer _cookieContainer = new System.Net.CookieContainer();
             string _htmlCode = "";
             await System.Threading.Tasks.Task.Run(() =>
             {
-                HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+                
+               // HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
+                HttpClientHandler handler = new HttpClientHandler() { CookieContainer = _cookieContainer };
+
                 try
                 {
                     using (HttpClient _client = new HttpClient(handler))
                     {
                         var getRequest = _client.GetAsync(url).Result;
                         var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+#if DEBUG
+                        var headers = getRequest.Headers;
+#endif
+                        RequestHeaders = getRequest.RequestMessage.Headers;
+                        ResponseHeaders = getRequest.Headers;
                         _htmlCode = resultContent;
                         //_notificationHttpRequestInProgress = false;
                     }

@@ -22,6 +22,10 @@ namespace BitChute
             public static int FabHeight { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutBottom { get; set; }
             public static RelativeLayout.LayoutParams FabLayoutOrig { get; set; }
+            public static View LoginLayout { get; set; }
+            public static EditText UserNameTextBox { get; set; }
+            public static EditText PasswordTextBox { get; set; }
+            public static Button LoginButton { get; set; }
             //public static int LayoutAbove { get; set; }
             public static Handler UiHandler = new Handler();
 
@@ -74,7 +78,7 @@ namespace BitChute
             public static View WebViewFragmentLayout { get; set; }
             public static WebView Wv { get; set; }
             public static View DownloaderLayout { get; set; }
-            public static RelativeLayout TabFragmentLinearLayout { get; set; }
+            public static RelativeLayout TabFragmentRelativeLayout { get; set; }
         }
 
         public class Tab1

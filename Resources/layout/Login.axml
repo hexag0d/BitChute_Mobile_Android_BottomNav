@@ -4,5 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 	android:background="@android:color/black">
+	<EditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/userNameEditText" />
+	<EditText
+		android:inputType="textPassword"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:id="@+id/passwordEditText" />
+	<Button
+		android:text="Login"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/loginButton" />
 
 </LinearLayout>
