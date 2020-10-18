@@ -47,7 +47,6 @@ namespace BitChute.Fragments
         {
             try
             {
-
                 if (FragmentContainerLayout == null)
                 { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false); }
                 

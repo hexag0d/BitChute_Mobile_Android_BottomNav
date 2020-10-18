@@ -149,10 +149,6 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-#if DEBUG
-                var test = request.RequestHeaders;
-                var test2 = request.RequestHeaders.Values;
-#endif
                 if (request.Url.ToString() == @"https://www.bitchute.com/accounts/login/")
                 {
                     if (request.Method == "POST")
@@ -165,7 +161,6 @@ namespace BitChute.Web
                     if (request.Method == "GET")
                     {
                         AppState.UserIsLoggingIn = false;
-                        AppSettings.UserWasLoggedInLastAppClose = false;
                     }
                 }
                 return base.ShouldInterceptRequest(view, request);
@@ -178,6 +173,7 @@ namespace BitChute.Web
                 {
                     RunPostLoginPageCommands(view);
                 }
+                AppState.UserIsLoggingIn = false;
             }
             
             public static async void RunPostLoginPageCommands(WebView w, int d = 2000)
@@ -218,7 +214,6 @@ namespace BitChute.Web
                         view.ClearCache(false);
                         view.LoadUrl(view.RootUrl); } 
                 }
-                AppState.UserIsLoggingIn = false;
                 AppState.UserIsLoggedIn = true;
                 //SubscriptionFrag.Wv.LoadUrl(SubscriptionFrag.RootUrl);
             }
@@ -342,36 +337,6 @@ namespace BitChute.Web
                 try
                 {
                     ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
-
-                    Https.CookieString = ExtWebInterface.CookieHeader.ToString();
-                    var cookiePairs = ExtWebInterface.CookieHeader.Split('&');
-
-                    Https.CookieString = "";
-
-                    foreach (var cookiePair in cookiePairs)
-                    {
-                        var cookiePieces = cookiePair.Split('=');
-                        if (cookiePieces[0].Contains(":"))
-                            cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
-                        ExtWebInterface.Cookies.Add(new Cookie
-                        {
-                            Name = cookiePieces[0],
-                            Value = cookiePieces[1]
-                        });
-                    }
-
-                    foreach (Cookie c in ExtWebInterface.Cookies)
-                    {
-                        c.Domain = "https://bitchute.com/";
-                        if (Https.CookieString == "")
-                        {
-                            Https.CookieString = c.ToString();
-                        }
-                        else
-                        {
-                            Https.CookieString += c.ToString();
-                        }
-                    }
                 }
                 catch { }
             }
@@ -409,7 +374,7 @@ namespace BitChute.Web
                 {
                     if (request.Method == "GET")
                     {
-                        AppState.UserIsLoggingIn = false;
+                        AppState.UserIsLoggedIn = false;
                     }
                 }
                 return base.ShouldInterceptRequest(view, request);

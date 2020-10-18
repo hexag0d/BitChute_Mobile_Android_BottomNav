@@ -630,6 +630,7 @@ namespace BitChute.Services
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
             {
+                this.SetBackgroundColor(Android.Graphics.Color.Black);
                 PlaystateManagement.WebViewIdDictionary.Add(this.Id, this);
                 tabKey++;
                 PlaystateManagement.WebViewTabDictionary.Add(tabKey, this);

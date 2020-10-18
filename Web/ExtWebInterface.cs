@@ -90,9 +90,7 @@ namespace BitChute.Web
                     {
                         var getRequest = _client.GetAsync(url).Result;
                         var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                        var responseHeaders = getRequest.Headers;
                         _htmlCode = resultContent;
-                        
                         //_notificationHttpRequestInProgress = false;
                     }
                 }
