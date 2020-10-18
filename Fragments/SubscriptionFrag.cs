@@ -134,7 +134,7 @@ namespace BitChute.Fragments
         }
 
         public static async void ExpandVideoCards(bool delayed)
-        {
+        { 
             if (delayed)
             {
                 await Task.Delay(4000);
