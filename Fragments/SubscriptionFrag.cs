@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab1;
+using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
@@ -15,16 +16,19 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        readonly ViewClients.Subs _wvc = new ViewClients.Subs();
-        public static string RootUrl = "https://bitchute.com/subscriptions/";
+        public static object WebViewClient;
         public static int TNo = 1;
 
-        public static SubscriptionFrag NewInstance(string title, string icon)
+        public static SubscriptionFrag NewInstance(string title, string icon, string rootUrl = null)
         {
+            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Subs(); }
+            else { WebViewClient = new LoginWebViewClient(); }
             var fragment = new SubscriptionFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            if (rootUrl == null) rootUrl = "https://www.bitchute.com/subscriptions/";
+            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -49,8 +53,9 @@ namespace BitChute.Fragments
                 { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab1FragLayout, container, false); }
 
                 Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
-                Wv.SetWebViewClient(_wvc);
-                
+                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
+                else  {  Wv.SetWebViewClient((Subs)WebViewClient); }
+                Wv.RootUrl = RootUrl;
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;

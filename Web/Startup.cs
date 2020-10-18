@@ -26,7 +26,7 @@ namespace BitChute.Web
             {
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(h);
-
+                
                 if (doc != null)
                 {
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))

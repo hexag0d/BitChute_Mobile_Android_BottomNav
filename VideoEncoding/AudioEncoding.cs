@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using BitChute;
 using Java.Nio;
 using MediaCodecHelper;
 //using static BitChute.ViewModels.VideoEncoderVM;
@@ -139,9 +133,8 @@ namespace BitChute.VideoEncoding
                         else
                         {
                             cf++;
-                            bufferInfo.PresentationTimeUs = ext.SampleTime + ptOffset; // I had to add this offset to get the audio lined up with visuals
-                                                                                               //anything in this loop using presentationtime needs the ptOffset (uo) for proper calculation
-                            if (endMs > 0 && ext.SampleTime >= us) { break; } //out of while
+                            bufferInfo.PresentationTimeUs = ext.SampleTime + ptOffset; 
+                            if (ext.SampleTime >= us) { break; } //out of while
                             else
                             {
                                 bufferInfo.Flags = MFlags2MCodecBuff(ext.SampleFlags);

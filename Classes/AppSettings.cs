@@ -15,11 +15,33 @@ namespace BitChute
         public static Android.Content.ISharedPreferences Prefs;
         public static Android.Content.ISharedPreferencesEditor PrefEditor;
 
+        private static bool _firstTimeAppLoad;
+        public static bool FirstTimeAppLoad
+        {
+            get
+            {
+                return _firstTimeAppLoad;
+            }
+            set
+            {
+                _firstTimeAppLoad = value;
+                SendPrefSettingToAndroid("firsttimeappload", value);
+            }
+        }
+
+
         public static bool ZoomControl { get; set; }
         public static bool Tab1FeaturedOn { get; set; }
         public static bool FanMode { get; set; }
         public static bool Tab3Hide { get; set; }
         public static bool SettingsTabOverride { get; set; }
+        public static bool VideoPreProcessingApproved { get; set; }
+        private static bool _userWasLoggedInLastAppClose = false;
+        public static bool UserWasLoggedInLastAppClose {
+            get { return _userWasLoggedInLastAppClose; }
+            set { _userWasLoggedInLastAppClose = value;
+                SendPrefSettingToAndroid("userwasloggedinlastappclose", value);
+            } }
         private static bool _searchFeatureOverride { get; set; }
         public static bool SearchFeatureOverride
         {
@@ -84,19 +106,22 @@ namespace BitChute
                 }
             }
         }
+
         public static void SendPrefSettingToAndroid(string setting, object newSet)
         {
-            try
+            if (!AppSettingsLoadingFromAndroid)
             {
-                var yo = newSet.GetType().ToString().ToLower();
-                switch (newSet.GetType().ToString().ToLower())
+                try
                 {
-                    case "system.boolean": PrefEditor.PutBoolean(setting, Convert.ToBoolean(newSet)); break;
-                    case "system.string": PrefEditor.PutString(setting, newSet.ToString()); break;
+                    switch (newSet.GetType().ToString().ToLower())
+                    {
+                        case "system.boolean": PrefEditor.PutBoolean(setting, Convert.ToBoolean(newSet)); break;
+                        case "system.string": PrefEditor.PutString(setting, newSet.ToString()); break;
+                    }
+                    PrefEditor.Commit();
                 }
-                PrefEditor.Commit();
+                catch { }
             }
-            catch { }
         }
 
         public static string Tab4OverridePreference { get; set; }
@@ -147,6 +172,7 @@ namespace BitChute
         public static Android.Content.ISharedPreferences GetAppSharedPrefs()
         {
             Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+            PrefEditor = Prefs.Edit();
             return Prefs;
         }
 
@@ -158,27 +184,32 @@ namespace BitChute
         /// </summary>
         public static async Task<bool> LoadAllPrefsFromSettings()
         {
-            try
+            await Task.Run(() =>
             {
-                AppSettingsLoadingFromAndroid = true;
-                GetAppSharedPrefs();
-                Notifying = Prefs.GetBoolean("notificationson", true);
-                Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
-                Tab5OverridePreference = Prefs.GetString("tab5overridestring", "Settings");
-                ZoomControl = Prefs.GetBoolean("zoomcontrol", false);
-                FanMode = Prefs.GetBoolean("fanmode", false);
-                Tab3Hide = Prefs.GetBoolean("tab3hide", true);
-                Tab1FeaturedOn = Prefs.GetBoolean("t1featured", true);
-                SettingsTabOverride = Prefs.GetBoolean("settingstaboverride", false);
-                HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
-                HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
-                DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
-                AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
-                BackgroundKey = Prefs.GetString("backgroundkey", "feed");
-                SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
-                SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
-            }
-            catch { return false; }
+                try
+                {
+                    AppSettingsLoadingFromAndroid = true;
+                    GetAppSharedPrefs();
+                    Notifying = Prefs.GetBoolean("notificationson", true);
+                    Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
+                    Tab5OverridePreference = Prefs.GetString("tab5overridestring", "Settings");
+                    ZoomControl = Prefs.GetBoolean("zoomcontrol", false);
+                    FanMode = Prefs.GetBoolean("fanmode", false);
+                    Tab3Hide = Prefs.GetBoolean("tab3hide", true);
+                    Tab1FeaturedOn = Prefs.GetBoolean("t1featured", true);
+                    SettingsTabOverride = Prefs.GetBoolean("settingstaboverride", false);
+                    HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
+                    HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
+                    DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
+                    AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
+                    BackgroundKey = Prefs.GetString("backgroundkey", "feed");
+                    SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
+                    SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+                    UserWasLoggedInLastAppClose = Prefs.GetBoolean("userwasloggedinlastappclose", false);
+                    FirstTimeAppLoad = Prefs.GetBoolean("firsttimeappload", true);
+                }
+                catch { }
+            });
             await Task.Delay(2000);
             AppSettingsLoadingFromAndroid = false;
             return true;

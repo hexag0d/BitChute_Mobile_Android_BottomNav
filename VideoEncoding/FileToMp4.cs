@@ -1,36 +1,21 @@
 ﻿
 using Java.Nio;
-using Camera = Android.Hardware.Camera;
 using Android.Util;
-using EGL14 = Android.Opengl.EGL14;
-using GLES20 = Android.Opengl.GLES20;
-using GLES11Ext = Android.Opengl.GLES11Ext;
-using GLSurfaceView = Android.Opengl.GLSurfaceView;
-using IEGL10 = Javax.Microedition.Khronos.Egl.IEGL10;
-using EGL10 = Javax.Microedition.Khronos.Egl.EGL10;
-using EGLConfig = Javax.Microedition.Khronos.Egl.EGLConfig;
-using EGLContext = Javax.Microedition.Khronos.Egl.EGLContext;
-using EGLDisplay = Javax.Microedition.Khronos.Egl.EGLDisplay;
-using EGLSurface = Javax.Microedition.Khronos.Egl.EGLSurface;
-using GL = Javax.Microedition.Khronos.Opengles.IGL;
-using GL10 = Javax.Microedition.Khronos.Opengles.GL10; // IGL10?
 using Java.Lang;
 using Android.Media;
 using System.IO;
-using MediaCodecHelper;
 using Android.Content;
-using System.Drawing;
 using BitChute;
 using BitChute.VideoEncoding;
 using static Android.Media.MediaCodec;
 using BitChute.Fragments;
 using Android.App;
-using static BitChute.FileBrowser;
 using Android.Runtime;
 using System;
 using Android.OS;
 
-namespace MediaCodecHelper {
+namespace MediaCodecHelper
+{
     [Service]
 	public class FileToMp4 : Service {
 
@@ -44,7 +29,7 @@ namespace MediaCodecHelper {
         /// <summary>
         /// frame count
         /// </summary>
-        private static long _fC;
+        private static long _frameCount;
         public static string LatestOutputPath = "";
         public static string LatestInputPath = "";
         public static int LatestAudioTrackIndex;
@@ -132,17 +117,16 @@ namespace MediaCodecHelper {
 		// camera state
 		private MediaPlayer _mediaPlayer;
 		private OutputSurface _outputSurface;
-
-		// allocate one of these up front so we don't need to do it every time
+        
         /// <summary>
-        /// MediaCodec bufferinfo 
+        /// buffer info instantiated once then used throughout encoding
         /// </summary>
 		private MediaCodec.BufferInfo _bfi;
 
         /// <summary>
         /// encoded bits so far
         /// </summary>
-        private static long _ebt = 0;
+        private static long _bitsEncodedSoFar = 0;
 
         /// <summary>
         /// Returns the total number of encoded bits, takes Bytes
@@ -154,23 +138,23 @@ namespace MediaCodecHelper {
         /// <returns></returns>
         public static long EncodedBits(int encoded)
         {
-            _ebt += encoded * 8; 
-            return _ebt;
+            _bitsEncodedSoFar += encoded * 8; 
+            return _bitsEncodedSoFar;
         }
 
         /// <summary>
         /// estimated total size of output video track
         /// </summary>
-        private static long _eTS = 0; 
+        private static long _estimatedTotalSize = 0; 
         public static long EstimateTotalSize(int length, int bitrate)
         {
-            _eTS = ((length/1000 * bitrate));
-            return _eTS;
+            _estimatedTotalSize = ((length/1000 * bitrate));
+            return _estimatedTotalSize;
         }
 
         public static long GetMicroSecondsFromByteCount(long bufferByteCount, int bitRate = 0)
         {
-            if (bitRate == 0) { bitRate = _bitRate; if (bitRate == 0) { return -1; } }
+            if (bitRate == 0) { bitRate = _bitRate; if (bitRate >= 0 || bufferByteCount >= 0) { return 0; } }
             long us = (long)((decimal)(bufferByteCount * 8)/*bits*/ / bitRate) /* = seconds*/ * 1000 /*ms*/* 1000/*us*/;
             return us;
         }
@@ -196,7 +180,7 @@ namespace MediaCodecHelper {
                 _mediaPlayer.Start();
                 _mediaPlayer.SetAudioStreamType(Android.Media.Stream.VoiceCall);
                 _mediaPlayer.SetVolume(0, 0);
-                _fC = 0;
+                _frameCount = 0;
             }
             catch (System.Exception ex) { Log.Debug("VideoEncoder", ex.Message); }
             VideoEncodingInProgress = true;
@@ -204,13 +188,14 @@ namespace MediaCodecHelper {
             {
 
                     D(false);
-                    _fC++;
+                    _frameCount++;
                 /*
                  Disable this to make it faster when not debugging
                  */
 #if DEBUG
-                if (_fC >= 119 && AppSettings.Logging.SendToConsole)
-                        System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                if (_frameCount >= 119 && AppSettings.Logging.SendToConsole)
+                        System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp} " +
+                            $"956 | encoded bits {_bitsEncodedSoFar} of estimated {_estimatedTotalSize}");
 #endif
                     // Acquire a new frame of input, and render it to the Surface.  If we had a
                     // GLSurfaceView we could switch EGL contexts and call drawImage() a second
@@ -236,14 +221,16 @@ namespace MediaCodecHelper {
                     // can supply another frame without blocking.
                     //if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending frame to encoder:");
                     _inputSurface.SwapBuffers();
-                    if (_ebt >= _eTS) { break; }
+                    if (_bitsEncodedSoFar >= _estimatedTotalSize) { break; }
                 
             }
             D(true);
             VideoEncodingInProgress = false;
 #if DEBUG
             if (AppSettings.Logging.SendToConsole)
-                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ {_outputSurface.WeakSurfaceTexture.Timestamp}  | encoded bits {_ebt} of estimated {_eTS}");
+                System.Console.WriteLine($"DrainEncoder started @ {_firstKnownBuffer} exited @ " +
+                    $"{_outputSurface.WeakSurfaceTexture.Timestamp}  " +
+                    $"| encoded bits {_bitsEncodedSoFar} of estimated {_estimatedTotalSize}");
 #endif
             try
             {
@@ -252,9 +239,9 @@ namespace MediaCodecHelper {
                 releaseWeakSurfaceTexture();
             }catch { }
             _firstKnownBuffer = 0; 
-            _eTS = 0;
-            _fC = 0;
-            _ebt = 0;
+            _estimatedTotalSize = 0;
+            _frameCount = 0;
+            _bitsEncodedSoFar = 0;
             _bfi = new BufferInfo();
             if (!AudioEncodingInProgress)
             {
@@ -262,10 +249,10 @@ namespace MediaCodecHelper {
                 _muxer.Release();
                 _muxer = null;
                 if (File.Exists(outputPath)) {
-                    this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _eTS, true, false, outputPath));
+                    this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, true, false, outputPath));
                     return outputPath; }
             }
-            this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _eTS, false, false, null));
+            this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, false, false, null));
             return null; //file isn't finished processing yet
         }
 
@@ -286,7 +273,7 @@ namespace MediaCodecHelper {
             {
                 if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");
                 mEncoder.SignalEndOfInputStream();
-                this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true));
+                this.Progress.Invoke(new EncoderEventArgs(_bitsEncodedSoFar, _estimatedTotalSize, true));
             }
             ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
             while (true)
@@ -353,14 +340,15 @@ namespace MediaCodecHelper {
                         // adjust the ByteBuffer values to match BufferInfo
                         ed.Position(_bfi.Offset);
                         ed.Limit(_bfi.Offset + _bfi.Size);
-                        EncodedBits(_bfi.Size);
+
                         _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        EncodedBits(_bfi.Size);
 #if DEBUG
                         if (AppSettings.Logging.SendToConsole)
                         {
                             System.Console.WriteLine($"Media player @ " +
                                 $"{_mediaPlayer.Timestamp.AnchorMediaTimeUs} us while sT @ " +
-                                $"{_outputSurface.WeakSurfaceTexture.Timestamp} & output buffer info @ {_ebt}");
+                                $"{_outputSurface.WeakSurfaceTexture.Timestamp} & output buffer info @ {_bitsEncodedSoFar}");
                         }
 #endif
                         if (_firstKnownBuffer == 0)
@@ -370,7 +358,7 @@ namespace MediaCodecHelper {
                             else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
                         } //we don't want to flood the system with EventArgs so only send once every 120 frames
-                        if (_fC >= 120) { Notify(_ebt, _eTS); _fC = 0; }
+                        if (_frameCount >= 120) { Notify(_bitsEncodedSoFar, _estimatedTotalSize); _frameCount = 0; }
                     }
 
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);
@@ -379,7 +367,7 @@ namespace MediaCodecHelper {
                     {
                         if (!es) { Log.Warn(TAG, "reached end of stream unexpectedly"); }
                         else { if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "end of stream reached"); }
-                        this.Progress.Invoke(new EncoderEventArgs(_ebt, _eTS, true, false));
+                        this.Progress.Invoke(new EncoderEventArgs(_bitsEncodedSoFar, _estimatedTotalSize, true, false));
                         break;      // out of while
                     }
                 }
@@ -474,13 +462,6 @@ namespace MediaCodecHelper {
 			mEncoder.Start();
 
 			Log.Info(TAG, "Output file is " + outputPath);
-
-			// Create a MediaMuxer.  We can't add the video track and start() the muxer here,
-			// because our MediaFormat doesn't have the Magic Goodies.  These can only be
-			// obtained from the encoder after it has started processing data.
-			//
-			// We're not actually interested in multiplexing audio.  We just want to convert
-			// the raw H.264 elementary stream we get from MediaCodec into a .mp4 file.
 			try {
 				_muxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MuxerOutputMpeg4);
 			} catch(System.Exception e) {

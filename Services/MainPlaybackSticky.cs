@@ -17,6 +17,7 @@ using static BitChute.Fragments.SettingsFrag;
 using Android.Views;
 using System.Reflection;
 using System.ComponentModel;
+using BitChute.Web;
 
 namespace BitChute.Services
 {
@@ -347,6 +348,7 @@ namespace BitChute.Services
             catch { }
         }
         #endregion
+
         public static void LoadVideoFromUrl(Intent i = null, int tab = -1, string url = null)
         {
             string u = "";
@@ -583,19 +585,23 @@ namespace BitChute.Services
         {
             if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
             
-            await Task.Delay(5);
+            await Task.Delay(10);
 
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
-            await Task.Delay(50);
+            await Task.Delay(20);
             
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
+            VerifyInBackground(webViewId);
+        }
+
+        static async void VerifyInBackground(int webViewId = -1)
+        {
             while (AppIsMovingIntoBackgroundAndStreaming)
             {
-                await Task.Delay(50);
+                await Task.Delay(10);
             }
-
             await Task.Delay(30);
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
         }
@@ -604,6 +610,7 @@ namespace BitChute.Services
         {
             public override string Url => base.Url;
             private static int tabKey = -1;
+            public string RootUrl;
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
@@ -613,14 +620,13 @@ namespace BitChute.Services
                     if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundAndStreaming)
                     {
                         AppIsMovingIntoBackgroundAndStreaming = false;
+
+                        PlaystateManagement.WebViewIdDictionary[this.Id].LoadUrl(JavascriptCommands._jsPlayVideo);
                     }
                 }
             }
-
-            public ServiceWebView(Context context) : base(context)
-            {
-
-            }
+            
+            public ServiceWebView(Context context) : base(context) { }
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
             {

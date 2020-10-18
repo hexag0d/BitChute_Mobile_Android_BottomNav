@@ -17,7 +17,19 @@ namespace BitChute.Fragments
     {
         public static ServiceWebView Wv;
         
-
+        private string _rootUrl;
+        public string RootUrl
+        {
+            get { return _rootUrl; }
+            set
+            {
+                _rootUrl = value;
+                if (Wv != null)
+                {
+                    Wv.RootUrl = value;
+                }
+            }
+        }
     }
 
 

@@ -5,7 +5,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BitChute;
-using BitChute;
+
 using BitChute.Services;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab3;
+using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
@@ -21,16 +22,22 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        readonly ViewClients.MyChannel _wvc = new ViewClients.MyChannel();
-        public static string RootUrl = "https://www.bitchute.com/profile";
+        public static object WebViewClient;
+        
         public static int TNo = 3;
         public static bool WvRling;
-        public static MyChannelFrag NewInstance(string title, string icon)
+
+
+        public static MyChannelFrag NewInstance(string title, string icon, string rootUrl = null)
         {
+            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new MyChannel(); }
+            else { WebViewClient = new LoginWebViewClient(); }
             var fragment = new MyChannelFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            if (rootUrl == null) rootUrl = "https://www.bitchute.com/profile/";
+            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -71,6 +78,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab3.DownloadProgressBar = ViewHelpers.Tab3.DownloaderLayout.FindViewById<ProgressBar>(Resource.Id.downloadProgressBar);
                 ViewHelpers.Tab3.DownloadProgressTextView = ViewHelpers.Tab3.DownloaderLayout.FindViewById<TextView>(Resource.Id.progressTextView);
                 Wv = (ServiceWebView)ViewHelpers.Tab3.WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView3Swapable);
+                Wv.RootUrl = RootUrl;
                 ViewHelpers.Container = container;
                 ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
                 ViewHelpers.Tab3.AutoFillVideoTitleText = ViewHelpers.Tab3.DownloaderLayout.FindViewById<CheckBox>(Resource.Id.autoFillTitleCheckBox);
@@ -85,7 +93,8 @@ namespace BitChute.Fragments
                 ViewHelpers.Main.DownloadFAB.Clickable = true;
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
                 if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
-                Wv.SetWebViewClient(_wvc);
+                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
+                else { Wv.SetWebViewClient((MyChannel)WebViewClient); }
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.JavaScriptEnabled = true;

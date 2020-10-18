@@ -15,16 +15,20 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        public static string RootUrl = "https://www.bitchute.com/";
+
         public static string LastLoadedUrl = "";
-        Home Wvc = new Home();
+        static object WebViewClient;
         public static int TNo = 0;
-        public static HomePageFrag NewInstance(string title, string icon)
+        public static HomePageFrag NewInstance(string title, string icon, string rootUrl = null)
         {
+            if (AppSettings.UserWasLoggedInLastAppClose) {  WebViewClient = new Home(); }
+            else { WebViewClient = new LoginWebViewClient(); }
             var fragment = new HomePageFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            if (rootUrl == null) rootUrl = "https://www.bitchute.com/";
+            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -48,8 +52,11 @@ namespace BitChute.Fragments
                 { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false); }
                 
                 Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
-                Wv.SetWebViewClient(Wvc);
-
+                Wv.RootUrl = RootUrl;
+                if (WebViewClient.GetType() == typeof(Home))
+                    Wv.SetWebViewClient((Home)WebViewClient);
+                else if (WebViewClient.GetType() == typeof(LoginWebViewClient))
+                    Wv.SetWebViewClient((LoginWebViewClient)WebViewClient);
                 SetAutoPlayWithDelay(1); 
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;

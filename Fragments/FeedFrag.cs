@@ -8,6 +8,7 @@ using BitChute;
 using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab2;
+using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
@@ -15,18 +16,20 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        //public static ServiceWebView Wv;
         public static ServiceWebView Wv;
-        readonly ViewClients.Feed _wvc = new ViewClients.Feed();
+        public static object WebViewClient;
         public static int TNo = 2;
-        public static string RootUrl = "https://www.bitchute.com/";
 
-        public static FeedFrag NewInstance(string title, string icon)
+        public static FeedFrag NewInstance(string title, string icon, string rootUrl = null)
         {
+            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Feed(); }
+            else { WebViewClient = new LoginWebViewClient(); }
             var fragment = new FeedFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            if (rootUrl == null) rootUrl = "https://www.bitchute.com/";
+            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -49,7 +52,9 @@ namespace BitChute.Fragments
                 if (FragmentContainerLayout == null )
                 FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
                 Wv = (ServiceWebView)FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView3);
-                Wv.SetWebViewClient(_wvc);
+                Wv.RootUrl = RootUrl;
+                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
+                else { Wv.SetWebViewClient((Feed)WebViewClient); }
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.JavaScriptEnabled = true;
                 if (AppSettings.ZoomControl)

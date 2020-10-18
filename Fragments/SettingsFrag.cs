@@ -17,6 +17,7 @@ using static BitChute.ViewHelpers.Tab4;
 
 using System.Linq;
 using MediaCodecHelper;
+using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
@@ -27,15 +28,18 @@ namespace BitChute.Fragments
         //public static ServiceWebView Wv;
         public static int TNo = 4;
         public static string Tab5Title = "Settings";
-        public static string RootUrl = "https://www.bitchute.com/settings/";
-        private static CookieCollection cookies = new CookieCollection();
+        public static object WebViewClient;
 
-        public static SettingsFrag NewInstance(string title, string icon)
+        public static SettingsFrag NewInstance(string title, string icon, string rootUrl = null)
         {
+            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Settings(); }
+            else { WebViewClient = new LoginWebViewClient(); }
             var fragment = new SettingsFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            if (rootUrl == null) rootUrl = "https://www.bitchute.com/settings/";
+            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -77,8 +81,10 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
                 ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
+                Wv.RootUrl = RootUrl;
                 if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
-                Wv.SetWebViewClient(new Web.ViewClients.Settings());
+                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
+                else { Wv.SetWebViewClient((Settings)WebViewClient); }
                 Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;

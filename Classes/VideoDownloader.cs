@@ -10,6 +10,7 @@ using BitChute.Fragments;
 using HtmlAgilityPack;
 using BitChute.Services;
 using static BitChute.Models.VideoModel;
+using BitChute.Web;
 
 namespace BitChute
 {
@@ -340,36 +341,41 @@ namespace BitChute
         /// <returns></returns>
         public async Task<bool> DownloadAndSaveVideo(VideoCard vc)
         {
-            ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
-            _wc = new ExtWebClient();
-            _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
-            _wc.DownloadFileCompleted += OnVideoDownloadFinished;
-            
-            var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
-            string filePath;
-            if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
+            string filePath = "";
+            try
             {
-                filePath = string.Join("_", vc.Title.Split(System.IO.Path.GetInvalidFileNameChars()));
-                ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
-                filePath = documentsPath + filePath;
-            }
-            else
-            {
-                filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
-            }
-            if (!filePath.EndsWith(@".mp4"))
-            {
-                filePath = filePath + @".mp4";
-            }
-            if (vc != null)
-            {
-                if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
+                ViewHelpers.Tab3.DownloadProgressTextView.Text = "Starting download";
+                _wc = new ExtWebClient();
+                _wc.DownloadProgressChanged += OnVideoDownloadProgressChanged;
+                _wc.DownloadFileCompleted += OnVideoDownloadFinished;
+
+                var documentsPath = Android.OS.Environment.ExternalStorageDirectory.Path + "/download/";
+
+                if (ViewHelpers.Tab3.AutoFillVideoTitleText.Checked)
                 {
-                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
-                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
-                    return false;
+                    filePath = string.Join("_", vc.Title.Split(System.IO.Path.GetInvalidFileNameChars()));
+                    ViewHelpers.Tab3.DownloadFileNameEditText.Text = filePath;
+                    filePath = documentsPath + filePath;
+                }
+                else
+                {
+                    filePath = documentsPath + ViewHelpers.Tab3.DownloadFileNameEditText.Text;
+                }
+                if (!filePath.EndsWith(@".mp4"))
+                {
+                    filePath = filePath + @".mp4";
+                }
+                if (vc != null)
+                {
+                    if ((vc.Link == null || vc.Link == "") && (vc.VideoUri == null || vc.VideoUri.AbsolutePath == ""))
+                    {
+                        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
+                        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
+                        return false;
+                    }
                 }
             }
+            catch { }
             try
             {
                 if (vc.VideoUri != null)
@@ -379,8 +385,7 @@ namespace BitChute
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
-                    await _wc.DownloadFileTaskAsync(vc.VideoUri,
-                        filePath);
+                    await _wc.DownloadFileTaskAsync(vc.VideoUri, filePath);
                 }
                 else
                 {
@@ -389,27 +394,33 @@ namespace BitChute
                         _wc.OpenRead(new System.Uri(vc.Link));
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
-                    await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
-                        filePath);
+                    await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),  filePath);
+                }
+                VideoDownloadInProgress = false;
+                if (System.IO.File.Exists(filePath))
+                {
+                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadSuccess(), ToastLength.Long);
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
+                    return true;
+                }
+                else
+                {
+                    Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadFailed(), ToastLength.Long);
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadFailed();
+                    return false;
                 }
             }
             catch (System.Exception ex)
             {
+                try {
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = $"An error occured getting from {vc.VideoUri} try " +
+                     $"another seed?";
+                    ViewHelpers.Tab3.DownloadLinkEditText.Text = vc.VideoUri.AbsolutePath;
+                }
+                catch { }
                 System.Console.WriteLine(ex.InnerException);
             }
-            VideoDownloadInProgress = false;
-            if (System.IO.File.Exists(filePath))
-            {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadSuccess() ,ToastLength.Long);
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
-                return true;
-            }
-            else
-            {
-                Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.FileDownloadFailed(), ToastLength.Long);
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadFailed();
-                return false;
-            }
+            return false;
         }
 
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
@@ -459,7 +470,7 @@ namespace BitChute
                                 .SetSmallIcon(Resource.Drawable.bitchute_notification2)
                                 .SetPriority(NotificationCompat.PriorityLow);
 
-                StartForeground(-6666, builder.Build());
+                StartForeground(-7777, builder.Build());
             }
             catch
             {
