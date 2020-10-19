@@ -9,14 +9,16 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using BitChute.Fragments;
 
 namespace BitChute.VideoEncoding
 {
     public class EncoderDialog : Java.Lang.Object, IDialogInterfaceOnClickListener
     {
-        public static EncoderDialog StatEncDiag;
+        public static EncoderDialog StatEncDiag = new EncoderDialog();
         public EncoderDialog() {  }
-        public static void ShowDialogQuestion(Context ctx) { StatEncDiag.AskIfUserDesiresPreEncoding(ctx); }
+        public static void ShowDialogQuestion(Context ctx) {
+            StatEncDiag.AskIfUserDesiresPreEncoding(ctx); }
         
         public static string TryVideoPreProcessing = $"Would you like to try video pre-processing?  It uses " +
             $"less data and increases the likelihood that your video will be available on BitChute.  Also, " +
@@ -44,6 +46,7 @@ namespace BitChute.VideoEncoding
 
                 case (int)Android.Content.DialogButtonType.Negative:
                     AppSettings.VideoPreProcessingApproved = false;
+                    SettingsFrag.OnUserDeniedPreProcessing();
                     break;
             }
         }

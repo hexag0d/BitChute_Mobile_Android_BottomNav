@@ -1,8 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:background="@android:color/black">
-
-</LinearLayout>
+	  android:background="@android:color/black">
+		<ImageView
+	    android:src="@drawable/darken_small"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+		  android:scaleX="1.5"
+		  android:scaleY="1.5"
+		  android:alpha="1"
+		  android:foregroundGravity=""
+			android:id="@+id/loginDarken" />
+	<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	  android:background="@android:color/black">
+	<ImageView
+	  android:src="@drawable/logo_bronze"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:scaleX=".75"
+		android:scaleY=".75"
+		android:alpha="1"
+		android:foregroundGravity="center"
+		android:id="@+id/loginBackgroundImage" />
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/holo_blue_light"
+	  android:textSize="24dp"
+	  android:foregroundGravity="top"
+		android:text="Login"
+		android:outlineProvider="paddedBounds"
+		android:shadowColor="@android:color/holo_purple"
+		android:id="@+id/loginTextView" />
+	<EditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/white"	
+		android:textSize="24dp"
+		android:foregroundGravity="top"
+			android:hint="username"
+		android:text=""
+		android:outlineProvider="paddedBounds"
+	  android:shadowColor="@android:color/holo_purple"
+		android:id="@+id/userNameEditText" />
+	<EditText
+		android:inputType="textPassword"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text=""
+			android:hint="password"
+			android:textColorHint="@android:color/holo_purple"
+		android:textColor="@android:color/white"
+	    android:outlineProvider="paddedBounds"
+	    android:shadowColor="@android:color/holo_purple"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:id="@+id/passwordEditText" />
+	<Button
+		android:text="Login"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+			android:scaleY="1.1"
+			android:textSize="28dp"
+			android:foregroundGravity="top"
+		android:id="@+id/loginButton" />
+	</LinearLayout>
+<ImageView
+	  android:src="@drawable/login_background_1"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scaleType="fitCenter"
+		android:scaleX="1.5"
+		android:scaleY="1.5"
+		android:alpha=".25"
+		android:foregroundGravity="bottom"
+		android:id="@+id/loginBackgroundImage" />
+</RelativeLayout>

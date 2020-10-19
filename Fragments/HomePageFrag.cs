@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using static BitChute.Web.ViewClients;
 using static BitChute.Services.MainPlaybackSticky;
 using static BitChute.ViewHelpers.Tab0;
+using static BitChute.ViewHelpers.Main;
+using Android.Widget;
+using BitChute.Web;
+using System;
 
 namespace BitChute.Fragments
 {
@@ -49,7 +53,21 @@ namespace BitChute.Fragments
             {
                 if (FragmentContainerLayout == null)
                 { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false); }
-                
+                if (LoginLayout == null)
+                {
+                    LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                }
+                if (TabFragmentRelativeLayout == null) { TabFragmentRelativeLayout=  
+                        FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);
+                }
+                if (WebViewFragmentLayout == null) {
+                    WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab0WebView, container, false);
+                }
+                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
+                LoginButton.Click += LoginButton_OnClick;
+                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
+                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+
                 Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
                 Wv.RootUrl = RootUrl;
                 if (WebViewClient.GetType() == typeof(Home))
@@ -70,13 +88,39 @@ namespace BitChute.Fragments
             return null;
         }
 
+        public static void LoginButton_OnClick(object sender, EventArgs e)
+        {
+            BitChute.Web.Login.MakeLoginRequest(
+                ViewHelpers.Main.UserNameTextBox.Text, 
+                ViewHelpers.Main.PasswordTextBox.Text);
+        }
+
         public static async void SetAutoPlayWithDelay(int delay)
         {
             await Task.Delay(delay);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
         }
 
-        public static void SwapView(View v) { }
+        static bool LoginVisible;
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public static void SwapLoginView()
+        {
+            if (!LoginVisible)
+            {
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(ViewHelpers.Main.LoginLayout);
+            }
+            else
+            {
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(ViewHelpers.Tab0.WebViewFragmentLayout);
+            }
+            LoginVisible = !LoginVisible;
+        }
+
         public override void OnResume()
         {
             base.OnResume();

@@ -625,7 +625,13 @@ namespace BitChute.Services
                     }
                 }
             }
-            
+
+            public override void LoadUrl(string url)
+            {
+                
+                base.LoadUrl(url);
+            }
+
             public ServiceWebView(Context context) : base(context) { }
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)
@@ -634,7 +640,11 @@ namespace BitChute.Services
                 PlaystateManagement.WebViewIdDictionary.Add(this.Id, this);
                 tabKey++;
                 PlaystateManagement.WebViewTabDictionary.Add(tabKey, this);
+
+                AppState.WebViewAgentString = this.Settings.UserAgentString;
             }
+
+            
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
             {

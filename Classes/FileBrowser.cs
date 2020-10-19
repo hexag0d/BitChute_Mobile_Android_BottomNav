@@ -9,6 +9,11 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using static Android.Support.V4.Content.ContextCompat;
+using static Android.Support.V4.App.ActivityCompat;
+using static Android.Manifest.Permission;
+using Android.Content.PM;
+using BitChute;
 
 namespace BitChute
 {
@@ -43,13 +48,10 @@ namespace BitChute
             
             // Update with additional mime types here using a String[]. 
             //intent.PutExtra(Intent.ExtraMimeTypes, );
-
-            // Only pick openable and local files. Theoretically we could pull files from google drive
-            // or other applications that have networked files, but that's unnecessary for this example.
+            
             intent.AddCategory(Intent.CategoryOpenable);
             intent.PutExtra(Intent.ExtraLocalOnly, true);
             
-            // REQUEST_CODE = <some-integer>
             MainActivity.Main.StartActivityForResult(intent, _requestCode);
         }
 
@@ -105,10 +107,7 @@ namespace BitChute
 
         public static void SaveFileToStorage(Java.IO.File f)
         {
-            if (f == null)
-            {
-                return;
-            }
+            if (f == null) { return; }
             try
             {
                 Java.IO.FileOutputStream fos = new Java.IO.FileOutputStream(f);
@@ -135,22 +134,28 @@ namespace BitChute
             }
         }
 
-        public static void GetExternalPermissions()
+        public static bool GetExternalPermissions()
         {
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.WriteExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+            bool permissionGranted;
+            if (CheckSelfPermission(MainActivity.Main, WriteExternalStorage) != (int)Permission.Granted)
             {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.WriteExternalStorage }, 0);
+                RequestPermissions(MainActivity.Main, new string[] { WriteExternalStorage }, 0);
+                permissionGranted = false;
             }
-            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(MainActivity.Main, Android.Manifest.Permission.ReadExternalStorage) != (int)Android.Content.PM.Permission.Granted)
+            else { permissionGranted = true; }
+            if (CheckSelfPermission(MainActivity.Main, ReadExternalStorage) != (int)Permission.Granted)
             {
-                Android.Support.V4.App.ActivityCompat.RequestPermissions(MainActivity.Main, new string[] { Android.Manifest.Permission.ReadExternalStorage }, 0);
+                RequestPermissions(MainActivity.Main, new string[] { ReadExternalStorage }, 0);
+                permissionGranted = false;
             }
+            else { permissionGranted = true; }
+            return permissionGranted;
         }
 
         public static List<string> GetLocalVideos()
         {
-            GetExternalPermissions();
             List<string> files = new List<string>();
+            if (!GetExternalPermissions()) { return files; }
             var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "download";
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);

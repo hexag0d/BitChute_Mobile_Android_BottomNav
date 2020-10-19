@@ -67,10 +67,12 @@
 
         public static Android.App.Notification ForeNote { get; set; }
 
+        public static string WebViewAgentString { get; set; }
+
         /// <summary>
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.6.7.2.API8.OpenGL.VideoProcessing.LoginFix__";
+        public static string AppVersion = "28.7.1.API8.OpenGL.VideoProcessing.LoginFix__";
     }
 }

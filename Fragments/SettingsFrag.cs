@@ -63,6 +63,8 @@ namespace BitChute.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
+
+            //MainActivity.Main.FinalizeStartUp();
         }
         
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -272,7 +274,6 @@ namespace BitChute.Fragments
         /// <param name="v">nullable, the view to swap for</param>
         public static void SwapSettingView()
         {
-            
             if (!WebsiteSettingsVisible)
             {
                 ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
@@ -295,6 +296,7 @@ namespace BitChute.Fragments
         /// <param name="v"></param>
         public static void ShowEncoderView_OnClick(object sender, EventArgs e)
         {
+            VideoEncoding.EncoderDialog.ShowDialogQuestion(Android.App.Application.Context);
             ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
             ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.VideoEncoder.VideoEncoderLayout);
             EncoderViewIsVisible = true;
@@ -310,13 +312,19 @@ namespace BitChute.Fragments
             ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
             EncoderViewIsVisible = false;
         }
+
+        public static void OnUserDeniedPreProcessing()
+        {
+            ShowWebViewButton.PerformClick();
+            Wv.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.EnterUploadView));
+        }
         
         public static void StartEncodingButton_OnClick(object sender, EventArgs e)
         {
             Task.Run(() => {
                 try
                 {
-                    FileBrowser.GetExternalPermissions();
+                    if (!FileBrowser.GetExternalPermissions()) { return; }
                     VideoEncoder.EncodeProgressBar.Progress = 0;
                     var codec = new MediaCodecHelper
                     .FileToMp4(Android.App.Application.Context, Convert.ToInt32(EncoderFpsEditText.Text), 1, 

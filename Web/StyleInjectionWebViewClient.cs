@@ -19,6 +19,7 @@ using BitChute.Fragments;
 using static BitChute.JavascriptCommands;
 using static BitChute.PlaystateManagement;
 using static BitChute.Services.MainPlaybackSticky;
+using System.Net.Http;
 
 namespace BitChute.Web
 {
@@ -60,6 +61,7 @@ namespace BitChute.Web
                 MainActivity.Fm0.RootUrl = "https://www.bitchute.com/";
                 AppState.NotificationStartedApp = false;
             }
+            
         }
         
         public static async void SetReload(int tab = -1)
@@ -146,6 +148,8 @@ namespace BitChute.Web
         public class LoginWebViewClient : BaseWebViewClient
         {
             public static bool LatestLoginWasSuccess;
+            CookieContainer _cookieCon = new CookieContainer();
+            
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
@@ -215,7 +219,6 @@ namespace BitChute.Web
                         view.LoadUrl(view.RootUrl); } 
                 }
                 AppState.UserIsLoggedIn = true;
-                //SubscriptionFrag.Wv.LoadUrl(SubscriptionFrag.RootUrl);
             }
         }
 

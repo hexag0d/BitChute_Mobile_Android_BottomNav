@@ -88,22 +88,21 @@
     <Compile Include="Web\ExtWebInterface.cs" />
     <Compile Include="Classes\FileBrowser.cs" />
     <Compile Include="Classes\HeadphoneIntent.cs" />
-    <Compile Include="Classes\Https.cs" />
-    <Compile Include="Classes\JavascriptCommands.cs" />
+    <Compile Include="Web\Https.cs" />
+    <Compile Include="Web\JavascriptCommands.cs" />
     <Compile Include="Classes\LanguageSupport.cs" />
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Web\Login.cs" />
-    <Compile Include="Web\RetainedPageStates.cs" />
     <Compile Include="Web\SearchOverride.cs" />
     <Compile Include="Services\MainPlaybackSticky.cs" />
     <Compile Include="Classes\TabStates.cs" />
     <Compile Include="Classes\UriDecoder.cs" />
-    <Compile Include="Classes\VideoDownloader.cs" />
+    <Compile Include="Web\VideoDownloader.cs" />
     <Compile Include="Css\CssHelper.cs" />
     <Compile Include="Fragments\CommonFrag.cs" />
     <Compile Include="Views\ViewHelpers.cs" />
-    <Compile Include="Classes\WebViewHelpers.cs" />
+    <Compile Include="Views\WebViewHelpers.cs" />
     <Compile Include="Fragments\HomePageFrag.cs" />
     <Compile Include="Fragments\SettingsFrag.cs" />
     <Compile Include="Fragments\MyChannelFrag.cs" />
@@ -165,6 +164,9 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.12</Version>
+    </PackageReference>
+    <PackageReference Include="Json.Net">
+      <Version>1.0.23</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
@@ -360,9 +362,19 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\html\bitchute_splash.gif" />
+    <AndroidAsset Include="Assets\html\splash.html" />
     <Content Include="Css\homepage.css" />
     <Content Include="Css\main.css" />
     <Content Include="Css\main.html" />
+    <AndroidResource Include="Resources\layout\Splash.axml" />
+    <AndroidResource Include="Resources\layout\Tab0WebView.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\login_background_1.jpg" />
+    <AndroidResource Include="Resources\drawable\darken_small.gif" />
+    <AndroidResource Include="Resources\drawable\logo_bronze.png" />
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

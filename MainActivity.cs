@@ -64,7 +64,6 @@ using static BitChute.Fragments.SettingsFrag;
 
 namespace BitChute
 {
-    //we need to set the intent filter so that links can open inapp
     [Android.App.IntentFilter(new[] { Intent.ActionView },
               Categories = new[] { Intent.CategoryBrowsable, Intent.CategoryDefault },
               DataScheme = "http",
@@ -105,7 +104,6 @@ namespace BitChute
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
 
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
-        public static CustomIntent.BackgroundIntentReceiver BackgroundReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -117,7 +115,10 @@ namespace BitChute
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
-            else {AppState.Display.Horizontal = false; }
+            else
+            {
+                AppState.Display.Horizontal = false;
+            }
             Main = this;
             var mServiceIntent = new Intent(this, typeof(MainPlaybackSticky));
             StartService(mServiceIntent);
@@ -138,16 +139,9 @@ namespace BitChute
                 catch { }
             }
             base.OnCreate(savedInstanceState);
-            InitializeTabs();
             _window.AddFlags(_winFlagUseHw);
             SetContentView(Resource.Layout.Main);
-            ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            ViewPager.PageSelected += ViewPager_PageSelected;
-            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-            NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
-            RemoveShiftMode(NavigationView);
-            NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
-            ViewPager.OffscreenPageLimit = 4;
+
             CreateNotificationChannel();
             MainPlaybackSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
@@ -158,13 +152,43 @@ namespace BitChute
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
             }
+
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
+            //BackgroundReceiver = new CustomIntent.BackgroundIntentReceiver();
         }
+
+        public void FinalizeStartUp()
+        {
+            ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+            ViewPager.PageSelected += ViewPager_PageSelected;
+            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
+            NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
+            RemoveShiftMode(NavigationView);
+            NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+            ViewPager.OffscreenPageLimit = 4;
+        }
+
+        public static bool SplashScreenIsVisible;
+
+        public static void SwapSplashView()
+        {
+            if (!SplashScreenIsVisible)
+            {
+                ViewHelpers.Main.ContentRelativeLayout.AddView(ViewHelpers.Main.SplashLayout);
+            }
+            else
+            {
+                ViewHelpers.Main.ContentRelativeLayout.RemoveView(ViewHelpers.Main.SplashLayout);
+            }
+            SplashScreenIsVisible = !SplashScreenIsVisible;
+        }
+
 
         public static async void StartUp()
         {
             await AppSettings.LoadAllPrefsFromSettings();
-            BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
+            InitializeFragments();
         }
 
         public static void InitializeFragments()
@@ -174,13 +198,15 @@ namespace BitChute
             Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
             Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
             Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+            Main.InitializeTabs();
+            Main.FinalizeStartUp();
         }
 
-        public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-        public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-        public static FeedFrag Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
-        public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-        public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+        public static HomePageFrag Fm0;
+        public static SubscriptionFrag Fm1;
+        public static FeedFrag Fm2;
+        public static MyChannelFrag Fm3;
+        public static SettingsFrag Fm4;
 
         void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
@@ -203,7 +229,7 @@ namespace BitChute
         }
 
         /// <summary>
-        /// invoked on scroll events and hides the navbar after x seconds
+        /// invoked on swipe events and hides the navbar after x seconds
         /// .. timer resets every time it's called
         /// . works with a custom scroll listener
         /// </summary>
@@ -525,9 +551,7 @@ namespace BitChute
 
         public void HomeLongClickListener(object sender, LongClickEventArgs e)
         {
-            BitChute.Web.SeedSwapping.GetNextPossibleSeed();
-            BitChute.Web.ViewClients.IsObtainingResourceFromWebView = true;
-
+            HomePageFrag.SwapLoginView();
         }
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
@@ -942,8 +966,8 @@ namespace BitChute
             }
             catch { }
             try {
-                IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
-                RegisterReceiver(ForegroundReceiver, filter);
+                //IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
+                //RegisterReceiver(ForegroundReceiver, filter);
             }
             catch(Exception ex)
             {
