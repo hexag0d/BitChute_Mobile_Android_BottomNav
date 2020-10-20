@@ -111,12 +111,13 @@ namespace BitChute.Web
                     cookieNew.Domain = "bitchute.com";
                     //.Add(cookieNew);
                     CookieContainer.Add(cookieNew);
-                    _cookieCollection.Add(new Cookie
-                    {
-                        Name = cookieSplit[0],
-                        Value = cookieSplit[1],
-                        Domain = "https://www.bitchute.com/"
-                    });
+                    //_cookieCollection.Add(new Cookie // setting the domain crashes the app, 
+                                                        //  nothing calls parent method atm
+                    //{
+                    //    Name = cookieSplit[0],
+                    //    Value = cookieSplit[1],
+                    //    Domain = "https://www.bitchute.com/"
+                    //});
                 }
             }
 

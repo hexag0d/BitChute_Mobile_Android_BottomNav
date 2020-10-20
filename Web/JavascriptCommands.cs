@@ -277,6 +277,10 @@ namespace BitChute
 
         public static string EnterUploadView = @"$(" + "\"" + @"a[href='/myupload/']" + "\"" + @")[0].click()";
 
+        public static string ClickLikeVideo = @"$('#video-like').click()";
+
+        public static string ClickDislikeVideo = @"$('#video-dislike').click()";
+
         public static string GetInjectable(string js)
         {
             return @"javascript:(function(){" + js + @"})()";
