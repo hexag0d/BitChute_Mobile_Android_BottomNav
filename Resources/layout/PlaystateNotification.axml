@@ -57,6 +57,17 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:id="@+id/spaceLayout" >
+			<ImageView
+				android:src="@drawable/like"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				
+				android:id="@+id/imageView1" />
+						<ImageView
+				android:src="@drawable/dislike"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/imageView1" />
     </LinearLayout>
     <LinearLayout
       android:orientation="horizontal"

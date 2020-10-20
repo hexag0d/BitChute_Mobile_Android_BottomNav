@@ -115,7 +115,7 @@ namespace BitChute.Web
                     {
                         Name = cookieSplit[0],
                         Value = cookieSplit[1],
-                        //Domain = "https://www.bitchute.com/"
+                        Domain = "https://www.bitchute.com/"
                     });
                 }
             }
@@ -260,7 +260,6 @@ namespace BitChute.Web
                 wc.Headers.Add(@"Origin: https://www.bitchute.com");
                 wc.Headers.Add(@"Content-Type: application/x-www-form-urlencoded; charset=UTF-8");
                 wc.Headers.Add(@"Accept-Language: en-US,en;q=0.5");
-                wc.Headers.Add($"User-Agent: {AppState.WebViewAgentString}");
                 wc.Headers.Add(@"X-Requested-With: XMLHttpRequest");
                 wc.Headers.Add($"Cookie: {cookieHeader}");
                 var body = AuthToken.GetSerializedToken(serializedPayload);

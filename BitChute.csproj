@@ -375,6 +375,8 @@
     <AndroidResource Include="Resources\drawable\login_background_1.jpg" />
     <AndroidResource Include="Resources\drawable\darken_small.gif" />
     <AndroidResource Include="Resources\drawable\logo_bronze.png" />
+    <AndroidResource Include="Resources\drawable\dislike.png" />
+    <AndroidResource Include="Resources\drawable\like.png" />
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

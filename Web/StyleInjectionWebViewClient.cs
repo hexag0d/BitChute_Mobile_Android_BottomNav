@@ -140,11 +140,6 @@ namespace BitChute.Web
             BitChute.Web.ViewClients.RunBaseCommands(wv, 2000);
         }
 
-        public static async void ReadByteStreamToStaticText(WebResourceResponse response)
-        {
-
-        }
-
         public class LoginWebViewClient : BaseWebViewClient
         {
             public static bool LatestLoginWasSuccess;
@@ -176,8 +171,9 @@ namespace BitChute.Web
                 if (AppState.UserIsLoggingIn)
                 {
                     RunPostLoginPageCommands(view);
+                    AppState.UserIsLoggingIn = false;
                 }
-                AppState.UserIsLoggingIn = false;
+
             }
             
             public static async void RunPostLoginPageCommands(WebView w, int d = 2000)
@@ -231,7 +227,7 @@ namespace BitChute.Web
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains(@"https://_%26app"))
+                if (request.Url.ToString().StartsWith(@"https://_"))
                 {
                     //check if we're currently on a bitchute page and otherwise don't reroute
                     if (view.Url.StartsWith("https://www.bitchute.com") || view.Url.StartsWith("https://bitchute.com"))
@@ -264,7 +260,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains($"/common.css"))
+                if (request.Url.ToString().EndsWith($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
                 }
@@ -290,7 +286,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("common.css"))
+                if (request.Url.ToString().EndsWith("common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
                 }
@@ -316,7 +312,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("common.css"))
+                if (request.Url.ToString().EndsWith($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCssFeed);
                 }
@@ -346,7 +342,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("common.css"))
+                if (request.Url.ToString().EndsWith($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCssMyChannel);
                 }
@@ -369,7 +365,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().Contains("common.css"))
+                if (request.Url.ToString().EndsWith($"/common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCssSettings);
                 }
