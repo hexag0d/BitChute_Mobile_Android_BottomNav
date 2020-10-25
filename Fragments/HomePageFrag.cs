@@ -67,8 +67,10 @@ namespace BitChute.Fragments
                 LoginButton.Click += LoginButton_OnClick;
                 UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
                 PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
 
-                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
+                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView0);
                 Wv.RootUrl = RootUrl;
                 if (WebViewClient.GetType() == typeof(Home))
                     Wv.SetWebViewClient((Home)WebViewClient);
@@ -82,6 +84,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
+                SwapLoginView();
                 return FragmentContainerLayout;
             }
             catch { }
@@ -93,6 +96,13 @@ namespace BitChute.Fragments
             BitChute.Web.Login.MakeLoginRequest(
                 ViewHelpers.Main.UserNameTextBox.Text, 
                 ViewHelpers.Main.PasswordTextBox.Text);
+            ViewHelpers.Main.UserNameTextBox.Text = "";
+            ViewHelpers.Main.PasswordTextBox.Text = "";
+        }
+
+        public static void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView();
         }
 
         public static async void SetAutoPlayWithDelay(int delay)

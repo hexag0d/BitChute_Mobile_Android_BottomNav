@@ -185,7 +185,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                BitChute.Web.ViewClients.LoadInitialUrls();
+                if (AppSettings.Debug.LoadWebViewsOnStart) { BitChute.Web.ViewClients.LoadInitialUrls(); }
             }
             catch (Exception ex) { }
             

@@ -51,7 +51,7 @@ namespace BitChute.Web
             {
                 HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
                 SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
-                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
+                FeedFragNative.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
                 MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
                 SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
             }
@@ -160,6 +160,7 @@ namespace BitChute.Web
                     if (request.Method == "GET")
                     {
                         AppState.UserIsLoggingIn = false;
+                        AppState.UserIsLoggedIn = true;
                     }
                 }
                 return base.ShouldInterceptRequest(view, request);
@@ -218,9 +219,9 @@ namespace BitChute.Web
             }
         }
 
-        public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
+        public class BaseWebViewClient : Android.Webkit.WebViewClient //WebViewClient shared between all applicable tabs
         {
-            public BaseWebViewClient()
+            public WebViewClient()
             {
                 if (PlaystateChanged == null) PlaystateChanged += OnPlaystateChanged;
             }

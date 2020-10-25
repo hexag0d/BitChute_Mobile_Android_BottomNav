@@ -66,10 +66,18 @@
 		android:text="Login"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-			android:scaleY="1.1"
+			android:scaleY="1.2"
 			android:textSize="28dp"
 			android:foregroundGravity="top"
 		android:id="@+id/loginButton" />
+	<Button
+		android:text="Continue without Login"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+			android:scaleY="1.1"
+			android:textSize="28dp"
+			android:foregroundGravity="top"
+		android:id="@+id/continueWithoutLoginButton" />
 	</LinearLayout>
 <ImageView
 	  android:src="@drawable/login_background_1"

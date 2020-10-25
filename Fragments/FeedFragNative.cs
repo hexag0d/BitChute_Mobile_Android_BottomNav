@@ -9,10 +9,13 @@ using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab2;
 using static BitChute.Web.ViewClients;
+using BitChute.ViewHolders;
+using Android.Widget;
+using Android.Support.V7.Widget;
 
 namespace BitChute.Fragments
 {
-    public class FeedFrag : CommonWebViewFrag
+    public class FeedFragNative : CommonWebViewFrag
     {
         string _title;
         string _icon;
@@ -20,11 +23,11 @@ namespace BitChute.Fragments
         public static object WebViewClient;
         public static int TNo = 2;
 
-        public static FeedFrag NewInstance(string title, string icon, string rootUrl = null)
+        public static FeedFragNative NewInstance(string title, string icon, string rootUrl = null)
         {
             if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Feed(); }
             else { WebViewClient = new LoginWebViewClient(); }
-            var fragment = new FeedFrag();
+            var fragment = new FeedFragNative();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
@@ -49,8 +52,19 @@ namespace BitChute.Fragments
         {
             try
             {
-                if (FragmentContainerLayout == null )
-                FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
+                if (FragmentContainerLayout == null)
+                    FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
+                if (TabFragmentRelativeLayout == null)  {
+                    TabFragmentRelativeLayout = FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.feedTabRelativeLayout);
+                }
+                if (FeedView == null)
+                {
+                    FeedView = inflater.Inflate(Resource.Layout.FeedLayout, container, false);
+                }
+                if (WebViewFragmentLayout == null)
+                {
+                    WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab2WebView, container, false);
+                }
                 Wv = (ServiceWebView)FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
                 Wv.RootUrl = RootUrl;
                 if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
@@ -63,9 +77,73 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 Wv.Settings.DisplayZoomControls = false;
+                SwapFeedView();
+                this.GetRecyclerAdapter(container);
                 return FragmentContainerLayout;
-            }catch { }
+            }
+            catch { }
             return null;
+        }
+
+        public static RecyclerView _feedRecyclerView;
+        public static LinearLayoutManager _layoutManager;
+
+        public void GetRecyclerAdapter(ViewGroup container)
+        {
+            _feedRecyclerView = FragmentContainerLayout.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
+            _feedRecyclerView.NestedScrollingEnabled = false;
+            _layoutManager = new LinearLayoutManager(container.Context);
+
+            _feedRecyclerView.SetLayoutManager(_layoutManager);
+            //var _rootAdapter = GetFeedAdapter();
+           // _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
+           // _recycleView.SetAdapter(_rootAdapter);
+            
+        }
+
+        /// <summary>
+        /// click event for the adapter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void RootVideoAdapter_ItemClick(object sender, int e)
+        {
+            
+        }
+
+
+        static bool FeedVisible;
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public static void SwapFeedView()
+        {
+            if (!FeedVisible)
+            {
+               TabFragmentRelativeLayout.RemoveAllViews();
+                TabFragmentRelativeLayout.AddView(FeedView);
+            }
+            else
+            {
+                TabFragmentRelativeLayout.RemoveAllViews();
+                TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+            }
+            FeedVisible = !FeedVisible;
+        }
+
+        public static async void GetSubscriptionFeed()
+        {
+            var vcList = await BitChute.Web.Request.GetVideoCardList();
+            var frva = new FeedRecyclerViewAdapter(vcList);
+
+            frva.ItemClick += RootVideoAdapter_ItemClick;
+             _feedRecyclerView.SetAdapter(frva);
+        }
+
+        public static FeedRecyclerViewAdapter GetFeedAdapter()
+        {
+            return new FeedRecyclerViewAdapter(new List<Models.VideoModel.VideoCard>());
         }
 
         public async void LoadUrlWithDelay(string url, int delay)
@@ -88,7 +166,7 @@ namespace BitChute.Fragments
             }
             else { Wv.LoadUrl(JavascriptCommands._jsShowCarousel); }
         }
-        
+
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
@@ -140,7 +218,7 @@ namespace BitChute.Fragments
 
         public static async void ExpandVideoCards(bool delayed = false)
         {
-            if (delayed){ await Task.Delay(5000); }
+            if (delayed) { await Task.Delay(5000); }
             Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
             Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
         }

@@ -20,13 +20,29 @@ namespace BitChute.Web
     {
         public static async Task<bool> GetObjectsFromHtmlResponse()
         {
-            string h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/");
+            string h = "";
+            if (String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfuid) ||
+                String.IsNullOrWhiteSpace(AppSettings.SessionState.CsrfToken))
+            {
+                if (String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId))
+                {
+                    h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
+                }
+                else
+                {
+                    h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
+                }
+            }
+            else
+            {
+                h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", false);
+            }
 
             try
             {
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(h);
-                
+
                 if (doc != null)
                 {
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))
@@ -39,6 +55,10 @@ namespace BitChute.Web
                         {
                             CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                         }
+                    }
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//input[@name='csrfmiddlewaretoken']"))
+                    {
+                        var csrf = Login.GetLatestCsrfToken(node.Attributes["value"].Value).Value;
                     }
                 }
                 CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);

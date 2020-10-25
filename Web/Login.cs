@@ -14,6 +14,9 @@ using Android.Views;
 using Android.Widget;
 using System.Collections;
 using Json.Net;
+using BitChute.Web;
+using HtmlAgilityPack;
+using BitChute.Web.Ui;
 
 namespace BitChute.Web
 {
@@ -44,7 +47,13 @@ namespace BitChute.Web
             }
             else { return _csrfPair; }
         }
-        
+
+        private static string _cookieStringHeader;
+        public static string CookieStringHeader {
+            get { return _cookieStringHeader; }
+            set { _cookieStringHeader = value; }
+        }
+
         public class AuthToken
         {
             public string Csrfmiddleware;
@@ -67,8 +76,8 @@ namespace BitChute.Web
             public static string GetSerializedToken(AuthToken toke)
             {
                 if (toke.Csrfmiddleware == null || toke.Csrfmiddleware == "") { toke.Csrfmiddleware = GetLatestCsrfToken().Value; }
-                // csrfmiddlewaretoken = xxxxx & username = hexagod_deep_house_mixes & password = xxxxxxxx & one_time_code =
-                string serialized =  $"csrfmiddlewaretoken={toke.Csrfmiddleware}&username={toke.Username}" +
+                // csrfmiddlewaretoken = xxxxx & username = xxxxxx & password = xxxxxxxx & one_time_code =
+                string serialized = $"csrfmiddlewaretoken={toke.Csrfmiddleware}&username={toke.Username}" +
                     $"&password={toke.Password}&one_time_code={toke.One_time_code}";
                 return serialized;
             }
@@ -83,13 +92,10 @@ namespace BitChute.Web
                 return dictionary;
             }
         }
-        
-        public static async void MakeLoginRequest(string username, string password)
+
+        public static async void MakeLoginRequest(string username, string password, string csrfmiddlewaretoken = null)
         {
-            var jt = AuthToken.GetToken(GetLatestCsrfToken().Value, username, password);
-            var rq = ExtWebInterface.RequestHeaders;
-            var rs = ExtWebInterface.ResponseHeaders;
-            var response = await DoLogin("https://www.bitchute.com/accounts/login/", jt,  rs, rq);
+            var response = await DoLogin(AuthToken.GetToken(GetLatestCsrfToken().Value, username, password));
         }
 
         public static CookieContainer CookieContainer = new CookieContainer();
@@ -108,15 +114,15 @@ namespace BitChute.Web
                     var cookieName = cookieSplit[0];
                     var cookieValue = cookieSplit[1];
                     var cookieNew = new Cookie(cookieName, cookieValue);
-                    cookieNew.Domain = "bitchute.com";
+                    cookieNew.Domain = "www.bitchute.com";
                     //.Add(cookieNew);
                     CookieContainer.Add(cookieNew);
                     //_cookieCollection.Add(new Cookie // setting the domain crashes the app, 
-                                                        //  nothing calls parent method atm
+                    //  nothing calls parent method atm
                     //{
                     //    Name = cookieSplit[0],
                     //    Value = cookieSplit[1],
-                    //    Domain = "https://www.bitchute.com/"
+                    //    Domain = "www.bitchute.com"
                     //});
                 }
             }
@@ -152,7 +158,7 @@ namespace BitChute.Web
             catch { }
             return String.Join(";", cookies);
         }
-        
+
         public static Task<CookieContainer> GetCookieContainer(HttpResponseHeaders responseHeader)
         {
             try
@@ -197,7 +203,7 @@ namespace BitChute.Web
                             }
                             else if (pairTrimmed.StartsWith("SameSite"))
                             {
-                                
+
                             }
                         }
                         else
@@ -216,7 +222,7 @@ namespace BitChute.Web
                     CookieContainer.Add(cookie);
                     if (cookie.Name == "csrftoken") GetLatestCsrfToken(cookie.Value);
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -225,49 +231,121 @@ namespace BitChute.Web
             return Task.FromResult(CookieContainer);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<string> DoLogin(string url, AuthToken serializedPayload, HttpResponseHeaders responseHeader, HttpRequestHeaders requestHeader)
+        public static FormUrlEncodedContent GetLoginKeys(AuthToken toke = null, string csrf = null, string username = null, string password = null, string onetimecode = "")
         {
-            CookieContainer cookieContainer = new CookieContainer();
-            HttpClientHandler handler1 = new HttpClientHandler() { UseCookies = true, CookieContainer = cookieContainer };
+            try
+            {
+                if (toke == null)
+                {
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                 new KeyValuePair<string, string>("csrfmiddlewaretoken", csrf),
+                 new KeyValuePair<string, string>("username", username),
+                 new KeyValuePair<string, string>("password", password),
+                 new KeyValuePair<string, string>("one_time_code", onetimecode)
+            });
+                    return formContent;
+                }
+                else
+                {
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                 new KeyValuePair<string, string>("csrfmiddlewaretoken", toke.Csrfmiddleware),
+                 new KeyValuePair<string, string>("username", toke.Username),
+                 new KeyValuePair<string, string>("password", toke.Password),
+                 new KeyValuePair<string, string>("one_time_code", toke.One_time_code)
+                });
+                    return formContent;
+                }
+            }
+            catch { return null; }
+        }
+
+        public static string GetRequestHeader(HttpResponseHeaders headers)
+        {
+            string cookieHeader = "";
+            foreach (var header in headers)
+            {
+                if (header.Key.ToLower() == "set-cookie")
+                {
+                    foreach (var cookiePair in header.Value)
+                    {
+                        var tokens = cookiePair.ToString().Split(';');
+                        foreach (var token in tokens)
+                        {
+                            if (token.Contains("csrftoken"))
+                            {
+                                cookieHeader += token + ";";
+                            }
+                            if (token.Contains("__cfduid"))
+                            {
+                                cookieHeader += token + ";";
+                            }
+                            if (token.Contains("sessionid"))
+                            {
+                                cookieHeader += token + ";";
+                            }
+                        }
+                    }
+                }
+            }
+            cookieHeader += "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+            return cookieHeader;
+        }
+
+        public static async Task<string> GetInitialCSRFToken(string html)
+        {
+            string csrfToken = "";
 
             try
             {
-                using (HttpClient _client = new HttpClient(handler1))
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+
+                if (doc != null)
                 {
-                    var getRequest = _client.GetAsync("https://www.bitchute.com/").Result;
-                    var content = getRequest.Content;
-                    var resultContent = content.ReadAsStringAsync().Result;
-                    cookieContainer = await GetCookieContainer(getRequest.Headers);
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))
+                    {
+                        if (node.OuterHtml.Contains("/common.css"))
+                        {
+                            CssHelper.CommonCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
+                        }
+                        if (node.OuterHtml.Contains("/search.css"))
+                        {
+                            CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
+                        }
+                    }
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//input[@name='csrfmiddlewaretoken']"))
+                    {
+                        csrfToken = Login.GetLatestCsrfToken(node.Attributes["value"].Value).Value;
+                    }
                 }
-                if (GetLatestCsrfToken().Value == "" || GetLatestCsrfToken().Value == null)
-                {
-                    serializedPayload.Csrfmiddleware = GetLatestCsrfToken().Value;
-                }
+                //CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
+            return csrfToken;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<string> DoLogin(AuthToken authToken)
+        {
+            try
+            {
+                ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
+                ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+                ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Referer", "https://www.bitchute.com/");
+                var formdata = GetLoginKeys(authToken);
+                var requestContent = await formdata.ReadAsStringAsync();
+                var response = await ExtWebInterface.HttpClient.PostAsync("https://www.bitchute.com/accounts/login/",formdata);
+                ExtWebInterface.GetRequestHeader(response.Headers);
+                var responseContent = response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
-            var cookieHeader = CookieContainer.GetCookieHeader(new Uri("https://www.bitchute.com"));
-            cookieHeader = RemoveDuplicateCookies(cookieHeader.Split(";").ToList<string>());
-            try
-            {
-                    WebClient wc = new WebClient();
-                wc.Headers.Add(@"Accept: */*");
-                wc.Headers.Add(@"Origin: https://www.bitchute.com");
-                wc.Headers.Add(@"Content-Type: application/x-www-form-urlencoded; charset=UTF-8");
-                wc.Headers.Add(@"Accept-Language: en-US,en;q=0.5");
-                wc.Headers.Add(@"X-Requested-With: XMLHttpRequest");
-                wc.Headers.Add($"Cookie: {cookieHeader}");
-                var body = AuthToken.GetSerializedToken(serializedPayload);
-                var response = await wc.UploadStringTaskAsync(new Uri(url), AuthToken.GetSerializedToken(serializedPayload));
-                
-            }
-            catch (Exception ex) {  Console.WriteLine(ex.Message); }
             return "";
         }
     }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <BitChute.Services.MainPlaybackSticky.ServiceWebView
-        android:id="@+id/webView2"
+        android:id="@+id/webView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"

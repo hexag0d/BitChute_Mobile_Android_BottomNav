@@ -178,14 +178,52 @@ namespace BitChute
 
         public static bool AppSettingsLoadingFromAndroid = false;
 
+        public class SessionState
+        {
+            private static string _csrfMiddlewareToken;
+            public static string CsrfMiddleWareToken {
+                get { return _csrfMiddlewareToken; }
+                set { _csrfMiddlewareToken = value;
+                }
+            }
+            private static string _csrfToken;
+            public static string CsrfToken {
+                get { return _csrfToken; }
+                set { _csrfToken = value;
+                    if (!AppSettingsLoadingFromAndroid)
+                        SendPrefSettingToAndroid("csrftoken", value);
+                }
+            }
+            private static string _cfuid;
+            public static string Cfuid {
+                get { return _cfuid; }
+                set { _cfuid = value;
+                    if (!AppSettingsLoadingFromAndroid)
+                        SendPrefSettingToAndroid("cfuid", value);
+                }
+            }
+            private static string _sessionId;
+            public static string SessionId {
+                get { return _sessionId; }
+                set { _sessionId = value;
+                    if (!AppSettingsLoadingFromAndroid)
+                        SendPrefSettingToAndroid("sessionid", SessionId);
+                }
+            }
+            public static void SaveSessionState()
+            {
+                SendPrefSettingToAndroid("csrftoken", CsrfToken);
+                SendPrefSettingToAndroid("cfuid", Cfuid);
+                SendPrefSettingToAndroid("sessionid", SessionId);
+            }
+        }
+
         /// <summary>
         /// Loads the stored android preferences for app
         /// and puts them into the static AppSettings class
         /// </summary>
         public static async Task<bool> LoadAllPrefsFromSettings()
         {
-            await Task.Run(() =>
-            {
                 try
                 {
                     AppSettingsLoadingFromAndroid = true;
@@ -205,12 +243,14 @@ namespace BitChute
                     BackgroundKey = Prefs.GetString("backgroundkey", "feed");
                     SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
                     SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+                    SessionState.CsrfToken = Prefs.GetString("csrftoken", "");
+                    SessionState.Cfuid = Prefs.GetString("cfuid", "");
+                    SessionState.SessionId = Prefs.GetString("sessionid", "");
                     UserWasLoggedInLastAppClose = Prefs.GetBoolean("userwasloggedinlastappclose", false);
-                    FirstTimeAppLoad = Prefs.GetBoolean("firsttimeappload", true);
+                    FirstTimeAppLoad = await Task.FromResult<bool>(Prefs.GetBoolean("firsttimeappload", true));
                 }
                 catch { }
-            });
-            await Task.Delay(2000);
+            
             AppSettingsLoadingFromAndroid = false;
             return true;
         }
@@ -233,6 +273,11 @@ namespace BitChute
                     return t5url;
             }
             return Https.URLs._homepage;
+        }
+
+        public class Debug
+        {
+            public static bool LoadWebViewsOnStart = false;
         }
 
         public class Logging

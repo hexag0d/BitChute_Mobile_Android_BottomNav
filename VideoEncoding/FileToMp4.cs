@@ -163,10 +163,7 @@ namespace MediaCodecHelper
             if (!BitChute.FileBrowser.GetExternalPermissions()) { return; }
              EncodeFileToMp4(inputPath, outputPath, true, inputUri); 
 		}
-
-        // For audio: http://stackoverflow.com/questions/22673011/how-to-extract-pcm-samples-from-mediacodec-decoders-output
-
-
+        
         private string EncodeFileToMp4(string inputPath, string outputPath, bool encodeAudio = true, Android.Net.Uri inputUri = null) {
             LatestInputVideoLength = AudioEncoding.GetVideoLength(inputPath, inputUri);
             LatestAudioInputFormat = AudioEncoding.GetAudioTrackFormat(inputPath, inputUri);
@@ -195,7 +192,7 @@ namespace MediaCodecHelper
 #if DEBUG
                 if (_frameCount >= 119 && AppSettings.Logging.SendToConsole)
                         System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp} " +
-                            $"956 | encoded bits {_bitsEncodedSoFar} of estimated {_estimatedTotalSize}");
+                            $" | encoded bits {_bitsEncodedSoFar} of estimated {_estimatedTotalSize}");
 #endif
                     // Acquire a new frame of input, and render it to the Surface.  If we had a
                     // GLSurfaceView we could switch EGL contexts and call drawImage() a second
@@ -268,7 +265,6 @@ namespace MediaCodecHelper
           */
         private void D(bool es)
         {
-            
             if (es)
             {
                 if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");

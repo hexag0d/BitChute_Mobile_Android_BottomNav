@@ -76,9 +76,12 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\FeedRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
+    <Compile Include="Fragments\FeedFragNative.cs" />
+    <Compile Include="ViewHolders\FeedViewHolder.cs" />
     <Compile Include="Web\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
@@ -94,6 +97,7 @@
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Web\Login.cs" />
+    <Compile Include="Web\Request.cs" />
     <Compile Include="Web\SearchOverride.cs" />
     <Compile Include="Services\MainPlaybackSticky.cs" />
     <Compile Include="Classes\TabStates.cs" />
@@ -377,6 +381,13 @@
     <AndroidResource Include="Resources\drawable\logo_bronze.png" />
     <AndroidResource Include="Resources\drawable\dislike.png" />
     <AndroidResource Include="Resources\drawable\like.png" />
+    <AndroidResource Include="Resources\layout\FeedLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\FeedCardView.axml" />
+    <AndroidResource Include="Resources\layout\Tab2WebView.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

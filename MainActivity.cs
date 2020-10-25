@@ -107,6 +107,7 @@ namespace BitChute
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Main = this;
             StartUp();
             _window = this.Window;
             if (Resources.Configuration.Orientation == Orientation.Landscape)
@@ -119,7 +120,7 @@ namespace BitChute
             {
                 AppState.Display.Horizontal = false;
             }
-            Main = this;
+            
             var mServiceIntent = new Intent(this, typeof(MainPlaybackSticky));
             StartService(mServiceIntent);
             //get the intent incase a notification started the activity
@@ -166,6 +167,7 @@ namespace BitChute
             RemoveShiftMode(NavigationView);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
             ViewPager.OffscreenPageLimit = 4;
+            
         }
 
         public static bool SplashScreenIsVisible;
@@ -186,6 +188,7 @@ namespace BitChute
 
         public static async void StartUp()
         {
+            //Web.ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
             await AppSettings.LoadAllPrefsFromSettings();
             await BitChute.Web.Startup.GetObjectsFromHtmlResponse();
             InitializeFragments();
@@ -193,20 +196,15 @@ namespace BitChute
 
         public static void InitializeFragments()
         {
-            Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-            Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-            Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
-            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-            Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
             Main.InitializeTabs();
             Main.FinalizeStartUp();
         }
 
-        public static HomePageFrag Fm0;
-        public static SubscriptionFrag Fm1;
-        public static FeedFrag Fm2;
-        public static MyChannelFrag Fm3;
-        public static SettingsFrag Fm4;
+        public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
+        public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
+        public static FeedFragNative Fm2 = FeedFragNative.NewInstance("Feed", "tab_playlist");
+        public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
+        public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
 
         void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
@@ -607,7 +605,8 @@ namespace BitChute
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            ForceAppIntoStickyBackground();
+            //ForceAppIntoStickyBackground();
+            FeedFragNative.GetSubscriptionFeed();
         }
 
         /// <summary>

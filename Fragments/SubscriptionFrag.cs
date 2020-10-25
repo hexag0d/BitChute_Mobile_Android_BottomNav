@@ -52,9 +52,9 @@ namespace BitChute.Fragments
                 if (FragmentContainerLayout == null)
                 { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab1FragLayout, container, false); }
 
-                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
+                Wv = FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView1);
                 if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
-                else  {  Wv.SetWebViewClient((Subs)WebViewClient); }
+                else  { Wv.SetWebViewClient((Subs)WebViewClient); }
                 Wv.RootUrl = RootUrl;
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -151,7 +151,7 @@ namespace BitChute.Fragments
             return innerHtml;
         }
 
-        private class ExtWebViewClient : WebViewClient
+        private class ExtWebViewClient : Android.Webkit.WebViewClient
         {
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)

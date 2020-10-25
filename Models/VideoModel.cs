@@ -82,13 +82,15 @@ namespace BitChute.Models
             //Title of Video
             public string Title { get; set; }
             //Description
-            public string Link { get; }
+            public string Link { get; set; }
             public string VideoId { get; set; }
             public System.Uri VideoUri { get; set; }
             public Android.Net.Uri VideoUriLocal { get; set; }
             public int Index { get; }
             public Drawable ThumbnailDrawable { get; set; }
             public Bitmap ThumbnailBitmap { get; set; }
+            public Android.Net.Uri ThumbnailUri { get; set; }
+            public string CreatorName { get; set; }
         }
     }
 }
