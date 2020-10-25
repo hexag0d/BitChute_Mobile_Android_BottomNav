@@ -89,8 +89,9 @@ namespace BitChute.Models
             public int Index { get; }
             public Drawable ThumbnailDrawable { get; set; }
             public Bitmap ThumbnailBitmap { get; set; }
-            public Android.Net.Uri ThumbnailUri { get; set; }
+            public string ThumbnailPath { get; set; }
             public string CreatorName { get; set; }
+            public int FragmentId { get; set; }
         }
     }
 }

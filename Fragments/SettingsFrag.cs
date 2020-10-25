@@ -21,7 +21,7 @@ using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
-    public class SettingsFrag : CommonWebViewFrag
+    public class SettingsFrag : CommonFrag
     {
         string _title;
         string _icon;
@@ -63,12 +63,12 @@ namespace BitChute.Fragments
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
             }
-
             //MainActivity.Main.FinalizeStartUp();
         }
         
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            this.Uid = new System.Random().Next(99999999);
             try
             {
                 if (FragmentContainerLayout == null)
@@ -79,9 +79,9 @@ namespace BitChute.Fragments
                     InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
                 if (SettingsTabLayout == null)
                     SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
-                TabFragmentLinearLayout = (LinearLayout)ViewHelpers.Tab4.FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
-                ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
-                ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
+                TabFragmentLinearLayout = (LinearLayout)FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
+                TabFragmentLinearLayout.RemoveAllViews();
+                TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
                 Wv.RootUrl = RootUrl;
                 if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
@@ -186,6 +186,7 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 if (AppSettings.Debug.LoadWebViewsOnStart) { BitChute.Web.ViewClients.LoadInitialUrls(); }
+                GetFragmentById(Uid, this);
             }
             catch (Exception ex) { }
             

@@ -10,10 +10,24 @@ using static BitChute.Models.VideoModel;
 
 public class FeedRecyclerViewAdapter : RecyclerView.Adapter
 {
-    public event EventHandler<int> ItemClick;
+    public event EventHandler<KeyValuePair<int,VideoCard>> ItemClick;
     //public static VideoCardSet _videoCardSet;
-    public static List<VideoCard> _videoCardNoCreators = new List<VideoCard>();
-    public static View itemView;
+    private List<VideoCard> _videoCardNoCreators;
+
+    public void UpdateDataSet(VideoCard vc)
+    {
+        if (_videoCardNoCreators == null) { _videoCardNoCreators = new List<VideoCard>(); }
+        _videoCardNoCreators.Add(vc);
+        this.NotifyDataSetChanged();
+    }
+
+    public List<VideoCard> UpdateDataSet(List<VideoCard> vcl, bool addToList = false)
+    {
+        if (_videoCardNoCreators == null) { _videoCardNoCreators = new List<VideoCard>(); }
+        if (addToList) { _videoCardNoCreators.AddRange(vcl); }
+        this.NotifyDataSetChanged();
+        return _videoCardNoCreators;
+    }
 
     public static FeedViewHolder vh;
 
@@ -61,26 +75,31 @@ public class FeedRecyclerViewAdapter : RecyclerView.Adapter
         return vh;
     }
 
+    //public async System.Threading.Tasks.Task<FeedViewHolder> GetViewHolder(RecyclerView.ViewHolder holder, int position)
+    //{
+    //    //var bmp = BitChute.Web.Request.GetBitmapDrawable(_videoCardNoCreators[position].ThumbnailPath).Result;
+
+    //         vh1 = holder as FeedViewHolder;
+    //        vh1.Image.SetImageBitmap(_videoCardNoCreators[position].ThumbnailBitmap);
+    //        vh1.Caption.Text = _videoCardNoCreators[position].Title;
+    //        vh1.Caption2.Text = _videoCardNoCreators[position].CreatorName;
+            
+
+    //    return vh1;
+    //}
+
     // Fill in the contents of the photo card (invoked by the layout manager):
     public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
         vh = holder as FeedViewHolder;
 
+        //GetViewHolder(holder, position);
         if (_videoCardNoCreators != null)
         {
-            //vh.Image.SetImageURI(_videoCardNoCreators[position].ThumbnailUri);
             vh.Image.SetImageBitmap(_videoCardNoCreators[position].ThumbnailBitmap);
             vh.Caption.Text = _videoCardNoCreators[position].Title;
             vh.Caption2.Text = _videoCardNoCreators[position].CreatorName;
         }
-        // Set the ImageView and TextView in this ViewHolder's CardView 
-        // from this position in the photo album:
-        //if (_videoCardSet != null)
-        //{
-        //    vh.Image.SetImageBitmap()
-        //    vh.Caption.Text = _videoCardSet[position].Title;
-        //    vh.Caption2.Text = _videoCardSet[position].Creator.Name;
-        //}
     }
 
     // Return the number of photos available in the photo album:
@@ -98,8 +117,10 @@ public class FeedRecyclerViewAdapter : RecyclerView.Adapter
     // Raise an event when the item-click takes place:
     void OnClick(int position)
     {
-        var pos = position;
         if (ItemClick != null)
-            ItemClick(this, position);
+        {
+            ItemClick(this, new KeyValuePair<int, VideoCard>(position, _videoCardNoCreators[position]));
+               
+        }           
     }
 }

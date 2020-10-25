@@ -82,6 +82,7 @@
     <Compile Include="Classes\AppState.cs" />
     <Compile Include="Fragments\FeedFragNative.cs" />
     <Compile Include="ViewHolders\FeedViewHolder.cs" />
+    <Compile Include="ViewModels\VideoDetailLoader.cs" />
     <Compile Include="Web\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
@@ -388,6 +389,18 @@
     <AndroidResource Include="Resources\layout\Tab2WebView.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\VideoDetailView.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\p2pstats.png" />
+    <AndroidResource Include="Resources\drawable\share.png" />
+    <AndroidResource Include="Resources\drawable\star.png" />
+    <AndroidResource Include="Resources\drawable\flagme.png" />
+    <AndroidResource Include="Resources\drawable\dollaSign.png" />
+    <AndroidResource Include="Resources\drawable\view.png" />
+    <AndroidResource Include="Resources\drawable\watchl8r.png" />
+    <AndroidResource Include="Resources\drawable\bell.png" />
+    <AndroidResource Include="Resources\drawable\addtoplaylist.png" />
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

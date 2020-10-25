@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using static BitChute.Web.Login;
 
 namespace BitChute.Web
 {
@@ -18,6 +19,7 @@ namespace BitChute.Web
                     _httpClient.DefaultRequestHeaders.Add("Host", "www.bitchute.com");
                     _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0");
                     _httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+                   
                     //_httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
                     _httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
                     _httpClient.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
@@ -124,6 +126,37 @@ namespace BitChute.Web
                 cookieString += cookie;
             }
             return cookieString;
+        }
+
+        public static Dictionary<string, string> GetCookieDictionary()
+        {
+            var cookieDict = new Dictionary<string, string>();
+
+            cookieDict.Add("Host", "www.bitchute.com");
+            cookieDict.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0");
+            cookieDict.Add("Accept-Language", "en-US,en;q=0.5");
+            cookieDict.Add("Accept", "video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5");
+            cookieDict.Add("Connection", "keep-alive");
+            cookieDict.Add("Upgrade-Insecure-Requests", "1");
+            cookieDict.Add("Cache-Control", "max-age=0");
+            cookieDict.Add("TE", "Trailers");
+            string cookieHeader = "";
+            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.CsrfToken))
+            {
+                cookieHeader = $"csrftoken={AppSettings.SessionState.CsrfToken};";
+            }
+            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfuid))
+            {
+                cookieHeader += $"__cfduid={AppSettings.SessionState.Cfuid};";
+            }
+            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId)) {
+                 cookieHeader += $"sessionid={AppSettings.SessionState.SessionId};";
+            }
+                
+            cookieHeader += "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+
+            cookieDict.Add("Cookie", cookieHeader);
+            return cookieDict;
         }
 
         public static Dictionary<string, string> CookieStore = new Dictionary<string, string>();

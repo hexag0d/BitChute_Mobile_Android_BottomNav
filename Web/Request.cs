@@ -9,8 +9,10 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using BitChute.Fragments;
 using HtmlAgilityPack;
 using Java.IO;
 using Java.Net;
@@ -23,6 +25,7 @@ namespace BitChute.Web
     {
         public class UrlStrings
         {
+            public static string Domain = "https://www.bitchute.com";
             public static string SubscriptionFullFeed = "https://www.bitchute.com/";
         }
 
@@ -31,17 +34,8 @@ namespace BitChute.Web
 
         public static async Task<Bitmap> GetBitmapDrawable(string url)
         {
-            //HttpURLConnection connection = (HttpURLConnection)new URL(url).OpenConnection();
-
             try {
-
                 var stream = await ImageHttpClient.GetStreamAsync(url);
-                //var request = ExtWebInterface.HttpClient.GetAsync(url).Result;
-                //var stream = await request.Content.ReadAsStreamAsync();
-                //connection.Connect();
-                //var stream = connection.InputStream;
-                //var bmpdrawable = Drawable.CreateFromResourceStreamAsync(stream)
-
                 return BitmapFactory.DecodeStream(stream);
             }
             catch (Exception ex)
@@ -51,7 +45,49 @@ namespace BitChute.Web
             return null;
         }
 
-        public static async Task<List<VideoCard>> GetVideoCardList()
+        public static void SendVideoCardListToFeedRecycler(VideoCard vc, Android.Support.V7.Widget.RecyclerView recyclerView, int id = -1)
+        {
+            if (GetFeedRecyclerViewAdapter == null)
+            {
+                List<VideoCard> vcl = new List<VideoCard>();
+                vcl.Add(vc);
+                GetFeedRecyclerViewAdapter = new FeedRecyclerViewAdapter(vcl);
+                GetFeedRecyclerViewAdapter.ItemClick += CommonFrag.GetFragmentById(id).RootVideoAdapter_ItemClick;
+                recyclerView.SetAdapter(GetFeedRecyclerViewAdapter);
+            }
+            else
+            {
+                GetFeedRecyclerViewAdapter.UpdateDataSet(vc);
+            }
+        }
+
+        private static FeedRecyclerViewAdapter _feedRecyclerAdapter;
+        public static FeedRecyclerViewAdapter GetFeedRecyclerViewAdapter { get { return _feedRecyclerAdapter; } set { _feedRecyclerAdapter = value; } }
+
+        public static void SendVideoCardListToFeedRecycler(List<VideoCard> vcl, Android.Support.V7.Widget.RecyclerView recyclerView, int id = -1)
+        {
+            if (GetFeedRecyclerViewAdapter == null)
+            {
+                GetFeedRecyclerViewAdapter = new FeedRecyclerViewAdapter(vcl);
+                GetFeedRecyclerViewAdapter.ItemClick += CommonFrag.GetFragmentById(id).RootVideoAdapter_ItemClick;
+                recyclerView.SetAdapter(GetFeedRecyclerViewAdapter);
+            }
+            else
+            {
+                GetFeedRecyclerViewAdapter.UpdateDataSet(vcl, true);
+            }
+        }
+
+        private static int _numberOfCardsInQueue;
+        private static List<VideoCard> _videoCardList = new List<VideoCard>();
+        public static async void AddSingleVideoToList(VideoCard vc, RecyclerView recyclerView, int fragId= -1)
+        {
+            vc.ThumbnailBitmap = await GetBitmapDrawable(vc.ThumbnailPath);
+
+            SendVideoCardListToFeedRecycler(vc, recyclerView, fragId);
+        }
+
+        public static async Task<List<VideoCard>> GetVideoCardList(RecyclerView recyclerView = null, int fragId = -1)
         {
             HttpClientHandler = new System.Net.Http.HttpClientHandler() { UseCookies = false };
             ImageHttpClient = new System.Net.Http.HttpClient(HttpClientHandler);
@@ -70,11 +106,15 @@ namespace BitChute.Web
                 {
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='listing-subscribed']"))
                     {
+                        int vcNum = -1;
                         foreach (HtmlNode videoCardNode in node.SelectNodes(".//div[@class='video-card']"))
                         {
+                            vcNum++;
                             VideoCard vc = new VideoCard();
                             //vc.ThumbnailUri = Android.Net.Uri.Parse(videoCardNode.SelectSingleNode(".//img").GetAttributeValue("data-src", ""));
-                            vc.ThumbnailBitmap = await GetBitmapDrawable(videoCardNode.SelectSingleNode(".//img").GetAttributeValue("data-src", ""));
+                            vc.ThumbnailPath = videoCardNode.SelectSingleNode(".//img").GetAttributeValue("data-src", "");
+                            vc.FragmentId = fragId;
+                            //vc.ThumbnailBitmap = await GetBitmapDrawable(videoCardNode.SelectSingleNode(".//img").GetAttributeValue("data-src", ""));
                             int nodeNumber = -1;
                             foreach (HtmlNode aNode in videoCardNode.SelectNodes(".//a[@class='spa']"))
                             {
@@ -83,7 +123,12 @@ namespace BitChute.Web
                                 else if (nodeNumber == 1) { vc.Title = aNode.InnerText; }
                                 else if (nodeNumber == 2) { vc.CreatorName = aNode.InnerText; }
                             }
-                            videoCards.Add(vc);
+                            if (vcNum >= 10)
+                            {
+
+                            }
+                            AddSingleVideoToList(vc, recyclerView, fragId);
+                            //videoCards.Add(vc);
                         }
                         //lstRecords.Add(record);
                     }
@@ -95,6 +140,13 @@ namespace BitChute.Web
 
             }
             return null;
+        }
+
+
+        public static string GetFullRequest(string afterRoot)
+        {
+            if (!afterRoot.StartsWith("/")) { afterRoot = afterRoot.Insert(0, @"/"); }
+            return $"{UrlStrings.Domain}{afterRoot}";
         }
     }
 }

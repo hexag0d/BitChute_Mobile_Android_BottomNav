@@ -18,6 +18,7 @@ using Android.Views;
 using System.Reflection;
 using System.ComponentModel;
 using BitChute.Web;
+using static BitChute.PlaystateManagement;
 
 namespace BitChute.Services
 {
@@ -49,6 +50,9 @@ namespace BitChute.Services
         private static Java.Util.Timer _timer = new Java.Util.Timer();
         private static NotificationTimerTask _timerTask = new NotificationTimerTask();
 
+        public delegate void PlaystateEventDelegate(PlaystateEventArgs _args);
+        public static event PlaystateEventDelegate PlaystateChanged;
+
         public static MainPlaybackSticky ExtStickyServ;
         public static PowerManager Pm;
 
@@ -75,6 +79,11 @@ namespace BitChute.Services
         //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
         #endregion
 
+        public static void OnPlaystateChanged(PlaystateEventArgs e)
+        {
+
+        }
+
         #region mediaplayer
         /// <summary>
         /// initializes the mediaplayer object on tab of your choice.  
@@ -82,73 +91,80 @@ namespace BitChute.Services
         /// </summary>
         /// <param name="mp"></param>
         /// <returns></returns>
-        public static MediaPlayer InitializePlayer(int tab, Android.Net.Uri uri, Context ctx)
+        public static async Task<MediaPlayer> InitializePlayer(int id, Android.Net.Uri uri, Context ctx, string mediaPath = null)
         {
             if (ctx == null)
             {
                 ctx = Android.App.Application.Context;
             }
-            bool tbo = false;
-            if (tab == -1)
-            {
-                tab = MainActivity.ViewPager.CurrentItem;
-            }
-            if (tab == -2)
-            {
-                tbo = true;
-                tab = -1;
-            }
+            var cookieHeader = ExtWebInterface.GetCookieDictionary();
 
             // we might be able to eventually just use one media player but I think the buffering will be better
             // with a few of them, plus this way you can queue up videos and instantly switch
-            if (!MainPlaybackSticky.MediaPlayerDictionary.ContainsKey(tab))
+            if (!MainPlaybackSticky.MediaPlayerDictionary.ContainsKey(id))
             {
-                MainPlaybackSticky.MediaPlayerDictionary.Add(tab, new MediaPlayer());
+                MainPlaybackSticky.MediaPlayerDictionary.Add(id, new MediaPlayer());
             }
-            else if (MediaPlayerDictionary[tab] == null)
+            else if (MediaPlayerDictionary[id] == null)
             {
-                MediaPlayerDictionary[tab] = new MediaPlayer();
+                MediaPlayerDictionary[id] = new MediaPlayer();
             }
-            //I tried to figure out how to switch the data source on an existing media player and eventually gave up lol
             else
             {
-                MediaPlayerDictionary[tab].Reset();
-                MediaPlayerDictionary[tab].Release();
-
-                //this is odd, have to set the media player back to null and re-instantiate every time the video loads
-                //I couldn't get it working without doing this
-                MediaPlayerDictionary[tab] = null;
-                MediaPlayerDictionary[tab] = new MediaPlayer();
+                MediaPlayerDictionary[id].Reset();
+                MediaPlayerDictionary[id].Release();
+                
+                MediaPlayerDictionary[id] = null;
+                MediaPlayerDictionary[id] = new MediaPlayer();
             }
-
-            if (uri != null)
+            if (mediaPath != null) { await MediaPlayerDictionary[id].SetDataSourceAsync(mediaPath); }
+            else 
             {
-                MediaPlayerDictionary[tab].SetDataSource(ctx, uri);
+                //await MediaPlayerDictionary[id].SetDataSourceAsync(ctx, uri);
+                await MediaPlayerDictionary[id].SetDataSourceAsync(Android.App.Application.Context, uri, cookieHeader);
             }
-
-            if (tab != 1)
-                PlaystateManagement.MediaPlayerNumberIsStreaming = tab;
+            MediaPlayerDictionary[id].PrepareAsync();
+            PlaystateChanged.Invoke(new PlaystateEventArgs(-1, false, false, false, id, false, false, true, id));
 
             //Wake mode will be partial to keep the CPU still running under lock screen
-            MediaPlayerDictionary[tab].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
+            MediaPlayerDictionary[id].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
 
             //When we have prepared the song start playback
-            MediaPlayerDictionary[tab].Prepared += (sender, args) => ExtStickyServ.Play();
+            MediaPlayerDictionary[id].Prepared += (sender, args) => ExtStickyServ.Play(id, PlayerType.NativeMediaPlayer);
 
             //When we have reached the end of the song stop ourselves, however you could signal next track here.
-            MediaPlayerDictionary[tab].Completion += (sender, args) => OnVideoFinished(false, tab);
+            MediaPlayerDictionary[id].Completion += (sender, args) => OnVideoFinished(false, id);
 
-            MediaPlayerDictionary[tab].Error += (sender, args) =>
+            MediaPlayerDictionary[id].Error += (sender, args) =>
             {
                 //playback error
                 Console.WriteLine("Error in playback resetting: " + args.What);
                 Stop();//this will clean up and reset properly.
             };
+            
+            return MediaPlayerDictionary[id];
+        }
 
-            if (!tbo)
-                MainPlaybackSticky.MediaPlayerDictionary[tab].Prepare();
 
-            return MediaPlayerDictionary[tab];
+        public static void InitializeMediaController(VideoView vv, int id)
+        {
+            if (!MainPlaybackSticky.MediaControllerDictionary.ContainsKey(id))
+            {
+                MainPlaybackSticky.MediaControllerDictionary.Add(id, ExtStickyServ.InitializeMediaController(Android.App.Application.Context));
+            }
+            vv.SetMediaController(MainPlaybackSticky.MediaControllerDictionary[id]);
+            MainPlaybackSticky.MediaControllerDictionary[id].SetAnchorView((View)ViewHelpers.Main.ContentRelativeLayout.Parent);
+
+            try
+            {
+                MainPlaybackSticky.MediaControllerDictionary[id].Enabled = true;
+                MainPlaybackSticky.MediaControllerDictionary[id].Show(10000);
+                //MainPlaybackSticky.MediaControllerDictionary[MainActivity.ViewPager.CurrentItem].Show();
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+            }
         }
 
         public ExtMediaController InitializeMediaController(Context ctx)
@@ -160,34 +176,40 @@ namespace BitChute.Services
         #endregion
 
         #region playback methods
-        private async void Play()
+        private async void Play(int id = -1, PlayerType playerType = PlayerType.None)
         {
-            if (PlaystateManagement.MediaPlayerIsStreaming)
+            if ((PlaystateManagement.MediaPlayerIsStreaming && PlaystateManagement.MediaPlayerIsQueued) 
+                || playerType == PlayerType.NativeMediaPlayer)
             {
                 await Task.Run(() =>
                 {
-                    if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] != null)
+                    if (MediaPlayerDictionary[id] != null)
                     {
-                        MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Start();
+                        MediaPlayerDictionary[id].Start();
                         return;
                     }
                     try  { AquireWifiLock(); }
                     catch {  }
-                    if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                    if (MediaPlayerDictionary[id].IsPlaying)
                     {
-                        PlaystateManagement.MediaPlayerNumberIsStreaming = MainActivity.ViewPager.CurrentItem;
+                        PlaystateChanged.Invoke(new PlaystateEventArgs(-1, false, false, false, id, false, false, false, id));
                     }
                 });
             }
             else
             {
                 PlaystateManagement.UserRequestedBackgroundPlayback = true;
+                PlaystateChanged.Invoke(new PlaystateEventArgs(id, true, false, false));
                 StartVideoInBkgrd();
             }
         }
 
         public static void SkipToPrev(int id = -1)
         {
+            if (PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlayerType.NativeMediaPlayer)
+            {
+
+            }
             if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
             {
                 try {
@@ -218,6 +240,7 @@ namespace BitChute.Services
 
         public static void SkipToNext(VideoCard vc)
         {
+
             if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
             {
                 SendWebViewNextVideoCommand();
@@ -226,16 +249,18 @@ namespace BitChute.Services
 
         private void Pause() { PlaystateManagement.SendPauseVideoCommand(); }
 
-        public static void Stop()
+        public static void Stop(int id = -1, PlayerType playerType = PlayerType.None)
         {
-            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem] == null)
-                return;
+            if (playerType == PlayerType.NativeMediaPlayer)
+            {
+                if (MediaPlayerDictionary[id] == null)
+                    return;
 
-            if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
-                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Stop();
+                if (MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].IsPlaying)
+                    MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Stop();
 
-            MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
-            _paused = false;
+                MediaPlayerDictionary[MainActivity.ViewPager.CurrentItem].Reset();
+            }
         }
 
         public static bool OnVideoFinished(bool overide, int tab)
@@ -315,6 +340,7 @@ namespace BitChute.Services
 
         public override void OnCreate()
         {
+            PlaystateChanged += OnPlaystateChanged;
             ExtStickyServ = this;
             base.OnCreate();
             //Find our audio and notificaton managers
@@ -522,7 +548,11 @@ namespace BitChute.Services
         {
             get
             {
-                return 100;
+                if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+                {
+                    return 100;
+                }
+                return 0;
             }
         }
 
@@ -530,27 +560,51 @@ namespace BitChute.Services
         {
             get
             {
-                return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].CurrentPosition;
+                if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+                {
+                    return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].CurrentPosition;
+                }
+                return 0;
             }
             set
             {
-                MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].SeekTo(value);
+                if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+                {
+                    MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].SeekTo(value);
+                }
             }
         }
 
-        public int Duration { get { return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].Duration; } }
+        public int Duration {
+            get
+            {
+                if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+                {
+                    return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].Duration;
+                }
+                return 0;
+            }
+        }
 
         public bool IsPlaying
         {
             get
             {
-                return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
+                if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+                {
+                    return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
+                }
+                else { return false; }
             }
         }
 
         public bool CanPause()
         {
-            return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
+            if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+            {
+                return MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].IsPlaying;
+            }
+            return false;
         }
 
         public bool CanSeekBackward() {return true; }

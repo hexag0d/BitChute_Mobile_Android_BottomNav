@@ -11,7 +11,7 @@ using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
-    public class SubscriptionFrag : CommonWebViewFrag
+    public class SubscriptionFrag : CommonFrag
     {
         string _title;
         string _icon;
@@ -64,7 +64,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-
+                GetFragmentById(this.Uid, this);
                 return FragmentContainerLayout;
             }
             catch { }

@@ -61,6 +61,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.SettingsFrag;
+using Android.Util;
 
 namespace BitChute
 {
@@ -110,6 +111,12 @@ namespace BitChute
             Main = this;
             StartUp();
             _window = this.Window;
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager.DefaultDisplay.GetMetrics(metrics);
+
+            AppState.Display.ScreenHeight = metrics.HeightPixels;
+            AppState.Display.ScreenWidth = metrics.WidthPixels;
+
             if (Resources.Configuration.Orientation == Orientation.Landscape)
             {
                 AppState.Display.Horizontal = true;
@@ -142,7 +149,7 @@ namespace BitChute
             base.OnCreate(savedInstanceState);
             _window.AddFlags(_winFlagUseHw);
             SetContentView(Resource.Layout.Main);
-
+            ViewHelpers.Main.ContentRelativeLayout = FindViewById<Android.Widget.RelativeLayout>(Resource.Id.activityMain);
             CreateNotificationChannel();
             MainPlaybackSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
@@ -549,7 +556,7 @@ namespace BitChute
 
         public void HomeLongClickListener(object sender, LongClickEventArgs e)
         {
-            HomePageFrag.SwapLoginView();
+            Fm0.SwapLoginView();
         }
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
@@ -606,7 +613,7 @@ namespace BitChute
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
             //ForceAppIntoStickyBackground();
-            FeedFragNative.GetSubscriptionFeed();
+            Fm2.GetSubscriptionFeed();
         }
 
         /// <summary>
@@ -840,7 +847,12 @@ namespace BitChute
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();
             }
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager.DefaultDisplay.GetMetrics(metrics);
 
+            AppState.Display.ScreenHeight = metrics.HeightPixels;
+            AppState.Display.ScreenWidth = metrics.WidthPixels;
+            
             if (!AppSettings.HideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {
                 NavTimeout = false;

@@ -97,6 +97,7 @@ namespace BitChute
         {
             public static View FragmentContainerLayout { get; set; }
             public static View WebViewFragmentLayout { get; set; }
+            public static View VideoDetailLayout { get; set; }
             public static View FeedView { get; set; }
             public static WebView Wv { get; set; }
             public static View DownloaderLayout { get; set; }

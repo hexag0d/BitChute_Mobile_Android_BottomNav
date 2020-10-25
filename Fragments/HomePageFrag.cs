@@ -14,7 +14,7 @@ using System;
 
 namespace BitChute.Fragments
 {
-    public class HomePageFrag : CommonWebViewFrag
+    public class HomePageFrag : CommonFrag
     {
         string _title;
         string _icon;
@@ -85,6 +85,7 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 SwapLoginView();
+                GetFragmentById(this.Uid, this);
                 return FragmentContainerLayout;
             }
             catch { }
@@ -100,7 +101,7 @@ namespace BitChute.Fragments
             ViewHelpers.Main.PasswordTextBox.Text = "";
         }
 
-        public static void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
+        public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
             SwapLoginView();
         }
@@ -116,17 +117,17 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public static void SwapLoginView()
+        public  void SwapLoginView()
         {
             if (!LoginVisible)
             {
-                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
-                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(ViewHelpers.Main.LoginLayout);
+                TabFragmentRelativeLayout.RemoveAllViews();
+               TabFragmentRelativeLayout.AddView(ViewHelpers.Main.LoginLayout);
             }
             else
             {
-                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
-                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(ViewHelpers.Tab0.WebViewFragmentLayout);
+                TabFragmentRelativeLayout.RemoveAllViews();
+               TabFragmentRelativeLayout.AddView(ViewHelpers.Tab0.WebViewFragmentLayout);
             }
             LoginVisible = !LoginVisible;
         }

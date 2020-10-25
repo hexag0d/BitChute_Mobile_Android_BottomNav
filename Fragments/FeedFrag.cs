@@ -12,7 +12,7 @@ using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
-    public class FeedFrag : CommonWebViewFrag
+    public class FeedFrag : CommonFrag
     {
         string _title;
         string _icon;

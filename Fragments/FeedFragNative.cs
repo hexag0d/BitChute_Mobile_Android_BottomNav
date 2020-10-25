@@ -12,10 +12,11 @@ using static BitChute.Web.ViewClients;
 using BitChute.ViewHolders;
 using Android.Widget;
 using Android.Support.V7.Widget;
+using static BitChute.Models.VideoModel;
 
 namespace BitChute.Fragments
 {
-    public class FeedFragNative : CommonWebViewFrag
+    public class FeedFragNative : CommonFrag
     {
         string _title;
         string _icon;
@@ -65,6 +66,7 @@ namespace BitChute.Fragments
                 {
                     WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab2WebView, container, false);
                 }
+                if (VideoDetailView == null) { VideoDetailView = inflater.Inflate(Resource.Layout.VideoDetailView, container, false); }
                 Wv = (ServiceWebView)FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
                 Wv.RootUrl = RootUrl;
                 if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
@@ -78,23 +80,22 @@ namespace BitChute.Fragments
                 }
                 Wv.Settings.DisplayZoomControls = false;
                 SwapFeedView();
-                this.GetRecyclerAdapter(container);
+                GetRecyclerFeedAdapter(container);
+                VideoDetail = new ViewModel.VideoDetailLoader(TabFragmentRelativeLayout, null, this.Uid);
+                GetFragmentById(this.Uid, this);
                 return FragmentContainerLayout;
             }
             catch { }
             return null;
         }
 
-        public static RecyclerView _feedRecyclerView;
-        public static LinearLayoutManager _layoutManager;
-
-        public void GetRecyclerAdapter(ViewGroup container)
+        public void GetRecyclerFeedAdapter(ViewGroup container)
         {
-            _feedRecyclerView = FragmentContainerLayout.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
-            _feedRecyclerView.NestedScrollingEnabled = false;
-            _layoutManager = new LinearLayoutManager(container.Context);
+            FeedRecyclerView = FragmentContainerLayout.FindViewById<RecyclerView>(Resource.Id.feedRecyclerView);
+            FeedRecyclerView.NestedScrollingEnabled = false;
+            LayoutManager = new LinearLayoutManager(container.Context);
 
-            _feedRecyclerView.SetLayoutManager(_layoutManager);
+            FeedRecyclerView.SetLayoutManager(LayoutManager);
             //var _rootAdapter = GetFeedAdapter();
            // _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
            // _recycleView.SetAdapter(_rootAdapter);
@@ -106,9 +107,14 @@ namespace BitChute.Fragments
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void RootVideoAdapter_ItemClick(object sender, int e)
+        public new void RootVideoAdapter_ItemClick(object sender, KeyValuePair<int, VideoCard> e)
         {
-            
+            if (FeedVisible) {
+
+
+                //Wv.LoadUrl(Request.GetFullRequest(e.Value));
+
+            }
         }
 
 
@@ -117,7 +123,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public static void SwapFeedView()
+        public void SwapFeedView()
         {
             if (!FeedVisible)
             {
@@ -132,13 +138,9 @@ namespace BitChute.Fragments
             FeedVisible = !FeedVisible;
         }
 
-        public static async void GetSubscriptionFeed()
+        public void GetSubscriptionFeed()
         {
-            var vcList = await BitChute.Web.Request.GetVideoCardList();
-            var frva = new FeedRecyclerViewAdapter(vcList);
-
-            frva.ItemClick += RootVideoAdapter_ItemClick;
-             _feedRecyclerView.SetAdapter(frva);
+            BitChute.Web.Request.GetVideoCardList(FeedRecyclerView, this.Uid);
         }
 
         public static FeedRecyclerViewAdapter GetFeedAdapter()

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+	android:id="@+id/videoDetailView"
+	android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/videoLayout" >
+		<TextView
+			android:text="Title"
+			android:layout_width="match_parent"
+			android:textSize="60px"
+			android:textColor="#ffffff"
+			android:layout_height="match_parent"
+
+			android:id="@+id/videoDetailTitleTextView" />
+			<LinearLayout
+				android:orientation="vertical"
+		
+				
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/videoLayoutSlim" >
+				<VideoView
+					
+				android:layout_width="match_parent"
+				android:layout_height="200dp"
+				android:id="@+id/videoView" />
+			</LinearLayout>
+	</LinearLayout>
+  <RelativeLayout
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
+	<ScrollView
+		android:orientation="vertical"
+		android:id="@+id/videoDetailScrollView"
+			android:layout_alignStart="@id/videoLayout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		 <LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/videoMetaLayoutFull">
+			<LinearLayout
+				android:orientation="horizontal"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_height="30dp"
+				android:layout_width="match_parent"
+				android:id="@+id/videoMetaLayout">
+				<RelativeLayout
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="fill_parent"
+				android:layout_height="30dp"
+				android:id="@+id/relativeLayout1">
+					<LinearLayout
+					android:orientation="horizontal"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="wrap_content"
+					android:layout_height="30dp"
+					android:layout_alignParentLeft="true"
+					android:id="@+id/likeDislikeLayout">
+						<ImageView
+						android:src="@drawable/view"
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:id="@+id/imageView1"/>
+						<TextView
+							android:text="[vc]"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:textColor="@android:color/white"
+							android:id="@+id/viewCountTextView" />
+						<TextView
+							android:text="           |"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:textColor="@android:color/white"
+							android:id="@+id/textView4" />
+						<TextView
+							android:text="0"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:textColor="@android:color/white"
+							android:id="@+id/likeCountTextView" />
+							<ImageView
+								android:src="@drawable/like"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:scaleType="fitStart"
+							android:id="@+id/likeButtonImageView" />
+						<TextView
+							android:text="|"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:textColor="@android:color/white"
+							android:id="@+id/textView5" />
+						<TextView
+							android:text="0"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:textColor="@android:color/white"
+							android:id="@+id/dislikeCountTextView" />
+						<ImageView
+						android:src="@drawable/like"
+								android:layout_width="28.7dp"
+						android:layout_height="match_parent"
+						android:scaleType="fitStart"
+						android:id="@+id/dislikeButtonImageView"
+						android:rotation="180" />
+						<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/imageButton7" />
+					</LinearLayout>
+					<LinearLayout
+						android:orientation="horizontal"
+						android:minWidth="25px"
+						android:minHeight="25px"
+						android:layout_width="wrap_content"
+						android:layout_height="30dp"
+						android:layout_alignParentRight="true"
+						android:id="@+id/extendedVideoControlLayout">
+						<ImageView
+						android:layout_width="30dp"
+						android:src="@drawable/star"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:id="@+id/favoriteImageView" />
+						<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:src="@drawable/addtoplaylist"
+						android:id="@+id/addToPlaylistImageView" />
+						<ImageView
+							android:src="@drawable/flagme"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:scaleType="fitStart"
+							android:id="@+id/flagMeImageView" />
+						<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:src="@drawable/p2pstats"
+						android:id="@+id/p2pStatsImageView" />
+						<ImageView
+						android:layout_width="30dp"
+						android:layout_height="30dp"
+						android:scaleType="fitStart"
+						android:src="@drawable/share"
+						android:id="@+id/shareImageView"
+							/>
+					</LinearLayout>
+				</RelativeLayout>
+			</LinearLayout>
+			<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/videoMetaLowerLayout">
+				<LinearLayout
+				android:orientation="vertical"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_height="match_parent"
+				android:id="@+id/linearLayout3"
+				android:layout_width="150dp">
+					<ImageView
+					android:src="@android:drawable/ic_menu_gallery"
+					android:layout_width="100dp"
+					android:layout_height="100dp"
+					android:id="@+id/creatorAvatarImageView" />
+					<LinearLayout
+						android:orientation="horizontal"
+						android:minWidth="25px"
+						android:minHeight="25px"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:id="@+id/linearLayout4">
+						<TextView
+						android:text="[creator name]"
+						android:textAppearance="?android:attr/textAppearanceMedium"
+						android:layout_width="wrap_content"
+						android:textColor="#ffffff"
+						android:layout_height="match_parent"
+						android:id="@+id/videoDetailCreatorName" />
+					</LinearLayout>
+					<LinearLayout
+						android:orientation="horizontal"
+						android:minWidth="25px"
+						android:minHeight="25px"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:id="@+id/linearLayout7">
+						<TextView
+						android:text="Small Text"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/descriptionTextView" />
+					</LinearLayout>
+				</LinearLayout>
+				<LinearLayout
+					android:orientation="vertical"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="fill_parent"
+					android:id="@+id/socialMediaContainer">
+					<LinearLayout
+						android:orientation="horizontal"
+						android:minWidth="25px"
+						android:minHeight="140px"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:id="@+id/linearLayout11">
+						<ImageView
+							android:src="@drawable/dollasign"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:id="@+id/dollarSignImageView" />
+						<Button
+							android:text="Subscribe"
+							android:backgroundTint="@android:color/holo_red_dark"
+							android:layout_width="wrap_content"
+							android:textColor="#ffffff"
+							android:layout_height="50dp"
+							android:id="@+id/creatorSubscribeButton"
+							 />
+						<ImageView
+							android:src="@drawable/bell"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:id="@+id/bellNotificationImageView" />
+						<TextView
+							android:text="    "
+							android:textAppearance="?android:attr/textAppearanceSmall"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:id="@+id/textView2" />
+					</LinearLayout>
+					<LinearLayout
+						android:orientation="horizontal"
+						android:minWidth="25px"
+						android:minHeight="25px"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:id="@+id/linearLayout6">
+						<TextView
+							android:text="[subcount]"
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:layout_width="wrap_content"
+							android:textColor="#ffffff"
+							android:layout_height="match_parent"
+							android:id="@+id/creatorSubscriberCount" />
+					</LinearLayout>
+	            </LinearLayout>
+			</LinearLayout>
+			<LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/linearLayout10">
+				<RelativeLayout
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/lowerRelativeLayout1">
+					<LinearLayout
+					android:orientation="vertical"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_alignParentTop="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/commentsCardViewLayout">
+						<android.support.v7.widget.RecyclerView
+						android:id="@+id/commentRecyclerView"
+						android:scrollbars="vertical"
+						android:layout_width="fill_parent"
+						android:nestedScrollingEnabled="false"
+						android:layout_height="fill_parent" />
+					</LinearLayout>
+				</RelativeLayout>
+			</LinearLayout>		
+		</LinearLayout>
+	</ScrollView>
+		<LinearLayout
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="100dp"
+			android:background="#ffffff"
+			android:gravity="top"
+			android:layout_alignParentBottom="true"
+			android:visibility="gone"
+			android:id="@+id/commentLeaverLayout" >
+			<RelativeLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent">
+			<MultiAutoCompleteTextView
+				android:layout_width="match_parent"
+				android:layout_height="fill_parent"
+				android:textColor="@android:color/white"
+				android:textAlignment="viewStart"
+				android:layout_alignParentTop="true"
+				android:shadowColor="#ffffff"
+					
+					android:background="#202020"
+					
+				android:visibility="visible"
+				android:id="@+id/commentEntryText" />
+				<Button
+							android:text="Post"
+							android:backgroundTint="@android:color/holo_red_dark"
+							android:layout_width="wrap_content"
+							android:textColor="#ffffff"
+							android:layout_height="40dp"
+					android:gravity="top"
+					android:layout_alignParentBottom="true"
+					android:layout_alignParentRight="true"
+							android:id="@+id/sendCommentButton"/>
+			</RelativeLayout>
+		</LinearLayout>
+  </RelativeLayout>
+</LinearLayout>

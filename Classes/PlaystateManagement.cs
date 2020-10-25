@@ -22,13 +22,17 @@ namespace BitChute
         private static bool _webViewMediaPlayerIsStreaming = false;
         private static bool _webViewMediaPlayerAutoPlayDetected = false;
         private static int _webViewMediaPlayerNumberIsStreaming = -1;
+        private static bool _nativeMediaPlayerIsStreaming = false;
+        private static int _nativeMediaPlayerNumberIsStreaming = -1;
+        private static bool _nativeMediaPlayerIsQueued = false;
+        private static int _nativeMediaPlayerNumberIsQueued = -1;
 
         public class PlaystateEventArgs : EventArgs
         {
             public PlaystateEventArgs(
                 int webViewId = -1, bool webViewPlayRequested = false, bool webViewPauseRequested = false,
                 bool webViewAutoPlayDetected = false, int nativeMediaPlayerNumber = -1, bool nativeMediaPlayerPlayRequested = false,
-                bool nativeMediaPlayerStopRequested = false)
+                bool nativeMediaPlayerStopRequested = false, bool nativeMediaPlayerQueueRequested = false, int nativeMediaPlayerNumberQueued = -1)
             {
                 if (webViewPlayRequested)
                 {
@@ -36,6 +40,7 @@ namespace BitChute
                         WebViewPlayerIsStreaming = true;
                         WebViewPlayerNumberIsStreaming = webViewId;
                         PlayerTypeQueued(PlayerType.WebViewPlayer);
+                        PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
                     }
                     else { MediaPlayerIsStreaming = false; }
                 }
@@ -45,31 +50,59 @@ namespace BitChute
                     WebViewPlayerNumberIsStreaming = webViewId;
                     MediaPlayerIsStreaming = false;
                     PlayerTypeQueued(PlayerType.WebViewPlayer);
+                    PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
                 }
                 if (webViewAutoPlayDetected)
                 {
                     WebViewPlayerAutoPlayDetected(webViewId);
                     PlayerTypeQueued(PlayerType.WebViewPlayer);
+                    PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
+                }
+                else if (nativeMediaPlayerPlayRequested)
+                {
+                    _nativeMediaPlayerIsStreaming = true;
+                    _nativeMediaPlayerNumberIsStreaming = nativeMediaPlayerNumber;
+                    _webViewMediaPlayerIsStreaming = false;
+                    PlayerTypeQueued(PlayerType.NativeMediaPlayer);
+                    PlayerTypeCurrentlyStreaming(PlayerType.NativeMediaPlayer);
                 }
             }
             public bool WebViewMediaPlayerIsStreaming { get { return WebViewPlayerIsStreaming; } }
             public int WebViewMediaPlayerNumberIsStreaming { get { return WebViewPlayerNumberIsStreaming; } }
             public bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
             public int NativeMediaPlayerNumberIsStreaming { get { return MediaPlayerNumberIsStreaming; } }
+            public int NativeMediaPlayerNumberIsQueued { get { return _nativeMediaPlayerNumberIsQueued; } }
+            public bool NativeMediaPlayerIsQueued { get { return _nativeMediaPlayerIsQueued; } }
         }
 
         /// <summary>
-        /// there are different media players and this keeps track of which one is playing
         /// 
-        /// returns -1 if none are playing otherwise it's 0-? coinciding with the tab played from
+        /// the int is the id of the fragment that spawned the player
         /// </summary>
-        public static int MediaPlayerNumberIsStreaming { get; set; }
+        public static int MediaPlayerNumberIsStreaming {
+            get { return _nativeMediaPlayerNumberIsStreaming; }
+            set { _nativeMediaPlayerNumberIsStreaming = value; }
+        }
 
         /// <summary>
         /// this bool is set true when a native media player is currently streaming
         /// it should be set to false when WebView is streaming audio
         /// </summary>
-        public static bool MediaPlayerIsStreaming = false;
+        public static bool MediaPlayerIsStreaming
+        {
+            get { return _nativeMediaPlayerIsStreaming; }
+            set { _nativeMediaPlayerIsStreaming = value; }
+        }
+
+        public static int MediaPlayerNumberIsQueued {
+            get { return _nativeMediaPlayerNumberIsQueued; }
+            set { _nativeMediaPlayerNumberIsQueued = value; }
+        }
+
+        public static bool MediaPlayerIsQueued {
+            get { return _nativeMediaPlayerIsQueued; }
+            set { _nativeMediaPlayerIsQueued = value; }
+        }
 
         /// <summary>
         /// this keeps track of which webview is currently streaming video
@@ -109,6 +142,14 @@ namespace BitChute
             if (playerType == PlayerType.None) { playerType = _playerTypeIsQueued; }
             else { _playerTypeIsQueued = playerType; }
             return _playerTypeIsQueued;
+        }
+
+        private static PlayerType _playerTypeCurrentlyStreaming = PlayerType.None;
+        public static PlayerType PlayerTypeCurrentlyStreaming(PlayerType playerType = PlayerType.None)
+        {
+            if (playerType != PlayerType.None) { _playerTypeCurrentlyStreaming = playerType; return _playerTypeCurrentlyStreaming; }
+            if (playerType == PlayerType.None) { _playerTypeCurrentlyStreaming = playerType; return _playerTypeCurrentlyStreaming; }
+            return _playerTypeCurrentlyStreaming;
         }
 
         public enum PlayerType

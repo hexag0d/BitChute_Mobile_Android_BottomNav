@@ -28,6 +28,45 @@ namespace BitChute.ViewHolders
         }
 
         // Get references to the views defined in the CardView layout.
+        public FeedViewHolder(View itemView, Action<KeyValuePair<int, KeyValuePair<int, string>>> listener) : base(itemView)
+        {
+            // Locate and cache view references:
+            Image = itemView.FindViewById<ImageView>(Resource.Id.feedImageView);
+            Caption = itemView.FindViewById<TextView>(Resource.Id.feedTitleCaptionTextView);
+            Caption2 = itemView.FindViewById<TextView>(Resource.Id.feedNameCaptionTextView);
+
+            // Detect user clicks on the item view and report which item
+            // was clicked (by layout position) to the listener:
+            //itemView.Click += (sender, e) => listener(base.LayoutPosition);
+        }
+
+        // Get references to the views defined in the CardView layout.
+        public FeedViewHolder(View itemView, Action<KeyValuePair<int, string>> listener) : base(itemView)
+        {
+            // Locate and cache view references:
+            Image = itemView.FindViewById<ImageView>(Resource.Id.feedImageView);
+            Caption = itemView.FindViewById<TextView>(Resource.Id.feedTitleCaptionTextView);
+            Caption2 = itemView.FindViewById<TextView>(Resource.Id.feedNameCaptionTextView);
+
+            // Detect user clicks on the item view and report which item
+            // was clicked (by layout position) to the listener:
+            //itemView.Click += (sender, e) => listener(base.LayoutPosition);
+        }
+
+        // Get references to the views defined in the CardView layout.
+        public FeedViewHolder(View itemView, Action<string> listener) : base(itemView)
+        {
+            // Locate and cache view references:
+            Image = itemView.FindViewById<ImageView>(Resource.Id.feedImageView);
+            Caption = itemView.FindViewById<TextView>(Resource.Id.feedTitleCaptionTextView);
+            Caption2 = itemView.FindViewById<TextView>(Resource.Id.feedNameCaptionTextView);
+
+            // Detect user clicks on the item view and report which item
+            // was clicked (by layout position) to the listener:
+            
+        }
+
+        // Get references to the views defined in the CardView layout.
         public FeedViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             // Locate and cache view references:

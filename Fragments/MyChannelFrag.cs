@@ -17,7 +17,7 @@ using static BitChute.Web.ViewClients;
 
 namespace BitChute.Fragments
 {
-    public class MyChannelFrag : CommonWebViewFrag
+    public class MyChannelFrag : CommonFrag
     {
         string _title;
         string _icon;
@@ -103,6 +103,8 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
+                this.Uid = new System.Random().Next(99999999);
+                GetFragmentById(this.Uid, this);
             }
             catch (Exception ex) { }
             return ViewHelpers.Tab3.TabFragmentLinearLayout;

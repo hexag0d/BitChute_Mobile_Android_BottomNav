@@ -219,9 +219,9 @@ namespace BitChute.Web
             }
         }
 
-        public class BaseWebViewClient : Android.Webkit.WebViewClient //WebViewClient shared between all applicable tabs
+        public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
         {
-            public WebViewClient()
+            public BaseWebViewClient()
             {
                 if (PlaystateChanged == null) PlaystateChanged += OnPlaystateChanged;
             }
