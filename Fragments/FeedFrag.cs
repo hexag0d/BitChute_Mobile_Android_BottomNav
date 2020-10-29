@@ -22,8 +22,9 @@ namespace BitChute.Fragments
 
         public static FeedFrag NewInstance(string title, string icon, string rootUrl = null)
         {
-            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Feed(); }
-            else { WebViewClient = new LoginWebViewClient(); }
+            //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Feed(); }
+            //else { WebViewClient = new LoginWebViewClient(); }
+            WebViewClient = new Feed();
             var fragment = new FeedFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);

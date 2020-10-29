@@ -103,6 +103,7 @@ namespace BitChute
         public static View MainView;
 
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
+        public static DisplayMetrics metrics = new DisplayMetrics();
 
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
 
@@ -111,9 +112,14 @@ namespace BitChute
             Main = this;
             StartUp();
             _window = this.Window;
-            DisplayMetrics metrics = new DisplayMetrics();
+            base.OnCreate(savedInstanceState);
+            _window.AddFlags(_winFlagUseHw);
+            SetContentView(Resource.Layout.Main);
+            //Android.Webkit.WebView wv = (Android.Webkit.WebView)
+            //    ViewHelpers.Main.ContentRelativeLayout.FindViewById(Resource.Id.splashWebViewOverlay);
+            //wv.SetBackgroundColor(Android.Graphics.Color.Black);
+            //wv.LoadUrl("file:///android_asset/html/splash.html");
             WindowManager.DefaultDisplay.GetMetrics(metrics);
-
             AppState.Display.ScreenHeight = metrics.HeightPixels;
             AppState.Display.ScreenWidth = metrics.WidthPixels;
 
@@ -127,7 +133,6 @@ namespace BitChute
             {
                 AppState.Display.Horizontal = false;
             }
-            
             var mServiceIntent = new Intent(this, typeof(MainPlaybackSticky));
             StartService(mServiceIntent);
             //get the intent incase a notification started the activity
@@ -146,12 +151,8 @@ namespace BitChute
                 }
                 catch { }
             }
-            base.OnCreate(savedInstanceState);
-            _window.AddFlags(_winFlagUseHw);
-            SetContentView(Resource.Layout.Main);
-            ViewHelpers.Main.ContentRelativeLayout = FindViewById<Android.Widget.RelativeLayout>(Resource.Id.activityMain);
             CreateNotificationChannel();
-            MainPlaybackSticky.StartNotificationLoop(30000);
+            //MainPlaybackSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
             ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
             //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
@@ -203,15 +204,28 @@ namespace BitChute
 
         public static void InitializeFragments()
         {
+            Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
+            Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
+            Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
+            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
+            Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
             Main.InitializeTabs();
             Main.FinalizeStartUp();
         }
 
-        public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-        public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-        public static FeedFragNative Fm2 = FeedFragNative.NewInstance("Feed", "tab_playlist");
-        public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-        public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+
+        public static HomePageFrag Fm0;
+        public static SubscriptionFrag Fm1;
+        public static FeedFrag Fm2;
+        public static MyChannelFrag Fm3;
+        public static SettingsFrag Fm4;
+
+
+        //public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
+        //public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
+        //public static FeedFrag Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
+        //public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
+        //public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
 
         void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
@@ -612,8 +626,8 @@ namespace BitChute
         /// <param name="e"></param>
         public void FeedTabLongClickListener(object sender, LongClickEventArgs e)
         {
-            //ForceAppIntoStickyBackground();
-            Fm2.GetSubscriptionFeed();
+            ForceAppIntoStickyBackground();
+            //Fm2.GetSubscriptionFeed();
         }
 
         /// <summary>
@@ -755,63 +769,72 @@ namespace BitChute
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
+            WindowManager.DefaultDisplay.GetMetrics(metrics);
+            AppState.Display.ScreenHeight = metrics.HeightPixels;
+            AppState.Display.ScreenWidth = metrics.WidthPixels;
             if (newConfig.Orientation == Orientation.Landscape)
             {
+                BitChute.Views.LayoutChangeHandlers
+                    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
                 NavigationView.Visibility = ViewStates.Gone;
-                
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0:
-                        if (HomePageFrag.Wv.Url != "https://www.bitchute.com/")
-                        {
-                            Fm0.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                            Fm0.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                            Fm0.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            Fm0.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        HomePageFrag.ExpandVideoCards(false);
-                        break;
-                    case 1:
-                        if (SubscriptionFrag.Wv.Url != "https://www.bitchute.com/")
-                        {
-                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                            SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        SubscriptionFrag.ExpandVideoCards(false);
-                        break;
-                    case 2:
-                        if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
-                        {
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        FeedFrag.ExpandVideoCards(false);
-                        break;
-                    case 3:
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                        MyChannelFrag.ExpandVideoCards(false);
-                        break;
-                    case 4:
-                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                        break;
-                }
-                if (AppSettings.DlFabShowSetting != "always")
-                {
-                    ViewHelpers.Main.DownloadFAB.Hide();
-                }
-                AppState.Display.Horizontal = true;
-                _window.ClearFlags(_winflagnotfullscreen);
-                _window.AddFlags(_winflagfullscreen);
+                try {
+                    switch (ViewPager.CurrentItem)
+                    {
+                        case 0:
+                            if (HomePageFrag.Wv.Url != "https://www.bitchute.com/")
+                            {
+                                Fm0.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                                Fm0.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                                Fm0.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                                Fm0.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
+                            }
+                            HomePageFrag.ExpandVideoCards(false);
+                            break;
+                        case 1:
+                            if (SubscriptionFrag.Wv.Url != "https://www.bitchute.com/")
+                            {
+                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+                            }
+                            SubscriptionFrag.ExpandVideoCards(false);
+                            break;
+                        case 2:
+
+                            if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
+                            {
+                                Fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
+                                Fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
+                                Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                                Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
+                            }
+                            FeedFrag.ExpandVideoCards(false);
+                            break;
+                        case 3:
+                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+                            MyChannelFrag.ExpandVideoCards(false);
+                            break;
+                        case 4:
+                            SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                            break;
+                    }
+                    if (AppSettings.DlFabShowSetting != "always")
+                    {
+                        ViewHelpers.Main.DownloadFAB.Hide();
+                    }
+                    AppState.Display.Horizontal = true;
+                    _window.ClearFlags(_winflagnotfullscreen);
+                    _window.AddFlags(_winflagfullscreen);
+                }catch { }
             }
             if (newConfig.Orientation == Orientation.Portrait)
             {
+                BitChute.Views.LayoutChangeHandlers
+                    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
@@ -823,8 +846,12 @@ namespace BitChute
                         SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                     case 2:
-                        FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        FeedFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
+                        if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
+                        {
+                            Fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);
+                            Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
+                            Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
+                        }
                         break;
                     case 3:
                         MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
@@ -847,11 +874,7 @@ namespace BitChute
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();
             }
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager.DefaultDisplay.GetMetrics(metrics);
 
-            AppState.Display.ScreenHeight = metrics.HeightPixels;
-            AppState.Display.ScreenWidth = metrics.WidthPixels;
             
             if (!AppSettings.HideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {

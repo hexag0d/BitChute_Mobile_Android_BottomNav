@@ -1,92 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/black">
+  <RelativeLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	  android:background="@android:color/black">
-		<ImageView
-	    android:src="@drawable/darken_small"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-		  android:scaleX="1.5"
-		  android:scaleY="1.5"
-		  android:alpha="1"
-		  android:foregroundGravity=""
-			android:id="@+id/loginDarken" />
-	<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	  android:background="@android:color/black">
-	<ImageView
-	  android:src="@drawable/logo_bronze"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:scaleX=".75"
-		android:scaleY=".75"
-		android:alpha="1"
-		android:foregroundGravity="center"
-		android:id="@+id/loginBackgroundImage" />
-	<TextView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/holo_blue_light"
-	  android:textSize="24dp"
-	  android:foregroundGravity="top"
-		android:text="Login"
-		android:outlineProvider="paddedBounds"
-		android:shadowColor="@android:color/holo_purple"
-		android:id="@+id/loginTextView" />
-	<EditText
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@android:color/white"	
-		android:textSize="24dp"
-		android:foregroundGravity="top"
-			android:hint="username"
-		android:text=""
-		android:outlineProvider="paddedBounds"
-	  android:shadowColor="@android:color/holo_purple"
-		android:id="@+id/userNameEditText" />
-	<EditText
-		android:inputType="textPassword"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text=""
-			android:hint="password"
-			android:textColorHint="@android:color/holo_purple"
-		android:textColor="@android:color/white"
-	    android:outlineProvider="paddedBounds"
-	    android:shadowColor="@android:color/holo_purple"
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:id="@+id/passwordEditText" />
-	<Button
-		android:text="Login"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-			android:scaleY="1.2"
-			android:textSize="28dp"
-			android:foregroundGravity="top"
-		android:id="@+id/loginButton" />
-	<Button
-		android:text="Continue without Login"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-			android:scaleY="1.1"
-			android:textSize="28dp"
-			android:foregroundGravity="top"
-		android:id="@+id/continueWithoutLoginButton" />
-	</LinearLayout>
-<ImageView
-	  android:src="@drawable/login_background_1"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:scaleType="fitCenter"
-		android:scaleX="1.5"
-		android:scaleY="1.5"
-		android:alpha=".25"
-		android:foregroundGravity="bottom"
-		android:id="@+id/loginBackgroundImage" />
-</RelativeLayout>
+    android:background="@android:color/black">
+    <ImageView
+      android:src="@drawable/darken_small"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scaleX="1.5"
+      android:scaleY="1.5"
+      android:visibility="gone"
+      android:alpha="1"
+      android:foregroundGravity=""
+      android:id="@+id/loginDarken" />
+    <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:alpha=".9"
+      android:layout_height="match_parent"
+      android:background="@android:color/black">
+      <ImageView
+        android:src="@drawable/logo_bronze"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleX=".75"
+        android:scaleY=".75"
+        android:alpha="1"
+        android:foregroundGravity="center"
+        android:id="@+id/loginBackgroundImage" />
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@android:color/holo_blue_light"
+          android:textSize="24dp"
+          android:foregroundGravity="top"
+			
+					android:paddingLeft="10dp"
+          android:text="Login        "
+          android:shadowColor="@android:color/holo_purple"
+          android:id="@+id/loginTextView" />
+        <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textColor="@android:color/holo_red_dark"
+          android:textSize="24dp"
+          android:foregroundGravity="top"
+					android:layout_margin="5dp"
+          android:visibility="gone"
+          android:text="Login Failed"
+          android:shadowColor="@android:color/holo_purple"
+          android:id="@+id/loginFailedTextView" />
+      </LinearLayout>
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="24dp"
+				android:layout_margin="5dp"
+        android:foregroundGravity="top"
+        android:hint="username"
+        android:text=""
+        android:outlineProvider="paddedBounds"
+        android:shadowColor="@android:color/holo_purple"
+        android:id="@+id/userNameEditText" />
+      <EditText
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="password"
+				android:layout_margin="5dp"
+        android:textColorHint="@android:color/holo_purple"
+        android:textColor="@android:color/white"
+        android:shadowColor="@android:color/holo_purple"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:id="@+id/passwordEditText" />
+			      <RelativeLayout
+        android:background="@android:color/holo_blue_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <Button
+        android:text="Login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_material_dark"
+        android:scaleY="1.2"
+        android:textColorHighlight="@android:color/holo_green_light"
+        android:textColor="@android:color/holo_blue_bright"
+        android:layout_margin="5dp"
+        android:textSize="28dp"
+        android:foregroundGravity="top"
+        android:id="@+id/loginButton" />
+				</RelativeLayout>
+      <RelativeLayout
+        android:background="@android:color/holo_purple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+          android:text="Continue without Login"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#ff313131"
+					
+		android:textColor="#ffffff"		
+          android:scaleY="1.1"
+          android:layout_margin="5dp"
+          android:textSize="28dp"
+          android:foregroundGravity="top"
+          android:id="@+id/continueWithoutLoginButton" />
+      </RelativeLayout>
+			      <RelativeLayout
+        android:background="@android:color/holo_purple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+          android:text="Logout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#ff313131"
+					
+		android:textColor="#ffffff"		
+          android:scaleY="1.1"
+          android:layout_margin="5dp"
+					
+					android:visibility="gone"
+          android:textSize="28dp"
+          android:foregroundGravity="top"
+          android:id="@+id/logoutButton" />
+
+      </RelativeLayout>
+						      <RelativeLayout
+        android:background="@android:color/holo_purple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+          android:text="Logout and Hard Flush Cache"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="#ff313131"
+					
+		android:textColor="#ffffff"		
+          android:scaleY="1.1"
+          android:layout_margin="5dp"
+          android:textSize="28dp"
+					android:visibility="gone"
+          android:foregroundGravity="top"
+          android:id="@+id/logoutAndHardFlushCacheButton" />
+
+      </RelativeLayout>
+      android:background="@android:color/holo_green_dark"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+      <RelativeLayout
+        android:background="@android:color/holo_purple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+          android:text="Register new account"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="5dp"
+          android:background="#ff414141"
+					android:textColor="@android:color/white"
+          android:scaleY="1.1"
+          android:textSize="28dp"
+          android:foregroundGravity="top"
+          android:id="@+id/registerNewAccountButton" />
+      </RelativeLayout>
+      <RelativeLayout
+        android:background="@android:color/holo_green_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+          android:text="Reset Password"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:scaleY="1.1"
+          android:layout_margin="5dp"
+					android:textColor="@android:color/holo_purple"
+          android:background="#ff313131"
+          android:textSize="28dp"
+          android:foregroundGravity="top"
+          android:id="@+id/forgotPasswordButton" />
+      </RelativeLayout>
+    </LinearLayout>
+    <ImageView
+      android:src="@drawable/login_background_1"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scaleType="fitCenter"
+      android:scaleX="1.5"
+      android:scaleY="1.5"
+      android:visibility="gone"
+      android:alpha=".25"
+      android:foregroundGravity="bottom"
+      android:id="@+id/loginBackgroundImage" />
+    <ImageView
+      android:src="@drawable/login_background_1"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scaleType="fitCenter"
+      android:scaleX="1.5"
+      android:scaleY="1.5"
+      android:alpha=".25"
+      android:foregroundGravity="bottom"
+      android:id="@+id/loginBackgroundImage" />
+  </RelativeLayout>
+</ScrollView>

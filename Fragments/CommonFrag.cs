@@ -12,6 +12,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute.Services;
 using BitChute.ViewModel;
+using BitChute.Web.Auth;
 using static BitChute.Models.VideoModel;
 using static BitChute.Services.MainPlaybackSticky;
 
@@ -19,8 +20,12 @@ namespace BitChute.Fragments
 {
     public class CommonFrag : Android.Support.V4.App.Fragment // @TODO consolidate webview fragment shared methods, members
     {
-        private int _uid;
-        public int Uid { get { return _uid; }set { _uid = value; } }
+        public delegate void LoginEventDelegate(object sender, LoginEventArgs args);
+        public static event LoginEventDelegate OnLogin;
+        public delegate void LogoutEventDelegate(LogoutEventArgs args);
+        public static event LogoutEventDelegate OnLogout;
+        private int _id;
+        public int Id { get { return _id; }set { _id = value; } }
         private VideoView _videoView;
         public VideoView VideoView { get { return _videoView; } set { _videoView = value; } }
         private View _webViewFragment;
@@ -45,12 +50,12 @@ namespace BitChute.Fragments
         private VideoDetailLoader _videoDetail;
         public VideoDetailLoader VideoDetail { get { return _videoDetail; } set { _videoDetail = value; } }
         private static Dictionary<int, CommonFrag> _fragmentDictionary;
-        public static CommonFrag GetFragmentById(int id = -1, object frag = null)
+        public static CommonFrag GetFragmentById(int id, object frag = null)
         {
             if (_fragmentDictionary == null) { _fragmentDictionary = new Dictionary<int, CommonFrag>(); }
             if ( !_fragmentDictionary.Keys.Contains(id))
             {
-                if (id != -1)
+                if (id != null)
                 {
                     if (frag != null)
                     {
@@ -66,15 +71,15 @@ namespace BitChute.Fragments
             }
             else
             {
-                if (frag != null && id != -1)
+                if (frag != null && id != null)
                 {
                     _fragmentDictionary.Remove(id);
                     _fragmentDictionary.Add(id, (CommonFrag)frag);
                 }
-                else if (frag == null && id != -1) {
+                else if (frag == null && id != null) {
                     return _fragmentDictionary[id];
                 }
-                else if(frag==null && id == -1){
+                else if(frag==null && id == null){
                     return null;
                 }
             }
@@ -84,7 +89,7 @@ namespace BitChute.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             System.Random random = new Random();
-            this.Uid = random.Next(999999999);
+            this.Id = new System.Random().Next(999999999);
             base.OnCreate(savedInstanceState);
         }
 
@@ -139,6 +144,4 @@ namespace BitChute.Fragments
             }
         }
     }
-
-
 }

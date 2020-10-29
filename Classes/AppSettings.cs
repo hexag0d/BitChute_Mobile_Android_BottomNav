@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Graphics.Drawables;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BitChute
@@ -21,7 +22,7 @@ namespace BitChute
             get
             {
                 return _firstTimeAppLoad;
-            }
+            }   
             set
             {
                 _firstTimeAppLoad = value;
@@ -183,37 +184,53 @@ namespace BitChute
             private static string _csrfMiddlewareToken;
             public static string CsrfMiddleWareToken {
                 get { return _csrfMiddlewareToken; }
-                set { _csrfMiddlewareToken = value;
-                }
+                set { _csrfMiddlewareToken = value; }
             }
             private static string _csrfToken;
             public static string CsrfToken {
-                get { return _csrfToken; }
+                get { return RemoveExpiredCookie(_csrfToken); }
                 set { _csrfToken = value;
                     if (!AppSettingsLoadingFromAndroid)
                         SendPrefSettingToAndroid("csrftoken", value);
                 }
             }
-            private static string _cfuid;
-            public static string Cfuid {
-                get { return _cfuid; }
-                set { _cfuid = value;
+            private static string _cfduid;
+            public static string Cfduid {
+                get { return RemoveExpiredCookie(_cfduid); }
+                set { _cfduid = value;
                     if (!AppSettingsLoadingFromAndroid)
-                        SendPrefSettingToAndroid("cfuid", value);
+                        SendPrefSettingToAndroid("cfduid", value);
                 }
             }
             private static string _sessionId;
-            public static string SessionId {
-                get { return _sessionId; }
+            public static string SessionId
+            {
+                get { return RemoveExpiredCookie(_sessionId); }
                 set { _sessionId = value;
                     if (!AppSettingsLoadingFromAndroid)
                         SendPrefSettingToAndroid("sessionid", SessionId);
                 }
             }
+            public static string RemoveExpiredCookie(string cookie)
+            {
+                foreach (var split in cookie.Split(';'))
+                {
+                    if (split.Contains("expires="))
+                    {
+                        if (DateTime.Now < DateTime.Parse(split.Split('=').Last()))
+                        {
+                            return cookie;
+                        }
+                        else { return ""; }
+                    }
+                }
+                return cookie;
+            }
+
             public static void SaveSessionState()
             {
                 SendPrefSettingToAndroid("csrftoken", CsrfToken);
-                SendPrefSettingToAndroid("cfuid", Cfuid);
+                SendPrefSettingToAndroid("cfduid", Cfduid);
                 SendPrefSettingToAndroid("sessionid", SessionId);
             }
         }
@@ -244,7 +261,7 @@ namespace BitChute
                     SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
                     SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
                     SessionState.CsrfToken = Prefs.GetString("csrftoken", "");
-                    SessionState.Cfuid = Prefs.GetString("cfuid", "");
+                    SessionState.Cfduid = Prefs.GetString("cfduid", "");
                     SessionState.SessionId = Prefs.GetString("sessionid", "");
                     UserWasLoggedInLastAppClose = Prefs.GetBoolean("userwasloggedinlastappclose", false);
                     FirstTimeAppLoad = await Task.FromResult<bool>(Prefs.GetBoolean("firsttimeappload", true));

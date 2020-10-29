@@ -16,15 +16,15 @@ namespace BitChute.Web
             get {
                 if (_httpClient == null) {
                     _httpClient = new HttpClient(HttpClientHandler);
-                    _httpClient.DefaultRequestHeaders.Add("Host", "www.bitchute.com");
-                    _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0");
-                    _httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+                    //_httpClient.DefaultRequestHeaders.Add("Host", "www.bitchute.com");
+                    //_httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0");
+                    //_httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
                    
-                    //_httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-                    _httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                    _httpClient.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
-                    _httpClient.DefaultRequestHeaders.Add("Cache-Control", "max-age=0");
-                    _httpClient.DefaultRequestHeaders.Add("TE", "Trailers");
+                    ////_httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+                    //_httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    //_httpClient.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+                    //_httpClient.DefaultRequestHeaders.Add("Cache-Control", "max-age=0");
+                    //_httpClient.DefaultRequestHeaders.Add("TE", "Trailers");
 
                 }
                 return _httpClient;
@@ -67,25 +67,23 @@ namespace BitChute.Web
                     {
                         foreach (var cookiePair in header.Value)
                         {
-                            var tokens = cookiePair.ToString().Split(';');
-                            foreach (var token in tokens)
-                            {
-                                if (token.Contains("csrftoken"))
+
+                                if (cookiePair.Contains("csrftoken"))
                                 {
-                                    cookieHeader += token + ";";
-                                    AppSettings.SessionState.CsrfToken = token;
+                                    cookieHeader += cookiePair + ";";
+                                    AppSettings.SessionState.CsrfToken = cookiePair;
                                 }
-                                if (token.Contains("__cfduid"))
+                                if (cookiePair.Contains("__cfduid"))
                                 {
-                                    cookieHeader += token + ";";
-                                    AppSettings.SessionState.Cfuid = token;
+                                    cookieHeader += cookiePair + ";";
+                                    AppSettings.SessionState.Cfduid = cookiePair;
                                 }
-                                if (token.Contains("sessionid"))
+                                if (cookiePair.Contains("sessionid"))
                                 {
-                                    cookieHeader += token + ";";
-                                    AppSettings.SessionState.SessionId = token;
+                                    cookieHeader += cookiePair + ";";
+                                    AppSettings.SessionState.SessionId = cookiePair;
                                 }
-                            }
+
                         }
                     }
                 }
@@ -93,7 +91,7 @@ namespace BitChute.Web
             else
             {
                 cookieHeader += AppSettings.SessionState.CsrfToken + ";";
-                cookieHeader += AppSettings.SessionState.Cfuid + ";";
+                cookieHeader += AppSettings.SessionState.Cfduid + ";";
                 cookieHeader += AppSettings.SessionState.SessionId + ";";
             }
             cookieHeader += "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
@@ -128,14 +126,15 @@ namespace BitChute.Web
             return cookieString;
         }
 
-        public static Dictionary<string, string> GetCookieDictionary()
+        public static Dictionary<string, string> GetCookieDictionary(bool addFinalHeader = false)
         {
             var cookieDict = new Dictionary<string, string>();
 
             cookieDict.Add("Host", "www.bitchute.com");
             cookieDict.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0");
             cookieDict.Add("Accept-Language", "en-US,en;q=0.5");
-            cookieDict.Add("Accept", "video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5");
+            cookieDict.Add("Accept", @"*/*");
+            //cookieDict.Add("Accept", "video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5");
             cookieDict.Add("Connection", "keep-alive");
             cookieDict.Add("Upgrade-Insecure-Requests", "1");
             cookieDict.Add("Cache-Control", "max-age=0");
@@ -143,19 +142,24 @@ namespace BitChute.Web
             string cookieHeader = "";
             if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.CsrfToken))
             {
-                cookieHeader = $"csrftoken={AppSettings.SessionState.CsrfToken};";
+                cookieHeader = $"{AppSettings.SessionState.CsrfToken};";
             }
-            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfuid))
+            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfduid))
             {
-                cookieHeader += $"__cfduid={AppSettings.SessionState.Cfuid};";
+                cookieHeader += $"{AppSettings.SessionState.Cfduid};";
             }
             if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId)) {
-                 cookieHeader += $"sessionid={AppSettings.SessionState.SessionId};";
+                 cookieHeader += $"{AppSettings.SessionState.SessionId};";
             }
                 
             cookieHeader += "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
 
             cookieDict.Add("Cookie", cookieHeader);
+            if (addFinalHeader)
+            {
+                cookieDict.Add("X-Requested-With", "XMLHttpRequest");
+                cookieDict.Add("Referer", "https://www.bitchute.com/");
+            }
             return cookieDict;
         }
 
@@ -204,16 +208,16 @@ namespace BitChute.Web
                         Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
                         var _cookieHeader = CookieCon.GetCookieHeader(_notificationURI);
 
-                            _httpClient.DefaultRequestHeaders.Add("Cookie", ExtWebInterface.CookieHeader);
-                            ExtNotifications.NotificationHttpRequestInProgress = true;
+                        //_httpClient.DefaultRequestHeaders.Add("Cookie", ExtWebInterface.CookieHeader);
+                        ExtNotifications.NotificationHttpRequestInProgress = true;
 
-                            var getRequest = _httpClient.GetAsync("https://bitchute.com/notifications/").Result;
+                        var getRequest = _httpClient.GetAsync("https://bitchute.com/notifications/").Result;
 
-                            CopyCookies(getRequest, new Uri("https://bitchute.com/"));
-                            var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                            HtmlCode = resultContent;
-                            ExtNotifications.NotificationHttpRequestInProgress = false;
-                        
+                        //CopyCookies(getRequest, new Uri("https://bitchute.com/"));
+                        var resultContent = getRequest.Content.ReadAsStringAsync().Result;
+                        HtmlCode = resultContent;
+                        ExtNotifications.NotificationHttpRequestInProgress = false;
+
                     }
                     catch (Exception ex)
                     {
@@ -224,30 +228,56 @@ namespace BitChute.Web
 
             return HtmlCode;
         }
-
+        
         /// <summary>
         /// returns html source of url requested
         /// </summary>
         /// <param name="url">use the string you want to get html source from</param>
         /// <returns></returns>
-        public static async System.Threading.Tasks.Task<string> GetHtmlTextFromUrl(string url, bool getInitialHeaders = false)
+        public static async System.Threading.Tasks.Task<string> GetHtmlTextFromUrl(string url, 
+            bool getInitialHeaders = false, bool checkSessionState = false, bool addRequestHeaders = false)
         {
             string _htmlCode = "";
 
             try
             {
                 HttpResponseMessage getRequest = new HttpResponseMessage();
-                if (getInitialHeaders)
+                if (getInitialHeaders && checkSessionState)
+                {
+                    foreach (var cookie in GetCookieDictionary())
+                    {
+                        ExtWebInterface.HttpClient.DefaultRequestHeaders.Add(cookie.Key, cookie.Value);
+                        
+                    }
+                    getRequest = await HttpClient.GetAsync(url);
+                }
+                else if (getInitialHeaders)
                 {
                     getRequest = await HttpClient.GetAsync(url);
                     ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Cookie", GetRequestHeader(getRequest.Headers));
                 }
 
-                if (!getInitialHeaders)
+                else if (!getInitialHeaders && !addRequestHeaders && !checkSessionState)
                 {
-                    ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Cookie", GetRequestHeader(null, true));
+                    //ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Cookie", GetRequestHeader(null, true));
                     getRequest = await HttpClient.GetAsync(url);
                 }
+                else if (!getInitialHeaders && checkSessionState && addRequestHeaders)
+                {
+                    foreach (var cookie in GetCookieDictionary(true))
+                    {
+                        ExtWebInterface.HttpClient.DefaultRequestHeaders.Add(cookie.Key, cookie.Value);
+                        
+                        
+                    }
+                    var dHeaders = ExtWebInterface.HttpClient.DefaultRequestHeaders;
+                    getRequest = await HttpClient.GetAsync(url);
+                }
+                else
+                {
+                    getRequest = await HttpClient.GetAsync(url);
+                }
+                
                 return await getRequest.Content.ReadAsStringAsync();
             }
             catch { }

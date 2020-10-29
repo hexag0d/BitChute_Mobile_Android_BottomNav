@@ -30,8 +30,9 @@ namespace BitChute.Fragments
 
         public static MyChannelFrag NewInstance(string title, string icon, string rootUrl = null)
         {
-            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new MyChannel(); }
-            else { WebViewClient = new LoginWebViewClient(); }
+            //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new MyChannel(); }
+            //else { WebViewClient = new LoginWebViewClient(); }
+            WebViewClient = new MyChannel();
             var fragment = new MyChannelFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
@@ -95,6 +96,7 @@ namespace BitChute.Fragments
                 if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
                 if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
                 else { Wv.SetWebViewClient((MyChannel)WebViewClient); }
+                Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.JavaScriptEnabled = true;
@@ -103,8 +105,8 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                this.Uid = new System.Random().Next(99999999);
-                GetFragmentById(this.Uid, this);
+                this.Id = new System.Random().Next(777);
+                GetFragmentById(this.Id, this);
             }
             catch (Exception ex) { }
             return ViewHelpers.Tab3.TabFragmentLinearLayout;

@@ -83,6 +83,7 @@ namespace BitChute.Fragments
                 GetRecyclerFeedAdapter(container);
                 VideoDetail = new ViewModel.VideoDetailLoader(TabFragmentRelativeLayout, null, this.Uid);
                 GetFragmentById(this.Uid, this);
+                GetSubscriptionFeed();
                 return FragmentContainerLayout;
             }
             catch { }
@@ -96,10 +97,6 @@ namespace BitChute.Fragments
             LayoutManager = new LinearLayoutManager(container.Context);
 
             FeedRecyclerView.SetLayoutManager(LayoutManager);
-            //var _rootAdapter = GetFeedAdapter();
-           // _rootAdapter.ItemClick += RootVideoAdapter_ItemClick;
-           // _recycleView.SetAdapter(_rootAdapter);
-            
         }
 
         /// <summary>

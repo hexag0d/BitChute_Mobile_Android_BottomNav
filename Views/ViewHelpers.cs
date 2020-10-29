@@ -30,6 +30,11 @@ namespace BitChute
             public static EditText PasswordTextBox { get; set; }
             public static Button LoginButton { get; set; }
             public static Button ContinueWithoutLoginButton { get; set; }
+            public static Button LogoutButton { get; set; }
+            public static Button LogoutAndHardFlushCacheButton { get; set; }
+            public static Button RegisterNewAccountButton { get; set; }
+            public static Button ForgotPasswordButton { get; set; }
+            public static TextView LoginErrorTextView { get; set; }
             //public static int LayoutAbove { get; set; }
             public static Handler UiHandler = new Handler();
 

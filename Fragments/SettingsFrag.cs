@@ -32,8 +32,9 @@ namespace BitChute.Fragments
 
         public static SettingsFrag NewInstance(string title, string icon, string rootUrl = null)
         {
-            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Settings(); }
-            else { WebViewClient = new LoginWebViewClient(); }
+            //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Settings(); }
+            //else { WebViewClient = new LoginWebViewClient(); }
+            WebViewClient = new Settings();
             var fragment = new SettingsFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
@@ -68,17 +69,26 @@ namespace BitChute.Fragments
         
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            this.Uid = new System.Random().Next(99999999);
+            this.Id = new System.Random().Next(99999999);
             try
             {
                 if (FragmentContainerLayout == null)
                     FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
                 if (WebViewFragmentLayout == null)
                     WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
+                
                 if (InternalTabbedLayout == null)
                     InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
+
                 if (SettingsTabLayout == null)
                     SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
+                if (InternalTabbedLayout != null)
+                {
+                    InternalTabbedLayout.FindViewById<Button>(Resource.Id.loginViewSwapButton)
+                        .Click += LoginButton_OnClick;
+                    InternalTabbedLayout.FindViewById<Button>(Resource.Id.settingsViewSwapButton)
+                        .Click += SettingsButton_OnClick;
+                }
                 TabFragmentLinearLayout = (LinearLayout)FragmentContainerLayout.FindViewById<LinearLayout>(Resource.Id.tab4LinearLayout);
                 TabFragmentLinearLayout.RemoveAllViews();
                 TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
@@ -111,6 +121,7 @@ namespace BitChute.Fragments
                 Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
                 Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
                 Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
+                
             }
             catch (Exception ex)
             {
@@ -119,7 +130,7 @@ namespace BitChute.Fragments
             try
             {
                 EncoderFlexLinearLayout = InternalTabbedLayout.FindViewById<LinearLayout>(Resource.Id.encoderFlexLinearLayout);
-                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
             }
             catch (Exception ex) { }
             try { 
@@ -158,6 +169,7 @@ namespace BitChute.Fragments
                 _stoverrideonrb.CheckedChange += ExtSettingChanged;
                 _stoverrideonrb.CheckedChange += OnSettingsRbCheckChanged;
                 _notificationonrb.CheckedChange += ExtSettingChanged;
+
                 _hidehorizontalnavbaronrb.CheckedChange += OnHorizontalNavbarRbChecked;
                 _hideverticalnavbaronrb.CheckedChange += OnVerticalNavbarRbChecked;
                 _showdlbuttonalways.CheckedChange += ExtSettingChanged;
@@ -186,13 +198,40 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 if (AppSettings.Debug.LoadWebViewsOnStart) { BitChute.Web.ViewClients.LoadInitialUrls(); }
-                GetFragmentById(Uid, this);
+                GetFragmentById(this.Id, this);
             }
             catch (Exception ex) { }
             
                 return FragmentContainerLayout;
         }
 
+        public static void NotificationsOnRb_OnClick(object sender, EventArgs e)
+        {
+            
+        }
+
+        public void ContinueWithoutLoginButton_OnClick(object sender, EventArgs e)
+        {
+            if (MainActivity.ViewPager.CurrentItem == 4)
+            {
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
+            }
+        }
+
+        public static void LoginButton_OnClick(object sender, EventArgs e)
+        {
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Main.LoginLayout);
+        }
+
+        public static void SettingsButton_OnClick(object sender, EventArgs e)
+        {
+            if (_firstTimeLoad) { MainActivity.Fm4.SetCheckedState(); _firstTimeLoad = false; }
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
+
+        }
 
         public static void WebViewGoBack()
         {
@@ -217,7 +256,7 @@ namespace BitChute.Fragments
         public async void SetCheckedState()
         {
             AppNowCheckingBoxes = true;
-            SearchOverride.UI.SetupSearchOverrideControls(); // populate the search override controls
+            //SearchOverride.UI.SetupSearchOverrideControls(); // populate the search override controls
             if (AppSettings.ZoomControl) { _zconrb.Checked = true; }
             else { _zcoffrb.Checked = true; }
             if (AppSettings.FanMode) { _fmonrb.Checked = true; }
@@ -297,7 +336,7 @@ namespace BitChute.Fragments
         /// <param name="v"></param>
         public static void ShowEncoderView_OnClick(object sender, EventArgs e)
         {
-            VideoEncoding.EncoderDialog.ShowDialogQuestion(Android.App.Application.Context);
+            //VideoEncoding.EncoderDialog.ShowDialogQuestion(Android.App.Application.Context);
             ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
             ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.VideoEncoder.VideoEncoderLayout);
             EncoderViewIsVisible = true;
@@ -307,10 +346,10 @@ namespace BitChute.Fragments
         /// 
         /// </summary>
         /// <param name="v"></param>
-        public static void ShowWebView_OnClick(object sender, EventArgs e)
+        public void ShowWebView_OnClick(object sender, EventArgs e)
         {
             ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
-            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.WebViewFragmentLayout);
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
             EncoderViewIsVisible = false;
         }
 

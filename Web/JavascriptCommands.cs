@@ -10,7 +10,9 @@ namespace BitChute
         /// </summary>
         public static string _jsLinkFixer = "javascript:(function() { " +
              "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
-                                 
+
+        public static string JsLinkFixer = "document.getElementById('video-description').style.overflow='hidden'; ";
+
         /// <summary>
         /// hides the static banner
         /// </summary>
@@ -104,6 +106,9 @@ namespace BitChute
                         "document.getElementById('video-like').data-toggle=''; " + "})()" + "\r\n"
             + "javascript:(function() { " +
                         "document.getElementById('video-dislike').data-toggle=''; " + "})()";
+
+        public static string JsDisableToolTips = "document.getElementById('video-like').data-toggle=''; " +
+            "document.getElementById('video-dislike').data-toggle=''; ";
 
         /// <summary>
         /// hides the video title

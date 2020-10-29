@@ -21,16 +21,23 @@ namespace BitChute.Web
         public static async Task<bool> GetObjectsFromHtmlResponse()
         {
             string h = "";
-            if (String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfuid) ||
+            if (!String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfduid) &&
+                !String.IsNullOrWhiteSpace(AppSettings.SessionState.CsrfToken) &&
+                !String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId))
+            {
+                h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/notifications", false, true, true);
+            }
+                else if (String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfduid) ||
                 String.IsNullOrWhiteSpace(AppSettings.SessionState.CsrfToken))
             {
                 if (String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId))
                 {
                     h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
+                    AppState.UserIsLoggedIn = false;
                 }
                 else
                 {
-                    h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
+                    h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/notifications", true);
                 }
             }
             else
@@ -45,6 +52,21 @@ namespace BitChute.Web
 
                 if (doc != null)
                 {
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
+                    {
+                        var _tagContents = node.InnerText;
+                        if (_tagContents.Contains("Notifications"))
+                        {
+                            AppState.UserIsLoggedIn = true;
+                            ExtNotifications.DecodeHtmlNotifications(h, true, null);
+
+                        }
+                        else
+                        {
+                            AppState.UserIsLoggedIn = false;
+                            BitChute.Fragments.HomePageFrag.ShowLoginOnStartup = true;
+                        }
+                    }
                     foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//link[@href]"))
                     {
                         if (node.OuterHtml.Contains("/common.css"))

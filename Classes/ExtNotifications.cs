@@ -24,7 +24,7 @@ namespace BitChute
         public static List<string> NotificationLinks = new List<string>();
         public static List<CustomNotification> CustomNoteList = new List<CustomNotification>();
         public static List<CustomNotification> PreviousNoteList = new List<CustomNotification>();
-        private int _currentListIndex;
+        private static int _currentListIndex;
 
         private static List<CustomNotification> _sentNotificationList = new List<CustomNotification>();
         private static Android.Support.V4.App.NotificationManagerCompat _notificationManager;
@@ -286,22 +286,22 @@ namespace BitChute
             return newIntent;
         }
 
-        public async Task<List<CustomNotification>> DecodeHtmlNotifications(string html)
+        public static async Task<List<CustomNotification>> DecodeHtmlNotifications(string html, bool fromInitialAppLoad = false, HtmlAgilityPack.HtmlDocument doc = null)
         {
             await Task.Run(() =>
             {
                 try
                 {
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                    doc.LoadHtml(html);
 
+                        doc = new HtmlAgilityPack.HtmlDocument();
+                        doc.LoadHtml(html);
+                    
                     NotificationTextList.Clear();
                     NotificationTypes.Clear();
                     NotificationLinks.Clear();
 
                     if (doc != null)
                     {
-                        var check = doc.DocumentNode;
                         foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//title"))
                         {
                             var _tagContents = node.InnerText;
@@ -315,8 +315,13 @@ namespace BitChute
                                 return;
                             }
                         }
+                    }
+                }
+                catch
+                {
 
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
+                }try { 
+                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes(".//span[@class='notification-target']"))
                         {
                             //&#39; <<< '   ... &amp; <<< & "&#x27; '
                             var _tagContents = node.InnerText;
@@ -327,13 +332,13 @@ namespace BitChute
                             NotificationTextList.Add(_tagContents);
                         }
 
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-detail']"))
+                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes(".//span[@class='notification-detail']"))
                         {
                             var _tagContents = node.InnerText;
                             NotificationTypes.Add(_tagContents.Split('-')[0]);
                         }
 
-                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
+                        foreach (HtmlNode node in doc.DocumentNode.SelectNodes(".//a[@class='notification-view']"))
                         {
                             var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
 
@@ -354,9 +359,23 @@ namespace BitChute
                             _currentListIndex++;
                         }
                         CustomNoteList.Reverse();
-                    }
+                    
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message);
+                }
+                if (fromInitialAppLoad)
+                {
+                    if (CustomNoteList.Count > 0)
+                    {
+                        MainPlaybackSticky.StartNotificationLoop(30000, CustomNoteList);
+                        ExtNotifications.NotificationHttpRequestInProgress = false;
+                        return;
+                    }
+                    else
+                    {
+                        ExtNotifications.NotificationHttpRequestInProgress = false;
+                        MainPlaybackSticky.StartNotificationLoop(30000);
+                    }
                 }
                 ExtNotifications.NotificationHttpRequestInProgress = false;
             });

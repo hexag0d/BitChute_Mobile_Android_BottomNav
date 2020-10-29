@@ -108,6 +108,7 @@ namespace MediaCodecHelper
 	private void FrameAvailable (object sender, SurfaceTexture.FrameAvailableEventArgs e)
 	{
 		System.Threading.Monitor.Enter (_frameSyncObject);
+            
 		if (IsFrameAvailable) {
 			throw new RuntimeException("mFrameAvailable already set, frame could be dropped");
 		}

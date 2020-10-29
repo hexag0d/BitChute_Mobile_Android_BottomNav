@@ -20,6 +20,7 @@ using static BitChute.JavascriptCommands;
 using static BitChute.PlaystateManagement;
 using static BitChute.Services.MainPlaybackSticky;
 using System.Net.Http;
+using BitChute.Web.Auth;
 
 namespace BitChute.Web
 {
@@ -27,6 +28,10 @@ namespace BitChute.Web
     {
         public delegate void PlaystateEventDelegate(PlaystateEventArgs _args);
         public static event PlaystateEventDelegate PlaystateChanged;
+        public delegate void LoginEventDelegate(LoginEventArgs args);
+        public static event LoginEventDelegate OnLogin;
+        public delegate void LogoutEventDelegate(LogoutEventArgs args);
+        public static event LogoutEventDelegate OnLogout;
         public static bool IsObtainingResourceFromWebView = false;
 
         public static async void LoadInitialUrls(int delay = 400)
@@ -51,7 +56,7 @@ namespace BitChute.Web
             {
                 HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
                 SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
-                FeedFragNative.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
+                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
                 MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
                 SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
             }
@@ -124,14 +129,61 @@ namespace BitChute.Web
 
         }
 
+        public static void Run_OnLogin()
+        {
+            int tabKey = -1;
+            //foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
+            //{
+            //    tabKey++;
+            //    try
+            //    {
+            //        view.SetWebViewClient(null);
+            //        switch (view.RootUrl)
+            //        {
+            //            case "https://www.bitchute.com/":
+            //                if (tabKey == 0) { view.SetWebViewClient(new Home()); }
+            //                else { view.SetWebViewClient(new Feed()); }
+            //                break;
+            //            case "https://www.bitchute.com/subscriptions/":
+            //                view.SetWebViewClient(new Subs());
+            //                break;
+            //            case "https://www.bitchute.com/profile/":
+            //                view.SetWebViewClient(new MyChannel());
+            //                break;
+            //            case "https://www.bitchute.com/settings/":
+            //                view.SetWebViewClient(new Settings());
+            //                break;
+            //        }
+            //    }
+            //    catch { }
+            //}
+            foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
+            {
+                
+                try
+                {
+                    view.ClearCache(true);
+                    view.LoadUrl(view.RootUrl);
+                }
+                catch { }
+            }
+            AppState.UserIsLoggedIn = true;
+        }
+
+        public static void RunOnLogout(LogoutEventArgs e)
+        {
+            AppSettings.SessionState.SessionId = "";
+        }
+
         public static async void RunBaseCommands(WebView w, int d = 2000)
         {
             await Task.Delay(d);
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
 
-            w.LoadUrl(GetInjectable(
+            w.LoadUrl(GetInjectable(JsDisableToolTips+
+                JsLinkFixer +
                 CallBackInjection.IsPlayingCallback +
-                CallBackInjection.PlayPauseButtonCallback)); // set the playstate callback so we know when the webview player is running
+                CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
         }
 
         public static void WebViewGoBack(WebView wv)
@@ -182,7 +234,7 @@ namespace BitChute.Web
                 await Task.Delay(d);
                 try
                 {
-                    ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
+                    //ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
                 }
                 catch { }
                 RunPostLoginSuccess(w.Id);
@@ -374,7 +426,10 @@ namespace BitChute.Web
                 {
                     if (request.Method == "GET")
                     {
+                        if (OnLogout == null) { OnLogout += RunOnLogout; }
+                        OnLogout.Invoke(new LogoutEventArgs());
                         AppState.UserIsLoggedIn = false;
+                        
                     }
                 }
                 return base.ShouldInterceptRequest(view, request);

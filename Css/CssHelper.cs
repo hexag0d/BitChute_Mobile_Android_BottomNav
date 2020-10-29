@@ -62,7 +62,7 @@ namespace BitChute.Web.Ui
             if (process) { c = await GetOverrideCss(c); }
             if (setNext)
             {
-                await GetSearchCss(SearchCssUrl);
+                //await GetSearchCss(SearchCssUrl);
                 await GetFeedCommonCss();
                 await GetMyChannelCommonCss();
                 await GetSettingsCommonCss();

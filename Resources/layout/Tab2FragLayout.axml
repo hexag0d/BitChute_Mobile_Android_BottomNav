@@ -3,13 +3,12 @@
     android:layout_width="match_parent"
 	android:id="@+id/feedTabRelativeLayout"
     android:layout_height="match_parent">
-    <BitChute.Services.MainPlaybackSticky.ServiceWebView
+	    <BitChute.Services.MainPlaybackSticky.ServiceWebView
         android:id="@+id/webView2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"
         android:textAlignment="center"
         android:textSize="@dimen/abc_text_size_display_1_material"
-        android:layout_centerVertical="false"
-	    android:tag="frag3tag"/>
+        android:layout_centerVertical="false"/>
 </RelativeLayout>

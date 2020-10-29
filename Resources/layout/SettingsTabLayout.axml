@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:id="@+id/settingsFragLayout"
-	android:backgroundTint="@android:color/black"
-	android:background="@android:color/black"
-	android:layout_height="match_parent">
-	<LinearLayout
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:id="@+id/settingsFragLayout"
+		android:backgroundTint="@android:color/black"
+		android:background="@android:color/black"
+		android:layout_height="match_parent">
+		<LinearLayout
 		android:orientation="vertical"
 		android:minWidth="25px"
 		android:minHeight="25px"
@@ -387,6 +390,8 @@
 					android:layout_height="wrap_content"
 					android:buttonTint="#3498db"
 					android:textColor="#3498db"
+					
+						android:visibility="gone"
 					android:text="Search Engine Override Off"
 					android:id="@+id/searchEngineOverrideOffRb" />
 				<RadioButton
@@ -394,6 +399,7 @@
 					android:layout_height="wrap_content"
 					android:buttonTint="#3498db"
 					android:textColor="#3498db"
+						android:visibility="gone"
 					android:text="On"
 					android:id="@+id/searchEngineOverrideOnRb" />
 				<RadioButton
@@ -466,7 +472,8 @@
 					android:visibility="gone"
 					android:text="Autohide"
 					android:id="@+id/verticalNavbarRbOff" />
-			</RadioGroup>
+				</RadioGroup>
+			</LinearLayout>
 		</LinearLayout>
-	</LinearLayout>
-</RelativeLayout>
+	</RelativeLayout>
+</ScrollView>

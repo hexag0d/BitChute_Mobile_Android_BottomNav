@@ -21,8 +21,9 @@ namespace BitChute.Fragments
 
         public static SubscriptionFrag NewInstance(string title, string icon, string rootUrl = null)
         {
-            if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Subs(); }
-            else { WebViewClient = new LoginWebViewClient(); }
+            //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Subs(); }
+            //else { WebViewClient = new LoginWebViewClient(); }
+            WebViewClient = new Subs();
             var fragment = new SubscriptionFrag();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
@@ -64,7 +65,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                GetFragmentById(this.Uid, this);
+                GetFragmentById(this.Id, this);
                 return FragmentContainerLayout;
             }
             catch { }

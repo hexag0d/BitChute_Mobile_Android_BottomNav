@@ -57,15 +57,23 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:id="@+id/spaceLayout" >
+			<TextView
+				android:text=" "
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/textView2" />
 			<ImageView
 				android:src="@drawable/like"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				
+				android:visibility="gone"
+				android:foregroundTint="@android:color/holo_green_light"
 				android:id="@+id/imageView1" />
 						<ImageView
 				android:src="@drawable/dislike"
 				android:layout_width="wrap_content"
+				android:visibility="gone"
 				android:layout_height="match_parent"
 				android:id="@+id/imageView1" />
     </LinearLayout>

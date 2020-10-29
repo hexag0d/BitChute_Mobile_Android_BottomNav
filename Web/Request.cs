@@ -1,23 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
 using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
 using BitChute.Fragments;
 using HtmlAgilityPack;
-using Java.IO;
-using Java.Net;
 using static BitChute.Models.VideoModel;
-using static BitChute.Web.ExtWebInterface;
 
 namespace BitChute.Web
 {
@@ -45,7 +33,7 @@ namespace BitChute.Web
             return null;
         }
 
-        public static void SendVideoCardListToFeedRecycler(VideoCard vc, Android.Support.V7.Widget.RecyclerView recyclerView, int id = -1)
+        public static void SendVideoCardListToFeedRecycler(VideoCard vc, Android.Support.V7.Widget.RecyclerView recyclerView, int id)
         {
             if (GetFeedRecyclerViewAdapter == null)
             {
@@ -80,14 +68,14 @@ namespace BitChute.Web
 
         private static int _numberOfCardsInQueue;
         private static List<VideoCard> _videoCardList = new List<VideoCard>();
-        public static async void AddSingleVideoToList(VideoCard vc, RecyclerView recyclerView, int fragId= -1)
+        public static async void AddSingleVideoToList(VideoCard vc, RecyclerView recyclerView, int fragid)
         {
             vc.ThumbnailBitmap = await GetBitmapDrawable(vc.ThumbnailPath);
 
-            SendVideoCardListToFeedRecycler(vc, recyclerView, fragId);
+            SendVideoCardListToFeedRecycler(vc, recyclerView, fragid);
         }
 
-        public static async Task<List<VideoCard>> GetVideoCardList(RecyclerView recyclerView = null, int fragId = -1)
+        public static async Task<List<VideoCard>> GetVideoCardList(int fragId, RecyclerView recyclerView = null)
         {
             HttpClientHandler = new System.Net.Http.HttpClientHandler() { UseCookies = false };
             ImageHttpClient = new System.Net.Http.HttpClient(HttpClientHandler);

@@ -76,13 +76,16 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\CommentRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\FeedRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\AppSettings.cs" />
     <Compile Include="Classes\AppState.cs" />
-    <Compile Include="Fragments\FeedFragNative.cs" />
+    <Compile Include="Models\CommentModel.cs" />
+    <Compile Include="ViewHolders\CommentSystemViewHolder.cs" />
     <Compile Include="ViewHolders\FeedViewHolder.cs" />
     <Compile Include="ViewModels\VideoDetailLoader.cs" />
+    <Compile Include="Views\LayoutChangeHandlers.cs" />
     <Compile Include="Web\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Classes\MediaHelper.cs" />
     <Compile Include="Classes\PlaystateManagement.cs" />
     <Compile Include="Web\Login.cs" />
+    <Compile Include="Web\LoginEvents.cs" />
     <Compile Include="Web\Request.cs" />
     <Compile Include="Web\SearchOverride.cs" />
     <Compile Include="Services\MainPlaybackSticky.cs" />
@@ -369,6 +373,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\html\bitchute_splash.gif" />
     <AndroidAsset Include="Assets\html\splash.html" />
+    <AndroidAsset Include="Assets\html\bitchute_splash2.gif" />
     <Content Include="Css\homepage.css" />
     <Content Include="Css\main.css" />
     <Content Include="Css\main.html" />
@@ -401,6 +406,10 @@
     <AndroidResource Include="Resources\drawable\watchl8r.png" />
     <AndroidResource Include="Resources\drawable\bell.png" />
     <AndroidResource Include="Resources\drawable\addtoplaylist.png" />
+    <AndroidResource Include="Resources\layout\CommentCardViewReplies.axml" />
+    <Content Include="Assets\html\background_fractal.png" />
+    <AndroidResource Include="Resources\drawable\noavatar.png" />
+    <Content Include="Resources\drawable\background_fractal.png" />
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

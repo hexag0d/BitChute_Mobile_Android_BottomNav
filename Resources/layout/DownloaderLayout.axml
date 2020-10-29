@@ -49,7 +49,7 @@
 				android:layout_height="wrap_content"
 				android:textColor="@android:color/white"
 				android:id="@+id/downloadByUrlFileNameEditText"
-				android:text="TEST45678.mp4"
+				android:text=""
 				android:hint="filename" />
 			<LinearLayout
 				android:orientation="horizontal"

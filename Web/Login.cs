@@ -4,24 +4,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using System.Collections;
-using Json.Net;
-using BitChute.Web;
 using HtmlAgilityPack;
 using BitChute.Web.Ui;
+using BitChute.Web.Auth;
+using BitChute.Fragments;
 
 namespace BitChute.Web
 {
     public class Login
     {
+        public delegate void LoginEventDelegate(LoginEventArgs args);
+        public static event LoginEventDelegate OnLogin;
         private static bool _userIsLoggingIn = false;
         public static bool UserIsLoggingIn
         {
@@ -95,7 +89,9 @@ namespace BitChute.Web
 
         public static async void MakeLoginRequest(string username, string password, string csrfmiddlewaretoken = null)
         {
+            if (GetLatestCsrfToken().Value != null) { 
             var response = await DoLogin(AuthToken.GetToken(GetLatestCsrfToken().Value, username, password));
+            }
         }
 
         public static CookieContainer CookieContainer = new CookieContainer();
@@ -331,6 +327,12 @@ namespace BitChute.Web
         /// <returns></returns>
         public static async Task<string> DoLogin(AuthToken authToken)
         {
+            bool loginSuccess = false;
+            if (OnLogin == null) {
+                OnLogin += OnPostLogin;
+                //OnLogin += BitChute.Web.ViewClients.Run_OnLogin;
+                OnLogin += HomePageFrag.OnPostLoginAttempt;
+            }
             try
             {
                 ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
@@ -338,15 +340,34 @@ namespace BitChute.Web
                 ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Referer", "https://www.bitchute.com/");
                 var formdata = GetLoginKeys(authToken);
                 var requestContent = await formdata.ReadAsStringAsync();
-                var response = await ExtWebInterface.HttpClient.PostAsync("https://www.bitchute.com/accounts/login/",formdata);
+                var response = await ExtWebInterface.HttpClient.PostAsync("https://www.bitchute.com/accounts/login/", formdata);
                 ExtWebInterface.GetRequestHeader(response.Headers);
-                var responseContent = response.Content.ReadAsStringAsync();
+                loginSuccess = response.IsSuccessStatusCode;
+            }
+            catch (Exception ex) { }
+            try
+            {
+                if (loginSuccess)
+                {
+                    
+                    OnLogin.Invoke(new LoginEventArgs(false, true, true, false));
+
+                }
+                else
+                {
+                    OnLogin.Invoke(new LoginEventArgs(false, true, false, true));
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             return "";
+        }
+
+        public static void OnPostLogin(LoginEventArgs e)
+        {
+
         }
     }
 }

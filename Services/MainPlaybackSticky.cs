@@ -30,7 +30,7 @@ namespace BitChute.Services
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
         ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
     public class MainPlaybackSticky : Service, AudioManager.IOnAudioFocusChangeListener,
-        MediaController.IMediaPlayerControl
+        MediaController.IMediaPlayerControl, MediaPlayer.IOnSeekCompleteListener
     {
         #region members
 
@@ -74,9 +74,7 @@ namespace BitChute.Services
         public static Dictionary<int, MediaPlayer> MediaPlayerDictionary = new Dictionary<int, MediaPlayer>();
         public static Dictionary<int, ExtMediaController> MediaControllerDictionary
                      = new Dictionary<int, ExtMediaController>();
-
-        private static bool _paused;
-        //private static VideoDetailLoader _vidLoader = new VideoDetailLoader();
+        
         #endregion
 
         public static void OnPlaystateChanged(PlaystateEventArgs e)
@@ -99,8 +97,6 @@ namespace BitChute.Services
             }
             var cookieHeader = ExtWebInterface.GetCookieDictionary();
 
-            // we might be able to eventually just use one media player but I think the buffering will be better
-            // with a few of them, plus this way you can queue up videos and instantly switch
             if (!MainPlaybackSticky.MediaPlayerDictionary.ContainsKey(id))
             {
                 MainPlaybackSticky.MediaPlayerDictionary.Add(id, new MediaPlayer());
@@ -124,7 +120,9 @@ namespace BitChute.Services
                 await MediaPlayerDictionary[id].SetDataSourceAsync(Android.App.Application.Context, uri, cookieHeader);
             }
             MediaPlayerDictionary[id].PrepareAsync();
+            
             PlaystateChanged.Invoke(new PlaystateEventArgs(-1, false, false, false, id, false, false, true, id));
+            MediaPlayerDictionary[id].SetOnSeekCompleteListener(ExtStickyServ);
 
             //Wake mode will be partial to keep the CPU still running under lock screen
             MediaPlayerDictionary[id].SetWakeMode(Android.App.Application.Context, WakeLockFlags.Partial);
@@ -170,13 +168,14 @@ namespace BitChute.Services
         public ExtMediaController InitializeMediaController(Context ctx)
         {
             var mc = new ExtMediaController(ctx);
+            
             mc.SetMediaPlayer(this);
             return mc;
         }
         #endregion
 
         #region playback methods
-        private async void Play(int id = -1, PlayerType playerType = PlayerType.None)
+        public async void Play(int id = -1, PlayerType playerType = PlayerType.None)
         {
             if ((PlaystateManagement.MediaPlayerIsStreaming && PlaystateManagement.MediaPlayerIsQueued) 
                 || playerType == PlayerType.NativeMediaPlayer)
@@ -196,9 +195,8 @@ namespace BitChute.Services
                     }
                 });
             }
-            else
+            else if (PlaystateManagement.WebViewPlayerIsStreaming)
             {
-                PlaystateManagement.UserRequestedBackgroundPlayback = true;
                 PlaystateChanged.Invoke(new PlaystateEventArgs(id, true, false, false));
                 StartVideoInBkgrd();
             }
@@ -247,7 +245,10 @@ namespace BitChute.Services
             }
         }
 
-        private void Pause() { PlaystateManagement.SendPauseVideoCommand(); }
+        /// <summary>
+        /// pause the video
+        /// </summary>
+        public void Pause() { PlaystateManagement.SendPauseVideoCommand(); }
 
         public static void Stop(int id = -1, PlayerType playerType = PlayerType.None)
         {
@@ -447,6 +448,7 @@ namespace BitChute.Services
 
         #endregion
 
+        static int NotificationLoopStartTimesInvoked = 0;
         /// <summary>
         /// starts/restarts the notifications, 
         /// takes a ms int as the delay for starting,
@@ -461,8 +463,9 @@ namespace BitChute.Services
         /// system for the long running task to see if that
         /// will prevent the loop from breaking.
         /// </summary>
-        public static async void StartNotificationLoop(int delay)
+        public static async void StartNotificationLoop(int delay, List<ExtNotifications.CustomNotification> initialNotifications = null, bool manuallyInvoked = false)
         {
+            NotificationLoopStartTimesInvoked++; 
             //wait on a delay so that the cookie is ready when we make
             //httprequest for the notifications
             await Task.Delay(delay);
@@ -473,13 +476,20 @@ namespace BitChute.Services
             {
                 if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                 {
-                    _notificationStackExecutionInProgress = true;
-                    await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                    await _extNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
-                    ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
-                    _notificationStackExecutionInProgress = false;
+                    if (initialNotifications == null)
+                    {
+                        _notificationStackExecutionInProgress = true;
+                        await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                        await ExtNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
+                        ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
+                        _notificationStackExecutionInProgress = false;
+                    }
+                    else
+                    {
+                        ExtNotifications.SendNotifications(initialNotifications);
+                    }
                 }
-                if (MainPlaybackSticky.NotificationsHaveBeenSent)
+                if (MainPlaybackSticky.NotificationsHaveBeenSent || initialNotifications != null)
                 {
                     //check to make sure the timer isn't already started or the app will crash
                     if (!MainPlaybackSticky._notificationLongTimerSet)
@@ -490,9 +500,10 @@ namespace BitChute.Services
                     }
                     return;
                 }
-                else if (!AppState.UserIsLoggedIn) { await Task.Delay(180000); }
+                if (NotificationLoopStartTimesInvoked > 1) { NotificationLoopStartTimesInvoked--; break; }
+                else if (!AppState.UserIsLoggedIn) { await Task.Delay(220000); }
                 //user is logged in but has not yet received a notification
-                else {  await Task.Delay(180000); }
+                else {  await Task.Delay(220000); }
             }
         }
 
@@ -513,7 +524,7 @@ namespace BitChute.Services
                         {
                             _notificationStackExecutionInProgress = true;
                             await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                            await _extNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
+                            await ExtNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
                             ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
                             _notificationStackExecutionInProgress = false;
                         }
@@ -540,7 +551,15 @@ namespace BitChute.Services
             else  { AppState.Bkgrd = true; return true; }
         }
 
-        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)  { }
+        public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
+        {
+            switch (focusChange)
+            {
+                case AudioFocus.Gain: break;
+                case AudioFocus.Loss: break;
+                case AudioFocus.LossTransientCanDuck: break;
+            }
+        }
 
         public int AudioSessionId { get { return 6; } }
 
@@ -607,14 +626,30 @@ namespace BitChute.Services
             return false;
         }
 
-        public bool CanSeekBackward() {return true; }
+        public bool CanSeekBackward()
+        {
+            if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+            {
+                if (MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].CurrentPosition > 0)
+                    return true;
+                else { return false; }
+            }
+            return false;
+        }
 
         public bool CanSeekForward()
         {
-            return true;
+            if (MediaPlayerDictionary.ContainsKey(PlaystateManagement.MediaPlayerNumberIsStreaming))
+            {
+                if (MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].Duration >
+                    MediaPlayerDictionary[PlaystateManagement.MediaPlayerNumberIsStreaming].CurrentPosition)
+                { return true; }
+                else { return false; }
+            }
+            return false;
         }
 
-        void MediaController.IMediaPlayerControl.Pause()
+        void ExtMediaController.IMediaPlayerControl.Pause()
         {
             Pause();
         }
@@ -624,10 +659,10 @@ namespace BitChute.Services
             CurrentPosition = pos;
         }
 
-        void MediaController.IMediaPlayerControl.Start()
-        {
+         void ExtMediaController.IMediaPlayerControl.Start()
+         {
             Play();
-        }
+         }
 
         public static bool AppIsMovingIntoBackgroundAndStreaming = false;
 
@@ -637,17 +672,20 @@ namespace BitChute.Services
         /// <param name="tab"></param>
         public static async void StartVideoInBkgrd(int webViewId = -1)
         {
-            if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
-            
-            await Task.Delay(10);
+            if (!PlaystateManagement.MediaPlayerIsStreaming)
+            {
+                if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
 
-            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+                await Task.Delay(10);
 
-            await Task.Delay(20);
-            
-            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+                PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
 
-            VerifyInBackground(webViewId);
+                await Task.Delay(20);
+
+                PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+
+                VerifyInBackground(webViewId);
+            }
         }
 
         static async void VerifyInBackground(int webViewId = -1)
@@ -660,10 +698,17 @@ namespace BitChute.Services
             PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
         }
 
+        public void OnSeekComplete(MediaPlayer mp)
+        {
+
+        }
+
         public class ServiceWebView : Android.Webkit.WebView
         {
             public override string Url => base.Url;
-            private static int tabKey = -1;
+            private int _tabKey = -1;
+            public int TabKey { get { return _tabKey; } }
+            private static int _latestTabKey = -1;
             public string RootUrl;
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
@@ -692,13 +737,16 @@ namespace BitChute.Services
             {
                 this.SetBackgroundColor(Android.Graphics.Color.Black);
                 PlaystateManagement.WebViewIdDictionary.Add(this.Id, this);
-                tabKey++;
-                PlaystateManagement.WebViewTabDictionary.Add(tabKey, this);
-
+                _latestTabKey++;
+                this._tabKey = _latestTabKey;
+                PlaystateManagement.WebViewTabDictionary.Add(this._tabKey, this);
                 AppState.WebViewAgentString = this.Settings.UserAgentString;
             }
 
-            
+            protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+            {
+                base.OnLayout(changed, left, top, right, bottom);
+            }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
             {

@@ -16,15 +16,29 @@
 		<Button
 			android:text="Encoder"
 			android:layout_width="wrap_content"
-			android:layout_weight=".5"
+			android:layout_weight=".25"
+			android:singleLine="true"
 			android:layout_height="match_parent"
 			android:id="@+id/encoderViewSwapButton" />
+						<Button
+			android:text="App Settings"
+			android:layout_weight=".25"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/settingsViewSwapButton" />
+								<Button
+			android:text="Login"
+			android:layout_weight=".25"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/loginViewSwapButton" />
 		<Button
 			android:text="Web"
-			android:layout_weight=".5"
+			android:layout_weight=".2"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:id="@+id/webViewSwapButton" />
+
 	</LinearLayout>
 	<LinearLayout
 		android:orientation="vertical"
