@@ -42,6 +42,7 @@
 				android:layout_height="wrap_content"
 				android:textColor="@android:color/white"
 				android:id="@+id/downloadByUrlEditText"
+				android:maxLines="5"
 				android:hint="url"
 				android:background="#ff263238" />
 			<EditText

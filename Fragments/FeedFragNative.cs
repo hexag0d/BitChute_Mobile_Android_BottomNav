@@ -84,6 +84,8 @@ namespace BitChute.Fragments
                 VideoDetail = new ViewModel.VideoDetailLoader(TabFragmentRelativeLayout, null, this.Uid);
                 GetFragmentById(this.Uid, this);
                 GetSubscriptionFeed();
+
+                LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
                 return FragmentContainerLayout;
             }
             catch { }

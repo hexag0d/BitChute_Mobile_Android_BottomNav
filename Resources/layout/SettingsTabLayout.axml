@@ -247,14 +247,21 @@
 						android:buttonTint="#3498db"
 						android:textColor="#3498db"
 						android:text="Background with Feed"
-						android:id="@+id/backgroundWFeed" />
+						android:id="@+id/backgroundWFeedRb" />
 					<RadioButton
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="Any"
 						android:buttonTint="#3498db"
 						android:textColor="#3498db"
-						android:id="@+id/backgroundWMinimize" />
+						android:id="@+id/backgroundWMinimizeRb" />
+											<RadioButton
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Off"
+						android:buttonTint="#3498db"
+						android:textColor="#3498db"
+						android:id="@+id/backgroundPlaybackOffRb" />
 				</RadioGroup>
 				<RadioGroup
 					android:minWidth="25px"
@@ -378,6 +385,11 @@
 				android:layout_height="wrap_content"
 				android:background="@android:color/darker_gray"
 				android:id="@+id/searchOverrideSourceSpinner" />
+				<Button
+					android:text="Clear Login Credentials"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/clearLoginCredentialsButton" />
 			<RadioGroup
 				android:minWidth="25px"
 				android:minHeight="25px"

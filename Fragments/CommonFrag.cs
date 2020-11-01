@@ -32,10 +32,32 @@ namespace BitChute.Fragments
         public View WebViewFragmentLayout { get { return _webViewFragment; } set { _webViewFragment = value; } }
         private View _feedView;
         public View FeedView { get { return _feedView; } set { _feedView = value; } }
+        private View _loginLayout;
+        public View LoginLayout { get { return _loginLayout; } set { _loginLayout = value; } }
         private RelativeLayout _tabFragmentRelativeLayout;
         public RelativeLayout TabFragmentRelativeLayout { get { return _tabFragmentRelativeLayout; } set { _tabFragmentRelativeLayout = value; } }
         private View _fragmentContainerLayout;
-        public View FragmentContainerLayout { get { return _fragmentContainerLayout; } set { _fragmentContainerLayout = value; } }
+        public View FragmentContainerLayout { get { return _fragmentContainerLayout; } set { _fragmentContainerLayout = value; }}
+
+        private Button _loginButton;
+        public Button LoginButton { get { return _loginButton; } set { _loginButton = value; } }
+        private Button _continueWithoutLoginButton;
+        public Button ContinueWithoutLoginButton { get { return _continueWithoutLoginButton; } set { _continueWithoutLoginButton = value; } }
+        private Button _logoutButton;
+        public Button LogoutButton { get { return _logoutButton; } set { _logoutButton = value; } }
+        private Button _logoutAndHardFlushCacheButton;
+        public Button LogoutAndHardFlushCacheButton { get { return _logoutAndHardFlushCacheButton; } set { _logoutAndHardFlushCacheButton = value; } }
+        private Button _registerNewAccountButton;
+        public Button RegisterNewAccountButton { get { return _registerNewAccountButton; } set { _registerNewAccountButton = value; } }
+        private Button _forgotPasswordButton;
+        public Button ForgotPasswordButton { get { return _forgotPasswordButton; } set { _forgotPasswordButton = value; } }
+        private EditText _usernameTextBox;
+        public EditText UserNameTextBox { get { return _usernameTextBox; } set { _usernameTextBox = value; } }
+        private EditText _passwordTextBox;
+        public EditText PasswordTextBox { get { return _passwordTextBox; } set { _passwordTextBox = value; } }
+        private TextView _loginErrorTextView;
+        public TextView LoginErrorTextView { get { return _loginErrorTextView; } set { _loginErrorTextView = value; } }
+
         private RecyclerView _feedRecyclerView;
         public RecyclerView FeedRecyclerView { get { return _feedRecyclerView; } set { _feedRecyclerView = value; } }
         private LinearLayoutManager _layoutManager;
@@ -49,6 +71,7 @@ namespace BitChute.Fragments
         public static ServiceWebView Wv;
         private VideoDetailLoader _videoDetail;
         public VideoDetailLoader VideoDetail { get { return _videoDetail; } set { _videoDetail = value; } }
+        public static Dictionary<int, CommonFrag> FragmentDictionary { get { return _fragmentDictionary; } }
         private static Dictionary<int, CommonFrag> _fragmentDictionary;
         public static CommonFrag GetFragmentById(int id, object frag = null)
         {
@@ -92,6 +115,7 @@ namespace BitChute.Fragments
             this.Id = new System.Random().Next(999999999);
             base.OnCreate(savedInstanceState);
         }
+
 
         /// <summary>
         /// click event for the adapter

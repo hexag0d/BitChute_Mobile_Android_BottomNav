@@ -374,6 +374,7 @@
     <AndroidAsset Include="Assets\html\bitchute_splash.gif" />
     <AndroidAsset Include="Assets\html\splash.html" />
     <AndroidAsset Include="Assets\html\bitchute_splash2.gif" />
+    <AndroidAsset Include="Assets\html\blank.html" />
     <Content Include="Css\homepage.css" />
     <Content Include="Css\main.css" />
     <Content Include="Css\main.html" />
@@ -410,6 +411,14 @@
     <Content Include="Assets\html\background_fractal.png" />
     <AndroidResource Include="Resources\drawable\noavatar.png" />
     <Content Include="Resources\drawable\background_fractal.png" />
+    <AndroidResource Include="Resources\layout\Tab1WebView.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Tab4Login.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <None Include="Css\main.min.css_" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

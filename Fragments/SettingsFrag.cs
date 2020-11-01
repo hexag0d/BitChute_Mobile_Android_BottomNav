@@ -76,16 +76,14 @@ namespace BitChute.Fragments
                     FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab4FragLayout, container, false);
                 if (WebViewFragmentLayout == null)
                     WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab4WebView, container, false);
-                
                 if (InternalTabbedLayout == null)
                     InternalTabbedLayout = inflater.Inflate(Resource.Layout.InternalEncoderTabLayout, container, false);
-
                 if (SettingsTabLayout == null)
                     SettingsTabLayout = inflater.Inflate(Resource.Layout.SettingsTabLayout, container, false);
                 if (InternalTabbedLayout != null)
                 {
                     InternalTabbedLayout.FindViewById<Button>(Resource.Id.loginViewSwapButton)
-                        .Click += LoginButton_OnClick;
+                        .Click += LoginButtonShow_OnClick;
                     InternalTabbedLayout.FindViewById<Button>(Resource.Id.settingsViewSwapButton)
                         .Click += SettingsButton_OnClick;
                 }
@@ -95,8 +93,7 @@ namespace BitChute.Fragments
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
                 Wv.RootUrl = RootUrl;
                 if (AppSettings.SettingsTabOverride) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab5overridestring"); }
-                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
-                else { Wv.SetWebViewClient((Settings)WebViewClient); }
+                Wv.SetWebViewClient((Settings)WebViewClient);
                 Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -199,10 +196,106 @@ namespace BitChute.Fragments
                 }
                 if (AppSettings.Debug.LoadWebViewsOnStart) { BitChute.Web.ViewClients.LoadInitialUrls(); }
                 GetFragmentById(this.Id, this);
+
+
             }
             catch (Exception ex) { }
-            
+            try
+            {
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimize).Click += ExtSettingChanged;
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayFeedOnly).Click += ExtSettingChanged;
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimizeOff).Click += ExtSettingChanged;
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
+                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
+                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                RegisterNewAccountButton = LoginLayout.FindViewById<Button>(Resource.Id.registerNewAccountButton);
+                ForgotPasswordButton = LoginLayout.FindViewById<Button>(Resource.Id.forgotPasswordButton);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                LoginErrorTextView = LoginLayout.FindViewById<TextView>(Resource.Id.loginFailedTextView);
+                LoginButton.Click += LoginButton_OnClick;
+                ForgotPasswordButton.Click += ForgotPasswordButton_OnClick;
+                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
+                RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
+            }
+            catch
+            {
+
+            }
                 return FragmentContainerLayout;
+        }
+
+
+
+        public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
+        {
+            Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
+            SwapLoginView(true);
+        }
+
+
+
+        public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
+        {
+            Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
+
+            SwapLoginView(true);
+        }
+
+
+        public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+        }
+
+
+        static bool LoginVisible;
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        {
+            if (forceRemoveLoginLayout)
+            {
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
+                LoginVisible = false;
+                return;
+            }
+            if (forceShowLoginView)
+            {
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(LoginLayout);
+                LoginVisible = true;
+                return;
+            }
+            else
+            {
+                if (forceWebViewLayout)
+                {
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
+                }
+                else if (!LoginVisible)
+                {
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(LoginLayout);
+                }
+                else
+                {
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
+                }
+            }
         }
 
         public static void NotificationsOnRb_OnClick(object sender, EventArgs e)
@@ -219,10 +312,19 @@ namespace BitChute.Fragments
             }
         }
 
-        public static void LoginButton_OnClick(object sender, EventArgs e)
+        public void LoginButton_OnClick(object sender, EventArgs e)
+        {
+            BitChute.Web.Login.MakeLoginRequest(
+                UserNameTextBox.Text,
+                PasswordTextBox.Text);
+            UserNameTextBox.Text = "";
+            PasswordTextBox.Text = "";
+        }
+
+        public void LoginButtonShow_OnClick(object sender, EventArgs e)
         {
             ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
-            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Main.LoginLayout);
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(LoginLayout);
         }
 
         public static void SettingsButton_OnClick(object sender, EventArgs e)
@@ -236,7 +338,7 @@ namespace BitChute.Fragments
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
-            BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
+           // BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
         }
 
 
@@ -295,6 +397,15 @@ namespace BitChute.Fragments
             else { _hidehorizontalnavbaroffrb.Checked = true; }
             if (AppSettings.HideVerticalNavBar) { _hideverticalnavbaronrb.Checked = true; }
             else { _hideverticalnavbaroffrb.Checked = true; }
+            if (AppSettings.AutoPlayOnMinimized == "any") {
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimize).Checked = true; ;
+            }
+            else if (AppSettings.AutoPlayOnMinimized == "feed") {
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayFeedOnly).Checked = true; ;
+            }
+            else if (AppSettings.AutoPlayOnMinimized == "off") {
+                SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimizeOff).Checked = true; ;
+            }
             try // something weird going on here.. dl fab setting selector is throwing resource error @TODO fix it
             {
                 if (AppSettings.DlFabShowSetting == "onpress") { _showdlbuttononpress.Checked = true; }
@@ -532,6 +643,19 @@ namespace BitChute.Fragments
                 if (_showdlbuttononpress.Checked) { AppSettings.DlFabShowSetting = "onpress"; }
                 else if (_showdlbuttonalways.Checked) { AppSettings.DlFabShowSetting = "always"; }
                 else if (_showdlbuttonnever.Checked) { AppSettings.DlFabShowSetting = "never"; }
+                if (SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimize).Checked)
+                {
+                    AppSettings.AutoPlayOnMinimized = "any";
+                }
+                else if (SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayFeedOnly).Checked)
+                {
+                    AppSettings.AutoPlayOnMinimized = "feed";
+                }
+                else if (SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.autoPlayOnMinimizeOff).Checked)
+                {
+                    AppSettings.AutoPlayOnMinimized = "off";
+                }
+                AppSettings.PrefEditor.PutString("autoplayonminimized", AppSettings.AutoPlayOnMinimized);
                 AppSettings.PrefEditor.PutBoolean("zoomcontrol", AppSettings.ZoomControl);
                 AppSettings.PrefEditor.PutBoolean("fanmode", AppSettings.FanMode);
                 AppSettings.PrefEditor.PutBoolean("tab3hide", AppSettings.Tab3Hide);

@@ -400,7 +400,7 @@ namespace BitChute
                 try {
                     ViewHelpers.Tab3.DownloadProgressTextView.Text = $"An error occured getting from {vc.VideoUri} try " +
                      $"another seed?";
-                    ViewHelpers.Tab3.DownloadLinkEditText.Text = vc.VideoUri.AbsolutePath;
+                    ViewHelpers.Tab3.DownloadLinkEditText.Text = vc.VideoUri.ToString();
                 }
                 catch { }
                 System.Console.WriteLine(ex.InnerException);

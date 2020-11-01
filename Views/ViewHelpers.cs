@@ -85,6 +85,8 @@ namespace BitChute
         {
             public static View FragmentContainerLayout { get; set; }
             public static View WebViewFragmentLayout { get; set; }
+            public static View LoginLayout { get; set; }
+            public static Button LoginButton { get; set; }
             public static WebView Wv { get; set; }
             public static View DownloaderLayout { get; set; }
             public static RelativeLayout TabFragmentRelativeLayout { get; set; }
@@ -136,6 +138,7 @@ namespace BitChute
             public static View WebViewFragmentLayout { get; set; }
             public static View InternalTabbedLayout { get; set; }
             public static View SettingsTabLayout { get; set; }
+            public static View LoginLayout { get; set; }
             public static WebView Wv { get; set; }
             public static LinearLayout TabFragmentLinearLayout { get; set; }
             public static LinearLayout EncoderFlexLinearLayout { get; set; }
@@ -186,6 +189,7 @@ namespace BitChute
         public class VideoEncoder
         {
             public static View VideoEncoderLayout { get; set; }
+
             public static TextView EncodingStatusTextView { get; set; }
             public static TextView AudioEncodingStatusTextView { get; set; }
             public static Button StartEncodingButton { get; set; }

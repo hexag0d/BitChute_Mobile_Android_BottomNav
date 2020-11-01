@@ -55,40 +55,27 @@ namespace BitChute.Fragments
         {
             try
             {
-                if (FragmentContainerLayout == null)
-                { FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false); }
-                if (LoginLayout == null)
+                if (ViewHelpers.Tab0.FragmentContainerLayout == null)
                 {
-                    LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                    ViewHelpers.Tab0.FragmentContainerLayout = 
+                        inflater.Inflate(Resource.Layout.Tab0FragLayout, container, false);
                 }
-                if (TabFragmentRelativeLayout == null)
+                if (ViewHelpers.Tab0.TabFragmentRelativeLayout == null)
                 {
-                    TabFragmentRelativeLayout =
-                        FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout =
+                        ViewHelpers.Tab0.FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab0relativeLayout);
                 }
                 if (WebViewFragmentLayout == null)
                 {
                     WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab0WebView, container, false);
                 }
-                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
-                LoginButton.Click += LoginButton_OnClick;
-                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
-                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
-                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
-                RegisterNewAccountButton = LoginLayout.FindViewById<Button>(Resource.Id.registerNewAccountButton);
-                ForgotPasswordButton = LoginLayout.FindViewById<Button>(Resource.Id.forgotPasswordButton);
-                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
-                LoginErrorTextView = LoginLayout.FindViewById<TextView>(Resource.Id.loginFailedTextView);
-                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
-                ContinueWithoutLoginButton.Click += MainActivity.Fm4.ContinueWithoutLoginButton_OnClick;
 
                 Wv = WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView0Swapable);
                 //Wv.LoadUrl("file:///android_asset/html/splash.html");
                 Wv.RootUrl = RootUrl;
-                if (WebViewClient.GetType() == typeof(Home))
-                    Wv.SetWebViewClient((Home)WebViewClient);
-                else if (WebViewClient.GetType() == typeof(LoginWebViewClient))
-                    Wv.SetWebViewClient((LoginWebViewClient)WebViewClient);
+                Wv.SetWebViewClient((Home)WebViewClient);
+
+                //LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
                 SetAutoPlayWithDelay(1);
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
@@ -97,29 +84,62 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                if (ShowLoginOnStartup)
-                {
-                    SwapLoginView();
-                }
-                else
-                {
-                    SwapLoginView(false, true);
-                }
+
 
                 GetFragmentById(this.Id, this);
-                return FragmentContainerLayout;
+
+            }
+
+            catch { }
+            try
+            {
+                LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
+                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
+                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                RegisterNewAccountButton = LoginLayout.FindViewById<Button>(Resource.Id.registerNewAccountButton);
+                ForgotPasswordButton = LoginLayout.FindViewById<Button>(Resource.Id.forgotPasswordButton);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                LoginErrorTextView = LoginLayout.FindViewById<TextView>(Resource.Id.loginFailedTextView);
+                LoginButton.Click += LoginButton_OnClick;
+                ForgotPasswordButton.Click += ForgotPasswordButton_OnClick;
+                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
+                RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
             }
             catch { }
-            return null;
+            if (ShowLoginOnStartup)
+            {
+                //SwapMainActivityLoginView(true);
+                SwapLoginView();
+            }
+            else
+            {
+                SwapLoginView(false, true);
+            }
+            return ViewHelpers.Tab0.FragmentContainerLayout;
         }
 
-        public static void LoginButton_OnClick(object sender, EventArgs e)
+        public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+            Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
+        }
+
+
+        public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+            Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
+        }
+
+        public void LoginButton_OnClick(object sender, EventArgs e)
         {
             BitChute.Web.Login.MakeLoginRequest(
-                ViewHelpers.Main.UserNameTextBox.Text, 
-                ViewHelpers.Main.PasswordTextBox.Text);
-            ViewHelpers.Main.UserNameTextBox.Text = "";
-            ViewHelpers.Main.PasswordTextBox.Text = "";
+                UserNameTextBox.Text,
+                PasswordTextBox.Text);
+            UserNameTextBox.Text = "";
+            PasswordTextBox.Text = "";
         }
 
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
@@ -128,7 +148,7 @@ namespace BitChute.Fragments
             SwapLoginView(true);
         }
 
-        public static void OnPostLoginAttempt(LoginEventArgs e)
+        public void OnPostLoginAttempt(LoginEventArgs e)
         {
             if (e.LoginSuccess)
             {
@@ -149,40 +169,52 @@ namespace BitChute.Fragments
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
         }
 
+        public void SwapMainActivityLoginView(bool showLoginScreen)
+        {
+            ContentRelativeLayout.AddView(ViewHelpers.Main.LoginLayout);
+        }
+
         static bool LoginVisible;
         /// <summary>
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false)
+        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
-                TabFragmentRelativeLayout.RemoveAllViews();
-                TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
                 LoginVisible = false;
+                return;
+            }
+            if (forceShowLoginView)
+            {
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(LoginLayout);
+                LoginVisible = true;
                 return;
             }
             else
             {
                 if (forceWebViewLayout)
                 {
-                    TabFragmentRelativeLayout.RemoveAllViews();
-                    TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
                 }
                 else if (!LoginVisible)
                 {
-                    TabFragmentRelativeLayout.RemoveAllViews();
-                    TabFragmentRelativeLayout.AddView(ViewHelpers.Main.LoginLayout);
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(LoginLayout);
                 }
                 else
                 {
-                    TabFragmentRelativeLayout.RemoveAllViews();
-                    TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.RemoveAllViews();
+                    ViewHelpers.Tab0.TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
                 }
             }
-            LoginVisible = !LoginVisible;
         }
+
 
         public override void OnResume()
         {
@@ -192,7 +224,7 @@ namespace BitChute.Fragments
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
-            BitChute.Web.ViewClients.RunBaseCommands(Wv);
+            //BitChute.Web.ViewClients.RunBaseCommands(Wv);
         }
 
         public void OnSettingsChanged(List<object> settings)

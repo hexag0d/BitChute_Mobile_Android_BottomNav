@@ -45,20 +45,20 @@ namespace BitChute.Web
             {
                 CookieManager.Instance.SetAcceptCookie(true);
                 CookieManager.Instance.SetCookie("https://www.bitchute.com/", "preferences=" + @"{%22theme%22:%22night%22%2C%22autoplay%22:true}");
-                HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
-                SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
-                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
-                MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
-                SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
+                HomePageFrag.Wv.LoadInitialUrl(MainActivity.Fm0.RootUrl);
+                SubscriptionFrag.Wv.LoadInitialUrl(MainActivity.Fm1.RootUrl);
+                FeedFrag.Wv.LoadInitialUrl(MainActivity.Fm2.RootUrl);
+                MyChannelFrag.Wv.LoadInitialUrl(MainActivity.Fm3.RootUrl);
+                SettingsFrag.Wv.LoadInitialUrl(MainActivity.Fm4.RootUrl);
                 AppSettings.FirstTimeAppLoad = false;
             }
             else
             {
-                HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
-                SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
-                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
-                MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
-                SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
+                HomePageFrag.Wv.LoadInitialUrl(MainActivity.Fm0.RootUrl);
+                SubscriptionFrag.Wv.LoadInitialUrl(MainActivity.Fm1.RootUrl);
+                FeedFrag.Wv.LoadInitialUrl(MainActivity.Fm2.RootUrl);
+                MyChannelFrag.Wv.LoadInitialUrl(MainActivity.Fm3.RootUrl);
+                SettingsFrag.Wv.LoadInitialUrl(MainActivity.Fm4.RootUrl);
             }
 
             if (AppState.NotificationStartedApp)
@@ -129,44 +129,70 @@ namespace BitChute.Web
 
         }
 
+        public static void Run_OnLoginFailure()
+        {
+            foreach (var frag in CommonFrag.FragmentDictionary.Values)
+            {
+                if (frag.LoginErrorTextView != null)
+                {
+                    frag.LoginErrorTextView.Visibility = Android.Views.ViewStates.Visible;
+                }
+            }
+        }
+
+        public static bool WebViewsAreReloadingAfterLogin = false;
+        public static List<int> WebViewIdList = new List<int>();
+
         public static void Run_OnLogin()
         {
             int tabKey = -1;
-            //foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
-            //{
-            //    tabKey++;
-            //    try
-            //    {
-            //        view.SetWebViewClient(null);
-            //        switch (view.RootUrl)
-            //        {
-            //            case "https://www.bitchute.com/":
-            //                if (tabKey == 0) { view.SetWebViewClient(new Home()); }
-            //                else { view.SetWebViewClient(new Feed()); }
-            //                break;
-            //            case "https://www.bitchute.com/subscriptions/":
-            //                view.SetWebViewClient(new Subs());
-            //                break;
-            //            case "https://www.bitchute.com/profile/":
-            //                view.SetWebViewClient(new MyChannel());
-            //                break;
-            //            case "https://www.bitchute.com/settings/":
-            //                view.SetWebViewClient(new Settings());
-            //                break;
-            //        }
-            //    }
-            //    catch { }
-            //}
+            WebViewsAreReloadingAfterLogin = true;
             foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
             {
-                
-                try
+                if (PlaystateManagement.WebViewPlayerIsStreaming)
                 {
-                    view.ClearCache(true);
-                    view.LoadUrl(view.RootUrl);
+                    if (PlaystateManagement.WebViewPlayerNumberIsStreaming != view.Id)
+                    {
+                        try
+                        {
+                            view.ClearCache(true);
+                            view.LoadUrl(view.RootUrl);
+                        }
+                        catch { }
+                    }
+                    else
+                    {
+                        view.ClearCache(false);
+                    }
                 }
-                catch { }
+                else
+                {
+                    try
+                    {
+                        view.ClearCache(true);
+                        if (view.Url.Contains("/accounts/login/"))
+                        {
+                            WebViewIdList.Add(view.Id);
+                                view.LoadUrl("file:///android_asset/html/blank.html");
+                                view.Visibility = Android.Views.ViewStates.Gone;
+                                view.LoadUrl(view.RootUrl);
+                            
+                            //view.LoadUrl(view.RootUrl);
+                        }
+                        else
+                        {
+                            view.Reload();
+                        }
+                    }
+                    catch { }
+                }
             }
+            MainActivity.Fm0.SwapLoginView(true);
+            MainActivity.Fm1.SwapLoginView(true);
+            MainActivity.Fm2.SwapLoginView(true);
+            MainActivity.Fm3.SwapLoginView(true);
+            MainActivity.Fm4.SwapLoginView(true);
+
             AppState.UserIsLoggedIn = true;
         }
 
@@ -175,15 +201,45 @@ namespace BitChute.Web
             AppSettings.SessionState.SessionId = "";
         }
 
+        public static List<int> WindowLoadEventSet = new List<int>();
+
+        public static async void SetInitialWindowDocumentLoadEvent(WebView w)
+        {
+            Task<bool> containsKey = Task.FromResult(WindowLoadEventSet.Contains(w.Id));
+            var cc = await containsKey;
+            if (!cc)
+            {
+                WindowLoadEventSet.Add(w.Id);
+                w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
+            }
+        }
+
         public static async void RunBaseCommands(WebView w, int d = 2000)
         {
+            w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
+            //w.LoadUrl(GetInjectable(CallBackInjection.GetWindowDocumentEvents));
+
             await Task.Delay(d);
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
 
-            w.LoadUrl(GetInjectable(JsDisableToolTips+
-                JsLinkFixer +
-                CallBackInjection.IsPlayingCallback +
-                CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
+            w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips +
+                JsLinkFixer));
+            w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.DocumentReady));
+            if (WebViewsAreReloadingAfterLogin)
+            {
+                if (WebViewIdList.Contains(w.Id))
+                {
+                    w.Visibility = Android.Views.ViewStates.Visible;
+                    WebViewIdList.Remove(w.Id);
+                }
+                if (WebViewIdList.Count == 0)
+                {
+                    WebViewsAreReloadingAfterLogin = false;
+                }
+            }
+            //    CallBackInjection.IsPlayingCallback +
+            //    CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
+            //w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
         }
 
         public static void WebViewGoBack(WebView wv)
@@ -192,83 +248,23 @@ namespace BitChute.Web
             BitChute.Web.ViewClients.RunBaseCommands(wv, 2000);
         }
 
-        public class LoginWebViewClient : BaseWebViewClient
+        public static void RunPostLoginSuccess(int viewCalled, string cookieString = null)
         {
-            public static bool LatestLoginWasSuccess;
-            CookieContainer _cookieCon = new CookieContainer();
-            
 
-            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+            foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
             {
-                if (request.Url.ToString() == @"https://www.bitchute.com/accounts/login/")
+                if (view.Id != viewCalled && view.RootUrl != null)
                 {
-                    if (request.Method == "POST")
-                    {
-                        AppState.UserIsLoggingIn = true;
-                    }
+                    view.ClearCache(false);
+                    view.LoadUrl(view.RootUrl);
                 }
-                if (request.Url.ToString() == @"https://www.bitchute.com/accounts/logout/")
-                {
-                    if (request.Method == "GET")
-                    {
-                        AppState.UserIsLoggingIn = false;
-                        AppState.UserIsLoggedIn = true;
-                    }
-                }
-                return base.ShouldInterceptRequest(view, request);
             }
-
-            public override void OnPageFinished(WebView view, string url)
-            {
-                base.OnPageFinished(view, url);
-                if (AppState.UserIsLoggingIn)
-                {
-                    RunPostLoginPageCommands(view);
-                    AppState.UserIsLoggingIn = false;
-                }
-
-            }
-            
-            public static async void RunPostLoginPageCommands(WebView w, int d = 2000)
-            {
-                await Task.Delay(d);
-                try
-                {
-                    //ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
-                }
-                catch { }
-                RunPostLoginSuccess(w.Id);
-            }
-
-            public static void RunPostLoginSuccess(int viewCalled)
-            {
-                int tabKey = -1;
-                foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
-                {
-                    view.SetWebViewClient(null);
-                    tabKey++;
-                    switch (view.RootUrl)
-                    {
-                        case "https://www.bitchute.com/":
-                            if (tabKey == 0) { view.SetWebViewClient(new Home()); }
-                            else { view.SetWebViewClient(new Feed()); }
-                            break;
-                        case "https://www.bitchute.com/subscriptions/":
-                            view.SetWebViewClient(new Subs()); 
-                            break;
-                        case "https://www.bitchute.com/profile/":
-                            view.SetWebViewClient(new MyChannel());
-                            break;
-                        case "https://www.bitchute.com/settings/":
-                            view.SetWebViewClient(new Settings());
-                            break;
-                    }
-                    if (view.Id != viewCalled && view.RootUrl != null) {
-                        view.ClearCache(false);
-                        view.LoadUrl(view.RootUrl); } 
-                }
-                AppState.UserIsLoggedIn = true;
-            }
+            MainActivity.Fm0.SwapLoginView(true);
+            MainActivity.Fm1.SwapLoginView(true);
+            MainActivity.Fm2.SwapLoginView(true);
+            MainActivity.Fm3.SwapLoginView(true);
+            MainActivity.Fm4.SwapLoginView(true);
+            AppState.UserIsLoggedIn = true;
         }
 
         public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
@@ -297,6 +293,7 @@ namespace BitChute.Web
             {
                 RunBaseCommands(view);
                 base.OnPageFinished(view, url);
+                
             }
         }
 
@@ -342,14 +339,29 @@ namespace BitChute.Web
                 if (request.Url.ToString().EndsWith("common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
+
                 }
+
                 return base.ShouldInterceptRequest(view, request);
+            }
+
+            public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().EndsWith("=/subscriptions/"))
+                {
+                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/subscriptions/")
+                    {
+                        MainActivity.Fm1.SwapLoginView(false, false, true);
+                    }
+                }
+                return base.ShouldOverrideUrlLoading(view, request);
             }
 
             public override void OnPageFinished(WebView view, string url)
             {
                 RunPageCommands(view);
                 base.OnPageFinished(view, url);
+
             }
         }
 
@@ -359,7 +371,17 @@ namespace BitChute.Web
             {
                 await Task.Delay(d);
                 if (w.Url.Contains("bitchute.com/channel/") || w.Url == "https://www.bitchute.com/")
-                { w.LoadUrl(GetInjectable(Display.ShowTabScrollInner +  Display.GetForAllTabs())); w.LoadUrl(_jsSelectSubscribed); }
+                {
+                    if (w.Url == "https://www.bitchute.com/" && AppState.UserIsLoggedIn)
+                    {
+                        w.LoadUrl(GetInjectable(Display.ShowTabScrollInner + Display.GetForAllTabs()));
+                        w.LoadUrl(_jsSelectSubscribed);
+                    }
+                    if (w.Url == "https://www.bitchute.com/" && !AppState.UserIsLoggedIn)
+                    {
+                        w.LoadUrl(GetInjectable(Display.ShowTabScrollInner + Display.GetForAllTabs()));
+                    }
+                }
                 HidePageTitle(w, AppSettings.HidePageTitleDelay);
             }
 
@@ -371,6 +393,8 @@ namespace BitChute.Web
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
+
+
 
             public override void OnPageFinished(WebView view, string url)
             {
@@ -400,6 +424,18 @@ namespace BitChute.Web
                     return CssHelper.GetCssResponse(CssHelper.CommonCssMyChannel);
                 }
                 return base.ShouldInterceptRequest(view, request);
+            }
+
+            public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().EndsWith("=/profile/"))
+                {
+                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/profile/")
+                    {
+                        MainActivity.Fm3.SwapLoginView(false, false, true);
+                    }
+                }
+                return base.ShouldOverrideUrlLoading(view, request);
             }
 
             public override void OnPageFinished(WebView view, string url)
@@ -434,7 +470,19 @@ namespace BitChute.Web
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
-            
+
+            public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            {
+                if (request.Url.ToString().EndsWith("=/settings/"))
+                {
+                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/settings/")
+                    {
+                        MainActivity.Fm4.SwapLoginView(false, false, true);
+                    }
+                }
+                return base.ShouldOverrideUrlLoading(view, request);
+            }
+
             public override void OnPageFinished(WebView view, string url)
             {
                 RunPageCommands(view);

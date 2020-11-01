@@ -46,9 +46,11 @@ namespace BitChute
                 }
                 else if (webViewPauseRequested)
                 {
-                    WebViewPlayerIsStreaming = false;
-                    WebViewPlayerNumberIsStreaming = webViewId;
-                    MediaPlayerIsStreaming = false;
+                    if (webViewId == _webViewMediaPlayerNumberIsStreaming)
+                    {
+                        _webViewMediaPlayerIsStreaming = false;
+                        _webViewMediaPlayerNumberIsStreaming = webViewId;
+                    }
                     PlayerTypeQueued(PlayerType.WebViewPlayer);
                     PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
                 }
@@ -67,8 +69,8 @@ namespace BitChute
                     PlayerTypeCurrentlyStreaming(PlayerType.NativeMediaPlayer);
                 }
             }
-            public bool WebViewMediaPlayerIsStreaming { get { return WebViewPlayerIsStreaming; } }
-            public int WebViewMediaPlayerNumberIsStreaming { get { return WebViewPlayerNumberIsStreaming; } }
+            public bool WebViewMediaPlayerIsStreaming { get { return _webViewMediaPlayerIsStreaming; } }
+            public int WebViewMediaPlayerNumberIsStreaming { get { return _webViewMediaPlayerNumberIsStreaming; } }
             public bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
             public int NativeMediaPlayerNumberIsStreaming { get { return MediaPlayerNumberIsStreaming; } }
             public int NativeMediaPlayerNumberIsQueued { get { return _nativeMediaPlayerNumberIsQueued; } }
@@ -164,20 +166,28 @@ namespace BitChute
 
         public static WebView GetWebViewPlayerById(int id = -1, int tabNo = -1)
         {
-            if (id == -1 && tabNo == -1)
+            try
             {
-                id = _webViewMediaPlayerNumberIsStreaming;
-                return WebViewIdDictionary[id];
+                if (id == -1 && tabNo == -1)
+                {
+                    id = _webViewMediaPlayerNumberIsStreaming;
+                    return WebViewIdDictionary[id];
+                }
+                else if (id == -1 && tabNo != -1)
+                {
+                    return WebViewTabDictionary[tabNo];
+                }
+                else if (id != -1)
+                {
+                    return WebViewIdDictionary[id];
+                }
+                else { return WebViewIdDictionary?.First().Value; }
             }
-            else if (id == -1 && tabNo != -1)
+            catch
             {
-                return WebViewTabDictionary[tabNo];
+
             }
-            else if (id != -1)
-            {
-                return WebViewIdDictionary[id];
-            }
-            else { return WebViewIdDictionary?.First().Value; }
+            return null;
         }
 
         public static void SendPauseVideoCommand()

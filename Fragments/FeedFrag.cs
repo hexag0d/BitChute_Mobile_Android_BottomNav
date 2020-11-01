@@ -9,6 +9,8 @@ using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab2;
 using static BitChute.Web.ViewClients;
+using Android.Widget;
+using System;
 
 namespace BitChute.Fragments
 {
@@ -50,12 +52,22 @@ namespace BitChute.Fragments
         {
             try
             {
-                if (FragmentContainerLayout == null )
-                FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
-                Wv = (ServiceWebView)FragmentContainerLayout.FindViewById<ServiceWebView>(Resource.Id.webView2);
+                if (FragmentContainerLayout == null)
+                {
+                    FragmentContainerLayout = inflater.Inflate(Resource.Layout.Tab2FragLayout, container, false);
+                }
+                if (TabFragmentRelativeLayout == null)
+                {
+                    TabFragmentRelativeLayout =
+                        FragmentContainerLayout.FindViewById<RelativeLayout>(Resource.Id.tab2relativeLayout);
+                }
+                if (WebViewFragmentLayout == null)
+                {
+                    WebViewFragmentLayout = inflater.Inflate(Resource.Layout.Tab2WebView, container, false);
+                }
+                Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView2Swapable);
                 Wv.RootUrl = RootUrl;
-                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
-                else { Wv.SetWebViewClient((Feed)WebViewClient); }
+                Wv.SetWebViewClient((Feed)WebViewClient);
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.JavaScriptEnabled = true;
                 if (AppSettings.ZoomControl)
@@ -63,11 +75,106 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
+
+
+                
                 Wv.Settings.DisplayZoomControls = false;
-                return FragmentContainerLayout;
+                
+                
             }catch { }
-            return null;
+            try
+            {
+                LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
+                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
+                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                RegisterNewAccountButton = LoginLayout.FindViewById<Button>(Resource.Id.registerNewAccountButton);
+                ForgotPasswordButton = LoginLayout.FindViewById<Button>(Resource.Id.forgotPasswordButton);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                LoginErrorTextView = LoginLayout.FindViewById<TextView>(Resource.Id.loginFailedTextView);
+                LoginButton.Click += LoginButton_OnClick;
+                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
+                RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                SwapLoginView(false, true);
+            }
+            catch { }
+            return FragmentContainerLayout;
         }
+
+
+        public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+            Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
+        }
+
+
+
+        public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+        }
+
+
+        public void LoginButton_OnClick(object sender, EventArgs e)
+        {
+            BitChute.Web.Login.MakeLoginRequest(
+                UserNameTextBox.Text,
+                PasswordTextBox.Text);
+            UserNameTextBox.Text = "";
+            PasswordTextBox.Text = "";
+        }
+
+
+        static bool LoginVisible;
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        {
+            if (forceRemoveLoginLayout)
+            {
+                TabFragmentRelativeLayout.RemoveAllViews();
+                TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                LoginVisible = false;
+                return;
+            }
+            if (forceShowLoginView)
+            {
+                TabFragmentRelativeLayout.RemoveAllViews();
+                TabFragmentRelativeLayout.AddView(LoginLayout);
+                LoginVisible = true;
+                return;
+            }
+            else
+            {
+                if (forceWebViewLayout)
+                {
+                    TabFragmentRelativeLayout.RemoveAllViews();
+                    TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                }
+                else if (!LoginVisible)
+                {
+                    TabFragmentRelativeLayout.RemoveAllViews();
+                    TabFragmentRelativeLayout.AddView(LoginLayout);
+                }
+                else
+                {
+                    TabFragmentRelativeLayout.RemoveAllViews();
+                    TabFragmentRelativeLayout.AddView(WebViewFragmentLayout);
+                }
+            }
+        }
+
 
         public async void LoadUrlWithDelay(string url, int delay)
         {
@@ -93,7 +200,7 @@ namespace BitChute.Fragments
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
-            BitChute.Web.ViewClients.RunBaseCommands(Wv);
+            //BitChute.Web.ViewClients.RunBaseCommands(Wv);
         }
 
         public static bool WvRl = true;

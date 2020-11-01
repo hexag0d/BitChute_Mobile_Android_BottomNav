@@ -44,6 +44,10 @@ namespace BitChute.Web.Auth
                     RunPostAuthEvent.OnPostLoginSuccess(null, null, null, false);
                 }
             }
+            if (loginAttemptFailure)
+            {
+                RunPostAuthEvent.OnPostLoginFailure();
+            }
         }
         public string Cfduid { get { return _cfduid; } }
         public string CsrfToken { get { return _csrftoken; } }
@@ -95,8 +99,12 @@ namespace BitChute.Web.Auth
 
             }
             
-            var check = CookieManager.Instance.GetCookie("https://www.bitchute.com/");
             BitChute.Web.ViewClients.Run_OnLogin();
+        }
+
+        public static void OnPostLoginFailure()
+        {
+            Run_OnLoginFailure();
         }
 
         public static void RunPostLoginWebViewClientUpdate(int viewCalled)

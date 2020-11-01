@@ -53,6 +53,7 @@
     <LinearLayout
       android:orientation="horizontal"
       android:minWidth="50px"
+			android:visibility="gone"
       android:minHeight="30px"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

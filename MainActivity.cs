@@ -116,6 +116,7 @@ namespace BitChute
             _window.AddFlags(_winFlagUseHw);
             SetContentView(Resource.Layout.Main);
             //Android.Webkit.WebView wv = (Android.Webkit.WebView)
+            ViewHelpers.Main.ContentRelativeLayout = FindViewById<Android.Widget.RelativeLayout>(Resource.Id.activityMain);
             //    ViewHelpers.Main.ContentRelativeLayout.FindViewById(Resource.Id.splashWebViewOverlay);
             //wv.SetBackgroundColor(Android.Graphics.Color.Black);
             //wv.LoadUrl("file:///android_asset/html/splash.html");
@@ -154,12 +155,13 @@ namespace BitChute
             CreateNotificationChannel();
             //MainPlaybackSticky.StartNotificationLoop(30000);
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
-            ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
+
             //ViewHelpers.Main.DownloadFAB.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
             //mFab.setRippleColor(your color in int);
             if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
             {
                 ViewHelpers.Main.DownloadFAB.Hide();
+                ViewHelpers.Main.DownloadFAB.SetY(5000);
             }
 
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
@@ -580,29 +582,8 @@ namespace BitChute
 
         public void SwapMyChannelVideoDownloader()
         {
-            if (!TabStates.Tab3.VideoDownloaderViewEnabled)
-            {
-                TabStates.Tab3.VideoDownloaderViewEnabled = true;
-                if (AppSettings.DlFabShowSetting == "onpress")
-                {
-                    ViewHelpers.Main.DownloadFAB.Show();
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
-                    ViewHelpers.Main.FabHeight = ViewHelpers.Main.DownloadFAB.Height;
-                }
-            }
-            else
-            {
-                TabStates.Tab3.VideoDownloaderViewEnabled = false;
-                if (AppSettings.DlFabShowSetting == "onpress")
-                {
-                    ViewHelpers.Main.DownloadFAB.Hide();
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
-                }
-            }
-            if (ViewPager.CurrentItem != 3)
-            {
-                ViewPager.CurrentItem = 3;
-            }
+            MyChannelFrag.SwapDownloaderView();
+
         }
 
         /// <summary>
@@ -630,14 +611,16 @@ namespace BitChute
             //Fm2.GetSubscriptionFeed();
         }
 
+        public static bool UserRequestedStickyBackground = false;
+
         /// <summary>
         /// Requests the app start sticky background playback service
         /// and move into background, regardless of playstate 
         /// </summary>
         public static void ForceAppIntoStickyBackground()
         {
-            PlaystateManagement.UserRequestedBackgroundPlayback = true;
-            MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+            UserRequestedStickyBackground = true;
+            MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification(), true, true);
             Main.MoveTaskToBack(true);
         }
 
@@ -774,8 +757,8 @@ namespace BitChute
             AppState.Display.ScreenWidth = metrics.WidthPixels;
             if (newConfig.Orientation == Orientation.Landscape)
             {
-                BitChute.Views.LayoutChangeHandlers
-                    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
+                //BitChute.Views.LayoutChangeHandlers
+                //    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
                 NavigationView.Visibility = ViewStates.Gone;
                 try {
                     switch (ViewPager.CurrentItem)
@@ -825,6 +808,7 @@ namespace BitChute
                     if (AppSettings.DlFabShowSetting != "always")
                     {
                         ViewHelpers.Main.DownloadFAB.Hide();
+                        ViewHelpers.Main.DownloadFAB.SetY(5000);
                     }
                     AppState.Display.Horizontal = true;
                     _window.ClearFlags(_winflagnotfullscreen);
@@ -833,8 +817,8 @@ namespace BitChute
             }
             if (newConfig.Orientation == Orientation.Portrait)
             {
-                BitChute.Views.LayoutChangeHandlers
-                    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
+                //BitChute.Views.LayoutChangeHandlers
+                //    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
                 switch (ViewPager.CurrentItem)
                 {
                     case 0:
@@ -865,9 +849,10 @@ namespace BitChute
                         break;
                 }
                 if (AppSettings.DlFabShowSetting != "never" ||
-                    (AppSettings.DlFabShowSetting == "onpress" && TabStates.Tab3.VideoDownloaderViewEnabled))
+                    (AppSettings.DlFabShowSetting == "onpress" && MyChannelFrag.VideoDownloaderViewEnabled))
                 {
                     ViewHelpers.Main.DownloadFAB.Show();
+                    ViewHelpers.Main.DownloadFAB.SetY(0);
                 }
                 AppState.Display.Horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
@@ -943,23 +928,36 @@ namespace BitChute
 
         protected override void OnPause()
         {
+            if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && !UserRequestedStickyBackground)
+            {
+                PlaystateManagement.GetWebViewPlayerById(PlaystateManagement.WebViewPlayerNumberIsStreaming)
+                    .LoadUrl(JavascriptCommands.GetInjectable(
+                    JavascriptCommands.CallBackInjection.DocumentReady));
+            }
             if (!WindowFocusChanged) // we don't want to start the background service unless the user has minimized the app
             {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
                                      // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
                                      // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
                                      // or clicking on a notification, which shouldn't cause the background service to start
-                if (PlaystateManagement.WebViewPlayerIsStreaming)
+                if (AppSettings.AutoPlayOnMinimized != "off")
                 {
-                    MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
-                    if (AppState.ForeNote == null)
+                    if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
                     {
-                        MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                        if (PlaystateManagement.WebViewPlayerIsStreaming)
+                        {
+                            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
+                            if (AppState.ForeNote == null)
+                            {
+                                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                            }
+                            try { MainPlaybackSticky.StartVideoInBkgrd(); }
+                            catch { }
+                        }
                     }
-                    try { MainPlaybackSticky.StartVideoInBkgrd(); }
-                    catch { }
                 }
+
+                base.OnPause();
             }
-            base.OnPause();
         }
 
         protected override void OnResume()
@@ -967,34 +965,34 @@ namespace BitChute
             try
             {
                 
-                if (!TabStates.Tab3.VideoDownloaderViewEnabled)
+                if (!MyChannelFrag.VideoDownloaderViewEnabled)
                 {
                     if (AppSettings.DlFabShowSetting != "always")
                     {
-                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                         ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
                         ViewHelpers.Main.DownloadFAB.Hide();
+                        ViewHelpers.Main.DownloadFAB.SetY(5000);
                     }
                     else
                     {
                         ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
-                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
                         ViewHelpers.Main.DownloadFAB.Show();
+                        ViewHelpers.Main.DownloadFAB.SetY(0);
                     }
                 }
-                else if (TabStates.Tab3.VideoDownloaderViewEnabled)
+                else if (MyChannelFrag.VideoDownloaderViewEnabled)
                 {
                     if (AppSettings.DlFabShowSetting != "never")
                     {
                         ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
                         ViewHelpers.Main.DownloadFAB.Show();
-                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(ViewHelpers.Main.FabHeight);
+                        ViewHelpers.Main.DownloadFAB.SetY(0);
                     }
                     else
                     {
-                        ViewHelpers.Main.DownloadFAB.SetMaxHeight(0);
                         ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
                         ViewHelpers.Main.DownloadFAB.Hide();
+                        ViewHelpers.Main.DownloadFAB.SetY(5000);
                     }
                 }
             }

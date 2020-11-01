@@ -95,7 +95,7 @@ namespace BitChute
                 if (_dlFabShowSetting != value)
                 {
                     if (value == "never" || 
-                        (value == "onpress" && !TabStates.Tab3.VideoDownloaderViewEnabled))
+                        (value == "onpress" && !BitChute.Fragments.MyChannelFrag.VideoDownloaderViewEnabled))
                     {
                         ViewHelpers.Main.DownloadFAB?.Hide();
                     }
@@ -208,7 +208,10 @@ namespace BitChute
                 get { return RemoveExpiredCookie(_sessionId); }
                 set { _sessionId = value;
                     if (!AppSettingsLoadingFromAndroid)
+                    {
                         SendPrefSettingToAndroid("sessionid", SessionId);
+                        if (String.IsNullOrWhiteSpace(_sessionId)) { AppState.UserIsLoggedIn = false; }
+                    }
                 }
             }
             public static string RemoveExpiredCookie(string cookie)
@@ -256,7 +259,7 @@ namespace BitChute
                     HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
                     HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
                     DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
-                    AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "feed");
+                    AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "any");
                     BackgroundKey = Prefs.GetString("backgroundkey", "feed");
                     SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
                     SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
@@ -294,7 +297,7 @@ namespace BitChute
 
         public class Debug
         {
-            public static bool LoadWebViewsOnStart = false;
+            public static bool LoadWebViewsOnStart = true;
         }
 
         public class Logging

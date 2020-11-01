@@ -309,14 +309,27 @@ namespace BitChute.Services
         /// When we start on the foreground we will present a notification to the user
         /// When they press the notification it will take them to the main page so they can control the music
         /// </summary>
-        public static void StartForeground(Notification startNote)
+        public static void StartForeground(Notification startNote, bool createNewNotification = false, bool overridePlaystate = false)
         {
             try
             {
-                ExtStickyServ.StartForeground(StartForegroundNotificationId, startNote);
-                ServiceIsRunningInForeground = true;
+                if (createNewNotification)
+                {
+                    AppState.ForeNote = null;
+                    ExtStickyServ.StopForeground(true);
+                    StartForegroundNotificationId = StartForegroundNotificationId++;
+                    ExtStickyServ.StartForeground(StartForegroundNotificationId, startNote);
+                }
+                else
+                {
+                    ExtStickyServ.StartForeground(StartForegroundNotificationId, startNote);
+                    ServiceIsRunningInForeground = true;
+                }
+                if (overridePlaystate)
+                {
+                    StartVideoInBkgrd(GetWebViewPlayerById(-1, MainActivity.ViewPager.CurrentItem).Id);
+                }
                 AppState.ForeNote = startNote;
-                StartForegroundNotificationId++;
             }
             catch (Exception ex)
             {
@@ -724,11 +737,16 @@ namespace BitChute.Services
                     }
                 }
             }
-
-            public override void LoadUrl(string url)
+            
+            public override void GoBack()
             {
-                
-                base.LoadUrl(url);
+                base.GoBack();
+                BitChute.Web.ViewClients.RunBaseCommands((Android.Webkit.WebView)this);
+            }
+
+            public void LoadInitialUrl(string url)
+            {
+                this.LoadUrl(url);
             }
 
             public ServiceWebView(Context context) : base(context) { }
@@ -741,11 +759,6 @@ namespace BitChute.Services
                 this._tabKey = _latestTabKey;
                 PlaystateManagement.WebViewTabDictionary.Add(this._tabKey, this);
                 AppState.WebViewAgentString = this.Settings.UserAgentString;
-            }
-
-            protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
-            {
-                base.OnLayout(changed, left, top, right, bottom);
             }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)

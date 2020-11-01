@@ -94,12 +94,13 @@ namespace BitChute.Fragments
                 ViewHelpers.Main.DownloadFAB.Clickable = true;
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
                 if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
-                if (WebViewClient.GetType() == typeof(LoginWebViewClient)) { Wv.SetWebViewClient((LoginWebViewClient)WebViewClient); }
-                else { Wv.SetWebViewClient((MyChannel)WebViewClient); }
+                Wv.SetWebViewClient((MyChannel)WebViewClient);
                 Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.JavaScriptEnabled = true;
+
+
                 if (AppSettings.ZoomControl)
                 {
                     Wv.Settings.BuiltInZoomControls = true;
@@ -109,24 +110,159 @@ namespace BitChute.Fragments
                 GetFragmentById(this.Id, this);
             }
             catch (Exception ex) { }
+            try
+            {
+                LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
+                LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
+                UserNameTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.userNameEditText);
+                PasswordTextBox = LoginLayout.FindViewById<EditText>(Resource.Id.passwordEditText);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                RegisterNewAccountButton = LoginLayout.FindViewById<Button>(Resource.Id.registerNewAccountButton);
+                ForgotPasswordButton = LoginLayout.FindViewById<Button>(Resource.Id.forgotPasswordButton);
+                ContinueWithoutLoginButton = LoginLayout.FindViewById<Button>(Resource.Id.continueWithoutLoginButton);
+                LoginErrorTextView = LoginLayout.FindViewById<TextView>(Resource.Id.loginFailedTextView);
+                LoginButton.Click += LoginButton_OnClick;
+                ForgotPasswordButton.Click += ForgotPasswordButton_OnClick;
+                ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
+                RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
+            }
+            catch { }
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
+        }
+
+
+        public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
+        {
+            Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
+
+            SwapLoginView(true);
+        }
+
+
+
+        public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
+        {
+            Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
+
+            SwapLoginView(true);
+        }
+
+
+        public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
+        {
+            SwapLoginView(true);
+        }
+
+        public void LoginButton_OnClick(object sender, EventArgs e)
+        {
+            BitChute.Web.Login.MakeLoginRequest(
+                UserNameTextBox.Text,
+                PasswordTextBox.Text);
+            UserNameTextBox.Text = "";
+            PasswordTextBox.Text = "";
+        }
+
+
+        static bool LoginVisible;
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        {
+            if (forceRemoveLoginLayout)
+            {
+                ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+                LoginVisible = false;
+                return;
+            }
+            if (forceShowLoginView)
+            {
+                ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(LoginLayout);
+                LoginVisible = true;
+                return;
+            }
+            else
+            {
+                if (forceWebViewLayout)
+                {
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+                }
+                else if (!LoginVisible)
+                {
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(LoginLayout);
+                }
+                else
+                {
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+                }
+            }
+            if (VideoDownloaderViewEnabled)
+            {
+                VideoDownloaderViewEnabled = false;
+            }
+        }
+
+        private static bool _videoDownloaderViewEnabled = false;
+        public static bool VideoDownloaderViewEnabled
+        {
+            get
+            {
+                return _videoDownloaderViewEnabled;
+            }
+            set
+            {
+
+                    _videoDownloaderViewEnabled = value;
+            }
         }
 
         /// <summary>
         /// swaps the view for the downloader layout
         /// </summary>
         /// <param name="v">nullable, the view to swap for</param>
-        public static void SwapDownloaderView(bool showDownloadView)
+        public static void SwapDownloaderView()
         {
-            if (showDownloadView)
+            if (!VideoDownloaderViewEnabled)
             {
                 ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
                 ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.DownloaderLayout);
+                VideoDownloaderViewEnabled = true;
+                if (AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Show();
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
+                    ViewHelpers.Main.DownloadFAB.SetY(0);
+                }
             }
             else
             {
+                if (AppSettings.DlFabShowSetting == "onpress")
+                {
+                    ViewHelpers.Main.DownloadFAB.Hide();
+                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
+                    ViewHelpers.Main.DownloadFAB.SetY(5000);
+                }
                 ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
-                ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+                if (AppState.UserIsLoggedIn)
+                {
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(ViewHelpers.Tab3.WebViewFragmentLayout);
+                    VideoDownloaderViewEnabled = false;
+                }
+                else
+                {
+                    ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(MainActivity.Fm3.LoginLayout);
+                    VideoDownloaderViewEnabled = false;
+                }
+            }
+            if (MainActivity.ViewPager.CurrentItem != 3)
+            {
+                MainActivity.ViewPager.CurrentItem = 3;
             }
         }
 
@@ -141,7 +277,7 @@ namespace BitChute.Fragments
         public static void WebViewGoBack()
         {
             if (Wv.CanGoBack()) Wv.GoBack();
-            BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
+            //BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
         }
 
         /// <summary>
