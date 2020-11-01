@@ -90,7 +90,7 @@ namespace BitChute.Fragments
                 ForgotPasswordButton.Click += ForgotPasswordButton_OnClick;
                 ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
                 RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
-                
+                ContinueWithoutLoginButton.Visibility = ViewStates.Gone;
             }
             catch { }
             try

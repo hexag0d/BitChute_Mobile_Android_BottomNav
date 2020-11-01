@@ -1,4 +1,5 @@
-﻿using BitChute;
+﻿using Android.Webkit;
+using BitChute;
 using BitChute.Web.Ui;
 using HtmlAgilityPack;
 using System;
@@ -35,11 +36,14 @@ namespace BitChute.Web
                 AppSettings.SessionState.CsrfToken = "";
                 AppSettings.SessionState.SessionId = "";
                 h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
-                    
-                
+                var darkmodeCookie = "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+                CookieManager.Instance.SetCookie("https://www.bitchute.com/", darkmodeCookie);
+
             }
             else
             {
+                var darkmodeCookie = "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+                CookieManager.Instance.SetCookie(".bitchute.com/", darkmodeCookie);
                 h = await ExtWebInterface.GetHtmlTextFromUrl("https://www.bitchute.com/", true);
             }
 

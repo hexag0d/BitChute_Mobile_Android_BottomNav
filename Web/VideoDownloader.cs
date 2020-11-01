@@ -410,7 +410,14 @@ namespace BitChute
 
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
         {
-            _wc.CancelAsync();
+            try
+            {
+                _wc.CancelAsync();
+            }
+            catch
+            {
+
+            }
             VideoDownloadInProgress = false;
         }
 

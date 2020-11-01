@@ -321,13 +321,13 @@ namespace BitChute
             //however, that's not what's happening when I run the app.  It is backwards but just leaving for now
             public static string PlayPauseButtonCallback = @"$(""button[data-plyr*='play']"")[0].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/';}});"
                 + @"$(""button[data-plyr*='play']"")[1].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/';}});";
-            public static string IsPlayingCallback = @"if(plyr.playing||(plyr.currentTime>=plyr.duration&&plyr.autoplay)){window.location='https://_&app_play_isPlaying/'}";
+            public static string IsPlayingCallback = @"if(plyr.playing||(plyr.currentTime>=plyr.duration&&plyr.autoplay)){window.location='https://_&app_play_isPlaying/'};";
             public static string FullscreenCallback = @"$(""button[data-plyr*='fullscreen']"")[0].addEventListener('click',function(){window.location='https://_&app_fullscreen_invoked/'})";
 
             //.mousedown[0].listener 
-            public static string GetWindowDocumentEvents = "if(window._wn_s_t == null){" + OnWindowDocumentLoadEnd + "};";
-            public static string OnWindowDocumentLoadEnd = "window._wn_s_t=true;window.document.addEventListener('ready', function() { " +
-                     $"{PlayPauseButtonCallback}{IsPlayingCallback}{FullscreenCallback}" + "}, true);";
+            public static string GetWindowDocumentEvents = "if(_wn_s_t == null){" + OnWindowDocumentLoadEnd + "};";
+            public static string OnWindowDocumentLoadEnd = "var _wn_s_t=true;window.document.addEventListener('onloadend', function() { " +
+                     $"{PlayPauseButtonCallback}{IsPlayingCallback}" + "});";
             public static string DocumentReady = "$(document).ready(()=>{" + IsPlayingCallback+ PlayPauseButtonCallback + "});";
         }
     }

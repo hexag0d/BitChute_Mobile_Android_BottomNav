@@ -739,6 +739,9 @@ namespace BitChute
                     if (!AppState.NotificationStartedApp)
                     {
                         PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrl(url);
+                        PlaystateManagement.WebViewPlayerNumberIsStreaming = 
+                            PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id;
+                        PlaystateManagement.WebViewPlayerIsStreaming = true;
                     }
                 }
             }
@@ -928,12 +931,17 @@ namespace BitChute
 
         protected override void OnPause()
         {
-            if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && !UserRequestedStickyBackground)
+            base.OnPause();
+            try
             {
-                PlaystateManagement.GetWebViewPlayerById(PlaystateManagement.WebViewPlayerNumberIsStreaming)
-                    .LoadUrl(JavascriptCommands.GetInjectable(
-                    JavascriptCommands.CallBackInjection.DocumentReady));
+                if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && !UserRequestedStickyBackground)
+                {
+                    PlaystateManagement.GetWebViewPlayerById(PlaystateManagement.WebViewPlayerNumberIsStreaming)
+                        .LoadUrl(JavascriptCommands.GetInjectable(
+                        JavascriptCommands.CallBackInjection.DocumentReady));
+                }
             }
+            catch { }
             if (!WindowFocusChanged) // we don't want to start the background service unless the user has minimized the app
             {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
                                      // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
@@ -956,7 +964,6 @@ namespace BitChute
                     }
                 }
 
-                base.OnPause();
             }
         }
 

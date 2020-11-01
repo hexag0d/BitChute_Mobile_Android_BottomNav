@@ -744,11 +744,6 @@ namespace BitChute.Services
                 BitChute.Web.ViewClients.RunBaseCommands((Android.Webkit.WebView)this);
             }
 
-            public void LoadInitialUrl(string url)
-            {
-                this.LoadUrl(url);
-            }
-
             public ServiceWebView(Context context) : base(context) { }
 
             public ServiceWebView(Context context, IAttributeSet attrs) : base(context, attrs)

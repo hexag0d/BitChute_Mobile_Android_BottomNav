@@ -42,6 +42,7 @@
 				android:layout_height="wrap_content"
 				android:textColor="@android:color/white"
 				android:id="@+id/downloadByUrlEditText"
+				android:textColorHint="@android:color/white"
 				android:maxLines="5"
 				android:hint="url"
 				android:background="#ff263238" />
@@ -51,6 +52,7 @@
 				android:textColor="@android:color/white"
 				android:id="@+id/downloadByUrlFileNameEditText"
 				android:text=""
+				android:textColorHint="@android:color/white"
 				android:hint="filename" />
 			<LinearLayout
 				android:orientation="horizontal"

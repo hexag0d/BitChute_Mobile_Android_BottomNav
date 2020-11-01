@@ -354,7 +354,7 @@ namespace MediaCodecHelper
                             else { this.StartAudioEncoder(_firstKnownBuffer, LatestInputPath, null); }
                             System.Console.WriteLine($"started draining @ {_bfi.PresentationTimeUs}");
                         } //we don't want to flood the system with EventArgs so only send once every 120 frames
-                        if (_frameCount >= 120) { Notify(_bitsEncodedSoFar, _estimatedTotalSize); _frameCount = 0; }
+                        if (_frameCount >= 120) { _frameCount = 0; Notify(_bitsEncodedSoFar, _estimatedTotalSize);  }
                     }
 
                     mEncoder.ReleaseOutputBuffer(encoderStatus, false);

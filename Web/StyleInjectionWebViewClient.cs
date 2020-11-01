@@ -45,20 +45,28 @@ namespace BitChute.Web
             {
                 CookieManager.Instance.SetAcceptCookie(true);
                 CookieManager.Instance.SetCookie("https://www.bitchute.com/", "preferences=" + @"{%22theme%22:%22night%22%2C%22autoplay%22:true}");
-                HomePageFrag.Wv.LoadInitialUrl(MainActivity.Fm0.RootUrl);
-                SubscriptionFrag.Wv.LoadInitialUrl(MainActivity.Fm1.RootUrl);
-                FeedFrag.Wv.LoadInitialUrl(MainActivity.Fm2.RootUrl);
-                MyChannelFrag.Wv.LoadInitialUrl(MainActivity.Fm3.RootUrl);
-                SettingsFrag.Wv.LoadInitialUrl(MainActivity.Fm4.RootUrl);
+                HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
+                await Task.Delay(200);
+                SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
+                await Task.Delay(200);
+                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
+                await Task.Delay(200);
+                MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
+                await Task.Delay(200);
+                SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
                 AppSettings.FirstTimeAppLoad = false;
             }
             else
             {
-                HomePageFrag.Wv.LoadInitialUrl(MainActivity.Fm0.RootUrl);
-                SubscriptionFrag.Wv.LoadInitialUrl(MainActivity.Fm1.RootUrl);
-                FeedFrag.Wv.LoadInitialUrl(MainActivity.Fm2.RootUrl);
-                MyChannelFrag.Wv.LoadInitialUrl(MainActivity.Fm3.RootUrl);
-                SettingsFrag.Wv.LoadInitialUrl(MainActivity.Fm4.RootUrl);
+                HomePageFrag.Wv.LoadUrl(MainActivity.Fm0.RootUrl);
+                await Task.Delay(200);
+                SubscriptionFrag.Wv.LoadUrl(MainActivity.Fm1.RootUrl);
+                await Task.Delay(200);
+                FeedFrag.Wv.LoadUrl(MainActivity.Fm2.RootUrl);
+                await Task.Delay(200);
+                MyChannelFrag.Wv.LoadUrl(MainActivity.Fm3.RootUrl);
+                await Task.Delay(200);
+                SettingsFrag.Wv.LoadUrl(MainActivity.Fm4.RootUrl);
             }
 
             if (AppState.NotificationStartedApp)
@@ -141,11 +149,10 @@ namespace BitChute.Web
         }
 
         public static bool WebViewsAreReloadingAfterLogin = false;
-        public static List<int> WebViewIdList = new List<int>();
+        public static List<int> WebViewIdLoginList = new List<int>();
 
         public static void Run_OnLogin()
         {
-            int tabKey = -1;
             WebViewsAreReloadingAfterLogin = true;
             foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
             {
@@ -172,17 +179,11 @@ namespace BitChute.Web
                         view.ClearCache(true);
                         if (view.Url.Contains("/accounts/login/"))
                         {
-                            WebViewIdList.Add(view.Id);
-                                view.LoadUrl("file:///android_asset/html/blank.html");
-                                view.Visibility = Android.Views.ViewStates.Gone;
-                                view.LoadUrl(view.RootUrl);
-                            
-                            //view.LoadUrl(view.RootUrl);
+                            WebViewIdLoginList.Add(view.Id);
+                            //view.LoadUrl("file:///android_asset/html/blank.html");
+                            view.Visibility = Android.Views.ViewStates.Gone;
                         }
-                        else
-                        {
-                            view.Reload();
-                        }
+                        view.LoadUrl(view.RootUrl);
                     }
                     catch { }
                 }
@@ -202,43 +203,34 @@ namespace BitChute.Web
         }
 
         public static List<int> WindowLoadEventSet = new List<int>();
-
-        public static async void SetInitialWindowDocumentLoadEvent(WebView w)
-        {
-            Task<bool> containsKey = Task.FromResult(WindowLoadEventSet.Contains(w.Id));
-            var cc = await containsKey;
-            if (!cc)
-            {
-                WindowLoadEventSet.Add(w.Id);
-                w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
-            }
-        }
-
+        
         public static async void RunBaseCommands(WebView w, int d = 2000)
         {
+            //w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.DocumentReady));
             w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
             //w.LoadUrl(GetInjectable(CallBackInjection.GetWindowDocumentEvents));
 
             await Task.Delay(d);
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
 
-            w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips +
-                JsLinkFixer));
-            w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.DocumentReady));
+            //w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips +
+            //    JsLinkFixer));
+           // w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.DocumentReady));
             if (WebViewsAreReloadingAfterLogin)
             {
-                if (WebViewIdList.Contains(w.Id))
+                if (WebViewIdLoginList.Contains(w.Id))
                 {
                     w.Visibility = Android.Views.ViewStates.Visible;
-                    WebViewIdList.Remove(w.Id);
+                    WebViewIdLoginList.Remove(w.Id);
                 }
-                if (WebViewIdList.Count == 0)
+                if (WebViewIdLoginList.Count == 0)
                 {
                     WebViewsAreReloadingAfterLogin = false;
                 }
             }
-            //    CallBackInjection.IsPlayingCallback +
-            //    CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
+            w.LoadUrl(GetInjectable(
+                CallBackInjection.IsPlayingCallback +
+                CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
             //w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
         }
 
@@ -310,7 +302,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"/common.css"))
+                if (request.Url.ToString().EndsWith($"common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
                 }
@@ -387,7 +379,7 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"/common.css"))
+                if (request.Url.ToString().EndsWith($"common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCssFeed);
                 }
@@ -412,7 +404,7 @@ namespace BitChute.Web
                 { w.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.Display.ShowTabScrollInner)); }
                 try
                 {
-                    ExtWebInterface.CookieHeader = Android.Webkit.CookieManager.Instance.GetCookie("https://www.bitchute.com/");
+                    
                 }
                 catch { }
             }

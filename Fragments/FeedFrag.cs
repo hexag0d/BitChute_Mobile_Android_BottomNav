@@ -19,7 +19,7 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         public static ServiceWebView Wv;
-        public static object WebViewClient;
+        public static Feed WebViewClient;
         public static int TNo = 2;
 
         public static FeedFrag NewInstance(string title, string icon, string rootUrl = null)
@@ -67,21 +67,26 @@ namespace BitChute.Fragments
                 }
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView2Swapable);
                 Wv.RootUrl = RootUrl;
-                Wv.SetWebViewClient((Feed)WebViewClient);
-                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                Wv.SetWebViewClient(WebViewClient);
                 Wv.Settings.JavaScriptEnabled = true;
+                Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 if (AppSettings.ZoomControl)
                 {
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-
-
-                
-                Wv.Settings.DisplayZoomControls = false;
+                else
+                {
+                    Wv.Settings.DisplayZoomControls = false;
+                }
                 
                 
             }catch { }
+            try
+            {
+                GetFragmentById(this.Id, this);
+            }
+            catch { }
             try
             {
                 LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
