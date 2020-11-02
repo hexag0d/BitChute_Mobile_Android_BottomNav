@@ -39,7 +39,7 @@
                         return _settings;
                     case "MyChannel":
                         return _myChannel;
-                    case "WatchL8r":
+                    case "WatchLater":
                         return _watchLater;
                     case "Playlists":
                         return _playlists;

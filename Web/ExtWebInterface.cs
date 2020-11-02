@@ -11,6 +11,8 @@ namespace BitChute.Web
 {
     public class ExtWebInterface
     {
+        public static string DefaultCookieHeaderNoTokens = "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+
         private static HttpClient _httpClient;
         public static HttpClient HttpClient {
             get {
@@ -169,6 +171,17 @@ namespace BitChute.Web
                 cookieDict.Add("Referer", "https://www.bitchute.com/");
             }
             return cookieDict;
+        }
+
+        public static void ClearLoginCredentials()
+        {
+            AppSettings.SessionState.Cfduid = "";
+            AppSettings.SessionState.CsrfToken = "";
+            AppSettings.SessionState.SessionId = "";
+            _httpClient.DefaultRequestHeaders.Remove("Cookie");
+            CookieManager.Instance.RemoveAllCookie();
+            CookieManager.Instance.SetCookie("https://www.bitchute.com/", DefaultCookieHeaderNoTokens);
+            AppState.UserIsLoggedIn = false;
         }
 
         public static Dictionary<string, string> CookieStore = new Dictionary<string, string>();

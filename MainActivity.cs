@@ -62,6 +62,7 @@ using System.Threading.Tasks;
 using static Android.Views.View;
 using static BitChute.Fragments.SettingsFrag;
 using Android.Util;
+using BitChute.App;
 
 namespace BitChute
 {
@@ -174,11 +175,119 @@ namespace BitChute
             ViewPager.PageSelected += ViewPager_PageSelected;
             ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
             NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
-            RemoveShiftMode(NavigationView);
+            NavigationView = CustomizeBottomNavigationViewMenuItems(NavigationView, TabStates.GetTabFragPackages(true), true);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
             ViewPager.OffscreenPageLimit = 4;
             
         }
+
+
+        public static BottomNavigationItemView GetBottomNavItemFromView(View view)
+        {
+            return (BottomNavigationItemView)view;
+        }
+
+        BottomNavigationView CustomizeBottomNavigationViewMenuItems(BottomNavigationView bottomNavigationView, List<TabStates.TabFragPackage> tabs = null, bool setExisting = false, bool removeShiftMode = true)
+        {
+            BottomNavigationMenuView menuView = (BottomNavigationMenuView)bottomNavigationView.GetChildAt(0);
+
+            var positionKey = -1;
+
+            if (!setExisting && tabs != null)
+            {
+                foreach (var item in tabs)
+                {
+                    positionKey++;
+                    BottomNavigationItemView tab = new BottomNavigationItemView(GetMainContext());
+                    tab.SetIcon(item.Icon);
+                    tab.SetEnabled(true);
+                    tab.SetTitle(item.Title);
+
+                    tab.ItemPosition = positionKey;
+                    menuView.AddView(tab, positionKey);
+                }
+            }
+            else if (setExisting && tabs != null)
+            {
+                for (int i = 0; i < menuView.ChildCount; i++)
+                {
+                    GetBottomNavItemFromView(menuView.GetChildAt(i)).ItemData.SetIcon(tabs[i].Icon);
+                    GetBottomNavItemFromView(menuView.GetChildAt(i)).ItemData.SetTitle(tabs[i].Title);
+                    GetBottomNavItemFromView(menuView.GetChildAt(i)).SetChecked(true);
+                }
+            }
+            
+            if (removeShiftMode) { RemoveShiftMode(bottomNavigationView); }
+
+            return bottomNavigationView;
+        }
+
+        void RemoveShiftMode(BottomNavigationView view)
+        {
+            var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
+
+            try
+            {
+                //view.ScaleY = (float)1.1;
+                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
+                shiftingMode.Accessible = true;
+                shiftingMode.SetBoolean(menuView, false);
+                shiftingMode.Accessible = false;
+
+                for (int i = 0; i < menuView.ChildCount; i++)
+                {
+                    var item = (BottomNavigationItemView)menuView.GetChildAt(i);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(true); 
+                    item.SetShiftingMode(false);
+                    if (i == 0) { item.LongClick += HomeLongClickListener; }
+                    if (i == 2) { item.LongClick += FeedTabLongClickListener; }
+                    if (i == 3) { item.LongClick += MyChannelLongClickListener; }
+                    if (i == 4) { item.LongClick += SettingsTabLongClickListener; }
+                    if (NavViewItemList != null) { NavViewItemList.Add(item); }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine((ex.InnerException ?? ex).Message);
+            }
+        }
+
+
+        void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
+        {
+            NavTimer = 0;
+            if (_tabSelected == e.Item.Order)
+            {
+                switch (ViewPager.CurrentItem)
+                {
+                    case 0: Fm0.Pop2Root(); break;
+                    case 1: Fm1.Pop2Root(); break;
+                    case 2: Fm2.Pop2Root(); break;
+                    case 3: Fm3.Pop2Root(); break;
+                    case 4: Fm4.Pop2Root(); break;
+                }
+            }
+            else { ViewPager.SetCurrentItem(e.Item.Order, true); }
+        }
+
+        void NavigationView_NavigationItemReSelected(object sender, BottomNavigationView.NavigationItemReselectedEventArgs e) //@TODO implement this instead of the item selected vs current
+        {
+
+        }
+
+        private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
+        {
+            NavTimer = 0;
+            _menu = NavigationView.Menu.GetItem(e.Position);
+            NavigationView.SelectedItemId = _menu.ItemId;
+            _tabSelected = ViewPager.CurrentItem;
+            CustomOnSwipe();
+        }
+
+
+
 
         public static bool SplashScreenIsVisible;
 
@@ -208,9 +317,9 @@ namespace BitChute
         {
             Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
             Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-            Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
-            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-            Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
+            Fm2 = FeedFrag.NewInstance("Subs", "tab_home");
+            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_home", AppSettings.Tab3OverridePreference);
+            Fm4 = SettingsFrag.NewInstance("Settings", "tab_home", AppSettings.Tab4OverridePreference);
             Main.InitializeTabs();
             Main.FinalizeStartUp();
         }
@@ -221,13 +330,6 @@ namespace BitChute
         public static FeedFrag Fm2;
         public static MyChannelFrag Fm3;
         public static SettingsFrag Fm4;
-
-
-        //public static HomePageFrag Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-        //public static SubscriptionFrag Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-        //public static FeedFrag Fm2 = FeedFrag.NewInstance("Feed", "tab_playlist");
-        //public static MyChannelFrag Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_mychannel");
-        //public static SettingsFrag Fm4 = SettingsFrag.NewInstance("Settings", "tab_settings");
 
         void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
@@ -324,95 +426,6 @@ namespace BitChute
             return false;
         }
 
-        void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
-        {
-            NavTimer = 0;
-            if (_tabSelected == e.Item.Order)
-            {
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0: Fm0.Pop2Root(); break;
-                    case 1: Fm1.Pop2Root(); break;
-                    case 2: Fm2.Pop2Root(); break;
-                    case 3: Fm3.Pop2Root(); break;
-                    case 4: Fm4.Pop2Root(); break;
-                }
-            }
-            else { ViewPager.SetCurrentItem(e.Item.Order, true); }
-        }
-
-        void NavigationView_NavigationItemReSelected(object sender, BottomNavigationView.NavigationItemReselectedEventArgs e) //@TODO implement this instead of the item selected vs current
-        {
-
-        }
-
-        private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
-        {
-            NavTimer = 0;
-            _menu = NavigationView.Menu.GetItem(e.Position);
-            NavigationView.SelectedItemId = _menu.ItemId;
-            _tabSelected = ViewPager.CurrentItem;
-            CustomOnSwipe();
-        }
-    
-        void RemoveShiftMode(BottomNavigationView view)
-        {
-            var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
-            
-            try
-            {
-                //view.ScaleY = (float)1.1;
-                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
-                shiftingMode.Accessible = true;
-                shiftingMode.SetBoolean(menuView, false);
-                shiftingMode.Accessible = false;
-
-                for (int i = 0; i < menuView.ChildCount; i++)
-                {
-                    var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-                    item.SetShiftingMode(false);
-                    // set once again checked value, so view will be updated
-                    item.SetChecked(item.ItemData.IsChecked);
-                    item.SetShiftingMode(false);
-                    if (i == 0) { item.LongClick += HomeLongClickListener; }
-                    if (i == 2) { item.LongClick += FeedTabLongClickListener; }
-                    if (i == 3) { item.LongClick += MyChannelLongClickListener; }
-                    if (i == 4) { item.LongClick += SettingsTabLongClickListener; }
-                    if (NavViewItemList != null) { NavViewItemList.Add(item); }
-                }
-            }
-            catch (System.Exception ex)
-            {
-                System.Console.WriteLine((ex.InnerException ?? ex).Message);
-            }
-            //try @TODO convert the fragment array instead of setting title and icon
-            //{
-            //    if (!AppSettings.FanMode)
-            //    {
-            //        _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-            //    }
-            //    else
-            //    {
-            //        NavViewItemList[3].SetTitle(AppSettings.Tab4OverridePreference);
-            //        NavViewItemList[3].SetIcon(GetTabIconFromString(AppSettings.Tab4OverridePreference));
-            //        _tab4Icon = GetTabIconFromString(AppSettings.Tab4OverridePreference);
-            //    }
-            //    if (!AppSettings.SettingsTabOverride)
-            //    {
-            //        _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-            //    }
-            //    else
-            //    {
-            //        NavViewItemList[4].SetTitle(AppSettings.Tab5OverridePreference);
-            //        NavViewItemList[4].SetIcon(GetTabIconFromString(AppSettings.Tab5OverridePreference));
-            //        _tab5Icon = GetTabIconFromString(AppSettings.Tab5OverridePreference);
-            //    }
-            //}
-            //catch
-            //{
-
-            //}
-        }
 
         /// <summary>
         /// forwards the settings to fragments
@@ -420,7 +433,7 @@ namespace BitChute
         /// <param name="oa"></param>
         public void OnSettingsChanged(List<object> oa)
         {
-            if (AppSettings.FanMode)
+            if (AppSettings.Tab3OverrideEnabled)
             {
             }
             Fm0.OnSettingsChanged(oa);
@@ -450,65 +463,65 @@ namespace BitChute
                 case 3: 
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            NavViewItemList[tab].SetTitle("MyChannel");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            NavViewItemList[tab].ItemData.SetTitle("MyChannel");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            
                             Fm3.RootUrl = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
-                            NavViewItemList[tab].SetTitle("Home");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_home);
+                            NavViewItemList[tab].ItemData.SetTitle("Home");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
+                            
                         Fm3.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
-                            NavViewItemList[tab].SetTitle("Subs");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
+                            NavViewItemList[tab].ItemData.SetTitle("Subs");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
+                            
                         Fm3.RootUrl = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
-                            NavViewItemList[tab].SetTitle("Feed");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
+                            NavViewItemList[tab].ItemData.SetTitle("Feed");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
+                            
                         Fm3.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "MyChannel")
                         {
-                            NavViewItemList[tab].SetTitle("MyChannel");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            NavViewItemList[tab].ItemData.SetTitle("MyChannel");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            
                         Fm3.RootUrl = Https.URLs._myChannel;
                         }
                         if (changeDetails == "Explore")
                         {
-                            NavViewItemList[tab].SetTitle("Explore");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
+                            NavViewItemList[tab].ItemData.SetTitle("Explore");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
+                            
                         Fm3.RootUrl = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
-                            NavViewItemList[tab].SetTitle("Settings");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
+                            NavViewItemList[tab].ItemData.SetTitle("Settings");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
+                            
                         Fm3.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
-                            NavViewItemList[tab].SetTitle("WatchL8r");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            NavViewItemList[tab].ItemData.SetTitle("WatchL8r");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            
                         Fm3.RootUrl = Https.URLs._watchLater;
                         }
                         if (changeDetails == "Downloader")
                         {
-                             NavViewItemList[tab].SetTitle("Downloader");
-                             NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-                             _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                             NavViewItemList[tab].ItemData.SetTitle("Downloader");
+                             NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
+                             
                              
                         }
                     MyChannelFrag.LoadUrlWithDelay(Fm3.RootUrl, 0);
@@ -517,51 +530,44 @@ namespace BitChute
 
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            NavViewItemList[tab].SetTitle("Settings");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
-                            _tab4Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
+                            NavViewItemList[tab].ItemData.SetTitle("Settings");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
                         Fm4.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
-                            NavViewItemList[tab].SetTitle("Home");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_home);
+                            NavViewItemList[tab].ItemData.SetTitle("Home");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_home));
                         Fm4.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
-                            NavViewItemList[tab].SetTitle("Subs");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
+                            NavViewItemList[tab].ItemData.SetTitle("Subs");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                         Fm4.RootUrl = Https.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
-                            NavViewItemList[tab].SetTitle("Feed");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
+                            NavViewItemList[tab].ItemData.SetTitle("Feed");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_playlists));
                         Fm4.RootUrl = Https.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
-                            NavViewItemList[tab].SetTitle("Explore");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_subs);
+                            NavViewItemList[tab].ItemData.SetTitle("Explore");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_subs));
                         Fm4.RootUrl = Https.URLs._explore;
                         }
                         if (changeDetails == "Settings")
                         {
-                            NavViewItemList[tab].SetTitle("Settings");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_settings);
+                            NavViewItemList[tab].ItemData.SetTitle("Settings");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_settings));
                         Fm4.RootUrl = Https.URLs._settings;
                         }
                         if (changeDetails == "WatchL8r")
                         {
-                            NavViewItemList[tab].SetTitle("WatchL8r");
-                            NavViewItemList[tab].SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-                            _tab5Icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            NavViewItemList[tab].ItemData.SetTitle("WatchL8r");
+                            NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                         Fm4.RootUrl = Https.URLs._watchLater;
                         }
                         SettingsFrag.LoadUrlWithDelay(Fm4.RootUrl, 0);
@@ -870,45 +876,6 @@ namespace BitChute
             }
         }
 
-        /// <summary>
-        /// returns a Drawable icon to be used for tab detail changing
-        /// takes string arguments like "Home" "Subs" "Feed" "MyChannel" "Settings"
-        /// </summary>
-        /// <param name="tabString"></param>
-        /// <returns></returns>
-        public static Drawable GetTabIconFromString(string tabString)
-        {
-            Drawable icon;
-
-            switch (tabString)
-            {
-                case "Home":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_home);
-                    return icon;
-                case "Subs":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_subs);
-                    return icon;
-                case "Feed":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
-                    return icon;
-                case "MyChannel":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_mychannel);
-                    return icon;
-                case "Settings":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_settings);
-                    return icon;
-                case "Playlists":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
-                    return icon;
-                case "WatchL8r":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_playlists);
-                    return icon;
-                case "Explore":
-                    icon = Main.GetDrawable(Resource.Drawable.tab_home);
-                    return icon;
-            }
-            return Main.GetDrawable(Resource.Drawable.tab_home);
-        }
 
         //OnPause called first = app actually put in background
         //OnWindowFocusChanged then OnPause is probably from a notification click or volume change event
@@ -1018,6 +985,7 @@ namespace BitChute
         
         protected override void OnDestroy()
         {
+            PlaystateManagement.SendPauseVideoCommand();
             if (AppState.UserIsLoggedIn)
             {
                 AppSettings.UserWasLoggedInLastAppClose = true;
@@ -1040,7 +1008,6 @@ namespace BitChute
                 AppState.ForeNote = null;
             }
             catch(Exception ex) { }
-            PlaystateManagement.SendPauseVideoCommand();
             MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnDestroy();
         }

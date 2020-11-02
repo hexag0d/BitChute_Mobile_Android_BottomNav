@@ -14,6 +14,7 @@ using static BitChute.Services.MainPlaybackSticky;
 using BitChute.Web;
 using static BitChute.ViewHelpers.Tab3;
 using static BitChute.Web.ViewClients;
+using BitChute.App;
 
 namespace BitChute.Fragments
 {
@@ -28,17 +29,27 @@ namespace BitChute.Fragments
         public static bool WvRling;
 
 
-        public static MyChannelFrag NewInstance(string title, string icon, string rootUrl = null)
+        public static MyChannelFrag NewInstance(string title, string icon, string tabOverridePref = null)
         {
-            //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new MyChannel(); }
-            //else { WebViewClient = new LoginWebViewClient(); }
-            WebViewClient = new MyChannel();
+            string rootUrl = "";
             var fragment = new MyChannelFrag();
             fragment.Arguments = new Bundle();
+            if (tabOverridePref != null && AppSettings.Tab3OverrideEnabled)
+            {
+                var tabFragPackage = new TabStates.TabFragPackage(tabOverridePref, true);
+                WebViewClient = tabFragPackage.WebViewClient;
+                rootUrl = tabFragPackage.RootUrl;
+                title = tabFragPackage.Title;
+                icon = tabFragPackage.Icon.ToString();
+            }
+            else
+            {
+                WebViewClient = new MyChannel();
+                rootUrl = "https://www.bitchute.com/profile/";
+            }
+            fragment.RootUrl = rootUrl;
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
-            if (rootUrl == null) rootUrl = "https://www.bitchute.com/profile/";
-            fragment.RootUrl = rootUrl;
             return fragment;
         }
 
@@ -93,8 +104,8 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
                 ViewHelpers.Main.DownloadFAB.Clickable = true;
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
-                if (AppSettings.FanMode) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
-                Wv.SetWebViewClient((MyChannel)WebViewClient);
+                if (AppSettings.Tab3OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab3overridestring"); }
+                BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, WebViewClient);
                 Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
@@ -125,6 +136,7 @@ namespace BitChute.Fragments
                 ForgotPasswordButton.Click += ForgotPasswordButton_OnClick;
                 ContinueWithoutLoginButton.Click += ContinueWithoutLogin_OnClick;
                 RegisterNewAccountButton.Click += RegisterNewAccountButton_OnClick;
+                ContinueWithoutLoginButton.Visibility = ViewStates.Gone;
             }
             catch { }
             return ViewHelpers.Tab3.TabFragmentLinearLayout;

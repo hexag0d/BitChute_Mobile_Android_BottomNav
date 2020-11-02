@@ -98,7 +98,7 @@ namespace BitChute.Web.Auth
                 CookieManager.Instance.SetCookie("https://www.bitchute.com/", cookieHeaderPt1);
 
             }
-            
+            BitChute.Services.MainPlaybackSticky.StartNotificationLoop(1000, null);
             BitChute.Web.ViewClients.Run_OnLogin();
         }
 
@@ -141,8 +141,7 @@ namespace BitChute.Web.Auth
 
         public static void OnPostLogout(LogoutEventArgs e)
         {
-            AppState.UserIsLoggedIn = false;
-            AppSettings.SessionState.SessionId = "";
+            ExtWebInterface.ClearLoginCredentials();
         }
     }
 

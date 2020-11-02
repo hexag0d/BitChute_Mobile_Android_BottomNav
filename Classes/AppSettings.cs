@@ -32,10 +32,10 @@ namespace BitChute
 
 
         public static bool ZoomControl { get; set; }
-        public static bool Tab1FeaturedOn { get; set; }
-        public static bool FanMode { get; set; }
-        public static bool Tab3Hide { get; set; }
-        public static bool SettingsTabOverride { get; set; }
+        public static bool Tab0FeaturedOn { get; set; }
+        public static bool Tab3OverrideEnabled { get; set; }
+        public static bool Tab2Hide { get; set; }
+        public static bool Tab4OverrideEnabled { get; set; }
         public static bool VideoPreProcessingApproved { get; set; }
         private static bool _userWasLoggedInLastAppClose = false;
         public static bool UserWasLoggedInLastAppClose {
@@ -125,8 +125,8 @@ namespace BitChute
             }
         }
 
+        public static string Tab3OverridePreference { get; set; }
         public static string Tab4OverridePreference { get; set; }
-        public static string Tab5OverridePreference { get; set; }
         
         /// <summary>
         /// the ms delay for setting a pop back to root for each tab
@@ -249,18 +249,18 @@ namespace BitChute
                     AppSettingsLoadingFromAndroid = true;
                     GetAppSharedPrefs();
                     Notifying = Prefs.GetBoolean("notificationson", true);
-                    Tab4OverridePreference = Prefs.GetString("tab4overridestring", "MyChannel");
-                    Tab5OverridePreference = Prefs.GetString("tab5overridestring", "Settings");
+                    Tab3OverridePreference = Prefs.GetString("tab3overridestring", "MyChannel");
+                    Tab4OverridePreference = Prefs.GetString("tab4overridestring", "Settings");
                     ZoomControl = Prefs.GetBoolean("zoomcontrol", false);
-                    FanMode = Prefs.GetBoolean("fanmode", false);
-                    Tab3Hide = Prefs.GetBoolean("tab3hide", true);
-                    Tab1FeaturedOn = Prefs.GetBoolean("t1featured", true);
-                    SettingsTabOverride = Prefs.GetBoolean("settingstaboverride", false);
+                    Tab3OverrideEnabled = Prefs.GetBoolean("tab3overrideenabled", false);
+                    Tab2Hide = Prefs.GetBoolean("tab2hide", true);
+                    Tab0FeaturedOn = Prefs.GetBoolean("t1featured", true);
+                    Tab4OverrideEnabled = Prefs.GetBoolean("tab4overrideenabled", false);
                     HideHorizontalNavBar = Prefs.GetBoolean("hidehoriztonalnavbar", true);
                     HideVerticalNavBar = Prefs.GetBoolean("hideverticalnavbar", false);
                     DlFabShowSetting = Prefs.GetString("dlfabshowsetting", "onpress");
                     AutoPlayOnMinimized = Prefs.GetString("autoplayonminimized", "any");
-                    BackgroundKey = Prefs.GetString("backgroundkey", "feed");
+                    BackgroundKey = Prefs.GetString("backgroundkey", "any");
                     SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
                     SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
                     SessionState.CsrfToken = Prefs.GetString("csrftoken", "");
@@ -285,10 +285,10 @@ namespace BitChute
 
             switch (tabPref)
             {
-                case "tab4overridestring":
+                case "tab3overridestring":
                     string t4url = Https.URLs.GetUrlStringFromPref(Prefs.GetString("tab4overridestring", "MyChannel"));
                     return t4url;
-                case "tab5overridestring":
+                case "tab4overridestring":
                     string t5url = Https.URLs.GetUrlStringFromPref(Prefs.GetString("tab5overridestring", "Settings"));
                     return t5url;
             }

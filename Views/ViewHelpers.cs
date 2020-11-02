@@ -179,11 +179,11 @@ namespace BitChute
             public static RadioButton _autoplayminimizedoff;
             public static TextView _versionTextView;
             public static List<string> _tabOverrideStringList = new List<string>();
+            public static ArrayAdapter<string> _tab3SpinOverrideAdapter;
             public static ArrayAdapter<string> _tab4SpinOverrideAdapter;
-            public static ArrayAdapter<string> _tab5SpinOverrideAdapter;
             public static List<object> _settingsList = new List<object>();
+            public static Spinner _tab3OverrideSpinner;
             public static Spinner _tab4OverrideSpinner;
-            public static Spinner _tab5OverrideSpinner;
         }
 
         public class VideoEncoder

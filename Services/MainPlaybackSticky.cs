@@ -476,7 +476,7 @@ namespace BitChute.Services
         /// system for the long running task to see if that
         /// will prevent the loop from breaking.
         /// </summary>
-        public static async void StartNotificationLoop(int delay, List<ExtNotifications.CustomNotification> initialNotifications = null, bool manuallyInvoked = false)
+        public static async void StartNotificationLoop(int delay, List<ExtNotifications.CustomNotification> initialNotifications = null)
         {
             NotificationLoopStartTimesInvoked++; 
             //wait on a delay so that the cookie is ready when we make

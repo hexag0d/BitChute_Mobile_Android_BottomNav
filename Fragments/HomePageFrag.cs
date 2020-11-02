@@ -230,7 +230,7 @@ namespace BitChute.Fragments
         public void OnSettingsChanged(List<object> settings)
         {
             Wv.Settings.SetSupportZoom(AppSettings.ZoomControl);
-            if (!AppSettings.Tab1FeaturedOn) { Wv.LoadUrl(JavascriptCommands._jsHideCarousel); }
+            if (!AppSettings.Tab0FeaturedOn) { Wv.LoadUrl(JavascriptCommands._jsHideCarousel); }
             else { Wv.LoadUrl(JavascriptCommands._jsShowCarousel); }
             if (AppSettings.ZoomControl) { Wv.Settings.BuiltInZoomControls = true; }
             else { Wv.Settings.BuiltInZoomControls = false; }

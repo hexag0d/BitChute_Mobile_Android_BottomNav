@@ -195,7 +195,7 @@ namespace BitChute.Fragments
                 Wv.Settings.DisplayZoomControls = false;
             }
             else { Wv.Settings.BuiltInZoomControls = false; }
-            if (AppSettings.Tab3Hide)
+            if (AppSettings.Tab2Hide)
             {
                 Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }

@@ -76,7 +76,19 @@ namespace BitChute.Web
             }
             
         }
-        
+
+        public static void SetWebViewClientFromObject(ServiceWebView wv, object webViewClient)
+        {
+            var type = webViewClient.GetType();
+            if (type == typeof(Home)) wv.SetWebViewClient((Home)webViewClient);
+            else if (type == typeof(Subs)) wv.SetWebViewClient((Subs)webViewClient);
+            else if (type == typeof(Feed)) wv.SetWebViewClient((Feed)webViewClient);
+            else if (type == typeof(MyChannel)) wv.SetWebViewClient((MyChannel)webViewClient);
+            else if (type == typeof(Settings)) wv.SetWebViewClient((Settings)webViewClient);
+            else { wv.SetWebViewClient((WebViewClient)webViewClient); }
+        }
+
+
         public static async void SetReload(int tab = -1)
         {
             if (tab == -1) tab = MainActivity.ViewPager.CurrentItem;
@@ -454,7 +466,10 @@ namespace BitChute.Web
                 {
                     if (request.Method == "GET")
                     {
-                        if (OnLogout == null) { OnLogout += RunOnLogout; }
+                        if (OnLogout == null) {
+                            OnLogout += RunOnLogout;
+                            OnLogout += RunPostAuthEvent.OnPostLogout;
+                        }
                         OnLogout.Invoke(new LogoutEventArgs());
                         AppState.UserIsLoggedIn = false;
                         
