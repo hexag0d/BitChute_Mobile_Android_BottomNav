@@ -247,18 +247,14 @@ namespace BitChute.Fragments
                 VideoDownloaderViewEnabled = true;
                 if (AppSettings.DlFabShowSetting == "onpress")
                 {
-                    ViewHelpers.Main.DownloadFAB.Show();
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Visible;
-                    ViewHelpers.Main.DownloadFAB.SetY(0);
+                    ViewHelpers.Main.SetDownloadFabViewState(false);
                 }
             }
             else
             {
                 if (AppSettings.DlFabShowSetting == "onpress")
                 {
-                    ViewHelpers.Main.DownloadFAB.Hide();
-                    ViewHelpers.Main.DownloadFAB.Visibility = ViewStates.Gone;
-                    ViewHelpers.Main.DownloadFAB.SetY(5000);
+                    ViewHelpers.Main.SetDownloadFabViewState(true);
                 }
                 ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
                 if (AppState.UserIsLoggedIn)

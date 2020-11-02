@@ -61,7 +61,7 @@ namespace BitChute.Fragments
             _tabOverrideStringList.Add("Explore");
             _tabOverrideStringList.Add("Settings");
             _tabOverrideStringList.Add("MyChannel");
-            _tabOverrideStringList.Add("WatchL8r");
+            _tabOverrideStringList.Add("WatchLater");
             _tabOverrideStringList.Add("Playlists");
             _tabOverrideStringList.Add("Downloader");
             base.OnCreate(savedInstanceState);

@@ -38,6 +38,24 @@ namespace BitChute
             //public static int LayoutAbove { get; set; }
             public static Handler UiHandler = new Handler();
 
+            public static void SetDownloadFabViewState(bool hide)
+            {
+                if (ContentRelativeLayout != null)
+                {
+                    try
+                    {
+                        if (hide)
+                        {
+                            ContentRelativeLayout.RemoveView(DownloadFAB);
+                        }
+                        else
+                        {
+                            ContentRelativeLayout.AddView(DownloadFAB);
+                        }
+                    }
+                    catch { }
+                }
+            }
             private static bool _navHidden;
             public static bool NavHidden
             {

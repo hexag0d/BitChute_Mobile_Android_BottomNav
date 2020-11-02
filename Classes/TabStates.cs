@@ -79,6 +79,7 @@ namespace BitChute.App
 
         public static object GetWebViewClientByType(FragmentType fragtype = FragmentType.None, string type = null)
         {
+            if (fragtype != FragmentType.None) { type = fragtype.ToString(); }
             switch (type)
             {
                 case "Home": return new Home();
@@ -87,7 +88,7 @@ namespace BitChute.App
                 case "MyChannel": return new MyChannel();
                 case "Settings": return new Settings();
             }
-            return new WebViewClient();
+            return new Subs();
         }
 
 

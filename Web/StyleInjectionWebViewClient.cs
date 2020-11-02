@@ -79,13 +79,14 @@ namespace BitChute.Web
 
         public static void SetWebViewClientFromObject(ServiceWebView wv, object webViewClient)
         {
+            wv.SetWebViewClient(null);
             var type = webViewClient.GetType();
             if (type == typeof(Home)) wv.SetWebViewClient((Home)webViewClient);
             else if (type == typeof(Subs)) wv.SetWebViewClient((Subs)webViewClient);
             else if (type == typeof(Feed)) wv.SetWebViewClient((Feed)webViewClient);
             else if (type == typeof(MyChannel)) wv.SetWebViewClient((MyChannel)webViewClient);
             else if (type == typeof(Settings)) wv.SetWebViewClient((Settings)webViewClient);
-            else { wv.SetWebViewClient((WebViewClient)webViewClient); }
+            else { wv.SetWebViewClient((Subs)webViewClient); }
         }
 
 
@@ -225,8 +226,7 @@ namespace BitChute.Web
             await Task.Delay(d);
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
 
-            //w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips +
-            //    JsLinkFixer));
+            w.LoadUrl(GetInjectable(JsDisableToolTips+JsHideTooltips+JsLinkFixer));
            // w.LoadUrl(GetInjectable(JavascriptCommands.CallBackInjection.DocumentReady));
             if (WebViewsAreReloadingAfterLogin)
             {
@@ -242,7 +242,7 @@ namespace BitChute.Web
             }
             w.LoadUrl(GetInjectable(
                 CallBackInjection.IsPlayingCallback +
-                CallBackInjection.PlayPauseButtonCallback) ); // set the playstate callback so we know when the webview player is running
+                CallBackInjection.PlayPauseButtonCallback) ); 
             //w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
         }
 
