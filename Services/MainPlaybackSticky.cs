@@ -187,8 +187,6 @@ namespace BitChute.Services
                         MediaPlayerDictionary[id].Start();
                         return;
                     }
-                    try  { AquireWifiLock(); }
-                    catch {  }
                     if (MediaPlayerDictionary[id].IsPlaying)
                     {
                         PlaystateChanged.Invoke(new PlaystateEventArgs(-1, false, false, false, id, false, false, false, id));

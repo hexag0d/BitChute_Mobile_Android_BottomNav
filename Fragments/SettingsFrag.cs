@@ -674,10 +674,10 @@ namespace BitChute.Fragments
                 }
                 AppSettings.PrefEditor.PutString("autoplayonminimized", AppSettings.AutoPlayOnMinimized);
                 AppSettings.PrefEditor.PutBoolean("zoomcontrol", AppSettings.ZoomControl);
-                AppSettings.PrefEditor.PutBoolean("fanmode", AppSettings.Tab3OverrideEnabled);
+                AppSettings.PrefEditor.PutBoolean("tab3overrideenabled", AppSettings.Tab3OverrideEnabled);
                 AppSettings.PrefEditor.PutBoolean("tab3hide", AppSettings.Tab2Hide);
                 AppSettings.PrefEditor.PutBoolean("t1featured", AppSettings.Tab0FeaturedOn);
-                AppSettings.PrefEditor.PutBoolean("settingstaboverride", AppSettings.Tab4OverrideEnabled);
+                AppSettings.PrefEditor.PutBoolean("tab4overrideenabled", AppSettings.Tab4OverrideEnabled);
                 AppSettings.PrefEditor.PutBoolean("notificationson", AppSettings.Notifying);
                 AppSettings.PrefEditor.PutString("dlfabshowsetting", AppSettings.DlFabShowSetting);
                 AppSettings.PrefEditor.Commit();

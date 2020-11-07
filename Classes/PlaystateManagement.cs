@@ -26,6 +26,7 @@ namespace BitChute
         private static int _nativeMediaPlayerNumberIsStreaming = -1;
         private static bool _nativeMediaPlayerIsQueued = false;
         private static int _nativeMediaPlayerNumberIsQueued = -1;
+        public static int WebViewPlayerPausedInBackgroundId = -1;
 
         public class PlaystateEventArgs : EventArgs
         {

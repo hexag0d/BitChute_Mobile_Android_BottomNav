@@ -73,6 +73,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.7.8.API8.OpenGL.VideoProcessing.LoginFix_Final";
+        public static string AppVersion = "28.8.2.API8.OpenGL.VideoProcessing.LoginFix_Final";
     }
 }

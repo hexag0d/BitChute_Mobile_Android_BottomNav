@@ -177,10 +177,8 @@ namespace BitChute
             NavigationView = CustomizeBottomNavigationViewMenuItems(NavigationView, TabStates.GetTabFragPackages(true), true);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
             ViewPager.OffscreenPageLimit = 4;
-            
         }
-
-
+        
         public static BottomNavigationItemView GetBottomNavItemFromView(View view)
         {
             return (BottomNavigationItemView)view;
@@ -285,9 +283,6 @@ namespace BitChute
             CustomOnSwipe();
         }
 
-
-
-
         public static bool SplashScreenIsVisible;
 
         public static void SwapSplashView()
@@ -335,7 +330,7 @@ namespace BitChute
         // public static bool NavHidden = false;
         public static bool NavTimeout = true;
         public static int NavTimer = 0;
-
+        
         public async void CustomOnSwipe()
         {
             if (NavTimer != 0)
@@ -725,7 +720,10 @@ namespace BitChute
                 _chooserIntentStr = null;
             }
         }
-        
+
+        public static bool NotificationRequestedInBackground = false;
+        public static bool NotificationIsBringingAppForeground = false;
+
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
@@ -736,6 +734,8 @@ namespace BitChute
                     url = intent.GetStringExtra("URL");
                     if ((url != null || url != "") && MainPlaybackSticky.NotificationShouldPlayInBkgrd)
                     {
+                        NotificationIsBringingAppForeground = true;
+                        NotificationRequestedInBackground = true;
                         Main.MoveTaskToBack(true);
                     }
                 }
@@ -748,6 +748,11 @@ namespace BitChute
                 {
                     if (!AppState.NotificationStartedApp)
                     {
+                        if (PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id
+                            != PlaystateManagement.WebViewPlayerNumberIsStreaming)
+                        {
+                            PlaystateManagement.WebViewPlayerPausedInBackgroundId = PlaystateManagement.WebViewPlayerNumberIsStreaming;
+                        }
                         PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrl(url);
                         PlaystateManagement.WebViewPlayerNumberIsStreaming = 
                             PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id;
@@ -856,18 +861,12 @@ namespace BitChute
                         SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
                         break;
                 }
-                if (AppSettings.DlFabShowSetting != "never" ||
-                    (AppSettings.DlFabShowSetting == "onpress" && MyChannelFrag.VideoDownloaderViewEnabled))
-                {
-
-                }
                 AppState.Display.Horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();
             }
 
-            
             if (!AppSettings.HideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {
                 NavTimeout = false;
@@ -896,6 +895,7 @@ namespace BitChute
 
         protected override void OnPause()
         {
+            var focus = WindowFocusChanged;
             base.OnPause();
             try
             {
@@ -907,34 +907,61 @@ namespace BitChute
                 }
             }
             catch { }
-            if (!WindowFocusChanged) // we don't want to start the background service unless the user has minimized the app
-            {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
-                                     // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
-                                     // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
-                                     // or clicking on a notification, which shouldn't cause the background service to start
-                if (AppSettings.AutoPlayOnMinimized != "off")
+            if (AppSettings.AutoPlayOnMinimized != "off")
+            {
+                if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
                 {
-                    if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
+                    if (PlaystateManagement.WebViewPlayerIsStreaming)
                     {
-                        if (PlaystateManagement.WebViewPlayerIsStreaming)
+                        if (!focus) // if this focus true that means window focus changed before OnPause() fired so it's most likely user clicking a notification in app
+                                    // which means that we don't need to start video in background because the app is still foreground
                         {
-                            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
-                            if (AppState.ForeNote == null)
-                            {
-                                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
-                            }
                             try { MainPlaybackSticky.StartVideoInBkgrd(); }
                             catch { }
                         }
                     }
                 }
-
+            }
+            if (!focus) // we don't want to start the background service unless the user has minimized the app
+            {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
+                                     // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
+                                     // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
+                                     // or clicking on a notification, which shouldn't cause the background service to start
+                MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
+                if (AppState.ForeNote == null)
+                {
+                    MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                }
             }
         }
 
         protected override void OnResume()
         {
-
+            if (NotificationIsBringingAppForeground)
+            {
+                NotificationIsBringingAppForeground = false;
+            }
+            else
+            {
+                if (NotificationRequestedInBackground)
+                {
+                    try
+                    {
+                        if (PlaystateManagement.WebViewPlayerPausedInBackgroundId != -1)
+                        {
+                            if (PlaystateManagement.WebViewPlayerIsStreaming)
+                            {
+                                PlaystateManagement
+                                        .GetWebViewPlayerById(PlaystateManagement.WebViewPlayerPausedInBackgroundId)
+                                         .LoadUrl(JavascriptCommands._jsPauseVideo);
+                                PlaystateManagement.GetWebViewPlayerById().LoadUrl(JavascriptCommands._jsPlayVideo);
+                            }
+                        }
+                        NotificationRequestedInBackground = false;
+                    }
+                    catch { }
+                }
+            }
             try {
                 //IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
                 //RegisterReceiver(ForegroundReceiver, filter);

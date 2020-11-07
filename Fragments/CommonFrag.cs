@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -165,6 +165,24 @@ namespace BitChute.Fragments
                 {
                     Wv.RootUrl = value;
                 }
+            }
+        }
+
+        public static bool WvRl = true;
+        public static bool WvRling = false;
+        /// <summary>
+        /// this is to allow faster phones and connections the ability to Pop2Root
+        /// used to be set without delay inside OnPageFinished but I don't think 
+        /// that would work on faster phones
+        /// </summary>
+        public static async void SetReload()
+        {
+            if (!WvRling)
+            {
+                WvRling = true;
+                await Task.Delay(AppSettings.TabDelay);
+                WvRl = true;
+                WvRling = false;
             }
         }
     }
