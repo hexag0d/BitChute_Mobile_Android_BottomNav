@@ -9,9 +9,11 @@ namespace BitChute
         /// fixes the link overflow issue
         /// </summary>
         public static string _jsLinkFixer = "javascript:(function() { " +
-             "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+             "window.document.getElementById('video-description').style.overflow='hidden';" + "})()";
 
-        public static string JsLinkFixer = "document.getElementById('video-description').style.overflow='hidden'; ";
+        public static string JsLinkFixer = "window.document.getElementById('video-description').style.overflow='hidden'; ";
+
+        public static string JsHideTeaserOverflow = "$('.teaser').style.overflow='hidden';";
 
         /// <summary>
         /// hides the static banner
@@ -107,8 +109,8 @@ namespace BitChute
             + "javascript:(function() { " +
                         "document.getElementById('video-dislike').data-toggle=''; " + "})()";
 
-        public static string JsDisableToolTips = "document.getElementById('video-like').data-toggle=''; " +
-            "document.getElementById('video-dislike').data-toggle=''; ";
+        public static string JsDisableToolTips = "document.getElementById('video-like').data-toggle='';" +
+            "document.getElementById('video-dislike').data-toggle='';";
 
         /// <summary>
         /// hides the video title
@@ -117,11 +119,22 @@ namespace BitChute
                         "document.getElementById('video-title').style.display='none'; " + "})()";
 
         /// <summary>
+        /// hides the video title
+        /// </summary>
+        public static string JsHideTitle = "document.getElementById('video-title').style.display='none';";
+
+
+        /// <summary>
         /// shows the title 
         /// </summary>
         public static string _jsShowTitle = "javascript:(function() { " +
                         "document.getElementById('video-title').style.display='block'; " + "})()";
 
+        /// <summary>
+        /// shows the title 
+        /// </summary>
+        public static string JsShowTitle =  "document.getElementById('video-title').style.display='block';";
+        
         /// <summary>
         /// hides the video watch block
         /// </summary>
@@ -129,11 +142,21 @@ namespace BitChute
                         "document.getElementsByClassName('tab-scroll-outer')[0].style.display='none'; " + "})()";
 
         /// <summary>
+        /// hides the video watch block
+        /// </summary>
+        public static string JsHideWatchTab = "document.getElementsByClassName('tab-scroll-outer')[0].style.display='none';";
+        
+        /// <summary>
         /// shows the video watch block
         /// </summary>
         public static string _jsShowWatchTab = "javascript:(function() { " +
                         "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
 
+        /// <summary>
+        /// shows the video watch block
+        /// </summary>
+        public static string JsShowWatchTab =  "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; ";
+        
         /// <summary>
         /// hides the page bar
         /// </summary>
@@ -141,10 +164,20 @@ namespace BitChute
                         "document.getElementsByClassName('page-bar')[0].style.display='none'; " + "})()";
 
         /// <summary>
+        /// hides the page bar
+        /// </summary>
+        public static string JsHidePageBar = "window.document.getElementsByClassName('page-bar')[0].style.display='none';";
+        
+        /// <summary>
         /// shows the page bar
         /// </summary>
         public static string _jsShowPageBar = "javascript:(function() { " +
                         "document.getElementsByClassName('page-bar')[0].style.display='block'; " + "})()";
+
+        /// <summary>
+        /// shows the page bar
+        /// </summary>
+        public static string JsShowPageBar = "document.getElementsByClassName('page-bar')[0].style.display='block';";
 
         /// <summary>
         /// hides the nav tab list
@@ -215,16 +248,23 @@ namespace BitChute
                                         }" + "})()";
 
 
-        public static string _jsHideVideoMargin = "javascript:(function() { " +
-                        @"document.getElementsByClassName('container')[0].style.paddingLeft='0px'; " +
-                        @"document.getElementsByClassName('container')[0].style.paddingRight='0px'; " +
-                        @"document.getElementsByClassName('video-container')[0].style.paddingLeft='0px'; " +
-                        @"document.getElementsByClassName('video-container')[0].style.paddingRight='0px'; " +
-                        @"document.getElementsByClassName('row')[2].style.marginLeft='0px';" +
-                        @"document.getElementsByClassName('row')[2].style.marginRight='0px';" + "})()";
+        public static string _jsHideMargin = "javascript:(function() { " +
+                        @"window.document.getElementsByClassName('container')[0].style.paddingLeft='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.paddingRight='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.marginLeft='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.marginRight='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.overflow='hidden'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.paddingLeft='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.paddingRight='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.marginLeft='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.marginRight='1px'; " +
+                        @"window.document.getElementsByClassName('row')[2].style.marginLeft='0px';" +
+                        @"window.document.getElementsByClassName('row')[2].style.marginRight='0px';" + "})()";
 
         public static string _jsPageBarDelete = "javascript:(function() { " +
-                        @"document.getElementById('page-bar').style='padding-top: 0px;padding-bottom: 0px;border-bottom-width: 0px;'" + "})()";
+                        @"window.document.getElementById('page-bar').style='padding-top: 0px;padding-bottom: 0px;border-bottom-width: 0px;'" + "})()";
+
+        public static string JsPageBarDelete = @"document.getElementById('page-bar').style='padding-top: 0px;padding-bottom: 0px;border-bottom-width: 0px;';";
 
         public static string _jsPut5pxMarginOnRows = "javascript:(function() { " +
                          @"var row_array = document.getElementsByClassName('row');
@@ -324,10 +364,19 @@ namespace BitChute
             public static string IsPlayingCallback = @"if(plyr.playing||(plyr.currentTime>=plyr.duration&&plyr.autoplay)){window.location='https://_&app_play_isPlaying/'};";
             public static string FullscreenCallback = @"$(""button[data-plyr*='fullscreen']"")[0].addEventListener('click',function(){window.location='https://_&app_fullscreen_invoked/'})";
 
+            public static string VideoPlayerCallbacks = @"if (window.document.getElementsByTagName('video')[0]!=undefined){
+    window.document.getElementsByTagName('video')[0].addEventListener('play', (event) => {window.location='https://_&app_play_invoked/';});
+    window.document.getElementsByTagName('video')[0].addEventListener('pause', (event) => {window.location='https://_&app_pause_invoked/';});
+    window.document.getElementsByTagName('video')[0].addEventListener('ended', (event) => {
+        if(plyr.autoplay){window.location='https://_&app_vidend_invoked_autoplay';}
+        else{window.location='https://_&app_vidend_invoked_noautoplay'}});
+}";
             //.mousedown[0].listener 
             public static string GetWindowDocumentEvents = "if(_wn_s_t == null){" + OnWindowDocumentLoadEnd + "};";
             public static string OnWindowDocumentLoadEnd = "var _wn_s_t=true;window.document.addEventListener('onloadend', function() { " +
                      $"{PlayPauseButtonCallback}{IsPlayingCallback}" + "});";
+            public static string OnWindowDocumentLoadEndPlayer = "var _wn_s_t=true;window.document.addEventListener('onloadend', function() { " +
+         $"{VideoPlayerCallbacks};" + "});";
             public static string DocumentReady = "$(document).ready(()=>{" + IsPlayingCallback+ PlayPauseButtonCallback + "});";
         }
     }

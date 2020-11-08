@@ -46,7 +46,7 @@ namespace BitChute.VideoEncoding
 
                 case (int)Android.Content.DialogButtonType.Negative:
                     AppSettings.VideoPreProcessingApproved = false;
-                    SettingsFrag.OnUserDeniedPreProcessing();
+                    //Fm4.OnUserDeniedPreProcessing();  //@TODO re-add
                     break;
             }
         }

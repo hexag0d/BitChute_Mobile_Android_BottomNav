@@ -80,7 +80,7 @@ namespace BitChute.Web
             }
             catch
             {
-                AppState.UserIsLoggedIn = false;
+                //AppState.UserIsLoggedIn = false;
                 BitChute.Fragments.HomePageFrag.ShowLoginOnStartup = true;
             }
             try
@@ -91,17 +91,25 @@ namespace BitChute.Web
                     {
                         CssHelper.CommonCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                     }
-                    if (node.OuterHtml.Contains("/search.css"))
+                    else if (node.OuterHtml.Contains("/video.css"))
                     {
-                        CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
+                        CssHelper.VideoCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
                     }
+                    //else if (node.OuterHtml.Contains("/bootstrap.min.css"))
+                    //{
+                    //    CssHelper.BootstrapCssUrl = await Task.FromResult(node.Attributes["href"].Value);
+                    //}
+                    //else if (node.OuterHtml.Contains("/search.css"))
+                    //{
+                    //    CssHelper.SearchCssUrl = await Task.FromResult("https://www.bitchute.com" + node.Attributes["href"].Value);
+                    //}
                 }
                 foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//input[@name='csrfmiddlewaretoken']"))
                 {
                     var csrf = Login.GetLatestCsrfToken(node.Attributes["value"].Value).Value;
                 }
 
-                CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true);
+                CssHelper.GetCommonCss(CssHelper.CommonCssUrl, true, true, CssHelper.VideoCssUrl, "");//CssHelper.BootstrapCssUrl);
             }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
             return false;

@@ -354,7 +354,7 @@ namespace BitChute.Web
                 var formdata = GetLoginKeys(authToken);
                 var requestContent = await formdata.ReadAsStringAsync();
                 var response = await ExtWebInterface.HttpClient.PostAsync("https://www.bitchute.com/accounts/login/", formdata);
-                var header = await ExtWebInterface.GetRequestHeader(response.Headers);
+                var header = await ExtWebInterface.GetRequestHeader(response.Headers, true);
                 responseCodeSuccess = response.IsSuccessStatusCode;
                 if (String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId))
                 {
@@ -363,6 +363,7 @@ namespace BitChute.Web
                 else
                 {
                     loginSuccess = true;
+                    AppState.UserIsLoggedIn = true;
                 }
             }
             catch (Exception ex) { }

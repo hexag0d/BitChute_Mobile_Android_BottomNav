@@ -149,6 +149,19 @@ namespace BitChute
 
         public static int HidePageTitleDelay = 5000;
 
+        private static bool _generateClickableAvatars;
+        public static bool GenerateClickableAvatars {
+            get { return _generateClickableAvatars; }
+            set
+            {
+                _generateClickableAvatars = value;
+                if (!AppSettings.AppSettingsLoadingFromAndroid)
+                {
+                    AppSettings.SendPrefSettingToAndroid("generateclickableavatars", value);
+                }
+            }
+        }
+
         /// <summary>
         /// this int controls the delay in ms of notifications being 
         /// parsed and then sent out.  It should be set to a high int
@@ -209,7 +222,7 @@ namespace BitChute
                 set { _sessionId = value;
                     if (!AppSettingsLoadingFromAndroid)
                     {
-                        SendPrefSettingToAndroid("sessionid", SessionId);
+                        SendPrefSettingToAndroid("sessionid", _sessionId);
                         if (String.IsNullOrWhiteSpace(_sessionId)) { AppState.UserIsLoggedIn = false; }
                     }
                 }
@@ -263,6 +276,7 @@ namespace BitChute
                     BackgroundKey = Prefs.GetString("backgroundkey", "any");
                     SearchFeatureOverride = Prefs.GetBoolean("searchfeatureoverride", false); // @TODO set to false
                     SearchOverrideSource = Prefs.GetString("searchoverridesource", "DuckDuckGo");
+                    GenerateClickableAvatars = Prefs.GetBoolean("generateclickableavatars", true);
                     SessionState.CsrfToken = Prefs.GetString("csrftoken", "");
                     SessionState.Cfduid = Prefs.GetString("cfduid", "");
                     SessionState.SessionId = Prefs.GetString("sessionid", "");

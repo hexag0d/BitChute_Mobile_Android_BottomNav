@@ -14,6 +14,9 @@ namespace BitChute.Web
         public static string DefaultCookieHeaderNoTokens = "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
 
         private static HttpClient _httpClient;
+        /// <summary>
+        /// http client with request headers for the main site
+        /// </summary>
         public static HttpClient HttpClient {
             get {
                 if (_httpClient == null) {
@@ -31,7 +34,12 @@ namespace BitChute.Web
                 }
                 return _httpClient;
             }
-            set { _httpClient = value; } }
+            set { _httpClient = value; }
+        }
+        /// <summary>
+        /// http client with no headers attached
+        /// </summary>
+        public static HttpClient GenericHttpClient = new HttpClient(new HttpClientHandler());
         private static HttpClientHandler _httpClientHandler;
         public static HttpClientHandler HttpClientHandler {
             get {
@@ -58,10 +66,12 @@ namespace BitChute.Web
             set { _defaultRequestHeaderString = value; }
         }
 
-        public static Task<string> GetRequestHeader(HttpResponseHeaders headers = null, bool fromSettings = false)
+        public static Task<string> GetRequestHeader(HttpResponseHeaders headers = null, bool setHttpClientDefaultHeader = false, bool fromSettings = false)
         {
             string cookieHeader = "";
             bool sessionIdSetCookie = false;
+            bool csrfSetToken= false;
+            bool cfduidSet = false;
             if (!fromSettings)
             {
                 foreach (var header in headers)
@@ -70,27 +80,28 @@ namespace BitChute.Web
                     {
                         foreach (var cookiePair in header.Value)
                         {
-
-                                if (cookiePair.Contains("csrftoken"))
-                                {
-                                    cookieHeader += cookiePair + ";";
-                                    AppSettings.SessionState.CsrfToken = cookiePair;
-                                }
-                                if (cookiePair.Contains("__cfduid"))
-                                {
-                                    cookieHeader += cookiePair + ";";
-                                    AppSettings.SessionState.Cfduid = cookiePair;
-                                }
-                                if (cookiePair.Contains("sessionid"))
-                                {
-                                    cookieHeader += cookiePair + ";";
-                                    AppSettings.SessionState.SessionId = cookiePair;
-                                    sessionIdSetCookie = true;
-                                }
-
+                            if (cookiePair.Contains("csrftoken"))
+                            {
+                                cookieHeader += cookiePair + ";";
+                                AppSettings.SessionState.CsrfToken = cookiePair;
+                                csrfSetToken = true;
+                            }
+                            if (cookiePair.Contains("__cfduid"))
+                            {
+                                cookieHeader += cookiePair + ";";
+                                AppSettings.SessionState.Cfduid = cookiePair;
+                                cfduidSet = true;
+                            }
+                            if (cookiePair.Contains("sessionid"))
+                            {
+                                cookieHeader += cookiePair + ";";
+                                AppSettings.SessionState.SessionId = cookiePair;
+                                sessionIdSetCookie = true;
+                            }
                         }
                     }
                 }
+
                 if (!sessionIdSetCookie) { AppSettings.SessionState.SessionId = ""; }
             }
             else
@@ -100,6 +111,16 @@ namespace BitChute.Web
                 cookieHeader += AppSettings.SessionState.SessionId + ";";
             }
             cookieHeader += "preferences={%22theme%22:%22night%22%2C%22autoplay%22:true}; ";
+            if ((csrfSetToken || cfduidSet || sessionIdSetCookie) && setHttpClientDefaultHeader)
+            {
+                if(!cfduidSet&&!String.IsNullOrWhiteSpace(AppSettings.SessionState.Cfduid)) {
+                    cookieHeader += AppSettings.SessionState.Cfduid;
+                }
+                try {
+                    HttpClient.DefaultRequestHeaders.Add("Cookie", cookieHeader);
+                }
+                catch { }
+            }
             DefaultRequestHeaderString = cookieHeader;
             return Task.FromResult(cookieHeader);
         }
@@ -211,6 +232,7 @@ namespace BitChute.Web
         private static string _cookieHeader;
         public static string CookieHeader{get{return _cookieHeader;}set{_cookieHeader=value;}}
 
+        Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
         /// <summary>
         /// returns html source of url requested
@@ -219,35 +241,33 @@ namespace BitChute.Web
         /// <returns></returns>
         public static async Task<string> GetNotificationText(string url)
         {
-            await Task.Run(() =>
+            HtmlCode = "";
+            if (!ExtNotifications.NotificationHttpRequestInProgress && !String.IsNullOrWhiteSpace(AppSettings.SessionState.SessionId))
             {
-                HtmlCode = "";
-                if (!ExtNotifications.NotificationHttpRequestInProgress)
+                try
                 {
-                    try
-                    {
-                        Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
-                        var _cookieHeader = CookieCon.GetCookieHeader(_notificationURI);
+                    ExtNotifications.NotificationHttpRequestInProgress = true;
+                    var getRequest = await HttpClient.GetAsync("https://bitchute.com/notifications/");
+                    var resultContent = await getRequest.Content.ReadAsStringAsync();
+                    HtmlCode = resultContent;
+                    ExtNotifications.NotificationHttpRequestInProgress = false;
 
-                        //_httpClient.DefaultRequestHeaders.Add("Cookie", ExtWebInterface.CookieHeader);
-                        ExtNotifications.NotificationHttpRequestInProgress = true;
-
-                        var getRequest = _httpClient.GetAsync("https://bitchute.com/notifications/").Result;
-
-                        //CopyCookies(getRequest, new Uri("https://bitchute.com/"));
-                        var resultContent = getRequest.Content.ReadAsStringAsync().Result;
-                        HtmlCode = resultContent;
-                        ExtNotifications.NotificationHttpRequestInProgress = false;
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
                 }
-            });
-
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
             return HtmlCode;
+        }
+
+        public static async System.Threading.Tasks.Task<string> GetTextResponseWithGenericClient(string url)
+        {
+            string responseText = "";
+            HttpResponseMessage getRequest = new HttpResponseMessage();
+            getRequest = await GenericHttpClient.GetAsync(url);
+            responseText = await getRequest.Content.ReadAsStringAsync();
+            return responseText;
         }
         
         /// <summary>

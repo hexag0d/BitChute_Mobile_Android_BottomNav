@@ -70,6 +70,34 @@ namespace BitChute
                     PlayerTypeCurrentlyStreaming(PlayerType.NativeMediaPlayer);
                 }
             }
+
+            public PlaystateEventArgs(bool webViewVideoEnded, int webViewId, bool autoPlayEnabled = false, bool nativeMediaPlayerEnded = false)
+            {
+                if (webViewVideoEnded)
+                {
+                    if (autoPlayEnabled)
+                    {
+                        if (webViewId == _webViewMediaPlayerNumberIsStreaming)
+                        {
+                            _webViewMediaPlayerIsStreaming = true;
+                            _webViewMediaPlayerNumberIsStreaming = webViewId;
+                        }
+                        PlayerTypeQueued(PlayerType.WebViewPlayer);
+                        PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
+                    }
+                    else
+                    {
+                        if (webViewId == _webViewMediaPlayerNumberIsStreaming)
+                        {
+                            _webViewMediaPlayerIsStreaming = false;
+                            _webViewMediaPlayerNumberIsStreaming = webViewId;
+                        }
+                        PlayerTypeQueued(PlayerType.WebViewPlayer);
+                        PlayerTypeCurrentlyStreaming(PlayerType.WebViewPlayer);
+                    }
+                }
+            }
+
             public bool WebViewMediaPlayerIsStreaming { get { return _webViewMediaPlayerIsStreaming; } }
             public int WebViewMediaPlayerNumberIsStreaming { get { return _webViewMediaPlayerNumberIsStreaming; } }
             public bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
@@ -162,10 +190,10 @@ namespace BitChute
             NativeMediaPlayer
         };
 
-        public static Dictionary<int, WebView> WebViewIdDictionary = new Dictionary<int, WebView>();
-        public static Dictionary<int, WebView> WebViewTabDictionary = new Dictionary<int, WebView>();
+        public static Dictionary<int, ServiceWebView> WebViewIdDictionary = new Dictionary<int, ServiceWebView>();
+        public static Dictionary<int, ServiceWebView> WebViewTabDictionary = new Dictionary<int, ServiceWebView>();
 
-        public static WebView GetWebViewPlayerById(int id = -1, int tabNo = -1)
+        public static ServiceWebView GetWebViewPlayerById(int id = -1, int tabNo = -1)
         {
             try
             {
@@ -197,7 +225,10 @@ namespace BitChute
             {
                 try
                 {
-                    GetWebViewPlayerById(_webViewMediaPlayerNumberIsStreaming).LoadUrl(JavascriptCommands._jsPauseVideo);
+                    if (_webViewMediaPlayerNumberIsStreaming != -1)
+                    {
+                        GetWebViewPlayerById(_webViewMediaPlayerNumberIsStreaming).LoadUrl(JavascriptCommands._jsPauseVideo);
+                    }
                     PlaystateManagement.WebViewPlayerIsStreaming = false;
                     PlayerTypeQueued(PlayerType.WebViewPlayer);
                 }

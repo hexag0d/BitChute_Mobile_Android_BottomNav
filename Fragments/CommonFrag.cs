@@ -20,6 +20,8 @@ namespace BitChute.Fragments
 {
     public class CommonFrag : Android.Support.V4.App.Fragment // @TODO consolidate webview fragment shared methods, members
     {
+        private int _tabId;
+        public int TabId { get { return _tabId; } set { _tabId = value; } }
         public delegate void LoginEventDelegate(object sender, LoginEventArgs args);
         public static event LoginEventDelegate OnLogin;
         public delegate void LogoutEventDelegate(LogoutEventArgs args);
@@ -68,17 +70,35 @@ namespace BitChute.Fragments
         public LinearLayout LinearLayout { get { return _linearLayout; }set { _linearLayout = value; } }
         private View _videoDetailView;
         public View VideoDetailView { get { return _videoDetailView; } set { _videoDetailView = value; } }
-        public static ServiceWebView Wv;
+        private ServiceWebView _wv;
+        public ServiceWebView Wv { get { return _wv; } set { _wv = value; } }
         private VideoDetailLoader _videoDetail;
         public VideoDetailLoader VideoDetail { get { return _videoDetail; } set { _videoDetail = value; } }
+        private static Dictionary<int, CommonFrag> _fragmentByTab;
+        public static Dictionary<int, CommonFrag> FragmentByTab { get { return _fragmentByTab; } }
         public static Dictionary<int, CommonFrag> FragmentDictionary { get { return _fragmentDictionary; } }
         private static Dictionary<int, CommonFrag> _fragmentDictionary;
-        public static CommonFrag GetFragmentById(int id, object frag = null)
+        public static CommonFrag GetFragmentById(int id = -1, object frag = null, int tabId = -1)
         {
+            if (_fragmentByTab == null) { _fragmentByTab = new Dictionary<int, CommonFrag>(); }
+            if (tabId != -1)
+            {
+                if (!FragmentByTab.Keys.Contains(tabId))
+                {
+                    if (frag != null)
+                    {
+                        FragmentByTab.Add(tabId, (CommonFrag)frag);
+                    }
+                }
+                else
+                {
+                    return FragmentByTab[tabId];
+                }
+            }
             if (_fragmentDictionary == null) { _fragmentDictionary = new Dictionary<int, CommonFrag>(); }
             if ( !_fragmentDictionary.Keys.Contains(id))
             {
-                if (id != null)
+                if (id != -1)
                 {
                     if (frag != null)
                     {
@@ -94,28 +114,95 @@ namespace BitChute.Fragments
             }
             else
             {
-                if (frag != null && id != null)
+                if (frag != null && id != -1)
                 {
                     _fragmentDictionary.Remove(id);
                     _fragmentDictionary.Add(id, (CommonFrag)frag);
                 }
-                else if (frag == null && id != null) {
+                else if (frag == null && id != -1) {
                     return _fragmentDictionary[id];
                 }
-                else if(frag==null && id == null){
+                else if(frag==null && id == -1){
                     return null;
                 }
             }
             return null;
         }
-
+        
         public override void OnCreate(Bundle savedInstanceState)
         {
             System.Random random = new Random();
             this.Id = new System.Random().Next(999999999);
             base.OnCreate(savedInstanceState);
         }
+        
 
+        private async void HideWatchLabel()
+        {
+            await Task.Delay(4000);
+            if (Wv.Url != "https://www.bitchute.com/")
+                Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
+        }
+
+        /// <summary>
+        /// swaps the view for the test login layout
+        /// </summary>
+        /// <param name="v"></param>
+        public virtual void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        {
+        }
+
+            public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
+        public async void ExpandVideoCards(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
+            Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
+        }
+
+        private async void ExpandFeaturedChannels(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(3000);
+            }
+            Wv.LoadUrl(JavascriptCommands._jsFeaturedRemoveMaxWidth);
+            Wv.LoadUrl(JavascriptCommands._jsExpandFeatured);
+        }
+
+        private async void ExpandPage(bool delayed)
+        {
+            if (delayed) { await Task.Delay(3000); }
+        }
+
+        int _autoInt = 0;
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public async void HideLinkOverflow()
+        {
+            await Task.Delay(AppSettings.LinkOverflowFixDelay);
+            Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
+            Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
+            Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
+        }
+        
+        public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
+        public async void HidePageTitle()
+        {
+            await Task.Delay(5000);
+
+            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
+            {
+                Wv.LoadUrl(JavascriptCommands._jsHideTitle);
+                Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
+                Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
+                Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
+            }
+        }
 
         /// <summary>
         /// click event for the adapter
@@ -153,7 +240,6 @@ namespace BitChute.Fragments
             }
         }
 
-
         private string _rootUrl;
         public string RootUrl
         {
@@ -168,14 +254,27 @@ namespace BitChute.Fragments
             }
         }
 
-        public static bool WvRl = true;
-        public static bool WvRling = false;
+        public bool WvRl = true;
+        /// <summary>
+        /// one press refreshes the page; two presses pops back to the root
+        /// </summary>
+        public void Pop2Root()
+        {
+            if (WvRl)
+            {
+                Wv.Reload();
+                WvRl = false;
+            }
+            else { Wv.LoadUrl(RootUrl); }
+        }
+        
+        public bool WvRling = false;
         /// <summary>
         /// this is to allow faster phones and connections the ability to Pop2Root
         /// used to be set without delay inside OnPageFinished but I don't think 
         /// that would work on faster phones
         /// </summary>
-        public static async void SetReload()
+        public async void SetReload()
         {
             if (!WvRling)
             {
@@ -184,6 +283,17 @@ namespace BitChute.Fragments
                 WvRl = true;
                 WvRling = false;
             }
+        }
+        
+        public async void LoadUrlWithDelay(string url, int delay)
+        {
+            await Task.Delay(delay); Wv.LoadUrl(url);
+        }
+        
+        public void WebViewGoBack()
+        {
+            if (Wv.CanGoBack()) Wv.GoBack();
+            // BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
         }
     }
 }

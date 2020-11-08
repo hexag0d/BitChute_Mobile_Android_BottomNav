@@ -57,6 +57,29 @@
 					android:text="Off"
 					android:id="@+id/_zoomControlOffBtn" />
 			</RadioGroup>
+							<RadioGroup
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/generateClickableAvatarGroup">
+
+				<RadioButton
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#3498db"
+					android:text="Generate Clickable Avatars On"
+					android:buttonTint="#3498db"
+					android:id="@+id/generateClickableAvatarsOnRb" />
+				<RadioButton
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#3498db"
+					android:buttonTint="#3498db"
+					android:text="Off"
+					android:id="@+id/generateClickableAvatarsOffRb" />
+			</RadioGroup>
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="vertical"
