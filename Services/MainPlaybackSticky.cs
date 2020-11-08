@@ -175,30 +175,35 @@ namespace BitChute.Services
         #endregion
 
         #region playback methods
-        public async void Play(int id = -1, PlayerType playerType = PlayerType.None)
+        public void Play(int id = -1, PlayerType playerType = PlayerType.None)
         {
-            if ((PlaystateManagement.MediaPlayerIsStreaming && PlaystateManagement.MediaPlayerIsQueued) 
+
+            if ((PlaystateManagement.MediaPlayerIsStreaming && PlaystateManagement.MediaPlayerIsQueued)
                 || playerType == PlayerType.NativeMediaPlayer)
             {
-                await Task.Run(() =>
+                Task.Factory.StartNew(() =>
                 {
                     if (MediaPlayerDictionary[id] != null)
                     {
                         MediaPlayerDictionary[id].Start();
                         return;
                     }
-                    try  { AquireWifiLock(); }
-                    catch {  }
                     if (MediaPlayerDictionary[id].IsPlaying)
                     {
                         PlaystateChanged.Invoke(new PlaystateEventArgs(-1, false, false, false, id, false, false, false, id));
                     }
                 });
             }
-            else if (PlaystateManagement.WebViewPlayerIsStreaming)
+            else if (PlaystateManagement.PlayerTypeQueued() == PlayerType.WebViewPlayer)
             {
-                PlaystateChanged.Invoke(new PlaystateEventArgs(id, true, false, false));
-                StartVideoInBkgrd();
+                Task.Factory.StartNew(() =>
+                {
+                    if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
+                        StartVideoInBkgrd(PlaystateManagement.WebViewPlayerNumberIsStreaming);
+                    else if (PlaystateManagement.WebViewPlayerPausedInBackgroundId != -1)
+                        StartVideoInBkgrd(PlaystateManagement.WebViewPlayerPausedInBackgroundId);
+                    else { StartVideoInBkgrd(); }
+                });
             }
         }
 
@@ -299,7 +304,7 @@ namespace BitChute.Services
             if (url == "" || url == null) { return; }
             try
             {
-                PlaystateManagement.GetWebViewPlayerById().LoadUrl(url);
+                PlaystateManagement.GetWebViewPlayerById(-1, MainActivity.ViewPager.CurrentItem).LoadUrl(url);
             }
             catch {   }
         }
@@ -396,19 +401,13 @@ namespace BitChute.Services
             {
                 try { u = i.GetStringExtra("URL"); }
                 catch{ }
-                if (u == null || u== "") { return;  }
+                if (u == null || u== "") { return; }
                 else { url = u; }
             }
             if (!PlaystateManagement.MediaPlayerIsStreaming)
             {
-                switch (tab)
-                {
-                    case 0: HomePageFrag.Wv.LoadUrl(url); break;
-                    case 1: SubscriptionFrag.Wv.LoadUrl(url); break;
-                    case 2: FeedFrag.Wv.LoadUrl(url); break;
-                    case 3: MyChannelFrag.Wv.LoadUrl(url); break;
-                    case 4: SettingsFrag.Wv.LoadUrl(url); break;
-                }
+                if (tab == -1) { tab = MainActivity.ViewPager.CurrentItem; }
+                CommonFrag.GetFragmentById(-1, null, tab).Wv.LoadUrl(url);
             }
             else{ }
         }
@@ -476,7 +475,7 @@ namespace BitChute.Services
         /// system for the long running task to see if that
         /// will prevent the loop from breaking.
         /// </summary>
-        public static async void StartNotificationLoop(int delay, List<ExtNotifications.CustomNotification> initialNotifications = null)
+        public static async void StartNotificationLoop(int delay, List<ExtNotifications.CustomNotification> initialNotifications = null, bool afterLogin = false)
         {
             NotificationLoopStartTimesInvoked++; 
             //wait on a delay so that the cookie is ready when we make
@@ -487,14 +486,18 @@ namespace BitChute.Services
             //they move over to a service timer eventually to prevent the loop from breaking
             while (AppSettings.Notifying)
             {
-                if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
+                if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress && AppState.UserIsLoggedIn)
                 {
                     if (initialNotifications == null)
                     {
                         _notificationStackExecutionInProgress = true;
-                        await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                        await ExtNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
-                        ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
+                        var noteText = await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                        var noteList = await ExtNotifications.DecodeHtmlNotifications(noteText);
+                        if (noteList.Count > 0)
+                        {
+                            ExtNotifications.SendNotifications(noteList);
+                            NotificationsHaveBeenSent = true;
+                        }
                         _notificationStackExecutionInProgress = false;
                     }
                     else
@@ -502,16 +505,20 @@ namespace BitChute.Services
                         ExtNotifications.SendNotifications(initialNotifications);
                     }
                 }
-                if (MainPlaybackSticky.NotificationsHaveBeenSent || initialNotifications != null)
+                if (NotificationsHaveBeenSent)
                 {
                     //check to make sure the timer isn't already started or the app will crash
                     if (!MainPlaybackSticky._notificationLongTimerSet)
                     {
-                        //after the initial notifications are sent, start the long running service timer task
-                        _timer.ScheduleAtFixedRate(_extTimerTask, 500000, 780000); // 780000
-                        _notificationLongTimerSet = true;
+                        try
+                        {
+                            //after the initial notifications are sent, start the long running service timer task
+                            _timer.ScheduleAtFixedRate(_extTimerTask, 500000, 780000); // 780000
+                            _notificationLongTimerSet = true;
+                            return;
+                        }
+                        catch { }
                     }
-                    return;
                 }
                 if (NotificationLoopStartTimesInvoked > 1) { NotificationLoopStartTimesInvoked--; break; }
                 else if (!AppState.UserIsLoggedIn) { await Task.Delay(220000); }
@@ -536,9 +543,9 @@ namespace BitChute.Services
                         if (!ExtNotifications.NotificationHttpRequestInProgress && !_notificationStackExecutionInProgress)
                         {
                             _notificationStackExecutionInProgress = true;
-                            await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
-                            await ExtNotifications.DecodeHtmlNotifications(ExtWebInterface.HtmlCode);
-                            ExtNotifications.SendNotifications(ExtNotifications.CustomNoteList);
+                            var noteText = await ExtWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                            var noteList = await ExtNotifications.DecodeHtmlNotifications(noteText);
+                            ExtNotifications.SendNotifications(noteList);
                             _notificationStackExecutionInProgress = false;
                         }
                     }
@@ -683,22 +690,25 @@ namespace BitChute.Services
         /// starts the video in background
         /// </summary>
         /// <param name="tab"></param>
-        public static async void StartVideoInBkgrd(int webViewId = -1)
+        public static async void StartVideoInBkgrd(int webViewId = -1, int mediaPlayerId = -1)
         {
-            if (!PlaystateManagement.MediaPlayerIsStreaming)
+            if (PlaystateManagement.WebViewPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlayerType.WebViewPlayer)
             {
                 if (webViewId == -1) { webViewId = PlaystateManagement.WebViewPlayerNumberIsStreaming; }
-
+                PlaystateManagement.WebViewPlayerIsStreaming = true;
                 await Task.Delay(10);
-
-                PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
-
+                ViewHelpers.DoActionOnUiThread(() =>
+                {
+                    PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+                });
                 await Task.Delay(20);
-
-                PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
-
+                ViewHelpers.DoActionOnUiThread(() =>
+                {
+                    PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+                });
                 VerifyInBackground(webViewId);
             }
+            
         }
 
         static async void VerifyInBackground(int webViewId = -1)
@@ -708,7 +718,10 @@ namespace BitChute.Services
                 await Task.Delay(10);
             }
             await Task.Delay(30);
-            PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+            ViewHelpers.DoActionOnUiThread(() =>
+            {
+                PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+            });
         }
 
         public void OnSeekComplete(MediaPlayer mp)
@@ -743,6 +756,37 @@ namespace BitChute.Services
                 base.GoBack();
                 BitChute.Web.ViewClients.RunBaseCommands((Android.Webkit.WebView)this);
             }
+            
+            public bool WvRl = true;
+            /// <summary>
+            /// one press refreshes the page; two presses pops back to the root
+            /// </summary>
+            public void Pop2Root()
+            {
+                if (WvRl)
+                {
+                    this.Reload();
+                    WvRl = false;
+                }
+                else { this.LoadUrl(RootUrl); }
+            }
+
+            public bool WvRling = false;
+            /// <summary>
+            /// this is to allow faster phones and connections the ability to Pop2Root
+            /// used to be set without delay inside OnPageFinished but I don't think 
+            /// that would work on faster phones
+            /// </summary>
+            public async void SetReload()
+            {
+                if (!WvRling)
+                {
+                    WvRling = true;
+                    await Task.Delay(AppSettings.TabDelay);
+                    WvRl = true;
+                    WvRling = false;
+                }
+            }
 
             public ServiceWebView(Context context) : base(context) { }
 
@@ -754,6 +798,7 @@ namespace BitChute.Services
                 this._tabKey = _latestTabKey;
                 PlaystateManagement.WebViewTabDictionary.Add(this._tabKey, this);
                 AppState.WebViewAgentString = this.Settings.UserAgentString;
+                this.Settings.SetSupportMultipleWindows(true);
             }
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)

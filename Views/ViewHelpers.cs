@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Views;
@@ -15,6 +16,11 @@ namespace BitChute
     public class ViewHelpers
     {
         public static ViewGroup Container { get; set; }
+
+        public static void DoActionOnUiThread(Action action)
+        {
+            new Handler(Looper.MainLooper).Post(action);
+        }
 
         public class Main
         {
@@ -68,6 +74,8 @@ namespace BitChute
                 UiHandler.Post(() => toBeUpdated = updateWith);
                 return true;
             }
+
+
             
             public static async void OnNavBarVizChanged()
             {

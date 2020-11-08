@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Runtime;
@@ -7,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using BitChute;
 using BitChute.Services;
+using static BitChute.Web.Ui.CssHelper.Strings;
 
 namespace BitChute.Web.Ui
 {
@@ -19,6 +21,21 @@ namespace BitChute.Web.Ui
         public static string CommonCssFeed = "";
         public static string CommonCssMyChannel = "";
         public static string CommonCssSettings = "";
+        public static string VideoCss = "";
+        public static string BootstrapCss = "";
+        private static string _bootstrapCssUrl;
+        public static string BootstrapCssUrl
+        {
+            get { return _bootstrapCssUrl; }
+            set { _bootstrapCssUrl = value; }
+        }
+        private static string _videoCssUrl;
+        public static string VideoCssUrl
+        {
+            get { return _videoCssUrl; }
+            set { _videoCssUrl = value; }
+        }
+
         private static string _commonCssUrl;
         public static string CommonCssUrl
         {
@@ -56,10 +73,20 @@ namespace BitChute.Web.Ui
             return new Android.Webkit.WebResourceResponse("text/css", "UTF-8", stream);
         }
 
-        public static async Task<string> GetCommonCss(string sourceUrl, bool process, bool setNext = true)
+        public static async Task<string> GetCommonCss(string sourceUrl, bool process, bool setNext = true, string videoCssUrl = "", string bootstrapCssUrl="")
         {
-            string c = await ExtWebInterface.GetHtmlTextFromUrl(sourceUrl); 
-            if (process) { c = await GetOverrideCss(c); }
+            string c = await ExtWebInterface.GetHtmlTextFromUrl(sourceUrl);
+            c = await GetOverrideCss(c); 
+            if (videoCssUrl != "")
+            {
+                string videoCss = await ExtWebInterface.GetTextResponseWithGenericClient(videoCssUrl);
+                await GetVideoCss(videoCss);
+            }
+            if (bootstrapCssUrl != "")
+            {
+                string bootstrapCss = await ExtWebInterface.GetTextResponseWithGenericClient(bootstrapCssUrl);
+                await GetBootStrapCss(bootstrapCss);
+            }
             if (setNext)
             {
                 //await GetSearchCss(SearchCssUrl);
@@ -87,7 +114,35 @@ namespace BitChute.Web.Ui
                 );
             SearchCss = await fct; return SearchCss;
         }
-        
+
+        public static async Task<string> GetVideoCss(string vCss = null)
+        {
+            if (vCss != null)
+            {
+                Task<string> vCssOverride = Task.FromResult<string>(vCss
+                    .Replace(Strings.VideoDetailParagraphOrg, Strings.VideoDetailParagraphNew)
+                    + ".tooltip{opacity:0;max-height:0px;}" + Strings.ContainerNoMargins+ 
+                    Strings.VideoContainerNoMargins+Strings.ThirdRowNoMargins);
+                VideoCss = await vCssOverride;
+            }
+            return VideoCss;
+        }
+
+        public static async Task<string> GetBootStrapCss(string bootstrap = null)
+        {
+            if (bootstrap != null)
+            {
+                Task<string> vCssOverride = Task.FromResult<string>(bootstrap
+                    .Replace(@".container{padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}",
+                    @".container{padding-right:1px;padding-left:1px;margin-right:0px;margin-left:0px}")
+                    .Replace(@".row{margin-right:-15px;margin-left:-15px}", @".row:nth-child(2){margin-right:0px;margin-left:0px}")
+                    + VideoContainerNoMargins);
+
+                BootstrapCss = await vCssOverride;
+            }
+            return BootstrapCss;
+        }
+
         public static async Task<string> GetFeedCommonCss(string bCss = null)
         {
             if (bCss == null) { bCss = CommonCss; } 
@@ -166,7 +221,66 @@ namespace BitChute.Web.Ui
             public static string VidResultTextNew = @".video-result-text{margin:5px 0;display:none;display:none;max-height:100px;max-width:100%;line-height:1.2em;-webkit-line-clamp:8;-webkit-box-orient:vertical;-moz-box-orient:vertical;-ms-box-orient:vertical;overflow:hidden}";
             public static string VidResultTextContainerOrg = @".video-result-text-container{margin:0;min-width:100%}";
             public static string VidResultTextContainerNew = @".video-result-text-container{margin:0;min-width:100%;max-height:100px;overflow:hidden}";
-
+            public static string VideoDetailParagraphOrg = @".video-detail-text p{";
+            public static string VideoDetailParagraphNew = @".video-detail-text p{overflow:hidden;";
+            public static string ContainerNoMargins = @".container{padding-right:1px!important;padding-left:1px!important;margin-left:1px!important;margin-right:1px!important;overflow:hidden!important;}";
+            public static string VideoContainerNoMargins = @".video-container{padding-right:1px!important;padding-left:1px!important;margin-left:1px!important;margin-right:1px!important;overflow:hidden!important;}";
+            public static string ThirdRowNoMargins = @".row:nth-child(3){margin-left:0px!important;margin-right:0px!important}";
+            public static string BootstrapContainerSeekTo = @".container{";
+            public static string ContainerSeekPadding = @"padding-right:15px;padding-left:15px;";
+            public static string ContainerSeekMargins = @"margin-right:auto;margin-left:auto;";
+            //.container{padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
+            /*
+                                     @"window.document.getElementsByClassName('container')[0].style.paddingLeft='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.paddingRight='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.marginLeft='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.marginRight='1px'; " +
+                        @"window.document.getElementsByClassName('container')[0].style.overflow='hidden'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.paddingLeft='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.paddingRight='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.marginLeft='1px'; " +
+                        @"window.document.getElementsByClassName('video-container')[0].style.marginRight='1px'; " +
+                        @"window.document.getElementsByClassName('row')[2].style.marginLeft='0px';" +
+                        @"window.document.getElementsByClassName('row')[2].style.marginRight='0px';" + "})()";
+             
+             
+             
+             */
         }
+
+        //public static async Task<string> GetBootStrapCss(string bootstrap = null)
+        //{
+        //    string processedCss = "";
+        //    var indexesToReplace = new List<Tuple<int, int>>();
+        //    var lastKnownStartPosition = 0;
+        //    var lastKnownEndPosition = 0;
+        //    while (lastKnownEndPosition < bootstrap.Length)
+        //    {
+        //        if (lastKnownStartPosition == 0)
+        //        {
+        //            lastKnownStartPosition = bootstrap.IndexOf(BootstrapContainerSeekTo);
+        //            if (lastKnownStartPosition != 0)
+        //            {
+        //                lastKnownEndPosition = bootstrap.IndexOf("}", lastKnownStartPosition);
+        //                indexesToReplace.Add(new Tuple<int, int>(lastKnownStartPosition, lastKnownEndPosition));
+        //            }
+        //            else
+        //            {
+
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    foreach (var )
+        //        Task<int> indexTask = Task.FromResult<int>
+        //    if (bootstrap != null)
+        //    {
+        //        Task<string> vCssOverride = Task.FromResult<string>(bootstrap
+        //            .LastIndexOf
+
+        //        VideoCss = await vCssOverride;
+        //    }
+        //    return VideoCss;
+        //}
     }
 }

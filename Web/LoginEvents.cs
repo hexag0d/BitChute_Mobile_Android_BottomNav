@@ -98,7 +98,7 @@ namespace BitChute.Web.Auth
                 CookieManager.Instance.SetCookie("https://www.bitchute.com/", cookieHeaderPt1);
 
             }
-            BitChute.Services.MainPlaybackSticky.StartNotificationLoop(1000, null);
+            BitChute.Services.MainPlaybackSticky.StartNotificationLoop(6000, null, true);
             BitChute.Web.ViewClients.Run_OnLogin();
         }
 

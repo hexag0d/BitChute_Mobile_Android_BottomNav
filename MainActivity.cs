@@ -87,7 +87,7 @@ namespace BitChute
         IMenuItem _menu;
         private static Drawable _tab4Icon;
         private static Drawable _tab5Icon;
-        static Android.Support.V4.App.Fragment[] _fragments;
+        public static Android.Support.V4.App.Fragment[] ViewFragmentArray;
 
         public static MainActivity Main;
         public static Bundle _bundle;
@@ -105,6 +105,8 @@ namespace BitChute
 
         readonly WindowManagerFlags _winFlagUseHw = WindowManagerFlags.HardwareAccelerated;
         public static DisplayMetrics metrics = new DisplayMetrics();
+
+        public static string NotificationStartedAppWithUrl;
 
         public static CustomIntent.ControlIntentReceiver ForegroundReceiver;
 
@@ -144,10 +146,9 @@ namespace BitChute
                 //if it's not null then set the fragment0 url to our intent url string
                 try
                 {
-                    var _tempUrl = _sentIntent.Extras?.GetString("URL");
-                    if (_tempUrl != "" && _tempUrl != null)
+                    NotificationStartedAppWithUrl = _sentIntent.Extras?.GetString("URL");
+                    if (NotificationStartedAppWithUrl != "" && NotificationStartedAppWithUrl != null)
                     {
-                        Fm0.RootUrl = _tempUrl;
                         AppState.NotificationStartedApp = true;
                     }
                 }
@@ -172,15 +173,14 @@ namespace BitChute
         {
             ViewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             ViewPager.PageSelected += ViewPager_PageSelected;
-            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
+            ViewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, ViewFragmentArray);
             NavigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             NavigationView = CustomizeBottomNavigationViewMenuItems(NavigationView, TabStates.GetTabFragPackages(true), true);
             NavigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+            NavigationView.NavigationItemReselected += NavigationView_NavigationItemReSelected;
             ViewPager.OffscreenPageLimit = 4;
-            
         }
-
-
+        
         public static BottomNavigationItemView GetBottomNavItemFromView(View view)
         {
             return (BottomNavigationItemView)view;
@@ -189,35 +189,53 @@ namespace BitChute
         BottomNavigationView CustomizeBottomNavigationViewMenuItems(BottomNavigationView bottomNavigationView, List<TabStates.TabFragPackage> tabs = null, bool setExisting = false, bool removeShiftMode = true)
         {
             BottomNavigationMenuView menuView = (BottomNavigationMenuView)bottomNavigationView.GetChildAt(0);
+            try {
+                //view.ScaleY = (float)1.1;
+                var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
+                shiftingMode.Accessible = true;
+                shiftingMode.SetBoolean(menuView, false);
+                shiftingMode.Accessible = false;
+            }
+            catch {
 
+            }
             var positionKey = -1;
 
             if (!setExisting && tabs != null)
             {
-                foreach (var item in tabs)
+                foreach (var tab in tabs)
                 {
                     positionKey++;
-                    BottomNavigationItemView tab = new BottomNavigationItemView(GetMainContext());
-                    tab.SetIcon(item.Icon);
-                    tab.SetEnabled(true);
-                    tab.SetTitle(item.Title);
-
-                    tab.ItemPosition = positionKey;
-                    menuView.AddView(tab, positionKey);
+                    var item = (BottomNavigationItemView)menuView.GetChildAt(positionKey);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(true); 
+                    //BottomNavigationItemView tab = new BottomNavigationItemView(GetMainContext());
+                    item.SetIcon(tab.Icon);
+                    item.SetEnabled(true);
+                    item.SetTitle(tab.Title);
+                    item.ItemPosition = positionKey;
+                    //menuView.AddView(tab, positionKey);
                 }
             }
             else if (setExisting && tabs != null)
             {
                 for (int i = 0; i < menuView.ChildCount; i++)
                 {
+                    try {
+                    GetBottomNavItemFromView(menuView.GetChildAt(i)).SetShiftingMode(false);
                     GetBottomNavItemFromView(menuView.GetChildAt(i)).ItemData.SetIcon(tabs[i].Icon);
                     GetBottomNavItemFromView(menuView.GetChildAt(i)).ItemData.SetTitle(tabs[i].Title);
                     GetBottomNavItemFromView(menuView.GetChildAt(i)).SetChecked(true);
+                    if (i == 0) { GetBottomNavItemFromView(menuView.GetChildAt(i)).LongClick += HomeLongClickListener; }
+                    if (i == 2) { GetBottomNavItemFromView(menuView.GetChildAt(i)).LongClick += FeedTabLongClickListener; }
+                    if (i == 3) { GetBottomNavItemFromView(menuView.GetChildAt(i)).LongClick += MyChannelLongClickListener; }
+                    if (i == 4) { GetBottomNavItemFromView(menuView.GetChildAt(i)).LongClick += SettingsTabLongClickListener; }
+                    } 
+                    catch { }
                 }
             }
             
-            if (removeShiftMode) { RemoveShiftMode(bottomNavigationView); }
-
             return bottomNavigationView;
         }
 
@@ -238,7 +256,7 @@ namespace BitChute
                     var item = (BottomNavigationItemView)menuView.GetChildAt(i);
                     item.SetShiftingMode(false);
                     // set once again checked value, so view will be updated
-                    item.SetChecked(true); 
+                    item.SetChecked(true);
                     item.SetShiftingMode(false);
                     if (i == 0) { item.LongClick += HomeLongClickListener; }
                     if (i == 2) { item.LongClick += FeedTabLongClickListener; }
@@ -256,24 +274,13 @@ namespace BitChute
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
+            ViewPager.SetCurrentItem(e.Item.Order, true);
             NavTimer = 0;
-            if (_tabSelected == e.Item.Order)
-            {
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0: Fm0.Pop2Root(); break;
-                    case 1: Fm1.Pop2Root(); break;
-                    case 2: Fm2.Pop2Root(); break;
-                    case 3: Fm3.Pop2Root(); break;
-                    case 4: Fm4.Pop2Root(); break;
-                }
-            }
-            else { ViewPager.SetCurrentItem(e.Item.Order, true); }
         }
 
-        void NavigationView_NavigationItemReSelected(object sender, BottomNavigationView.NavigationItemReselectedEventArgs e) //@TODO implement this instead of the item selected vs current
+        void NavigationView_NavigationItemReSelected(object sender, BottomNavigationView.NavigationItemReselectedEventArgs e) 
         {
-
+            CommonFrag.GetFragmentById(-1, null, e.Item.Order).Pop2Root();
         }
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
@@ -284,9 +291,6 @@ namespace BitChute
             _tabSelected = ViewPager.CurrentItem;
             CustomOnSwipe();
         }
-
-
-
 
         public static bool SplashScreenIsVisible;
 
@@ -314,15 +318,14 @@ namespace BitChute
 
         public static void InitializeFragments()
         {
-            Fm0 = HomePageFrag.NewInstance("Home", "tab_home");
-            Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs");
-            Fm2 = FeedFrag.NewInstance("Subs", "tab_home");
-            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_home", AppSettings.Tab3OverridePreference);
-            Fm4 = SettingsFrag.NewInstance("Settings", "tab_home", AppSettings.Tab4OverridePreference);
+            Fm0 = HomePageFrag.NewInstance("Home", "tab_home", null, 0);
+            Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs", null, 1);
+            Fm2 = FeedFrag.NewInstance("Subs", "tab_home", null, 2);
+            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_home", AppSettings.Tab3OverridePreference, 3);
+            Fm4 = SettingsFrag.NewInstance("Settings", "tab_home", AppSettings.Tab4OverridePreference, 4);
             Main.InitializeTabs();
             Main.FinalizeStartUp();
         }
-
 
         public static HomePageFrag Fm0;
         public static SubscriptionFrag Fm1;
@@ -330,12 +333,12 @@ namespace BitChute
         public static MyChannelFrag Fm3;
         public static SettingsFrag Fm4;
 
-        void InitializeTabs(){_fragments=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
+        void InitializeTabs(){ViewFragmentArray=new Android.Support.V4.App.Fragment[]{Fm0,Fm1,Fm2,Fm3,Fm4};}
 
         // public static bool NavHidden = false;
         public static bool NavTimeout = true;
         public static int NavTimer = 0;
-
+        
         public async void CustomOnSwipe()
         {
             if (NavTimer != 0)
@@ -413,14 +416,7 @@ namespace BitChute
         {
             if (e.KeyCode == Android.Views.Keycode.Back)
             {
-                switch (ViewPager.CurrentItem)
-                {
-                    case 0: HomePageFrag.WebViewGoBack(); break;
-                    case 1: SubscriptionFrag.WebViewGoBack(); break;
-                    case 2: FeedFrag.WebViewGoBack(); break;
-                    case 3: MyChannelFrag.WebViewGoBack(); break;
-                    case 4: SettingsFrag.WebViewGoBack(); break;
-                }
+                CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).WebViewGoBack();
             }
             return false;
         }
@@ -451,7 +447,7 @@ namespace BitChute
         /// <param name="changeDetails"></param>
         public static void TabDetailChanger(int tab, string changeDetails) // this needs to get changed into a fragment swapper, not use SetTitle
         {
-            ((CommonFrag)_fragments[tab]).RootUrl = Https.URLs.GetUrlStringFromPref(changeDetails);
+            ((CommonFrag)ViewFragmentArray[tab]).RootUrl = Https.URLs.GetUrlStringFromPref(changeDetails);
             switch (tab)
             {
                 case 0:
@@ -525,9 +521,9 @@ namespace BitChute
 
 
                     }
-                    BitChute.Web.ViewClients.SetWebViewClientFromObject(MyChannelFrag.Wv,
+                    BitChute.Web.ViewClients.SetWebViewClientFromObject(Fm3.Wv,
                         TabStates.GetWebViewClientByType(TabStates.TabFragPackage.FragmentType.None, changeDetails));
-                    MyChannelFrag.LoadUrlWithDelay(Fm3.RootUrl, 0);
+                    Fm3.LoadUrlWithDelay(Fm3.RootUrl, 0);
                     break;
                 case 4:
 
@@ -573,9 +569,9 @@ namespace BitChute
                         NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
                         Fm4.RootUrl = Https.URLs._watchLater;
                     }
-                    SettingsFrag.LoadUrlWithDelay(Fm4.RootUrl, 0);
-                    BitChute.Web.ViewClients.SetWebViewClientFromObject(SettingsFrag.Wv,
-    TabStates.GetWebViewClientByType(TabStates.TabFragPackage.FragmentType.None, changeDetails));
+                    Fm4.LoadUrlWithDelay(Fm4.RootUrl, 0);
+                    BitChute.Web.ViewClients.SetWebViewClientFromObject(Fm4.Wv,
+                        TabStates.GetWebViewClientByType(TabStates.TabFragPackage.FragmentType.None, changeDetails));
                     break;
             }
         }
@@ -725,7 +721,10 @@ namespace BitChute
                 _chooserIntentStr = null;
             }
         }
-        
+
+        public static bool NotificationRequestedInBackground = false;
+        public static bool NotificationIsBringingAppForeground = false;
+
         protected override void OnNewIntent(Intent intent)
         {
             string url = "";
@@ -736,6 +735,8 @@ namespace BitChute
                     url = intent.GetStringExtra("URL");
                     if ((url != null || url != "") && MainPlaybackSticky.NotificationShouldPlayInBkgrd)
                     {
+                        NotificationIsBringingAppForeground = true;
+                        NotificationRequestedInBackground = true;
                         Main.MoveTaskToBack(true);
                     }
                 }
@@ -748,12 +749,18 @@ namespace BitChute
                 {
                     if (!AppState.NotificationStartedApp)
                     {
+                        if (PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id
+                            != PlaystateManagement.WebViewPlayerNumberIsStreaming)
+                        {
+                            PlaystateManagement.WebViewPlayerPausedInBackgroundId = PlaystateManagement.WebViewPlayerNumberIsStreaming;
+                        }
                         PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrl(url);
                         PlaystateManagement.WebViewPlayerNumberIsStreaming = 
                             PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id;
                         PlaystateManagement.WebViewPlayerIsStreaming = true;
                     }
                 }
+                else { }
             }
             catch { }
             base.OnNewIntent(intent);
@@ -765,125 +772,83 @@ namespace BitChute
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-            WindowManager.DefaultDisplay.GetMetrics(metrics);
-            AppState.Display.ScreenHeight = metrics.HeightPixels;
-            AppState.Display.ScreenWidth = metrics.WidthPixels;
             if (newConfig.Orientation == Orientation.Landscape)
             {
-                //BitChute.Views.LayoutChangeHandlers
-                //    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
                 NavigationView.Visibility = ViewStates.Gone;
                 try {
-                    switch (ViewPager.CurrentItem)
+                    if (CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url.StartsWith(@"https://www.bitchute.com/video/") &&
+                         CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl != Https.URLs._settings &&
+                         CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl != Https.URLs._myChannel)
                     {
-                        case 0:
-                            if (HomePageFrag.Wv.Url != "https://www.bitchute.com/")
-                            {
-                                Fm0.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                                Fm0.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                                Fm0.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                                Fm0.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                            }
-                            HomePageFrag.ExpandVideoCards(false);
-                            break;
-                        case 1:
-                            if (SubscriptionFrag.Wv.Url != "https://www.bitchute.com/")
-                            {
-                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                                SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                            }
-                            SubscriptionFrag.ExpandVideoCards(false);
-                            break;
-                        case 2:
-
-                            if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
-                            {
-                                Fm2.LoadCustomUrl(JavascriptCommands._jsHideTitle);
-                                Fm2.LoadCustomUrl(JavascriptCommands._jsHideWatchTab);
-                                Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                                Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                            }
-                            FeedFrag.ExpandVideoCards(false);
-                            break;
-                        case 3:
-                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-                            MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                            MyChannelFrag.ExpandVideoCards(false);
-                            break;
-                        case 4:
-                            SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                            break;
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                          .Wv.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.JsHideTitle +
+                          JavascriptCommands.JsHideWatchTab + JavascriptCommands.JsHideTooltips + JavascriptCommands.JsHidePageBar));
+                    }
+                    else if (CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url.StartsWith(@"https://www.bitchute.com/channel/") ||
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl == Https.URLs._myChannel ||
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl == Https.URLs._settings ||
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url == Https.URLs._homepage)
+                    {
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                               .Wv.LoadUrl(JavascriptCommands.GetInjectable(
+                               JavascriptCommands.JsHideTitle + JavascriptCommands.JsHideTooltips));
+                    }
+                    else
+                    {
+                        CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                            .Wv.LoadUrl(JavascriptCommands.GetInjectable(
+                                JavascriptCommands.JsShowTitle + JavascriptCommands.JsHideTooltips + JavascriptCommands.JsHidePageBar));
                     }
                     AppState.Display.Horizontal = true;
                     _window.ClearFlags(_winflagnotfullscreen);
                     _window.AddFlags(_winflagfullscreen);
                 }catch { }
             }
-            if (newConfig.Orientation == Orientation.Portrait)
+            else if (newConfig.Orientation == Orientation.Portrait)
             {
-                //BitChute.Views.LayoutChangeHandlers
-                //    .OnDeviceRotation(true, AppState.Display.ScreenHeight, AppState.Display.ScreenWidth);
-                switch (ViewPager.CurrentItem)
+                if (CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url.Contains(@"https://www.bitchute.com/video/") &&
+                     CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl != Https.URLs._settings &&
+                     CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl != Https.URLs._myChannel)
                 {
-                    case 0:
-                        Fm0.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                        Fm0.LoadCustomUrl(JavascriptCommands._jsShowPageBar);
-                        break;
-                    case 1:
-                        SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
-                        break;
-                    case 2:
-                        if (FeedFrag.Wv.Url != "https://www.bitchute.com/")
-                        {
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsShowTitle);
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsPageBarDelete);
-                            Fm2.LoadCustomUrl(JavascriptCommands._jsDisableTooltips);
-                        }
-                        break;
-                    case 3:
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowWatchTab);
-                        MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
-                        break;
-                    case 4:
-                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowTitle);
-                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowWatchTab);
-                        SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsShowPageBar);
-                        break;
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                      .Wv.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.JsShowTitle + JavascriptCommands.JsHideTooltips));
                 }
-                if (AppSettings.DlFabShowSetting != "never" ||
-                    (AppSettings.DlFabShowSetting == "onpress" && MyChannelFrag.VideoDownloaderViewEnabled))
+                else if (CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url.StartsWith(@"https://www.bitchute.com/channel/") ||
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url.StartsWith(@"https://www.bitchute.com/profile/") ||
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl == Https.URLs._myChannel ||
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.RootUrl == Https.URLs._settings ||
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Url == Https.URLs._homepage)
                 {
-
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                           .Wv.LoadUrl(JavascriptCommands.GetInjectable(
+                           JavascriptCommands.JsShowTitle + JavascriptCommands.JsShowWatchTab + JavascriptCommands.JsHideTooltips));
+                }
+                else 
+                {
+                    CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem)
+                        .Wv.LoadUrl(JavascriptCommands.GetInjectable(
+                            JavascriptCommands.JsShowTitle + JavascriptCommands.JsHideTooltips));
                 }
                 AppState.Display.Horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
                 CustomOnTouch();
             }
-
-            
             if (!AppSettings.HideHorizontalNavBar || newConfig.Orientation == Orientation.Portrait)
             {
                 NavTimeout = false;
             }
         }
 
-
         //OnPause called first = app actually put in background
         //OnWindowFocusChanged then OnPause is probably from a notification click or volume change event
 
-        static bool WindowFocusChanged = false;
+        static bool WindowFocusChangedToBackground = false;
         static bool ActivityPaused = false;
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            WindowFocusChanged = true; // track that window focus changed to check if this fired before or after OnPause()
+            if (!hasFocus) { WindowFocusChangedToBackground = true; }// track that window focus changed to check if this fired before or after OnPause()
             base.OnWindowFocusChanged(hasFocus);
             SetFocusTrackBitAfterDelay();
         }
@@ -891,50 +856,77 @@ namespace BitChute
         static async void SetFocusTrackBitAfterDelay()
         {
             await Task.Delay(40);
-            WindowFocusChanged = false;
+            WindowFocusChangedToBackground = false;
         }
 
         protected override void OnPause()
         {
+            var focus = WindowFocusChangedToBackground;
             base.OnPause();
             try
             {
                 if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1 && !UserRequestedStickyBackground)
                 {
-                    PlaystateManagement.GetWebViewPlayerById(PlaystateManagement.WebViewPlayerNumberIsStreaming)
-                        .LoadUrl(JavascriptCommands.GetInjectable(
-                        JavascriptCommands.CallBackInjection.DocumentReady));
+
                 }
             }
             catch { }
-            if (!WindowFocusChanged) // we don't want to start the background service unless the user has minimized the app
-            {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
-                                     // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
-                                     // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
-                                     // or clicking on a notification, which shouldn't cause the background service to start
-                if (AppSettings.AutoPlayOnMinimized != "off")
+            if (AppSettings.AutoPlayOnMinimized != "off")
+            {
+                if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
                 {
-                    if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
+                    if (PlaystateManagement.WebViewPlayerIsStreaming)
                     {
-                        if (PlaystateManagement.WebViewPlayerIsStreaming)
+                        if (!focus) // if this focus true that means window focus changed before OnPause() fired so it's most likely user clicking a notification in app
+                                    // which means that we don't need to start video in background because the app is still foreground
                         {
-                            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
-                            if (AppState.ForeNote == null)
-                            {
-                                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
-                            }
                             try { MainPlaybackSticky.StartVideoInBkgrd(); }
                             catch { }
                         }
                     }
                 }
-
+                if ((!focus && PlaystateManagement.WebViewPlayerIsStreaming) || UserRequestedStickyBackground) // we don't want to start the background service unless the user has minimized the app
+                {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
+                                         // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
+                                         // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
+                                         // or clicking on a notification, which shouldn't cause the background service to start
+                    MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
+                    if (UserRequestedStickyBackground) { UserRequestedStickyBackground = false; } // if the user requested sticky background
+                    else if (AppState.ForeNote == null)                                          // explicitly then the control notification will already be sent
+                    { 
+                        MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                    }
+                }
             }
         }
 
         protected override void OnResume()
         {
-
+            if (NotificationIsBringingAppForeground)
+            {
+                NotificationIsBringingAppForeground = false;
+            }
+            else
+            {
+                if (NotificationRequestedInBackground)
+                {
+                    try
+                    {
+                        if (PlaystateManagement.WebViewPlayerPausedInBackgroundId != -1)
+                        {
+                            if (PlaystateManagement.WebViewPlayerIsStreaming)
+                            {
+                                PlaystateManagement
+                                        .GetWebViewPlayerById(PlaystateManagement.WebViewPlayerPausedInBackgroundId)
+                                         .LoadUrl(JavascriptCommands._jsPauseVideo);
+                                PlaystateManagement.GetWebViewPlayerById().LoadUrl(JavascriptCommands._jsPlayVideo);
+                            }
+                        }
+                        NotificationRequestedInBackground = false;
+                    }
+                    catch { }
+                }
+            }
             try {
                 //IntentFilter filter = new IntentFilter(Intent.ActionHeadsetPlug);
                 //RegisterReceiver(ForegroundReceiver, filter);

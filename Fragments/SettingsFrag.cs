@@ -28,7 +28,7 @@ namespace BitChute.Fragments
         //public static ServiceWebView Wv;
         public static object WebViewClient;
 
-        public static SettingsFrag NewInstance(string title, string icon, string tabOverridePref = null)
+        public static SettingsFrag NewInstance(string title, string icon, string tabOverridePref = null, int tabId = -1)
         {
             string rootUrl = "";
             var fragment = new SettingsFrag();
@@ -49,6 +49,7 @@ namespace BitChute.Fragments
             fragment.RootUrl = rootUrl;
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            fragment.Arguments.PutInt("tabId", tabId);
             return fragment;
         }
 
@@ -69,9 +70,10 @@ namespace BitChute.Fragments
             {
                 if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
-
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+                if (Arguments.ContainsKey("tabId"))
+                    TabId = (int)Arguments.Get("tabId");
             }
             //MainActivity.Main.FinalizeStartUp();
         }
@@ -204,7 +206,7 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 if (AppSettings.Debug.LoadWebViewsOnStart) { BitChute.Web.ViewClients.LoadInitialUrls(); }
-                GetFragmentById(this.Id, this);
+                GetFragmentById(this.Id, this, TabId);
 
 
             }
@@ -276,7 +278,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -348,13 +350,6 @@ namespace BitChute.Fragments
             ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
 
         }
-
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack()) Wv.GoBack();
-           // BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
-        }
-
 
         /// <summary>
         /// set to true when the application is initially 
@@ -478,7 +473,7 @@ namespace BitChute.Fragments
             EncoderViewIsVisible = false;
         }
 
-        public static void OnUserDeniedPreProcessing()
+        public void OnUserDeniedPreProcessing()
         {
             ShowWebViewButton.PerformClick();
             Wv.LoadUrl(JavascriptCommands.GetInjectable(JavascriptCommands.EnterUploadView));
@@ -577,7 +572,7 @@ namespace BitChute.Fragments
             }
         }
 
-        public static async void LoadUrlWithDelay(string url, int delay)
+        public async void LoadUrlWithDelay(string url, int delay)
         {
             await Task.Delay(delay);
             Wv.LoadUrl(url);
@@ -631,6 +626,8 @@ namespace BitChute.Fragments
             }
         }
 
+        bool _previousNotificationSetting;
+
         /// <summary>
         /// called when the .Checked state of radio buttons in the app settings fragment is changed
         /// sets the settings when this event occurs and calls a method to notify all fragments via mainactivity.
@@ -644,9 +641,13 @@ namespace BitChute.Fragments
             {
                 if (_notificationonrb.Checked) {
                     AppSettings.Notifying = true;
-                    BitChute.Services.MainPlaybackSticky.StartNotificationLoop(1000, null);
+                    if (_previousNotificationSetting != AppSettings.Notifying)
+                    {
+                        BitChute.Services.MainPlaybackSticky.StartNotificationLoop(3000, null);
+                    }
                 }
                 else { AppSettings.Notifying = false; }
+                _previousNotificationSetting = AppSettings.Notifying;
                 if (_zconrb.Checked) { AppSettings.ZoomControl = true; }
                 else { AppSettings.ZoomControl = false; }
                 if (_t3honrb.Checked) { AppSettings.Tab2Hide = true; }
@@ -674,10 +675,10 @@ namespace BitChute.Fragments
                 }
                 AppSettings.PrefEditor.PutString("autoplayonminimized", AppSettings.AutoPlayOnMinimized);
                 AppSettings.PrefEditor.PutBoolean("zoomcontrol", AppSettings.ZoomControl);
-                AppSettings.PrefEditor.PutBoolean("fanmode", AppSettings.Tab3OverrideEnabled);
+                AppSettings.PrefEditor.PutBoolean("tab3overrideenabled", AppSettings.Tab3OverrideEnabled);
                 AppSettings.PrefEditor.PutBoolean("tab3hide", AppSettings.Tab2Hide);
                 AppSettings.PrefEditor.PutBoolean("t1featured", AppSettings.Tab0FeaturedOn);
-                AppSettings.PrefEditor.PutBoolean("settingstaboverride", AppSettings.Tab4OverrideEnabled);
+                AppSettings.PrefEditor.PutBoolean("tab4overrideenabled", AppSettings.Tab4OverrideEnabled);
                 AppSettings.PrefEditor.PutBoolean("notificationson", AppSettings.Notifying);
                 AppSettings.PrefEditor.PutString("dlfabshowsetting", AppSettings.DlFabShowSetting);
                 AppSettings.PrefEditor.Commit();
@@ -749,29 +750,6 @@ namespace BitChute.Fragments
 
         static bool _firstTimeLoad = true;
         
-        public static bool WvRl = true;
-        public void Pop2Root()
-        {
-            if(WvRl){try{Wv.Reload();WvRl=false;}catch{}}
-            else { Wv.LoadUrl(RootUrl); }
-        }
-        public static bool WvRling = false;
-        /// <summary>
-        /// this is to allow faster phones and connections the ability to Pop2Root
-        /// used to be set without delay inside OnPageFinished but I don't think 
-        /// that would work on faster phones
-        /// </summary>
-        public static async void SetReload()
-        {
-            if (!WvRling)
-            {
-                WvRling = true;
-                await Task.Delay(AppSettings.TabDelay);
-                WvRl = true;
-                await Task.Delay(6);
-                WvRling = false;
-            }
-        }
 
         public void GetPendingIntent()
         {
@@ -825,13 +803,13 @@ namespace BitChute.Fragments
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
         /// </summary>
-        public static async void HideLinkOverflow()
+        public async void HideLinkOverflow()
         {
             await Task.Delay(AppSettings.LinkOverflowFixDelay);
             Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
         }
 
-        private static async void HideWatchLabel()
+        private async void HideWatchLabel()
         {
             await Task.Delay(1000);
             Wv.LoadUrl(JavascriptCommands._jsHideTabInner);

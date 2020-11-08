@@ -61,7 +61,7 @@ namespace BitChute
                     {
                         case 0:
                             //headset unplugged
-                            SendPauseVideoCommand();
+                            PlaystateManagement.SendPauseVideoCommand();
                             break;
                         case 1:
                             //headset plugged
@@ -72,22 +72,6 @@ namespace BitChute
                     return;
                 }
                 intent = ExtNotifications.SwapToBackgroundNotification(intent);
-            }
-
-            public static void SendPauseVideoCommand()
-            {
-                try
-                {
-                    HomePageFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SubscriptionFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    FeedFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    MyChannelFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                    SettingsFrag.Wv.LoadUrl(JavascriptCommands._jsPauseVideo);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
             }
         }
     }

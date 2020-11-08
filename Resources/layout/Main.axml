@@ -11,11 +11,14 @@
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"
 		android:visibility="gone"
+		
+		android:background="@android:color/black"
 		android:id="@+id/splashWebViewOverlay"/>
   <FrameLayout
     android:id="@+id/fragment_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+		android:background="@android:color/black"
     android:layout_above="@+id/bottom_navigation">
   </FrameLayout>
   <android.support.design.widget.FloatingActionButton
@@ -31,12 +34,13 @@
     
     app:fabSize="auto"
     android:src="@drawable/download_grey_round"/>
-  <android.support.v4.view.ViewPager
-    android:id="@+id/viewpager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:foregroundGravity="bottom"
-    android:layout_above="@id/bottom_navigation" />
+	<android.support.v4.view.ViewPager
+		android:id="@+id/viewpager"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:foregroundGravity="bottom"
+		android:layout_above="@id/bottom_navigation"
+		android:background="#ff000000" />
   <android.support.design.widget.BottomNavigationView
     android:id="@+id/bottom_navigation"
     android:layout_width="match_parent"
@@ -47,6 +51,7 @@
     app:itemIconTint="@drawable/bottom_navigation_selector"
     android:background="@android:color/black"
     
+		
 		app:menu="@menu/navigation_main"
 	/>
 

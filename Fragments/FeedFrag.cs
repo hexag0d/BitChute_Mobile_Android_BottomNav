@@ -18,11 +18,10 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
         public static Feed WebViewClient;
         public static int TNo = 2;
 
-        public static FeedFrag NewInstance(string title, string icon, string rootUrl = null)
+        public static FeedFrag NewInstance(string title, string icon, string rootUrl = null, int tabId = -1)
         {
             //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Feed(); }
             //else { WebViewClient = new LoginWebViewClient(); }
@@ -31,6 +30,7 @@ namespace BitChute.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            fragment.Arguments.PutInt("tabId", tabId);
             if (rootUrl == null) rootUrl = "https://www.bitchute.com/";
             fragment.RootUrl = rootUrl;
             return fragment;
@@ -45,6 +45,8 @@ namespace BitChute.Fragments
                     _title = (string)Arguments.Get("title");
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+                if (Arguments.ContainsKey("tabId"))
+                    TabId = (int)Arguments.Get("tabId");
             }
         }
 
@@ -84,7 +86,7 @@ namespace BitChute.Fragments
             }catch { }
             try
             {
-                GetFragmentById(this.Id, this);
+                GetFragmentById(this.Id, this, TabId);
             }
             catch { }
             try
@@ -144,7 +146,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -180,13 +182,6 @@ namespace BitChute.Fragments
             }
         }
 
-
-        public async void LoadUrlWithDelay(string url, int delay)
-        {
-            await Task.Delay(delay);
-            Wv.LoadUrl(url);
-        }
-
         public void OnSettingsChanged(List<object> settings)
         {
             if (AppSettings.ZoomControl)
@@ -200,68 +195,6 @@ namespace BitChute.Fragments
                 Wv.LoadUrl(JavascriptCommands._jsHideCarousel);
             }
             else { Wv.LoadUrl(JavascriptCommands._jsShowCarousel); }
-        }
-        
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack()) Wv.GoBack();
-            //BitChute.Web.ViewClients.RunBaseCommands(Wv);
-        }
-
-        public static bool WvRl = true;
-        public void Pop2Root()
-        {
-            if (WvRl) { Wv.Reload(); WvRl = false; }
-            else { Wv.LoadUrl(@"https://www.bitchute.com/"); }
-        }
-
-        public static bool WvRling = false;
-        /// <summary>
-        /// this is to allow faster phones and connections the ability to Pop2Root
-        /// used to be set without delay inside OnPageFinished but I don't think 
-        /// that would work on faster phones
-        /// </summary>
-        public static async void SetReload()
-        {
-            if (!WvRling)
-            {
-                WvRling = true;
-                await Task.Delay(AppSettings.TabDelay);
-                WvRl = true;
-                WvRling = false;
-            }
-        }
-
-        public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
-        public static async void HidePageTitle(int delay)
-        {
-            if (delay != 0) { await Task.Delay(delay); }
-            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
-            {
-                Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-            }
-        }
-
-        private static async void HideWatchLabel(int delay)
-        {
-            await Task.Delay(delay);
-            Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
-        }
-
-        public static async void ExpandVideoCards(bool delayed = false)
-        {
-            if (delayed){ await Task.Delay(5000); }
-            Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
-            Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
-        }
-
-        public static async void SelectSubscribedTab(int delay)
-        {
-            await Task.Delay(delay);
-            Wv.LoadUrl(JavascriptCommands._jsSelectSubscribed);
         }
     }
 }

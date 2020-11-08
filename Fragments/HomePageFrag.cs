@@ -19,13 +19,12 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
         public static bool ShowLoginOnStartup;
 
         public static string LastLoadedUrl = "";
         static object WebViewClient;
         public static int TNo = 0;
-        public static HomePageFrag NewInstance(string title, string icon, string rootUrl = null)
+        public static HomePageFrag NewInstance(string title, string icon, string rootUrl = null, int tabId = -1)
         {
             //if (AppSettings.UserWasLoggedInLastAppClose || AppState.UserIsLoggedIn) {  WebViewClient = new Home(); }
             //else { WebViewClient = new LoginWebViewClient(); }
@@ -34,6 +33,7 @@ namespace BitChute.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            fragment.Arguments.PutInt("tabId", tabId);
             if (rootUrl == null) rootUrl = "https://www.bitchute.com/";
             fragment.RootUrl = rootUrl;
             return fragment;
@@ -47,6 +47,8 @@ namespace BitChute.Fragments
                 if (Arguments.ContainsKey("title")) { _title = (string)Arguments.Get("title"); }
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+                if (Arguments.ContainsKey("tabId"))
+                    TabId = (int)Arguments.Get("tabId");
             }
             
         }
@@ -86,7 +88,7 @@ namespace BitChute.Fragments
                 }
 
 
-                GetFragmentById(this.Id, this);
+                GetFragmentById(this.Id, this, TabId);
 
             }
 
@@ -163,7 +165,7 @@ namespace BitChute.Fragments
             }
         }
         
-        public static async void SetAutoPlayWithDelay(int delay)
+        public async void SetAutoPlayWithDelay(int delay)
         {
             await Task.Delay(delay);
             Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -179,7 +181,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -221,12 +223,6 @@ namespace BitChute.Fragments
             base.OnResume();
         }
 
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack()) Wv.GoBack();
-            //BitChute.Web.ViewClients.RunBaseCommands(Wv);
-        }
-
         public void OnSettingsChanged(List<object> settings)
         {
             Wv.Settings.SetSupportZoom(AppSettings.ZoomControl);
@@ -236,94 +232,35 @@ namespace BitChute.Fragments
             else { Wv.Settings.BuiltInZoomControls = false; }
         }
         
-        public static bool WvRl = true;
-        /// <summary>
-        /// one press refreshes the page; two presses pops back to the root
-        /// </summary>
-        public void Pop2Root()
-        {
-            if (WvRl)
-            {
-                Wv.Reload();
-                WvRl = false;
-            }
-            else { Wv.LoadUrl(RootUrl); }
-        }
+        //public static bool WvRl = true;
+        ///// <summary>
+        ///// one press refreshes the page; two presses pops back to the root
+        ///// </summary>
+        //public void Pop2Root()
+        //{
+        //    if (WvRl)
+        //    {
+        //        Wv.Reload();
+        //        WvRl = false;
+        //    }
+        //    else { Wv.LoadUrl(RootUrl); }
+        //}
 
-        public static bool WvRling = false;
-        /// <summary>
-        /// this is to allow faster phones and connections the ability to Pop2Root
-        /// used to be set without delay inside OnPageFinished but I don't think 
-        /// that would work on faster phones
-        /// </summary>
-        public static async void SetReload()
-        {
-            if (!WvRling)
-            {
-                WvRling = true;
-                await Task.Delay(AppSettings.TabDelay);
-                WvRl = true;
-                WvRling = false;
-            }
-        }
-
-        static int _autoInt = 0;
-        /// <summary>
-        /// we have to set this with a delay or it won't fix the link overflow
-        /// </summary>
-        public static async void HideLinkOverflow()
-        {
-            await Task.Delay(AppSettings.LinkOverflowFixDelay);
-            Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-            Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-            Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-        }
-
-        public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
-        public static async void HidePageTitle()
-        {
-            await Task.Delay(5000);
-
-            if (Wv.Url != "https://www.bitchute.com/" && AppState.Display.Horizontal)
-            {
-                Wv.LoadUrl(JavascriptCommands._jsHideTitle);
-                Wv.LoadUrl(JavascriptCommands._jsHideWatchTab);
-                Wv.LoadUrl(JavascriptCommands._jsHidePageBar);
-                Wv.LoadUrl(JavascriptCommands._jsPageBarDelete);
-            }
-        }
-
-        private static async void HideWatchLabel()
-        {
-            await Task.Delay(4000);
-            if (Wv.Url != "https://www.bitchute.com/")
-                Wv.LoadUrl(JavascriptCommands._jsHideTabInner);
-        }
-
-        public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
-        public static async void ExpandVideoCards(bool delayed)
-        {
-            if (delayed)
-            {
-                await Task.Delay(5000);
-            }
-            Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
-            Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
-        }
-
-        private static async void ExpandFeaturedChannels(bool delayed)
-        {
-            if (delayed)
-            {
-                await Task.Delay(3000);
-            }
-            Wv.LoadUrl(JavascriptCommands._jsFeaturedRemoveMaxWidth);
-            Wv.LoadUrl(JavascriptCommands._jsExpandFeatured);
-        }
-
-        private static async void ExpandPage(bool delayed)
-        {
-            if (delayed) { await Task.Delay(3000); }
-        }
+        //public static bool WvRling = false;
+        ///// <summary>
+        ///// this is to allow faster phones and connections the ability to Pop2Root
+        ///// used to be set without delay inside OnPageFinished but I don't think 
+        ///// that would work on faster phones
+        ///// </summary>
+        //public static async void SetReload()
+        //{
+        //    if (!WvRling)
+        //    {
+        //        WvRling = true;
+        //        await Task.Delay(AppSettings.TabDelay);
+        //        WvRl = true;
+        //        WvRling = false;
+        //    }
+        //}
     }
 }

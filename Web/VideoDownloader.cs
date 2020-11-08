@@ -33,22 +33,13 @@ namespace BitChute
 
         public static void DownloadFAB_OnClick(object sender, System.EventArgs e)
         {
-            //JavascriptCommands.CallBackInjection.SetCallbackWithDelay(TheFragment1.Wv,
-            //    JavascriptCommands.CallBackInjection.AddFullScreenCallback, 0);
             InitializeVideoDownload(GetVideoUrlByTab(MainActivity.ViewPager.CurrentItem));
         }
 
         public static string GetVideoUrlByTab(int tab)
         {
             string taburl = "";
-            switch (tab)
-            {
-                case 0: taburl = HomePageFrag.Wv.OriginalUrl; break;
-                case 1: taburl = SubscriptionFrag.Wv.OriginalUrl; break;
-                case 2: taburl = FeedFrag.Wv.OriginalUrl; break;
-                case 3: taburl = MyChannelFrag.Wv.OriginalUrl; break;
-                case 4: taburl = SettingsFrag.Wv.OriginalUrl; break;
-            }
+            taburl = CommonFrag.GetFragmentById(-1, null, tab)?.Wv.OriginalUrl;
             return taburl;
         }
 

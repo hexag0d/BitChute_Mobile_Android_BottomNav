@@ -22,14 +22,13 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
         public static object WebViewClient;
         
         public static int TNo = 3;
         public static bool WvRling;
 
 
-        public static MyChannelFrag NewInstance(string title, string icon, string tabOverridePref = null)
+        public static MyChannelFrag NewInstance(string title, string icon, string tabOverridePref = null, int tabId = -1)
         {
             string rootUrl = "";
             var fragment = new MyChannelFrag();
@@ -50,6 +49,7 @@ namespace BitChute.Fragments
             fragment.RootUrl = rootUrl;
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            fragment.Arguments.PutInt("tabId", tabId);
             return fragment;
         }
 
@@ -60,18 +60,13 @@ namespace BitChute.Fragments
             {
                 if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
-
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+                if (Arguments.ContainsKey("tabId"))
+                    TabId = (int)Arguments.Get("tabId");
             }
         }
 
-        public static bool WvRl = true;
-        public void Pop2Root()
-        {
-            if (WvRl) { Wv.Reload(); WvRl = false; }
-            else { Wv.LoadUrl(RootUrl); }
-        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -104,7 +99,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab3.CancelDownloadButton.Click += VideoDownloader.CancelDownloadButton_OnClick;
                 ViewHelpers.Main.DownloadFAB.Clickable = true;
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
-                if (AppSettings.Tab3OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab3overridestring"); }
+                //if (AppSettings.Tab3OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab3overridestring"); }
                 BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, WebViewClient);
                 Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -118,7 +113,7 @@ namespace BitChute.Fragments
                     Wv.Settings.DisplayZoomControls = false;
                 }
                 this.Id = new System.Random().Next(777);
-                GetFragmentById(this.Id, this);
+                GetFragmentById(this.Id, this, TabId);
             }
             catch (Exception ex) { }
             try
@@ -180,7 +175,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -274,19 +269,6 @@ namespace BitChute.Fragments
             }
         }
 
-        public static async void ExpandVideoCards(bool delayed = false)
-        {
-            if (delayed) { await Task.Delay(4000); }
-            Wv.LoadUrl(JavascriptCommands._jsExpandSubs);
-            Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
-            Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
-        }
-
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack()) Wv.GoBack();
-            //BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
-        }
 
         /// <summary>
         /// swaps the view for this tab
@@ -297,11 +279,6 @@ namespace BitChute.Fragments
             ViewHelpers.Tab3.TabFragmentLinearLayout.RemoveAllViews();
             try { ViewHelpers.Tab3.TabFragmentLinearLayout.AddView(v); }
             catch { }
-        }
-
-        public static async void LoadUrlWithDelay(string url, int delay)
-        {
-            await Task.Delay(delay); Wv.LoadUrl(url);
         }
 
         public void OnSettingsChanged(List<object> settings)

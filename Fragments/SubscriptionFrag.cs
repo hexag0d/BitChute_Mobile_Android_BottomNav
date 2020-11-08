@@ -17,11 +17,10 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static ServiceWebView Wv;
         public static object WebViewClient;
         public static int TNo = 1;
 
-        public static SubscriptionFrag NewInstance(string title, string icon, string rootUrl = null)
+        public static SubscriptionFrag NewInstance(string title, string icon, string rootUrl = null, int tabId = -1)
         {
             //if (AppSettings.UserWasLoggedInLastAppClose) { WebViewClient = new Subs(); }
             //else { WebViewClient = new LoginWebViewClient(); }
@@ -30,6 +29,7 @@ namespace BitChute.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            fragment.Arguments.PutInt("tabId", tabId);
             if (rootUrl == null) rootUrl = "https://www.bitchute.com/subscriptions/";
             fragment.RootUrl = rootUrl;
             return fragment;
@@ -44,6 +44,8 @@ namespace BitChute.Fragments
                     _title = (string)Arguments.Get("title");
                 if (Arguments.ContainsKey("icon"))
                     _icon = (string)Arguments.Get("icon");
+                if (Arguments.ContainsKey("tabId"))
+                    TabId = (int)Arguments.Get("tabId");
             }
         }
 
@@ -75,7 +77,7 @@ namespace BitChute.Fragments
                     Wv.Settings.BuiltInZoomControls = true;
                     Wv.Settings.DisplayZoomControls = false;
                 }
-                GetFragmentById(this.Id, this);
+                GetFragmentById(this.Id, this, TabId);
 
                 LoginLayout = inflater.Inflate(Resource.Layout.Login, container, false);
                 LoginButton = LoginLayout.FindViewById<Button>(Resource.Id.loginButton);
@@ -141,7 +143,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             try
             {
@@ -191,116 +193,10 @@ namespace BitChute.Fragments
             else { Wv.Settings.BuiltInZoomControls = false; }
         }
 
-
-        public static void WebViewGoBack()
-        {
-            if (Wv.CanGoBack()) Wv.GoBack();
-            //BitChute.Web.ViewClients.RunBaseCommands(Wv, 2000);
-        }
-
-
-        public static bool WvRl = true;
-        public void Pop2Root()
-        {
-            if (WvRl) { Wv.Reload(); WvRl = false; }
-            else { Wv.LoadUrl(RootUrl); }
-        }
-
-        public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
-        public static bool WvRling = false;
-        /// <summary>
-        /// this is to allow faster phones and connections the ability to Pop2Root
-        /// used to be set without delay inside OnPageFinished but I don't think 
-        /// that would work on faster phones
-        /// </summary>
-        public static async void SetReload()
-        {
-            if (!WvRling)
-            {
-                WvRling = true;
-                await Task.Delay(AppSettings.TabDelay);
-                WvRl = true;
-                WvRling = false;
-            }
-        }
-
-        /// <summary>
-        /// we have to set this with a delay or it won't fix the link overflow
-        /// </summary>
-        public static async void HideLinkOverflow()
-        {
-            await Task.Delay(AppSettings.LinkOverflowFixDelay);
-            Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-            Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-            Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-        }
-
-        public void LoadCustomUrl(string url) { Wv.LoadUrl(url); }
-        
-        public static async void HideWatchTab(int delay)
-        {
-            if (delay != 0) { await Task.Delay(delay); }
-            if (Wv.Url != "https://www.bitchute.com/") { Wv.LoadUrl(JavascriptCommands._jsHideWatchTab); }
-        }
-
-        public static async void ExpandVideoCards(bool delayed)
-        { 
-            if (delayed)
-            {
-                await Task.Delay(4000);
-            }
-            Wv.LoadUrl(JavascriptCommands._jsExpandSubs);
-            Wv.LoadUrl(JavascriptCommands._jsBorderBoxAll);
-            Wv.LoadUrl(JavascriptCommands._jsRemoveMaxWidthAll);
-        }
-
-        public static void StartVideo() { Wv.LoadUrl(JavascriptCommands._jsPlayVideo); }
         public static string GetHtmlText()
         {
             string innerHtml = "";
             return innerHtml;
-        }
-
-        private class ExtWebViewClient : Android.Webkit.WebViewClient
-        {
-
-            public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
-            {
-                if (AppSettings.SearchFeatureOverride && !SearchOverride.SearchOverrideInProg)
-                {
-                    if (!request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    { //Return immediately to optimize the ux
-                        return base.ShouldInterceptRequest(view, request);
-                    }
-                    if (request.Url.ToString().Contains(@"https://www.bitchute.com/search?q="))
-                    {
-                        SearchOverride.SearchOverrideInProg = true;
-                        MainActivity.Main.RunOnUiThread(() => { Wv.StopLoading(); });
-                        var ro = SearchOverride.ReRouteSearch(request.Url.ToString());
-                        SearchOverride.UI.WvSearchOverride(view, ro);
-                        WebResourceResponse w = new WebResourceResponse("text/css", "UTF-8", null);
-                        return w;
-                    }
-                }
-                return base.ShouldInterceptRequest(view, request);
-            }
-
-            public override void OnPageFinished(WebView view, string url)
-            {
-                WebViewHelpers.DelayedScrollToTop(TNo);
-                Wv.LoadUrl(JavascriptCommands._jsHideBanner);
-                Wv.LoadUrl(JavascriptCommands._jsHideBuff);
-                Wv.LoadUrl(JavascriptCommands._jsHideNavTabsList);
-                //if (AppState.Display.Horizontal) { HidePageTitle(5000); }
-                SetReload();
-                HideLinkOverflow();
-                HideWatchTab(5000);
-                ExpandVideoCards(true);
-                Wv.LoadUrl(JavascriptCommands._jsLinkFixer);
-                Wv.LoadUrl(JavascriptCommands._jsDisableTooltips);
-                Wv.LoadUrl(JavascriptCommands._jsHideTooltips);
-                base.OnPageFinished(view, url);
-            }
         }
     }
 }
