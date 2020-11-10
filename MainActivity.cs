@@ -761,7 +761,7 @@ namespace BitChute
                         {
                             PlaystateManagement._webViewPlayerQueuedId = PlaystateManagement.WebViewPlayerNumberIsStreaming;
                         }
-                        PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrl(url);
+                        PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).LoadUrlWithDelay(url);
                         PlaystateManagement.WebViewPlayerNumberIsStreaming =
                             PlaystateManagement.GetWebViewPlayerById(-1, ViewPager.CurrentItem).Id;
                         PlaystateManagement.WebViewPlayerIsStreaming = true;
@@ -865,25 +865,22 @@ namespace BitChute
             await Task.Delay(250);
             WindowFocusChangedToBackground = false;
         }
-
-        int webViewPlayCheckInt;
-
+        
         protected override void OnPause()
         {
-            base.OnPause();
+            var focus = WindowFocusChangedToBackground;
             VerifyInBackground();
-            if (UserRequestedStickyBackground)
+            base.OnPause();
+            if (!focus)
             {
-                StartStickyAfterDelay(0, UserRequestedStickyBackground);
+                if (UserRequestedStickyBackground)
+                {
+                    StartStickyAfterDelay(0, UserRequestedStickyBackground, CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Id);
+                }
             }
-            else if (AppSettings.AutoPlayOnMinimized == "off")
-            {
-
-            }
-
         }
 
-        public static async void VerifyInBackground()
+        public static void VerifyInBackground()
         {
             MainPlaybackSticky.ServiceWebView.ClearWebViewMinimizedState();
             foreach (var webView in PlaystateManagement.WebViewIdDictionary)
@@ -898,8 +895,7 @@ namespace BitChute
             MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnResume();
         }
-
-
+        
         public static Tuple<int, MainPlaybackSticky.ServiceWebView> LatestDetectedPlayingWebView;
         private static List<MainPlaybackSticky.ServiceWebView> _latestDetectedPlayingWebView = new List<MainPlaybackSticky.ServiceWebView>();
         public static async void AwaitGetCurrentlyPlayingWebView()
@@ -911,10 +907,13 @@ namespace BitChute
         public static async void StartStickyAfterDelay(int d = 3000, bool userRequestedStickyBackground = false, int idOverride = -1)
         {
             if (idOverride != -1) { }
-            else { idOverride = CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Id; }
+            else {
+                idOverride = CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Id;
+            }
             if (userRequestedStickyBackground)
             {
                 MainPlaybackSticky.StartVideoInBkgrd(idOverride);
+                CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.StickyBackgroundRequested = true;
             }
             await Task.Delay(d);
             if (MainPlaybackSticky.IsInBkGrd() && PlaystateManagement.WebViewPlayerIsStreaming && AppSettings.AutoPlayOnMinimized != "off")
@@ -957,82 +956,3 @@ namespace BitChute
         public static Context GetMainContext() {   return Main.ApplicationContext; }
     }
 }
-
-//protected override void OnPause()
-//{
-//    var focus = WindowFocusChangedToBackground;
-
-
-//    if (AppSettings.AutoPlayOnMinimized != "off")
-//    {
-//        if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
-//        {
-//            if (PlaystateManagement.WebViewPlayerIsStreaming)
-//            {
-//                if (!focus) // if this focus true that means window focus changed before OnPause() fired so it's most likely user clicking a notification in app
-//                            // which means that we don't need to start video in background because the app is still foreground
-//                {
-//                    try { MainPlaybackSticky.StartVideoInBkgrd(); }
-//                    catch { }
-//                }
-//            }
-//        }
-//        if ((!focus && PlaystateManagement.WebViewPlayerIsStreaming) || UserRequestedStickyBackground) // we don't want to start the background service unless the user has minimized the app
-//        {                        // if the user clicks on a notification then OnPause() will fire and the background service starts
-//                                 // the tracking bit tells us if OnWindowFocusChanged() fired before OnPause()
-//                                 // if OnWindowFocusChanged() fired before OnPause() then it's likely the user changing volume
-//                                 // or clicking on a notification, which shouldn't cause the background service to start
-//            MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = true;
-//            if (UserRequestedStickyBackground) { UserRequestedStickyBackground = false; } // if the user requested sticky background
-//            else if (AppState.ForeNote == null)                                          // explicitly then the control notification will already be sent
-//            { 
-//                MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
-//            }
-//        }
-//    }
-//    base.OnPause();
-//}
-
-
-//protected override void OnPause()
-//{
-
-//    webViewPlayCheckInt = -1;
-//    if (UserRequestedStickyBackground)
-//    {
-//        StartStickyAfterDelay(0, UserRequestedStickyBackground);
-//    }
-//    else if (AppSettings.AutoPlayOnMinimized == "off")
-//    {
-
-//    }
-//    else if (AppSettings.AutoPlayOnMinimized == "any" && !WindowFocusChangedToBackground)
-//    {
-//        bool gettingWebView = false;
-//        int timeout = 0;
-//        while (timeout < 5000)
-//        {
-//            timeout += 10;
-//            if (!gettingWebView)
-//            {
-//                gettingWebView = true;
-//                AwaitGetCurrentlyPlayingWebView();
-//            }
-//            else
-//            {
-//                if (_latestDetectedPlayingWebView.Count > 0)
-//                {
-//                    webViewPlayCheckInt = _latestDetectedPlayingWebView[0].Id;
-//                    MainPlaybackSticky.StartVideoInBkgrd(_latestDetectedPlayingWebView[0].Id);
-//                    _latestDetectedPlayingWebView = new List<MainPlaybackSticky.ServiceWebView>();
-//                    gettingWebView = false;
-//                    break;
-//                }
-//            }
-//            System.Threading.Thread.Sleep(20);
-//        }
-//        StartStickyAfterDelay(3000, false, webViewPlayCheckInt);
-//    }
-
-//    base.OnPause();
-//}

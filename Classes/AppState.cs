@@ -57,7 +57,6 @@
         public static bool UserIsLoggedIn {
             get { return _userIsLoggedIn; }
             set { _userIsLoggedIn = value;
-                AppSettings.UserWasLoggedInLastAppClose = value;
             }
         }
 
@@ -73,6 +72,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.8.5.API8.ClickableAvatar";
+        public static string AppVersion = "28.8.7.API8.ClickableAvatar";
     }
 }

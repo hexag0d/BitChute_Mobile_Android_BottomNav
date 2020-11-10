@@ -712,7 +712,6 @@ namespace BitChute.Services
                 });
                 VerifyInBackground(webViewId);
             }
-            
         }
 
         static async void VerifyInBackground(int webViewId = -1, int backgroundTimeOut = 3000)
@@ -752,18 +751,19 @@ namespace BitChute.Services
             public bool PlaybackShouldResumeOnMinimize = false;
             public bool PlayerIsLoadingOnMinimize = false;
             public bool ViewIsNoLongerVisible = false;
+            public bool StickyBackgroundRequested = false;
 
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 base.OnWindowFocusChanged(hasWindowFocus);
                 if (hasWindowFocus)
                 {
-                    TotalWebViewsMovingIntoBackground = 0;
-                    ClearWebViewMinimizedState();
+                    //TotalWebViewsMovingIntoBackground = 0;
+                    //ClearWebViewMinimizedState();
                 }
                 else if (!hasWindowFocus)
                 {
-                    if (PlaybackShouldResumeOnMinimize && AppSettings.AutoPlayOnMinimized != "off")
+                    if ((PlaybackShouldResumeOnMinimize && AppSettings.AutoPlayOnMinimized != "off") && !MainActivity.UserRequestedStickyBackground)
                     {
                         if (WebViewPlayersWhereBufferingDetectedOnMinimized.Count == 0 || AllWebViewPlayersWithPlayingState.Count < 2)
                         {
@@ -789,18 +789,25 @@ namespace BitChute.Services
                             }
                         }
                     }
+                    else if (MainActivity.UserRequestedStickyBackground && StickyBackgroundRequested)
+                    {
+                        AwaitMinimizedInBackground();
+                        this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                        PlaybackShouldResumeOnMinimize = false;
+                        StickyBackgroundRequested = false;
+                    }
                     TotalWebViewsMovingIntoBackground--;
                 }
             }
             public static int TotalWebViewsMovingIntoBackground;
-            static int TotalWebViews = 5;
 
             public async void AwaitMinimizedInBackground()
             {
                 while (TotalWebViewsMovingIntoBackground > 0)
                 {
                     await Task.Delay(50);
-                    this.LoadUrl(JavascriptCommands._jsPlayVideo);
+
+                        this.LoadUrl(JavascriptCommands._jsPlayVideo);
                 }
                 await Task.Delay(50);
                 PlaystateManagement.WebViewPlayerNumberIsStreaming = this.Id;
@@ -809,10 +816,15 @@ namespace BitChute.Services
                 {
                     MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
                 }
-                this.LoadUrl(JavascriptCommands._jsPlayVideo);
-                TotalWebViewsMovingIntoBackground = 5;
-                this.LoadUrl(JavascriptCommands._jsPlayVideo);
-
+                ViewHelpers.DoActionOnUiThread(() =>
+                {
+                    this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                });
+                await Task.Delay(100);
+                ViewHelpers.DoActionOnUiThread(() =>
+                {
+                    this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                });
             }
 
             public static void ClearWebViewMinimizedState()
@@ -840,6 +852,19 @@ namespace BitChute.Services
                     WvRl = false;
                 }
                 else { this.LoadUrl(RootUrl); }
+
+
+            }
+
+            public async void LoadUrlWithDelay(string url, int delay = 1)
+            {
+                await Task.Delay(delay);
+                this.LoadUrl(url);
+            }
+
+            public override void LoadUrl(string url)
+            {
+                base.LoadUrl(url);
             }
 
             public bool WvRling = false;

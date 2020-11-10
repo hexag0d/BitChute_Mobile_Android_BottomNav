@@ -1,27 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Widget;
 using Android.Webkit;
-using System.IO;
 using Android.Graphics;
 using System.Threading.Tasks;
-using BitChute;
 using BitChute.Web.Ui;
-using System.Net;
 using BitChute.Fragments;
 using static BitChute.JavascriptCommands;
 using static BitChute.PlaystateManagement;
 using static BitChute.Services.MainPlaybackSticky;
-using System.Net.Http;
 using BitChute.Web.Auth;
 using static BitChute.ViewHelpers;
+using BitChute.App;
 
 namespace BitChute.Web
 {
@@ -152,13 +141,7 @@ namespace BitChute.Web
         public static Tuple<int, ServiceWebView> VerifyPlayerPlayingOnMinimized()
         {
             _playerIdPlayingCallbackResponseList.Clear();
-            //foreach (var webView in PlaystateManagement.WebViewIdDictionary)
-            //{
-            //    //ViewHelpers.DoActionOnUiThread(() =>
-            //    //{
-            //        webView.Value.LoadUrl(GetInjectable(CallBackInjection.IsPlayingCallbackSimple));
-            //    //});
-            //}
+
             Task.Factory.StartNew(() =>
             {
                 while (_playerIdPlayingCallbackResponseList.Count < PlaystateManagement.WebViewIdDictionary.Count)
@@ -232,7 +215,6 @@ namespace BitChute.Web
                         if (view.Url.Contains("/accounts/login/"))
                         {
                             WebViewIdLoginList.Add(view.Id);
-                            //view.LoadUrl("file:///android_asset/html/blank.html");
                             view.Visibility = Android.Views.ViewStates.Gone;
                         }
                         view.LoadUrl(view.RootUrl);
@@ -254,8 +236,7 @@ namespace BitChute.Web
         {
             AppSettings.SessionState.SessionId = "";
         }
-
-
+        
         public static List<int> WindowLoadEventSet = new List<int>();
 
         public static async void RunBaseCommands(WebView w, int tabId = -1, int d = 2000)
@@ -263,7 +244,6 @@ namespace BitChute.Web
             await Task.Delay(20);
             //DoActionOnUiThread(() => w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEndPlayer)));
             DoActionOnUiThread(() => w.LoadUrl(GetInjectable(JavascriptCommands.JsHidePageBar)));
-            
             
             DoActionOnUiThread(() => w.LoadUrl(JavascriptCommands._jsHideMargin));
             await Task.Delay(d);
@@ -296,24 +276,6 @@ namespace BitChute.Web
         {
             if (wv.CanGoBack()) wv.GoBack();
             BitChute.Web.ViewClients.RunBaseCommands(wv, 2000);
-        }
-
-        public static void RunPostLoginSuccess(int viewCalled, string cookieString = null)
-        {
-            foreach (ServiceWebView view in PlaystateManagement.WebViewTabDictionary.Values)
-            {
-                if (view.Id != viewCalled && view.RootUrl != null)
-                {
-                    view.ClearCache(false);
-                    view.LoadUrl(view.RootUrl);
-                }
-            }
-            MainActivity.Fm0.SwapLoginView(true);
-            MainActivity.Fm1.SwapLoginView(true);
-            MainActivity.Fm2.SwapLoginView(true);
-            MainActivity.Fm3.SwapLoginView(true);
-            MainActivity.Fm4.SwapLoginView(true);
-            AppState.UserIsLoggedIn = true;
         }
 
         public class BaseWebViewClient : WebViewClient //WebViewClient shared between all applicable tabs
@@ -413,9 +375,7 @@ namespace BitChute.Web
                 if (request.Url.ToString().EndsWith("common.css"))
                 {
                     return CssHelper.GetCssResponse(CssHelper.CommonCss);
-
                 }
-
                 return base.ShouldInterceptRequest(view, request);
             }
 
@@ -461,9 +421,7 @@ namespace BitChute.Web
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
-
-
-
+            
             public override void OnPageFinished(WebView view, string url)
             {
                 DoActionOnUiThread(() => view.LoadUrl(JavascriptCommands._jsHideMargin));
@@ -537,7 +495,6 @@ namespace BitChute.Web
                         }
                         OnLogout.Invoke(new LogoutEventArgs());
                         AppState.UserIsLoggedIn = false;
-                        
                     }
                 }
                 return base.ShouldInterceptRequest(view, request);

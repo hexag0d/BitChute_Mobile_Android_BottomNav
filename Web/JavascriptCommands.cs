@@ -247,7 +247,6 @@ namespace BitChute
                                             ite5.style.maxWidth = 'none';
                                         }" + "})()";
 
-
         public static string _jsHideMargin = "javascript:(function() { " +
                         @"window.document.getElementsByClassName('container')[0].style.paddingLeft='1px'; " +
                         @"window.document.getElementsByClassName('container')[0].style.paddingRight='1px'; " +
@@ -381,7 +380,7 @@ namespace BitChute
         if(plyr.autoplay){window.location='https://_&app_vidend_invoked_autoplay';}
         else{window.location='https://_&app_vidend_invoked_noautoplay'}});
 }";
-            //.mousedown[0].listener 
+
             public static string GetWindowDocumentEvents = "if(_wn_s_t == null){" + OnWindowDocumentLoadEnd + "};";
             public static string OnWindowDocumentLoadEnd = "var _wn_s_t=true;window.document.addEventListener('onloadend', function() { " +
                      $"{PlayPauseButtonCallback}{IsPlayingCallback}" + "});";
