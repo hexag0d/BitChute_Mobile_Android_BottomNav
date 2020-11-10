@@ -29,7 +29,7 @@ namespace BitChute.Services
     [Service(Exported = true)]
     [IntentFilter(new[] { ActionPlay, ActionPause, ActionStop, ActionTogglePlayback,
         ActionNext, ActionPrevious, ActionLoadUrl, ActionBkgrdNote, ActionResumeNote })]
-    public class MainPlaybackSticky : Service, AudioManager.IOnAudioFocusChangeListener,
+    public class MainPlaybackSticky : Service, 
         MediaController.IMediaPlayerControl, MediaPlayer.IOnSeekCompleteListener
     {
         #region members
@@ -200,8 +200,8 @@ namespace BitChute.Services
                 {
                     if (PlaystateManagement.WebViewPlayerNumberIsStreaming != -1)
                         StartVideoInBkgrd(PlaystateManagement.WebViewPlayerNumberIsStreaming);
-                    else if (PlaystateManagement.WebViewPlayerPausedInBackgroundId != -1)
-                        StartVideoInBkgrd(PlaystateManagement.WebViewPlayerPausedInBackgroundId);
+                    else if (PlaystateManagement.MediaPlayerNumberIsQueued != -1)
+                        StartVideoInBkgrd(PlaystateManagement.MediaPlayerNumberIsQueued);
                     else { StartVideoInBkgrd(); }
                 });
             }
@@ -253,7 +253,10 @@ namespace BitChute.Services
         /// <summary>
         /// pause the video
         /// </summary>
-        public void Pause() { PlaystateManagement.SendPauseVideoCommand(); }
+        public void Pause() {
+            AppIsMovingIntoBackgroundAndStreaming = false;
+            PlaystateManagement.SendPauseVideoCommand();
+        }
 
         public static void Stop(int id = -1, PlayerType playerType = PlayerType.None)
         {
@@ -365,6 +368,7 @@ namespace BitChute.Services
             //Find our audio and notificaton managers
             AudioMan = (AudioManager)GetSystemService(AudioService);
             WifiManager = (WifiManager)GetSystemService(WifiService);
+            
             
         }
         public override IBinder OnBind(Intent intent)
@@ -711,11 +715,16 @@ namespace BitChute.Services
             
         }
 
-        static async void VerifyInBackground(int webViewId = -1)
+        static async void VerifyInBackground(int webViewId = -1, int backgroundTimeOut = 3000)
         {
-            while (AppIsMovingIntoBackgroundAndStreaming)
+            int backgroundTimer = 0;
+            while (IsInBkGrd() && AppIsMovingIntoBackgroundAndStreaming && backgroundTimer <= 3000)
             {
-                await Task.Delay(10);
+                await Task.Delay(100);
+                ViewHelpers.DoActionOnUiThread(() =>
+                {
+                    PlaystateManagement.WebViewIdDictionary[webViewId].LoadUrl(JavascriptCommands._jsPlayVideo);
+                });
             }
             await Task.Delay(30);
             ViewHelpers.DoActionOnUiThread(() =>
@@ -737,20 +746,82 @@ namespace BitChute.Services
             private static int _latestTabKey = -1;
             public string RootUrl;
 
+            public static bool PlayerBufferingDetectedOnMinimize = false;
+            public static List<int> WebViewPlayersWhereBufferingDetectedOnMinimized = new List<int>();
+            public static List<int> AllWebViewPlayersWithPlayingState = new List<int>();
+            public bool PlaybackShouldResumeOnMinimize = false;
+            public bool PlayerIsLoadingOnMinimize = false;
+            public bool ViewIsNoLongerVisible = false;
+
             public override void OnWindowFocusChanged(bool hasWindowFocus)
             {
                 base.OnWindowFocusChanged(hasWindowFocus);
-                if (!hasWindowFocus)
+                if (hasWindowFocus)
                 {
-                    if (this.Id == PlaystateManagement.WebViewPlayerNumberIsStreaming && AppIsMovingIntoBackgroundAndStreaming)
+                    TotalWebViewsMovingIntoBackground = 0;
+                    ClearWebViewMinimizedState();
+                }
+                else if (!hasWindowFocus)
+                {
+                    if (PlaybackShouldResumeOnMinimize && AppSettings.AutoPlayOnMinimized != "off")
                     {
-                        AppIsMovingIntoBackgroundAndStreaming = false;
-
-                        PlaystateManagement.WebViewIdDictionary[this.Id].LoadUrl(JavascriptCommands._jsPlayVideo);
+                        if (WebViewPlayersWhereBufferingDetectedOnMinimized.Count == 0 || AllWebViewPlayersWithPlayingState.Count < 2)
+                        {
+                            AwaitMinimizedInBackground();
+                            this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                            PlaybackShouldResumeOnMinimize = false;
+                        }
+                        else if (WebViewPlayersWhereBufferingDetectedOnMinimized.Count > 0)
+                        {
+                            if (AllWebViewPlayersWithPlayingState.Count > 1)
+                            {
+                                if (WebViewPlayersWhereBufferingDetectedOnMinimized.Contains(this.Id))
+                                {
+                                    this.LoadUrl(JavascriptCommands._jsPauseVideo);
+                                    PlaybackShouldResumeOnMinimize = false;
+                                }
+                            }
+                            else
+                            {
+                                AwaitMinimizedInBackground();
+                                this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                                PlaybackShouldResumeOnMinimize = false;
+                            }
+                        }
                     }
+                    TotalWebViewsMovingIntoBackground--;
                 }
             }
-            
+            public static int TotalWebViewsMovingIntoBackground;
+            static int TotalWebViews = 5;
+
+            public async void AwaitMinimizedInBackground()
+            {
+                while (TotalWebViewsMovingIntoBackground > 0)
+                {
+                    await Task.Delay(50);
+                    this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                }
+                await Task.Delay(50);
+                PlaystateManagement.WebViewPlayerNumberIsStreaming = this.Id;
+                PlaystateManagement.WebViewPlayerIsStreaming = true;
+                if (AppState.ForeNote == null)
+                {
+                    MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification());
+                }
+                this.LoadUrl(JavascriptCommands._jsPlayVideo);
+                TotalWebViewsMovingIntoBackground = 5;
+                this.LoadUrl(JavascriptCommands._jsPlayVideo);
+
+            }
+
+            public static void ClearWebViewMinimizedState()
+            {
+                MainPlaybackSticky.ServiceWebView.TotalWebViewsMovingIntoBackground = 0;
+                WebViewPlayersWhereBufferingDetectedOnMinimized.Clear();
+                AllWebViewPlayersWithPlayingState.Clear();
+            }
+
             public override void GoBack()
             {
                 base.GoBack();
@@ -799,7 +870,10 @@ namespace BitChute.Services
                 PlaystateManagement.WebViewTabDictionary.Add(this._tabKey, this);
                 AppState.WebViewAgentString = this.Settings.UserAgentString;
                 this.Settings.SetSupportMultipleWindows(true);
+
             }
+
+            
 
             public ServiceWebView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
             {

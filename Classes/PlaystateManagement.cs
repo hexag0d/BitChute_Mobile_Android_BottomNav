@@ -26,7 +26,7 @@ namespace BitChute
         private static int _nativeMediaPlayerNumberIsStreaming = -1;
         private static bool _nativeMediaPlayerIsQueued = false;
         private static int _nativeMediaPlayerNumberIsQueued = -1;
-        public static int WebViewPlayerPausedInBackgroundId = -1;
+        public static int _webViewPlayerQueuedId = -1;
 
         public class PlaystateEventArgs : EventArgs
         {
@@ -98,6 +98,31 @@ namespace BitChute
                 }
             }
 
+            public PlaystateEventArgs( bool isPlaying, int playerId, bool playerIsBufferingOnMinimize = false)
+            {
+                if (playerIsBufferingOnMinimize)
+                {
+                    ServiceWebView.PlayerBufferingDetectedOnMinimize = true;
+                    if (!ServiceWebView.WebViewPlayersWhereBufferingDetectedOnMinimized.Contains(playerId))
+                    {
+                        ServiceWebView.WebViewPlayersWhereBufferingDetectedOnMinimized.Add(playerId);
+                    }
+                }
+                if (isPlaying)
+                {
+                    if (!ServiceWebView.AllWebViewPlayersWithPlayingState.Contains(playerId))
+                    {
+                        ServiceWebView.AllWebViewPlayersWithPlayingState.Add(playerId);
+                    }
+                    if (!playerIsBufferingOnMinimize) { GetWebViewPlayerById(playerId).LoadUrl(JavascriptCommands._jsPlayVideo); }
+                }
+                WebViewPlayerIdConfirmedInBackgroundIsPlaying = playerId;
+                WebViewPlayerConfirmedInBackgroundIsPlaying = isPlaying;
+            }
+
+            public bool WebViewPlayerConfirmedInBackgroundIsPlaying { get; set; }
+            public int WebViewPlayerIdConfirmedInBackgroundIsPlaying = -1;
+            public int WebViewPlayerIdQueued { get { return _webViewPlayerQueuedId; } set { _webViewPlayerQueuedId = value; } }
             public bool WebViewMediaPlayerIsStreaming { get { return _webViewMediaPlayerIsStreaming; } }
             public int WebViewMediaPlayerNumberIsStreaming { get { return _webViewMediaPlayerNumberIsStreaming; } }
             public bool NativeMediaPlayerIsStreaming { get { return MediaPlayerIsStreaming; } }
@@ -231,6 +256,7 @@ namespace BitChute
                     }
                     PlaystateManagement.WebViewPlayerIsStreaming = false;
                     PlayerTypeQueued(PlayerType.WebViewPlayer);
+                    PlaystateManagement._webViewPlayerQueuedId = _webViewMediaPlayerNumberIsStreaming;
                 }
                 catch (Exception ex)
                 {

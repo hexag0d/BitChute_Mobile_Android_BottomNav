@@ -131,6 +131,7 @@ namespace BitChute.Fragments
         
         public override void OnCreate(Bundle savedInstanceState)
         {
+            
             System.Random random = new Random();
             this.Id = new System.Random().Next(999999999);
             base.OnCreate(savedInstanceState);

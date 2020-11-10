@@ -77,7 +77,7 @@ namespace BitChute.Fragments
             }
             //MainActivity.Main.FinalizeStartUp();
         }
-        
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.Id = new System.Random().Next(99999999);
@@ -109,6 +109,7 @@ namespace BitChute.Fragments
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                
                 if (VideoEncoderLayout == null)
                     ViewHelpers.VideoEncoder.VideoEncoderLayout = inflater.Inflate(Resource.Layout.VideoEncodingLayout, container, false);
                 ViewHelpers.VideoEncoder.EncoderBitRateEditText = ViewHelpers.VideoEncoder.VideoEncoderLayout.FindViewById<EditText>(Resource.Id.videoEncoderBitRateEditText);
@@ -129,7 +130,8 @@ namespace BitChute.Fragments
                 Tab4.ShowWebViewButton = InternalTabbedLayout.FindViewById<Button>(Resource.Id.webViewSwapButton);
                 Tab4.ShowEncoderViewButton.Click += ShowEncoderView_OnClick;
                 Tab4.ShowWebViewButton.Click += ShowWebView_OnClick;
-                
+                ViewHelpers.Tab4.SettingsTabLayout.FindViewById<Button>(Resource.Id.goButton).Click += GoButton_OnClick;
+                JavascriptInjectionTextBox = ViewHelpers.Tab4.SettingsTabLayout.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
             }
             catch (Exception ex)
             {
@@ -141,7 +143,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
             }
             catch (Exception ex) { }
-            try { 
+            try {
                 AppSettings.Prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
                 AppSettings.PrefEditor = AppSettings.Prefs.Edit();
                 _zcoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
@@ -160,7 +162,7 @@ namespace BitChute.Fragments
                 _notificationoffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._notificationsOffRb);
             }
             catch (Exception ex) { }
-                try { 
+            try {
                 _hidehorizontalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOn);
                 _hidehorizontalnavbaroffrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id._hideNavBarHorizontalOff);
                 _hideverticalnavbaronrb = SettingsTabLayout.FindViewById<RadioButton>(Resource.Id.verticalNavbarRbOn);
@@ -183,7 +185,7 @@ namespace BitChute.Fragments
                 _showdlbuttonalways.CheckedChange += ExtSettingChanged;
                 _showdlbuttonnever.CheckedChange += ExtSettingChanged;
                 _showdlbuttononpress.CheckedChange += ExtSettingChanged;
-                //ViewHelpers.Tab4.JavascriptInjectionTextBox = _view.FindViewById<EditText>(Resource.Id.javascriptDebugInjectionTextBox);
+
                 //Tab4.SearchOverrideSourceSpinner = _view.FindViewById<Spinner>(Resource.Id.searchOverrideSourceSpinner);
                 //Tab4.SearchOverrideOffRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOffRb);
                 //Tab4.SearchOverrideOnRb = _view.FindViewById<RadioButton>(Resource.Id.searchEngineOverrideOnRb);
@@ -243,7 +245,13 @@ namespace BitChute.Fragments
             {
 
             }
-                return FragmentContainerLayout;
+            return FragmentContainerLayout;
+        }
+
+        public void GoButton_OnClick(object sender, EventArgs e)
+        {
+            this.Wv.LoadUrl(ViewHelpers.Tab4.JavascriptInjectionTextBox.Text);
+            ShowWebView();
         }
 
         public void ClearLoginCredentialsButton_OnClick(object sender, EventArgs e)
@@ -256,17 +264,14 @@ namespace BitChute.Fragments
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
             SwapLoginView(true);
         }
-
-
-
+        
         public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
 
             SwapLoginView(true);
         }
-
-
+        
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
             SwapLoginView(true);
@@ -316,7 +321,7 @@ namespace BitChute.Fragments
 
         public static void NotificationsOnRb_OnClick(object sender, EventArgs e)
         {
-            
+
         }
 
         public void ContinueWithoutLoginButton_OnClick(object sender, EventArgs e)
@@ -462,15 +467,19 @@ namespace BitChute.Fragments
             EncoderViewIsVisible = true;
         }
 
+        public void ShowWebView()
+        {
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="v"></param>
         public void ShowWebView_OnClick(object sender, EventArgs e)
         {
-            ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
-            ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
-            EncoderViewIsVisible = false;
+            ShowWebView();
         }
 
         public void OnUserDeniedPreProcessing()

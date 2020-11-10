@@ -83,7 +83,7 @@ namespace BitChute.Web
             else if (type == typeof(Settings)) wv.SetWebViewClient((Settings)webViewClient);
             else { wv.SetWebViewClient((Subs)webViewClient); }
         }
-        
+
         public static async void SetReload(int tab = -1)
         {
             if (tab == -1) { tab = MainActivity.ViewPager.CurrentItem; }
@@ -131,18 +131,62 @@ namespace BitChute.Web
                 case @"https://_%26app_play_isplaying/":
                     PlaystateChanged.Invoke(new PlaystateEventArgs(playerNumber, false, false, true));
                     break;
-                case @"https://_&app_vidend_invoked_autoplay":
+                case @"https://_%26app_vidend_invoked_autoplay":
                     PlaystateChanged.Invoke(new PlaystateEventArgs(true, playerNumber, true, false));
                     break;
-                case @"https://_&app_vidend_invoked_noautoplay":
+                case @"https://_%26app_vidend_invoked_noautoplay":
                     PlaystateChanged.Invoke(new PlaystateEventArgs(true, playerNumber, false, false));
+                    break;
+                case @"https://_%26app_isplaying_onminimized/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(true, playerNumber, true));
+                    break;
+                case @"https://_%26app_isnotplaying_onminimized/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(false, playerNumber, false));
+                    break;
+                case @"https://_&app_isplaying_and_loading_onminimized/":
+                    PlaystateChanged.Invoke(new PlaystateEventArgs(true, playerNumber, true));
                     break;
             }
         }
+        
+        public static Tuple<int, ServiceWebView> VerifyPlayerPlayingOnMinimized()
+        {
+            _playerIdPlayingCallbackResponseList.Clear();
+            //foreach (var webView in PlaystateManagement.WebViewIdDictionary)
+            //{
+            //    //ViewHelpers.DoActionOnUiThread(() =>
+            //    //{
+            //        webView.Value.LoadUrl(GetInjectable(CallBackInjection.IsPlayingCallbackSimple));
+            //    //});
+            //}
+            Task.Factory.StartNew(() =>
+            {
+                while (_playerIdPlayingCallbackResponseList.Count < PlaystateManagement.WebViewIdDictionary.Count)
+                {
+
+                    System.Threading.Thread.Sleep(50);
+                }
+            });
+            foreach (var player in _playerIdPlayingCallbackResponseList)
+            {
+                if (player.Item1 != -1)
+                {
+                    return new Tuple<int, ServiceWebView>(player.Item1, GetWebViewPlayerById(player.Item1));
+                }
+            }
+            return null;
+        }
+
+        static List<Tuple<int, bool>> _playerIdPlayingCallbackResponseList = new List<Tuple<int, bool>>(); 
 
         public static void OnPlaystateChanged(PlaystateEventArgs e)
         {
-
+            if (e.WebViewPlayerIdConfirmedInBackgroundIsPlaying != -1 && e.WebViewPlayerConfirmedInBackgroundIsPlaying)
+            {
+                PlaystateManagement.GetWebViewPlayerById(e.WebViewPlayerIdConfirmedInBackgroundIsPlaying).PlaybackShouldResumeOnMinimize = true;
+                _playerIdPlayingCallbackResponseList
+                    .Add(new Tuple<int, bool>(e.WebViewPlayerIdConfirmedInBackgroundIsPlaying, e.WebViewPlayerConfirmedInBackgroundIsPlaying));
+            }
         }
 
         public static void Run_OnLoginFailure()
@@ -211,18 +255,21 @@ namespace BitChute.Web
             AppSettings.SessionState.SessionId = "";
         }
 
+
         public static List<int> WindowLoadEventSet = new List<int>();
 
         public static async void RunBaseCommands(WebView w, int tabId = -1, int d = 2000)
         {
             await Task.Delay(20);
-            DoActionOnUiThread(() => w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEndPlayer)));
+            //DoActionOnUiThread(() => w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEndPlayer)));
             DoActionOnUiThread(() => w.LoadUrl(GetInjectable(JavascriptCommands.JsHidePageBar)));
-            GetWebViewPlayerById(w.Id).SetReload();
+            
+            
             DoActionOnUiThread(() => w.LoadUrl(JavascriptCommands._jsHideMargin));
             await Task.Delay(d);
             DoActionOnUiThread(() => w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips)));
             HidePageTitle(w, AppSettings.HidePageTitleDelay);
+
             if (WebViewsAreReloadingAfterLogin)
             {
                 if (WebViewIdLoginList.Contains(w.Id))
@@ -242,6 +289,7 @@ namespace BitChute.Web
                     CallBackInjection.PlayPauseButtonCallback));
                 //w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEnd));
             });
+            CustomComments.MakeAvatarsClickable(null, w, false, 4000);
         }
 
         public static void WebViewGoBack(WebView wv)
@@ -278,6 +326,7 @@ namespace BitChute.Web
             public BaseWebViewClient()
             {
                 if (PlaystateChanged == null) PlaystateChanged += OnPlaystateChanged;
+                
             }
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
@@ -297,7 +346,6 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                
                 if (request.Url.Path.EndsWith(@"/video.css")) //|| request.Url.Path.EndsWith(@"/bootstrap.min.css"))
                 {
                     /*if (request.Url.Path.EndsWith(@"/video.css")) */{ return CssHelper.GetCssResponse(CssHelper.VideoCss); }
@@ -308,6 +356,7 @@ namespace BitChute.Web
 
             public override void OnPageFinished(WebView view, string url)
             {
+                GetWebViewPlayerById(view.Id).SetReload();
                 base.OnPageFinished(view, url);
                 Task.Factory.StartNew(() => { RunBaseCommands(view, MainActivity.ViewPager.CurrentItem); });
             }
@@ -417,6 +466,7 @@ namespace BitChute.Web
 
             public override void OnPageFinished(WebView view, string url)
             {
+                DoActionOnUiThread(() => view.LoadUrl(JavascriptCommands._jsHideMargin));
                 base.OnPageFinished(view, url);
                 Task.Factory.StartNew(() => { RunPageCommands(view); });
             }

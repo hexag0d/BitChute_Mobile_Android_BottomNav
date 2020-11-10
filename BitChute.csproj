@@ -86,9 +86,11 @@
     <Compile Include="ViewHolders\FeedViewHolder.cs" />
     <Compile Include="ViewModels\VideoDetailLoader.cs" />
     <Compile Include="Views\LayoutChangeHandlers.cs" />
+    <Compile Include="Web\CustomComments.cs" />
     <Compile Include="Web\ExtChromeClient.cs" />
     <Compile Include="Classes\ExtMediaController.cs" />
     <Compile Include="Classes\ExtNotifications.cs" />
+    <Compile Include="Web\ExtValueCallbackListener.cs" />
     <Compile Include="Web\ExtWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

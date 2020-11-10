@@ -296,6 +296,12 @@ namespace BitChute
 
 
         /// <summary>
+        /// stops the video
+        /// </summary>
+        public static string _jsStopVideo = "javascript:(function() { " + "plyr.stop()" + "})()";
+
+
+        /// <summary>
         /// plays the video
         /// </summary>
         public static string _jsPlayVideo = "javascript:(function() { " + "plyr.play()" + "})()";
@@ -363,7 +369,11 @@ namespace BitChute
                 + @"$(""button[data-plyr*='play']"")[1].addEventListener('click', function(){if(plyr.playing){window.location='https://_&app_play_invoked/';}else{window.location='https://_&app_pause_invoked/';}});";
             public static string IsPlayingCallback = @"if(plyr.playing||(plyr.currentTime>=plyr.duration&&plyr.autoplay)){window.location='https://_&app_play_isPlaying/'};";
             public static string FullscreenCallback = @"$(""button[data-plyr*='fullscreen']"")[0].addEventListener('click',function(){window.location='https://_&app_fullscreen_invoked/'})";
+            public static string IsPlayingCallbackSimple = @"if(plyr!= null&& plyr.playing == true){if(plyr.loading){window.location='https://_&app_isplaying_and_loading_onminimized';}else{window.location='https://_&app_isplaying_onminimized';}}else{window.location='https://_&app_isnotplaying_onminimized';}";
+            public static string IsPlayingCallbackSimpleWithBuffer = @"if(plyr!= null&& plyr.playing == true){if(plyr.loading || (plyr.buffering == 0)){window.location='https://_&app_isplaying_and_loading_onminimized';}else{window.location='https://_&app_isplaying_onminimized';}}else{window.location='https://_&app_isnotplaying_onminimized';}";
 
+
+            //if(plyr!= null&& plyr.playing == true){if(plyr.loading || (plyr.buffering == 0)){window.location='https://_&app_isplaying_and_loading_onminimized';}else{window.location='https://_&app_isplaying_onminimized';}}else{window.location='https://_&app_isnotplaying_onminimized';}
             public static string VideoPlayerCallbacks = @"if (window.document.getElementsByTagName('video')[0]!=undefined){
     window.document.getElementsByTagName('video')[0].addEventListener('play', (event) => {window.location='https://_&app_play_invoked/';});
     window.document.getElementsByTagName('video')[0].addEventListener('pause', (event) => {window.location='https://_&app_pause_invoked/';});

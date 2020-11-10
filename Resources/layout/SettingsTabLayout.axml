@@ -9,6 +9,11 @@
 		android:backgroundTint="@android:color/black"
 		android:background="@android:color/black"
 		android:layout_height="match_parent">
+					<ImageView
+				
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/imageView1" />
 		<LinearLayout
 		android:orientation="vertical"
 		android:minWidth="25px"
@@ -16,14 +21,15 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/appSettingsMainLayout">
+
 		<EditText
 			android:inputType="textMultiLine"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/javascriptDebugInjectionTextBox"
-			android:visibility="gone"
+			android:visibility="visible"
 			android:lines="3"
-			android:text="var _dms=12000;setTimeout(function() {var _hi=$('iFrame')[0].style.height;if(_hi=='0px'){DISQUS.reset({reload: true})}}, _dms);"
+			android:text=""
 			android:background="#ff000000"
 			android:textColor="#ff00ff21"
 			android:textColorHighlight="#ff0009f1" />
@@ -408,6 +414,11 @@
 				android:layout_height="wrap_content"
 				android:background="@android:color/darker_gray"
 				android:id="@+id/searchOverrideSourceSpinner" />
+				<Button
+					android:text="Go"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/goButton" />
 				<Button
 					android:text="Clear Login Credentials"
 					android:layout_width="match_parent"
