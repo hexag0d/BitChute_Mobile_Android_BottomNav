@@ -103,7 +103,6 @@ namespace BitChute.Fragments
                 TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
                 Wv.RootUrl = RootUrl;
-                if (AppSettings.Tab4OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab4overridestring"); }
                 BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, WebViewClient);
                 Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.JavaScriptEnabled = true;
@@ -262,19 +261,19 @@ namespace BitChute.Fragments
         public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
-            SwapLoginView(true);
+            SwapFragView(true);
         }
         
         public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
 
-            SwapLoginView(true);
+            SwapFragView(true);
         }
         
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
 
@@ -283,7 +282,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -437,20 +436,22 @@ namespace BitChute.Fragments
         /// swaps the view between android settings and site settings layouts
         /// </summary>
         /// <param name="v">nullable, the view to swap for</param>
-        public static void SwapSettingView()
+        public void SwapSettingView()
         {
-            if (!WebsiteSettingsVisible)
+            if (WebsiteSettingsVisible)
             {
-                ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
-                ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(InternalTabbedLayout);
+                if (_firstTimeLoad) { MainActivity.Fm4.SetCheckedState(); _firstTimeLoad = false; }
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
+
             }
-            else
+            else if (!WebsiteSettingsVisible)
             {
-                ViewHelpers.Tab4.TabFragmentLinearLayout.RemoveAllViews();
-                ViewHelpers.Tab4.TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.SettingsTabLayout);
+                if (_firstTimeLoad) { MainActivity.Fm4.SetCheckedState(); _firstTimeLoad = false; }
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.RemoveAllViews();
+                ViewHelpers.Tab4.EncoderFlexLinearLayout.AddView(WebViewFragmentLayout);
             }
             WebsiteSettingsVisible = !WebsiteSettingsVisible;
-            if (_firstTimeLoad) { MainActivity.Fm4.SetCheckedState(); _firstTimeLoad = false; }
         }
 
         public static bool EncoderViewIsVisible = false;
@@ -530,13 +531,13 @@ namespace BitChute.Fragments
             FileBrowser.ShowFileChooser("encoder");
         }
 
-        public static void OnEncoderProgress(VideoEncoding.EncoderEventArgs e)
+        public static void OnEncoderProgress(VideoEncoding.MinEventArgs.EncoderMinArgs e)
         {
-            if (!e.Finished)
+            if (!VideoEncoding.MinEventArgs.Finished)
             {
                 int r = 0;
-                if (e.TotalData!=0)
-                r = (int)((((decimal)e.EncodedData / (decimal)e.TotalData)) * 100);
+                if (VideoEncoding.MinEventArgs.TotalData!=0)
+                r = (int)((((decimal)VideoEncoding.MinEventArgs.EncodedData / (decimal)VideoEncoding.MinEventArgs.TotalData)) * 100);
                 if (r > 100) { r = 100; }
                 ViewHelpers.Main.UiHandler.Post(() =>
                 {
@@ -549,7 +550,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Main.UiHandler.Post(() => {
                     ViewHelpers.VideoEncoder.EncodeProgressBar.Progress = 100;
                     ViewHelpers.VideoEncoder.EncodingStatusTextView.Text = "Video finished encoding";
-                    if (!FileToMp4.AudioEncodingInProgress){ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text=e.FilePath;}
+                    if (!FileToMp4.AudioEncodingInProgress){ViewHelpers.VideoEncoder.EncoderOutputFileEditText.Text= VideoEncoding.MinEventArgs.FilePath;}
                 }); 
             }
         }

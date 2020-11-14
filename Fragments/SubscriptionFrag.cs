@@ -99,7 +99,7 @@ namespace BitChute.Fragments
             {
                 if (AppState.UserIsLoggedIn)
                 {
-                    SwapLoginView(false, true);
+                    SwapFragView(false, true);
                 }
             }
             catch { }
@@ -111,7 +111,7 @@ namespace BitChute.Fragments
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
 
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
 
@@ -120,12 +120,12 @@ namespace BitChute.Fragments
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
 
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
-              SwapLoginView(true);
+              SwapFragView(true);
         }
 
 
@@ -143,7 +143,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             try
             {

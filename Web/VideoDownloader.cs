@@ -20,7 +20,8 @@ namespace BitChute
         public static bool LatestDownloadSucceeded;
         public static bool VideoDownloadInProgress;
         static System.Int64 bytes_total;
-        private static ExtWebClient _wc; 
+        private static ExtWebClient _wc;
+        static bool _videoDownloadCancelledByUser = false;
         //private static System.Net.WebClient _wc;
         
 
@@ -47,37 +48,49 @@ namespace BitChute
         {
             if (!VideoDownloadInProgress)
             {
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
-                if(!FileBrowser.GetExternalPermissions()) { return; }
-                VideoDownloadInProgress = true;
-                VideoDownloader _vd = new VideoDownloader();
-                if (videoLink != null && videoLink != "")
+                try
                 {
-                    ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting video link";
-                    Task<string> rawHtmlTask = ExtWebInterface.GetHtmlTextFromUrl(videoLink);
-                    await rawHtmlTask;
-                    Task<VideoCard> videoCardTask = _vd.DecodeHtmlVideoSource(rawHtmlTask.Result);
-                    await videoCardTask;
-                    if ((videoCardTask.Result).VideoUri.AbsolutePath == "" 
-                        || (videoCardTask.Result).VideoUri.AbsolutePath == null)
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting permissions";
+                    if (!FileBrowser.GetExternalPermissions()) { return; }
+                    VideoDownloadInProgress = true;
+                    VideoDownloader _vd = new VideoDownloader();
+                    if (videoLink != null && videoLink != "")
                     {
-                        ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
-                        Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
-                        VideoDownloadInProgress = false;
-                        return;
+                        ViewHelpers.Tab3.DownloadProgressTextView.Text = "Getting video link";
+                        Task<string> rawHtmlTask = ExtWebInterface.GetHtmlTextFromUrl(videoLink);
+                        var html =  await rawHtmlTask;
+                        Task<VideoCard> videoCardTask = _vd.DecodeHtmlVideoSource(html);
+                        var vidCard = await videoCardTask;
+                        if ((vidCard).VideoUri.AbsolutePath == ""
+                            || (vidCard).VideoUri.AbsolutePath == null)
+                        {
+                            ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.VideoSourceMissing();
+                            Toast.MakeText(Android.App.Application.Context, LanguageSupport.Main.IO.VideoSourceMissing(), ToastLength.Long);
+                            VideoDownloadInProgress = false;
+                            return;
+                        }
+                        Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(vidCard);
+                        await videoDownloadComplete;
                     }
-                    Task<bool> videoDownloadComplete = _vd.DownloadAndSaveVideo(videoCardTask.Result);
-                    await videoDownloadComplete;
+                    else
+                    {
+                        await _vd.DownloadAndSaveVideo(null);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    await _vd.DownloadAndSaveVideo(null);
+                    VideoDownloadInProgress = false;
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = $"An error occured : {ex.Message} "; 
                 }
             }
             else
             {
-                ViewHelpers.Tab3.DownloadProgressTextView.Text = "Video download already in progress, stop it first";
-                Toast.MakeText(Android.App.Application.Context, "Video download already in progress, stop it first", ToastLength.Long);
+                try
+                {
+                    ViewHelpers.Tab3.DownloadProgressTextView.Text = "Video download already in progress, stop it first";
+                    Toast.MakeText(Android.App.Application.Context, "Video download already in progress, stop it first", ToastLength.Long);
+                }
+                catch { }
             }
         }
 
@@ -126,7 +139,7 @@ namespace BitChute
                     }
                 }
                 catch
-                {
+                { 
                 }
             });
             return vidCard;
@@ -154,12 +167,16 @@ namespace BitChute
         private static int _progStep = 0;
         private static string _progText;
         private static string _progString;
+        static decimal _progress;
 
         public static void OnVideoDownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
-            decimal progress = ((decimal)e.BytesReceived/(decimal)bytes_total) * 100;
-            if (progress < 100)
-            _progString = progress.ToString().Substring(0, 4);
+            if (bytes_total > 0)
+            {
+                 _progress = ((decimal)e.BytesReceived / (decimal)bytes_total) * 100;
+            }
+            if (_progress < 100)
+            _progString = _progress.ToString().Substring(0, 4);
             switch (_progStep)
             {
                 case 0:
@@ -218,12 +235,15 @@ namespace BitChute
 
         public static void OnVideoDownloadFinished(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
+            ViewHelpers.Tab3.DownloadProgressBar.Indeterminate = true;
             _progBlue = 150;
             _progBlueUp = true;
             _progColor = Android.Graphics.Color.Rgb(_progRed, _progGreen, _progBlue);
             ViewHelpers.Main.DownloadFAB.SetColorFilter(null); 
             ViewHelpers.Tab3.DownloadProgressTextView.SetTextColor(_progColor);
-            ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess();
+            if (e.Cancelled) { ViewHelpers.Tab3.DownloadProgressTextView.Text = "video download aborted by user"; }
+            else if (e.Error != null) { }
+            else { ViewHelpers.Tab3.DownloadProgressTextView.Text = LanguageSupport.Main.IO.FileDownloadSuccess(); }
         }
 
         /// <summary>
@@ -274,6 +294,7 @@ namespace BitChute
                         _wc.OpenRead(vc.VideoUri);
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
+                    ViewHelpers.Tab3.DownloadProgressBar.Indeterminate = false;
                     await _wc.DownloadFileTaskAsync(vc.VideoUri,
                         filePath);
                 }
@@ -284,6 +305,7 @@ namespace BitChute
                         _wc.OpenRead(new System.Uri(vc.Link));
                         bytes_total = System.Convert.ToInt64(_wc.ResponseHeaders["Content-Length"]);
                     });
+                    ViewHelpers.Tab3.DownloadProgressBar.Indeterminate = false;
                     await _wc.DownloadFileTaskAsync(new System.Uri(vc.Link),
                         filePath);
                 }
@@ -291,6 +313,7 @@ namespace BitChute
             catch (System.Exception ex)
             {
                 System.Console.WriteLine(ex.InnerException);
+                ViewHelpers.Tab3.DownloadProgressBar.Indeterminate = true;
             }
             VideoDownloadInProgress = false;
             if (System.IO.File.Exists(filePath))
@@ -401,21 +424,12 @@ namespace BitChute
 
         public static void CancelDownloadButton_OnClick(object sender, System.EventArgs e)
         {
-            try
-            {
-                _wc.CancelAsync();
-            }
-            catch
-            {
-
-            }
+            try { _wc.CancelAsync(); }
+            catch{}
             VideoDownloadInProgress = false;
         }
 
-        public override IBinder OnBind(Intent intent)
-        {
-            return null;
-        }
+        public override IBinder OnBind(Intent intent) { return null; }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -425,7 +439,7 @@ namespace BitChute
                 {
                     MainPlaybackSticky.Pm = (PowerManager)GetSystemService(Context.PowerService);
                 }
-                PowerManager.WakeLock _wl = MainPlaybackSticky.Pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                PowerManager.WakeLock _wl = MainPlaybackSticky.Pm.NewWakeLock(WakeLockFlags.Partial, "Wakelock_BC");
                 _wl.Acquire();
             }
             catch (Exception ex)

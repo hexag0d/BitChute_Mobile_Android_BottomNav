@@ -4,7 +4,6 @@
     {
         public class Display
         {
-
             public static Android.Graphics.Color DarkGrey = new Android.Graphics.Color(20, 20, 20);
 
             /// <summary>
@@ -72,6 +71,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.8.7.API8.ClickableAvatar";
+        public static string AppVersion = "28.8.9.API8.ClickableAvatar";
     }
 }

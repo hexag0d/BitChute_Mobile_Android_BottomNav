@@ -19,6 +19,7 @@
             public static string _myChannel = "https://www.bitchute.com/profile";
             public static string _watchLater = "https://www.bitchute.com/playlist/watch-later/";
             public static string _playlists = "https://www.bitchute.com/playlists/";
+            public static string MakeADonation = "https://www.bitchute.com/help-us-grow/";
 
             /// <summary>
             /// gets the url string based upon user preference

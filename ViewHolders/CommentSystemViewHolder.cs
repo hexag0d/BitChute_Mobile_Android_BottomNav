@@ -32,7 +32,7 @@ namespace BitChute.ViewHolders
             Action<int> avatarListener, Action<int> replyListener) : base(itemView)
         {
             // Locate and cache view references:
-            CreatorAvatar = itemView.FindViewById<ImageView>(2131230861); //commentAvatarImageView
+            CreatorAvatar = itemView.FindViewById<ImageView>(Resource.Id.creatorAvatarImageView); //commentAvatarImageView
             CommentTextView = itemView.FindViewById<TextView>(Resource.Id.commentContentsTextView);
             CreatorNameTextView = itemView.FindViewById<TextView>(Resource.Id.commenterNameTextViewRe);
             ReplyButton = itemView.FindViewById<Button>(Resource.Id.commentReplyButton);

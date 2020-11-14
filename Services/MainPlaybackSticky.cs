@@ -213,7 +213,8 @@ namespace BitChute.Services
             {
 
             }
-            if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
+            if (!PlaystateManagement.MediaPlayerIsStreaming || PlaystateManagement.WebViewPlayerIsStreaming ||
+                PlaystateManagement.PlayerTypeQueued() == PlaystateManagement.PlayerType.WebViewPlayer)
             {
                 try {
                     if (id == -1)

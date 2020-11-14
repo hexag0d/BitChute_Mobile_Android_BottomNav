@@ -110,7 +110,7 @@ namespace BitChute.Fragments
             }
             try
             {
-                SwapLoginView(false, true);
+                SwapFragView(false, true);
             }
             catch { }
             return FragmentContainerLayout;
@@ -119,7 +119,7 @@ namespace BitChute.Fragments
 
         public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
         }
 
@@ -127,7 +127,7 @@ namespace BitChute.Fragments
 
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
 
@@ -146,7 +146,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {

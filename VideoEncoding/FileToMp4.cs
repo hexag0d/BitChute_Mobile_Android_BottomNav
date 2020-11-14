@@ -14,6 +14,8 @@ using Android.Runtime;
 using System;
 using Android.OS;
 
+using static BitChute.VideoEncoding.MinEventArgs;
+
 namespace MediaCodecHelper
 {
     [Service]
@@ -41,7 +43,7 @@ namespace MediaCodecHelper
         public static bool AudioEncodingInProgress;
         public static bool VideoEncodingInProgress;
 
-        public delegate void VideoEncoderEventDelegate(EncoderEventArgs _args);
+        public delegate void VideoEncoderEventDelegate(EncoderMinArgs _args);
         public event VideoEncoderEventDelegate Progress;
 
         public static string GetWorkingDirectory(string wd = null)
@@ -190,7 +192,7 @@ namespace MediaCodecHelper
                  Disable this to make it faster when not debugging
                  */
 #if DEBUG
-                if (_frameCount >= 119 && AppSettings.Logging.SendToConsole)
+                if (_frameCount >= 120 && AppSettings.Logging.SendToConsole)
                         System.Console.WriteLine($"FileToMp4 exited @ {_outputSurface.WeakSurfaceTexture.Timestamp} " +
                             $" | encoded bits {_bitsEncodedSoFar} of estimated {_estimatedTotalSize}");
 #endif
@@ -246,10 +248,10 @@ namespace MediaCodecHelper
                 _muxer.Release();
                 _muxer = null;
                 if (File.Exists(outputPath)) {
-                    this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, true, false, outputPath));
+                    this.Progress.Invoke(new EncoderMinArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, true, false, outputPath));
                     return outputPath; }
             }
-            this.Progress.Invoke(new EncoderEventArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, false, false, null));
+            this.Progress.Invoke(new EncoderMinArgs(EncodedBits(_bfi.Size), _estimatedTotalSize, false, false, null));
             return null; //file isn't finished processing yet
         }
 
@@ -269,7 +271,7 @@ namespace MediaCodecHelper
             {
                 if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "sending EOS to encoder");
                 mEncoder.SignalEndOfInputStream();
-                this.Progress.Invoke(new EncoderEventArgs(_bitsEncodedSoFar, _estimatedTotalSize, true));
+                this.Progress.Invoke(new EncoderMinArgs(_bitsEncodedSoFar, _estimatedTotalSize, true));
             }
             ByteBuffer[] encoderOutputBuffers = mEncoder.GetOutputBuffers();
             while (true)
@@ -315,8 +317,8 @@ namespace MediaCodecHelper
                 }
                 else
                 {
-                    ByteBuffer ed = encoderOutputBuffers[encoderStatus];
-                    if (ed == null)
+                    ByteBuffer encoderBuffers = encoderOutputBuffers[encoderStatus];
+                    if (encoderBuffers == null)
                     {
                         throw new RuntimeException("encoderOutputBuffer " + encoderStatus +
                             " was null");
@@ -334,10 +336,10 @@ namespace MediaCodecHelper
                     {
                         if (!MuxerStarted) { throw new RuntimeException("muxer hasn't started"); }
                         // adjust the ByteBuffer values to match BufferInfo
-                        ed.Position(_bfi.Offset);
-                        ed.Limit(_bfi.Offset + _bfi.Size);
+                        encoderBuffers.Position(_bfi.Offset);
+                        encoderBuffers.Limit(_bfi.Offset + _bfi.Size);
 
-                        _muxer.WriteSampleData(mTrackIndex, ed, _bfi);
+                        _muxer.WriteSampleData(mTrackIndex, encoderBuffers, _bfi);
                         EncodedBits(_bfi.Size);
 #if DEBUG
                         if (AppSettings.Logging.SendToConsole)
@@ -363,7 +365,7 @@ namespace MediaCodecHelper
                     {
                         if (!es) { Log.Warn(TAG, "reached end of stream unexpectedly"); }
                         else { if (AppSettings.Logging.SendToConsole) Log.Debug(TAG, "end of stream reached"); }
-                        this.Progress.Invoke(new EncoderEventArgs(_bitsEncodedSoFar, _estimatedTotalSize, true, false));
+                        this.Progress.Invoke(new EncoderMinArgs(_bitsEncodedSoFar, _estimatedTotalSize, true, false));
                         break;      // out of while
                     }
                 }
@@ -501,7 +503,7 @@ namespace MediaCodecHelper
         {
             await System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
-                this.Progress.Invoke(new EncoderEventArgs(eb, ets));
+                this.Progress.Invoke(new EncoderMinArgs(eb, ets));
             });
         }
 

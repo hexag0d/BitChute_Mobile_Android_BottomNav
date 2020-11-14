@@ -1,95 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+  <LinearLayout
     android:orientation="vertical"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:alpha=".9"
+    android:foregroundGravity="top"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-	<LinearLayout
-		android:orientation="vertical"
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:id="@+id/linearLayout1">
-		<LinearLayout
-			android:orientation="vertical"
-			android:minWidth="25px"
-			android:minHeight="25px"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/linearLayout2">
-			<ProgressBar
-				android:layout_width="match_parent"
-				android:layout_height="100px"
-				android:progressBackgroundTint="@android:color/holo_purple"
-				android:indeterminate="true"
-				android:indeterminateTintMode="src_atop"
-				android:indeterminateTint="@android:color/holo_blue_light"
-				android:id="@+id/downloadProgressBar"
-				style="@android:style/Widget.Holo.ProgressBar.Horizontal"
-				android:min="0"
-				android:progress="0"
-				android:max="100"
-				android:scaleY="3"/>
-			<TextView
-				android:text=""
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textColor="@android:color/white"
-				android:id="@+id/progressTextView" />
-			<EditText
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textColor="@android:color/white"
-				android:id="@+id/downloadByUrlEditText"
-				android:textColorHint="@android:color/white"
-				android:maxLines="5"
-				android:hint="url"
-				android:background="#ff263238" />
-			<EditText
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textColor="@android:color/white"
-				android:id="@+id/downloadByUrlFileNameEditText"
-				android:text=""
-				android:textColorHint="@android:color/white"
-				android:hint="filename" />
-			<LinearLayout
-				android:orientation="horizontal"
-				android:minWidth="25px"
-				android:minHeight="25px"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/linearLayout3">
-				<Button
-					android:text="Video Files"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:id="@+id/getVideoFileDownloadButton" />
-				<Button
-					android:text="Download"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:id="@+id/downloadButton" />
-				<CheckBox
-					android:text="AutoTitle"
-					android:layout_width="wrap_content"
-					android:checked="true"
-					android:layout_height="match_parent"
-					android:textColor="@android:color/white"
-					android:id="@+id/autoFillTitleCheckBox" />
-				<Button
-					android:text="stop"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:id="@+id/cancelDownloadButton"/>
-			</LinearLayout>
-		</LinearLayout>
-		<android.support.v7.widget.RecyclerView
-			android:minWidth="25px"
-			android:minHeight="25px"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/fileRecyclerView" />
-	</LinearLayout>
-</LinearLayout>
+    android:layout_height="match_parent"
+    android:id="@+id/linearLayout1">
+    <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:foregroundGravity="top"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout2">
+      <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/linearLayout2">
+        <ImageView
+          android:src="@drawable/logo_bronze"
+          android:layout_width="wrap_content"
+          android:foregroundGravity="top"
+          android:layout_height="wrap_content"
+          android:id="@+id/videoDownloaderViewBackgroundImage" />
+      </LinearLayout>
+      <TextView
+        android:text="Video downloader"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="wrap_content"
+        android:foregroundGravity="top"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:id="@+id/titleTextView" />
+      <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="50px"
+        android:progressBackgroundTint="@android:color/holo_purple"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@android:color/holo_blue_light"
+        android:id="@+id/downloadProgressBar"
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+        android:min="0"
+        android:foregroundGravity="center"
+        android:progress="0"
+        android:max="100"
+        android:scaleY="3"/>
+      <TextView
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_light"
+        android:id="@+id/progressTextView" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/downloadByUrlEditText"
+        android:textColorHint="@android:color/holo_blue_light"
+        android:maxLines="5"
+        android:foregroundGravity="top"
+        android:hint="url"
+        android:background="#ff263238" />
+      <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:id="@+id/downloadByUrlFileNameEditText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:textColorHint="@android:color/holo_purple"
+        android:hint="filename" />
+      <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout3">
+        <Button
+          android:text="Video Files"
+          android:layout_width="wrap_content"
+          android:foregroundGravity="top"
+          android:layout_height="match_parent"
+          android:id="@+id/getVideoFileDownloadButton" />
+        <Button
+          android:text="Download"
+          android:layout_width="wrap_content"
+          android:foregroundGravity="top"
+          android:layout_height="match_parent"
+          android:id="@+id/downloadButton" />
+        <CheckBox
+          android:text="AutoTitle"
+          android:layout_width="wrap_content"
+          android:foregroundGravity="top"
+          android:checked="true"
+          android:layout_height="match_parent"
+          android:textColor="@android:color/white"
+          android:id="@+id/autoFillTitleCheckBox" />
+        <Button
+          android:text="stop"
+          android:foregroundGravity="top"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:id="@+id/cancelDownloadButton"/>
+      </LinearLayout>
+      <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:foregroundGravity="top"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/videoDownloaderDonateLayout">
+        <LinearLayout
+          android:orientation="horizontal"
+          android:minWidth="25px"
+          android:minHeight="25px"
+          android:foregroundGravity="top"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:id="@+id/vdDonateButtonLayout">
+          <Button
+            android:text="Donate"
+            android:layout_width="wrap_content"
+            android:foregroundGravity="top"
+            android:layout_height="match_parent"
+            android:id="@+id/videoDownloaderDonationButton"/>
+        </LinearLayout>
+        <LinearLayout
+          android:orientation="horizontal"
+          android:minWidth="25px"
+          android:minHeight="25px"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/linearLayout2">
+          <TextView
+            android:text="Consider Making a donation to help support freespeech content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:id="@+id/considerADonationTextview" />
+        </LinearLayout>
+      </LinearLayout>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+      android:minWidth="25px"
+      android:alpha=".8"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/fileRecyclerView" />
+  </LinearLayout>
+  <ImageView
+    android:src="@drawable/background_fractal"
+    android:layout_width="match_parent"
+    android:foregroundGravity="center"
+    android:scaleType="fitXY"
+    android:alpha=".2"
+    android:layout_height="match_parent"
+    android:id="@+id/videoDownloaderViewBackgroundImage" />
+</RelativeLayout>

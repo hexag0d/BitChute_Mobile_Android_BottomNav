@@ -288,26 +288,6 @@ namespace BitChute
             AppSettingsLoadingFromAndroid = false;
             return true;
         }
-        /// <summary>
-        /// gets the url string; input examples include: "tab4overridestring" and "tab5overridestring"
-        /// </summary>
-        /// <param name="tabPref"></param>
-        /// <returns></returns>
-        public static string GetTabOverrideUrlPref(string tabPref)
-        {
-            Prefs = GetAppSharedPrefs();
-
-            switch (tabPref)
-            {
-                case "tab3overridestring":
-                    string t4url = Https.URLs.GetUrlStringFromPref(Prefs.GetString("tab4overridestring", "MyChannel"));
-                    return t4url;
-                case "tab4overridestring":
-                    string t5url = Https.URLs.GetUrlStringFromPref(Prefs.GetString("tab5overridestring", "Settings"));
-                    return t5url;
-            }
-            return Https.URLs._homepage;
-        }
 
         public class Debug
         {

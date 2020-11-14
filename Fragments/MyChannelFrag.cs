@@ -25,8 +25,6 @@ namespace BitChute.Fragments
         public static object WebViewClient;
         
         public static int TNo = 3;
-        public static bool WvRling;
-
 
         public static MyChannelFrag NewInstance(string title, string icon, string tabOverridePref = null, int tabId = -1)
         {
@@ -67,7 +65,6 @@ namespace BitChute.Fragments
             }
         }
 
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             try
@@ -84,6 +81,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Tab3.DownloadFileNameEditText = ViewHelpers.Tab3.DownloaderLayout.FindViewById<EditText>(Resource.Id.downloadByUrlFileNameEditText);
                 ViewHelpers.Tab3.DownloadProgressBar = ViewHelpers.Tab3.DownloaderLayout.FindViewById<ProgressBar>(Resource.Id.downloadProgressBar);
                 ViewHelpers.Tab3.DownloadProgressTextView = ViewHelpers.Tab3.DownloaderLayout.FindViewById<TextView>(Resource.Id.progressTextView);
+                DownloaderLayout.FindViewById<Button>(Resource.Id.videoDownloaderDonationButton).Click += MakeADonationButton_OnClick;
                 Wv = (ServiceWebView)ViewHelpers.Tab3.WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView3Swapable);
                 Wv.RootUrl = RootUrl;
                 ViewHelpers.Container = container;
@@ -137,27 +135,28 @@ namespace BitChute.Fragments
             return ViewHelpers.Tab3.TabFragmentLinearLayout;
         }
 
+        public void MakeADonationButton_OnClick(object sender, EventArgs e)
+        {
+            MakeADonationViaWebView();
+        }
 
         public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
 
-            SwapLoginView(true);
+            SwapFragView(true);
         }
-
-
 
         public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
         {
             Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
 
-            SwapLoginView(true);
+            SwapFragView(true);
         }
-
 
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
         public void LoginButton_OnClick(object sender, EventArgs e)
@@ -169,13 +168,12 @@ namespace BitChute.Fragments
             PasswordTextBox.Text = "";
         }
 
-
         static bool LoginVisible;
         /// <summary>
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
@@ -268,7 +266,6 @@ namespace BitChute.Fragments
                 MainActivity.ViewPager.CurrentItem = 3;
             }
         }
-
 
         /// <summary>
         /// swaps the view for this tab

@@ -226,7 +226,7 @@ namespace BitChute.Web
             {
                 ViewHelpers.DoActionOnUiThread(() =>
                 {
-                    ((CommonFrag)frag).SwapLoginView(true);
+                    ((CommonFrag)frag).SwapFragView(true);
                 });
             }
             AppState.UserIsLoggedIn = true;
@@ -244,7 +244,7 @@ namespace BitChute.Web
             await Task.Delay(20);
             //DoActionOnUiThread(() => w.LoadUrl(GetInjectable(CallBackInjection.OnWindowDocumentLoadEndPlayer)));
             DoActionOnUiThread(() => w.LoadUrl(GetInjectable(JavascriptCommands.JsHidePageBar)));
-            
+            GetWebViewPlayerById(w.Id).SetReload();
             DoActionOnUiThread(() => w.LoadUrl(JavascriptCommands._jsHideMargin));
             await Task.Delay(d);
             DoActionOnUiThread(() => w.LoadUrl(GetInjectable(JsDisableToolTips + JsHideTooltips)));
@@ -293,7 +293,7 @@ namespace BitChute.Web
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().StartsWith(@"https://_"))
+                if (request.Url.Host.StartsWith(@"_")) // this reroutes javascript playstate callbacks from the webview 
                 {
                     //check if we're currently on a bitchute page and otherwise don't reroute
                     if (view.Url.StartsWith("https://www.bitchute.com") || view.Url.StartsWith("https://bitchute.com"))
@@ -308,17 +308,19 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.Path.EndsWith(@"/video.css")) //|| request.Url.Path.EndsWith(@"/bootstrap.min.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    /*if (request.Url.Path.EndsWith(@"/video.css")) */{ return CssHelper.GetCssResponse(CssHelper.VideoCss); }
-                    //else if (CssHelper.BootstrapCss != "") { return CssHelper.GetCssResponse(CssHelper.BootstrapCss); }
+                    if (request.Url.LastPathSegment.EndsWith("s")) //|| request.Url.Path.EndsWith(@"/bootstrap.min.css"))
+                    {
+                        if (request.Url.Path.EndsWith(@"/video.css")) { return CssHelper.GetCssResponse(CssHelper.VideoCss); }
+                        //else if (CssHelper.BootstrapCss != "") { return CssHelper.GetCssResponse(CssHelper.BootstrapCss); }
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override void OnPageFinished(WebView view, string url)
             {
-                GetWebViewPlayerById(view.Id).SetReload();
                 base.OnPageFinished(view, url);
                 Task.Factory.StartNew(() => { RunBaseCommands(view, MainActivity.ViewPager.CurrentItem); });
             }
@@ -341,9 +343,15 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"common.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    if (request.Url.LastPathSegment.EndsWith("s"))
+                    {
+                        if (request.Url.LastPathSegment.EndsWith("common.css"))
+                        {
+                            return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                        }
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
@@ -372,20 +380,29 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith("common.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                    if (request.Url.LastPathSegment.EndsWith("s"))
+                    {
+                        if (request.Url.LastPathSegment.EndsWith("common.css"))
+                        {
+                            return CssHelper.GetCssResponse(CssHelper.CommonCss);
+                        }
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith("=/subscriptions/"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/subscriptions/")
+                    if (request.Url.LastPathSegment.EndsWith("ns/"))
                     {
-                        MainActivity.Fm1.SwapLoginView(false, false, true);
+                        if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/subscriptions/")
+                        {
+                            MainActivity.Fm1.SwapFragView(false, false, true);
+                        }
                     }
                 }
                 return base.ShouldOverrideUrlLoading(view, request);
@@ -415,9 +432,15 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"common.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCssFeed);
+                    if (request.Url.LastPathSegment.EndsWith("s"))
+                    {
+                        if (request.Url.LastPathSegment.EndsWith("common.css"))
+                        {
+                            return CssHelper.GetCssResponse(CssHelper.CommonCssFeed);
+                        }
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
@@ -446,20 +469,29 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"/common.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCssMyChannel);
+                    if (request.Url.LastPathSegment.EndsWith("s"))
+                    {
+                        if (request.Url.LastPathSegment.EndsWith("common.css"))
+                        {
+                            return CssHelper.GetCssResponse(CssHelper.CommonCssMyChannel);
+                        }
+                    }
                 }
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith("=/profile/"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/profile/")
+                    if (request.Url.LastPathSegment.EndsWith(@"e/"))
                     {
-                        MainActivity.Fm3.SwapLoginView(false, false, true);
+                        if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/profile/")
+                        {
+                            MainActivity.Fm3.SwapFragView(false, false, true);
+                        }
                     }
                 }
                 return base.ShouldOverrideUrlLoading(view, request);
@@ -481,33 +513,50 @@ namespace BitChute.Web
 
             public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith($"/common.css"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    return CssHelper.GetCssResponse(CssHelper.CommonCssSettings);
-                }
-                if (request.Url.ToString() == @"https://www.bitchute.com/accounts/logout/")
-                {
-                    if (request.Method == "GET")
+                    if (request.Url.LastPathSegment.EndsWith("s"))
                     {
-                        if (OnLogout == null) {
-                            OnLogout += RunOnLogout;
-                            OnLogout += RunPostAuthEvent.OnPostLogout;
+                        if (request.Url.LastPathSegment.EndsWith("common.css"))
+                        {
+                            return CssHelper.GetCssResponse(CssHelper.CommonCssSettings);
                         }
-                        OnLogout.Invoke(new LogoutEventArgs());
-                        AppState.UserIsLoggedIn = false;
+                    }
+                    if (request.Url.LastPathSegment.EndsWith(@"t/"))
+                    {
+                        if (request.Url.ToString() == @"https://www.bitchute.com/accounts/logout/")
+                        {
+                            if (request.Method == "GET")
+                            {
+                                if (OnLogout == null)
+                                {
+                                    OnLogout += RunOnLogout;
+                                    OnLogout += RunPostAuthEvent.OnPostLogout;
+                                }
+                                OnLogout.Invoke(new LogoutEventArgs());
+                                AppState.UserIsLoggedIn = false;
+                            }
+                        }
                     }
                 }
+
                 return base.ShouldInterceptRequest(view, request);
             }
 
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
-                if (request.Url.ToString().EndsWith("=/settings/") || request.Url.ToString().EndsWith(@"logout/"))
+                if (request.Url.LastPathSegment != null)
                 {
-                    if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/settings/"||
-                        request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/accounts/logout/")
+                    if (request.Url.LastPathSegment.EndsWith(@"s/") || request.Url.LastPathSegment.EndsWith(@"t/"))
                     {
-                        MainActivity.Fm4.SwapLoginView(false, false, true);
+                        if (request.Url.LastPathSegment.EndsWith(@"=/settings/") || request.Url.LastPathSegment.EndsWith(@"logout/"))
+                        {
+                            if (request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/settings/" ||
+                                request.Url.ToString() == "https://www.bitchute.com/accounts/login/?next=/accounts/logout/")
+                            {
+                                MainActivity.Fm4.SwapFragView(false, false, true);
+                            }
+                        }
                     }
                 }
                 return base.ShouldOverrideUrlLoading(view, request);

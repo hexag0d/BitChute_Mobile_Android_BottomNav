@@ -114,7 +114,6 @@ namespace BitChute
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-
             Main = this;
             StartUp();
             _window = this.Window;
@@ -123,7 +122,6 @@ namespace BitChute
             SetContentView(Resource.Layout.Main);
             //Android.Webkit.WebView wv = (Android.Webkit.WebView)
             ViewHelpers.Main.ContentRelativeLayout = FindViewById<Android.Widget.RelativeLayout>(Resource.Id.activityMain);
-
             //wv.SetBackgroundColor(Android.Graphics.Color.Black);
             //wv.LoadUrl("file:///android_asset/html/splash.html");
             WindowManager.DefaultDisplay.GetMetrics(metrics);
@@ -159,13 +157,10 @@ namespace BitChute
             }
             CreateNotificationChannel();
             ViewHelpers.Main.DownloadFAB = FindViewById<FloatingActionButton>(Resource.Id.downloadFab);
-
-
             if (AppSettings.DlFabShowSetting == "never" || AppSettings.DlFabShowSetting == "onpress")
             {
                 ViewHelpers.Main.SetDownloadFabViewState(true);
             }
-
             ForegroundReceiver = new CustomIntent.ControlIntentReceiver();
         }
 
@@ -196,9 +191,7 @@ namespace BitChute
                 shiftingMode.SetBoolean(menuView, false);
                 shiftingMode.Accessible = false;
             }
-            catch {
-
-            }
+            catch {  }
             var positionKey = -1;
 
             if (!setExisting && tabs != null)
@@ -276,7 +269,6 @@ namespace BitChute
                 System.Console.WriteLine((ex.InnerException ?? ex).Message);
             }
         }
-
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
@@ -434,9 +426,7 @@ namespace BitChute
         /// <param name="oa"></param>
         public void OnSettingsChanged(List<object> oa)
         {
-            if (AppSettings.Tab3OverrideEnabled)
-            {
-            }
+            if (AppSettings.Tab3OverrideEnabled){}
             Fm0.OnSettingsChanged(oa);
             Fm1.OnSettingsChanged(oa);
             Fm2.OnSettingsChanged(oa);
@@ -524,8 +514,6 @@ namespace BitChute
                     {
                         NavViewItemList[tab].ItemData.SetTitle("Downloader");
                         NavViewItemList[tab].ItemData.SetIcon(Main.GetDrawable(Resource.Drawable.tab_mychannel));
-
-
                     }
                     BitChute.Web.ViewClients.SetWebViewClientFromObject(Fm3.Wv,
                         TabStates.GetWebViewClientByType(TabStates.TabFragPackage.FragmentType.None, changeDetails));
@@ -584,7 +572,7 @@ namespace BitChute
 
         public void HomeLongClickListener(object sender, LongClickEventArgs e)
         {
-            Fm0.SwapLoginView();
+            Fm0.SwapFragView();
         }
 
         public void MyChannelLongClickListener(object sender, LongClickEventArgs e)
@@ -609,7 +597,7 @@ namespace BitChute
             {
                 ViewPager.CurrentItem = 4;
             }
-            SettingsFrag.SwapSettingView();
+            Fm4.SwapSettingView();
         }
 
         /// <summary>
@@ -631,7 +619,6 @@ namespace BitChute
         /// </summary>
         public static void ForceAppIntoStickyBackground()
         {
-
             UserRequestedStickyBackground = true;
             MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification(), true, true);
             Main.MoveTaskToBack(true);
@@ -853,35 +840,45 @@ namespace BitChute
         static bool WindowFocusChangedToBackground = false;
         static bool ActivityPaused = false;
 
+        enum AppMinimizeOrder
+        {
+            None,
+            WindowFocusChangedFirst,
+            AppPausedFirst,
+            BackgroundExplicit
+        };
+
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            if (!hasFocus && !WindowFocusChangedToBackground) { WindowFocusChangedToBackground = true; }// track that window focus changed to check if this fired before or after OnPause()
-            base.OnWindowFocusChanged(hasFocus);
-            SetFocusTrackBitAfterDelay();
+            WindowFocusChangedToBackground = hasFocus; // track if window focus changed to check if this fired before or after OnPause()
         }
 
-        static async void SetFocusTrackBitAfterDelay()
+        void OnDelayedWindowFocusChange(bool hasFocus)
         {
-            await Task.Delay(250);
-            WindowFocusChangedToBackground = false;
+            base.OnWindowFocusChanged(hasFocus);
         }
-        
+
         protected override void OnPause()
         {
-            var focus = WindowFocusChangedToBackground;
-            VerifyInBackground();
-            base.OnPause();
-            if (!focus)
+            VerifyInBackground(WindowFocusChangedToBackground);
+
+            if (UserRequestedStickyBackground)
             {
-                if (UserRequestedStickyBackground)
-                {
-                    StartStickyAfterDelay(0, UserRequestedStickyBackground, CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Id);
-                }
+                StartStickyAfterDelay(0, UserRequestedStickyBackground, CommonFrag.GetFragmentById(-1, null, ViewPager.CurrentItem).Wv.Id);
+
+                UserRequestedStickyBackground = false;
             }
+
+            base.OnPause();
         }
 
-        public static void VerifyInBackground()
+        public async void DelayedPause()
         {
+        }
+
+        public static void VerifyInBackground(bool windowFocusChangedBeforeOnPause)
+        {
+
             MainPlaybackSticky.ServiceWebView.ClearWebViewMinimizedState();
             foreach (var webView in PlaystateManagement.WebViewIdDictionary)
             {
@@ -901,7 +898,6 @@ namespace BitChute
         public static async void AwaitGetCurrentlyPlayingWebView()
         {
             _latestDetectedPlayingWebView = await ExtWebValueCallbackListener.GetCurrentlyPlayingWebView();
-
         }
 
         public static async void StartStickyAfterDelay(int d = 3000, bool userRequestedStickyBackground = false, int idOverride = -1)
@@ -922,11 +918,9 @@ namespace BitChute
                 MainPlaybackSticky.StartForeground(BitChute.ExtNotifications.BuildPlayControlNotification(), true, true);
             }
         }
-
-
+        
         protected override void OnDestroy()
         {
-            
             if (AppState.UserIsLoggedIn)
             {
                 AppSettings.UserWasLoggedInLastAppClose = true;
@@ -947,12 +941,16 @@ namespace BitChute
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             try { MainPlaybackSticky.ExternalStopForeground();
                 AppState.ForeNote = null;
+                foreach (var wv in PlaystateManagement.WebViewIdDictionary)
+                {
+                    wv.Value.LoadUrl(JavascriptCommands._jsPlayVideo);
+                }
             }
             catch(Exception ex) { }
             MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnDestroy();
         }
 
-        public static Context GetMainContext() {   return Main.ApplicationContext; }
+        public static Context GetMainContext() { return Main.ApplicationContext; }
     }
 }

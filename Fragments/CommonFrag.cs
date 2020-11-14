@@ -149,11 +149,25 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public virtual void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public virtual void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
         }
 
-            public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
+        public void MakeADonationViaWebView()
+        {
+            if (!(this.TabId >= MainActivity.ViewPager.ChildCount))
+            {
+                CommonFrag.GetFragmentById(-1, null, this.TabId + 1).Wv.LoadUrlWithDelay(Https.URLs.MakeADonation);
+                MainActivity.ViewPager.CurrentItem = this.TabId + 1;
+            }
+            else
+            {
+                CommonFrag.GetFragmentById(-1, null, 0).Wv.LoadUrlWithDelay(Https.URLs.MakeADonation);
+                MainActivity.ViewPager.CurrentItem = 0;
+            }
+        }
+
+        public void SetWebViewVis() { Wv.Visibility = ViewStates.Visible; }
         public async void ExpandVideoCards(bool delayed)
         {
             if (delayed)

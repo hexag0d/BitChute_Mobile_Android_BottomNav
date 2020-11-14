@@ -412,7 +412,7 @@
     <AndroidResource Include="Resources\layout\CommentCardViewReplies.axml" />
     <Content Include="Assets\html\background_fractal.png" />
     <AndroidResource Include="Resources\drawable\noavatar.png" />
-    <Content Include="Resources\drawable\background_fractal.png" />
+    <AndroidResource Include="Resources\drawable\background_fractal.png" />
     <AndroidResource Include="Resources\layout\Tab1WebView.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>

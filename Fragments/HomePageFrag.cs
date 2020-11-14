@@ -113,25 +113,25 @@ namespace BitChute.Fragments
             if (ShowLoginOnStartup)
             {
                 //SwapMainActivityLoginView(true);
-                SwapLoginView();
+                SwapFragView();
             }
             else
             {
-                SwapLoginView(false, true);
+                SwapFragView(false, true);
             }
             return ViewHelpers.Tab0.FragmentContainerLayout;
         }
 
         public void RegisterNewAccountButton_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
             Wv.LoadUrl("https://www.bitchute.com/accounts/register/");
         }
 
 
         public void ForgotPasswordButton_OnClick(object sender, EventArgs e)
         {
-            SwapLoginView(true);
+            SwapFragView(true);
             Wv.LoadUrl("https://www.bitchute.com/accounts/reset/");
         }
 
@@ -147,14 +147,14 @@ namespace BitChute.Fragments
         public void ContinueWithoutLogin_OnClick(object sender, EventArgs e)
         {
             if (MainActivity.ViewPager.CurrentItem == 0)
-            SwapLoginView(true);
+            SwapFragView(true);
         }
 
         public void OnPostLoginAttempt(LoginEventArgs e)
         {
             if (e.LoginSuccess)
             {
-                MainActivity.Fm0.SwapLoginView(true);
+                MainActivity.Fm0.SwapFragView(true);
                 ContinueWithoutLoginButton.Visibility = ViewStates.Gone;
                 return;
             }
@@ -181,7 +181,7 @@ namespace BitChute.Fragments
         /// swaps the view for the test login layout
         /// </summary>
         /// <param name="v"></param>
-        public override void SwapLoginView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
+        public override void SwapFragView(bool forceRemoveLoginLayout = false, bool forceWebViewLayout = false, bool forceShowLoginView = false)
         {
             if (forceRemoveLoginLayout)
             {
