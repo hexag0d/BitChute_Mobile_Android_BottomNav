@@ -301,7 +301,6 @@ namespace BitChute.Web
 
                 else if (!getInitialHeaders && !addRequestHeaders && !checkSessionState)
                 {
-                    //ExtWebInterface.HttpClient.DefaultRequestHeaders.Add("Cookie", GetRequestHeader(null, true));
                     getRequest = await HttpClient.GetAsync(url);
                 }
                 else if (!getInitialHeaders && checkSessionState && addRequestHeaders)
@@ -319,16 +318,13 @@ namespace BitChute.Web
 
                             }
                         }
-                        
                     }
-                    var dHeaders = ExtWebInterface.HttpClient.DefaultRequestHeaders;
                     getRequest = await HttpClient.GetAsync(url);
                 }
                 else
                 {
                     getRequest = await HttpClient.GetAsync(url);
                 }
-                
                 return await getRequest.Content.ReadAsStringAsync();
             }
             catch { }

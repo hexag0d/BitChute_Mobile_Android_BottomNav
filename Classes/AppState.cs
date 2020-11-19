@@ -71,6 +71,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.8.9.API8.ClickableAvatar";
+        public static string AppVersion = "28.8.9.1.API8.VideoDownloaderUpdate";
     }
 }
