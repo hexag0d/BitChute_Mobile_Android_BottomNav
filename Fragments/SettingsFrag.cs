@@ -18,6 +18,7 @@ using static BitChute.ViewHelpers.Tab4;
 using System.Linq;
 using MediaCodecHelper;
 using static BitChute.Web.ViewClients;
+using BitChute.App;
 
 namespace BitChute.Fragments
 {
@@ -26,27 +27,19 @@ namespace BitChute.Fragments
         string _title;
         string _icon;
         //public static ServiceWebView Wv;
-        public static object WebViewClient;
+        public static object Wvc;
 
         public static SettingsFrag NewInstance(string title, string icon, string tabOverridePref = null, int tabId = -1)
         {
-            string rootUrl = "";
             var fragment = new SettingsFrag();
             fragment.Arguments = new Bundle();
-            if (tabOverridePref != null && AppSettings.Tab4OverrideEnabled)
-            {
-                var tabFragPackage = new App.TabStates.TabFragPackage(tabOverridePref, true);
-                WebViewClient = tabFragPackage.WebViewClient;
-                rootUrl = tabFragPackage.RootUrl;
-                title = tabFragPackage.Title;
-                icon = tabFragPackage.Icon.ToString();
-            }
-            else
-            {
-                WebViewClient = new Settings();
-                rootUrl = "https://www.bitchute.com/settings/";
-            }
-            fragment.RootUrl = rootUrl;
+            var tabFragPackage = new TabStates.TabFragPackage();
+            if (tabOverridePref != null && AppSettings.Tab4OverrideEnabled) { tabFragPackage = new TabStates.TabFragPackage(tabOverridePref, true); }
+            else { tabFragPackage = new TabStates.TabFragPackage(TabStates.TabFragPackage.FragmentType.Settings); }
+            title = tabFragPackage.Title;
+            icon = tabFragPackage.Icon.ToString();
+            Wvc = tabFragPackage.WebViewClient;
+            fragment.RootUrl = tabFragPackage.RootUrl;
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
             fragment.Arguments.PutInt("tabId", tabId);
@@ -103,7 +96,7 @@ namespace BitChute.Fragments
                 TabFragmentLinearLayout.AddView(ViewHelpers.Tab4.InternalTabbedLayout);
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
                 Wv.RootUrl = RootUrl;
-                BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, WebViewClient);
+                BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, Wvc);
                 Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;

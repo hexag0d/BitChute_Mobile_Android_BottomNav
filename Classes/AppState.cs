@@ -71,6 +71,6 @@
         /// this string is used in the app settings fragment to notify user 
         /// of version they're running
         /// </summary>
-        public static string AppVersion = "28.8.9.1.API8.VideoDownloaderUpdate";
+        public static string AppVersion = "28.8.9.3.API8.VideoDownloaderUpdate";
     }
 }

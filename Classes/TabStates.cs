@@ -66,8 +66,10 @@ namespace BitChute.App
             }
             if (fromSettingsWithOverride)
             {
-                tab3 = new TabFragPackage(AppSettings.Tab3OverridePreference);
-                tab4 = new TabFragPackage(AppSettings.Tab4OverridePreference);
+                if (AppSettings.Tab3OverrideEnabled) { tab3 = new TabFragPackage(AppSettings.Tab3OverridePreference); }
+                else { tab3 = new TabFragPackage(FragmentType.MyChannel); }
+                if (AppSettings.Tab4OverrideEnabled) { tab4 = new TabFragPackage(AppSettings.Tab4OverridePreference); }
+                else { tab4 = new TabFragPackage(FragmentType.Settings); }
             }
             tabfrags.Add(tab0);
             tabfrags.Add(tab1);
@@ -121,6 +123,7 @@ namespace BitChute.App
                 Icon = GetTabIconFromString(fragType.ToString());
                 Title = fragType.ToString();
                 RootUrl = Https.URLs.GetUrlStringFromPref(fragType.ToString());
+                WebViewClient = GetWebViewClientByType(FragmentType.None, fragType.ToString());
             }
 
             public TabFragPackage(string fragType, bool withWebViewClient = false)

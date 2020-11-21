@@ -22,29 +22,21 @@ namespace BitChute.Fragments
     {
         string _title;
         string _icon;
-        public static object WebViewClient;
+        public static object Wvc;
         
         public static int TNo = 3;
 
         public static MyChannelFrag NewInstance(string title, string icon, string tabOverridePref = null, int tabId = -1)
         {
-            string rootUrl = "";
             var fragment = new MyChannelFrag();
             fragment.Arguments = new Bundle();
-            if (tabOverridePref != null && AppSettings.Tab3OverrideEnabled)
-            {
-                var tabFragPackage = new TabStates.TabFragPackage(tabOverridePref, true);
-                WebViewClient = tabFragPackage.WebViewClient;
-                rootUrl = tabFragPackage.RootUrl;
-                title = tabFragPackage.Title;
-                icon = tabFragPackage.Icon.ToString();
-            }
-            else
-            {
-                WebViewClient = new MyChannel();
-                rootUrl = "https://www.bitchute.com/profile/";
-            }
-            fragment.RootUrl = rootUrl;
+            var tabFragPackage = new TabStates.TabFragPackage();
+            if (tabOverridePref != null && AppSettings.Tab3OverrideEnabled) { tabFragPackage = new TabStates.TabFragPackage(tabOverridePref, true); }
+            else{ tabFragPackage = new TabStates.TabFragPackage(TabStates.TabFragPackage.FragmentType.MyChannel); }
+            title = tabFragPackage.Title;
+            icon = tabFragPackage.Icon.ToString();
+            Wvc = tabFragPackage.WebViewClient;
+            fragment.RootUrl = tabFragPackage.RootUrl;
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
             fragment.Arguments.PutInt("tabId", tabId);
@@ -98,7 +90,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Main.DownloadFAB.Clickable = true;
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
                 //if (AppSettings.Tab3OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab3overridestring"); }
-                BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, WebViewClient);
+                BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, Wvc);
                 Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;

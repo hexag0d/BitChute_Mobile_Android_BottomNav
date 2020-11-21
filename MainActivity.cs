@@ -319,7 +319,7 @@ namespace BitChute
             Fm0 = HomePageFrag.NewInstance("Home", "tab_home", null, 0);
             Fm1 = SubscriptionFrag.NewInstance("Subs", "tab_subs", null, 1);
             Fm2 = FeedFrag.NewInstance("Subs", "tab_home", null, 2);
-            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_home", AppSettings.Tab3OverridePreference, 3);
+            Fm3 = MyChannelFrag.NewInstance("MyChannel", "tab_home", AppSettings.Tab3OverridePreference, 3); 
             Fm4 = SettingsFrag.NewInstance("Settings", "tab_home", AppSettings.Tab4OverridePreference, 4);
             Main.InitializeTabs();
             Main.FinalizeStartUp();
@@ -941,12 +941,17 @@ namespace BitChute
             NavigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             try { MainPlaybackSticky.ExternalStopForeground();
                 AppState.ForeNote = null;
-                foreach (var wv in PlaystateManagement.WebViewIdDictionary)
-                {
-                    wv.Value.LoadUrl(JavascriptCommands._jsPlayVideo);
-                }
+
             }
             catch(Exception ex) { }
+            try
+            {
+                foreach (var wv in PlaystateManagement.WebViewIdDictionary)
+                {
+                    wv.Value.LoadUrl(JavascriptCommands._jsPauseVideo);
+                }
+            }
+            catch { }
             MainPlaybackSticky.AppIsMovingIntoBackgroundAndStreaming = false;
             base.OnDestroy();
         }
