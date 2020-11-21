@@ -24,31 +24,31 @@ namespace BitChute.App
             switch (tabString)
             {
                 case "Home":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_home);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_home);
                     return icon;
                 case "Subs":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_subs);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_subs);
                     return icon;
                 case "Feed":
-                    icon = MainActivity.Main.GetDrawable(Resource.Drawable.tab_playlists);
+                    icon = MainActivity.Instance.GetDrawable(Resource.Drawable.tab_playlists);
                     return icon;
                 case "MyChannel":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_mychannel);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_mychannel);
                     return icon;
                 case "Settings":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_settings);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_settings);
                     return icon;
                 case "Playlists":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_playlists);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_playlists);
                     return icon;
                 case "WatchLater":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_playlists);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_playlists);
                     return icon;
                 case "Explore":
-                    icon =  MainActivity.Main.GetDrawable(Resource.Drawable.tab_home);
+                    icon =  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_home);
                     return icon;
             }
-            return  MainActivity.Main.GetDrawable(Resource.Drawable.tab_home);
+            return  MainActivity.Instance.GetDrawable(Resource.Drawable.tab_home);
         }
 
         public static List<TabFragPackage> GetTabFragPackages(bool fromSettingsWithOverride = false)

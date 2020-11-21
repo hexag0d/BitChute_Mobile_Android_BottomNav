@@ -144,8 +144,8 @@ namespace BitChute
 
             public static void WvSearchOverride(WebView wv, string url, bool darkMode = true)
             {
-                if (darkMode) { MainActivity.Main.RunOnUiThread(() => { wv.LoadUrl(url); }); }
-                else { MainActivity.Main.RunOnUiThread(() => { wv.LoadUrl(url); }); }
+                if (darkMode) { MainActivity.Instance.RunOnUiThread(() => { wv.LoadUrl(url); }); }
+                else { MainActivity.Instance.RunOnUiThread(() => { wv.LoadUrl(url); }); }
                 SearchOverride.SearchOverrideInProg = false;
             }
 

@@ -97,7 +97,7 @@ namespace BitChute.Fragments
                 Wv = (ServiceWebView)WebViewFragmentLayout.FindViewById<ServiceWebView>(Resource.Id.webView4Swapable);
                 Wv.RootUrl = RootUrl;
                 BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, Wvc);
-                Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Main));
+                Wv.SetWebChromeClient(new ExtendedChromeClient(MainActivity.Instance));
                 Wv.Settings.JavaScriptEnabled = true;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
@@ -691,7 +691,7 @@ namespace BitChute.Fragments
                 _settingsList.Add(AppSettings.Tab2Hide);
                 _settingsList.Add(AppSettings.Tab0FeaturedOn);
                 _settingsList.Add(AppSettings.Tab4OverrideEnabled);
-                MainActivity.Main.OnSettingsChanged(_settingsList);
+                MainActivity.Instance.OnSettingsChanged(_settingsList);
             }
         }
 

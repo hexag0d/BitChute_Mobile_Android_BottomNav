@@ -82,7 +82,7 @@ namespace BitChute.Web
         public static async void RunAfterDelay(WebView wv, string command, int delay = 10)
         {
             await Task.Delay(delay);
-            MainActivity.Main.RunOnUiThread(() => { wv.LoadUrl(command); });
+            MainActivity.Instance.RunOnUiThread(() => { wv.LoadUrl(command); });
         }
 
         public static async void HidePageTitle(WebView w, int delay = 5000)

@@ -91,7 +91,7 @@ namespace BitChute.Fragments
                 ViewHelpers.Main.DownloadFAB.Click += VideoDownloader.DownloadFAB_OnClick;
                 //if (AppSettings.Tab3OverrideEnabled) { RootUrl = AppSettings.GetTabOverrideUrlPref("tab3overridestring"); }
                 BitChute.Web.ViewClients.SetWebViewClientFromObject(Wv, Wvc);
-                Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Main));
+                Wv.SetWebChromeClient(new ExtWebChromeClient.ExtendedChromeClient(MainActivity.Instance));
                 Wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 Wv.Settings.DisplayZoomControls = false;
                 Wv.Settings.JavaScriptEnabled = true;

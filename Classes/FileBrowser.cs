@@ -23,7 +23,7 @@ namespace BitChute
         public static FileRecyclerViewAdapter FileAdapter;
         private static int _requestCode;
         public static FileBrowser StatBrowser = new FileBrowser();
-        public delegate void FileChooserEventDelegate(FileChooserArgs _args);
+        public delegate void FileChooserEventDelegate(FileChooserEventArgs _args);
         public event FileChooserEventDelegate Selected;
         public static string LatestFilePath = "";
         public static string LatestSendTo;
@@ -52,19 +52,19 @@ namespace BitChute
             intent.AddCategory(Intent.CategoryOpenable);
             intent.PutExtra(Intent.ExtraLocalOnly, true);
             
-            MainActivity.Main.StartActivityForResult(intent, _requestCode);
+            MainActivity.Instance.StartActivityForResult(intent, _requestCode);
         }
 
         /// <summary>
         /// sendto = "encoder", "uploader"
         /// </summary>
-        public class FileChooserArgs : EventArgs
+        public class FileChooserEventArgs : EventArgs
         {
             private string _path;
             private bool _cancelled;
             private string _sendTo;
             private Android.Net.Uri _uri;
-            public FileChooserArgs(string path = null, string sendTo = null, bool cancelled = false, Android.Net.Uri uri = null)
+            public FileChooserEventArgs(string path = null, string sendTo = null, bool cancelled = false, Android.Net.Uri uri = null)
             {
                 if (path != null) { _path = path; }
                 _cancelled = cancelled;
@@ -77,7 +77,7 @@ namespace BitChute
             public Android.Net.Uri Uri { get { return _uri; } }
         }
 
-        public static void OnFileSelected(FileChooserArgs e)
+        public static void OnFileSelected(FileChooserEventArgs e)
         {
             if (e.Path != null || e.Path != "") { LatestFilePath = e.Path; }
             if (e.SendTo != null)
@@ -95,13 +95,13 @@ namespace BitChute
         {
             string decodedPath = "";
             decodedPath = UriDecoder.ConvertUriToString(uri);
-            StatBrowser.Selected.Invoke(new FileChooserArgs(decodedPath, sendToIntent));
+            StatBrowser.Selected.Invoke(new FileChooserEventArgs(decodedPath, sendToIntent));
             return decodedPath;
         }
 
         public static Android.Net.Uri ImportFileToUri(Android.Net.Uri uri, string sendToIntent, Context ctx)
         {
-            StatBrowser.Selected.Invoke(new FileChooserArgs(null, sendToIntent, false, uri));
+            StatBrowser.Selected.Invoke(new FileChooserEventArgs(null, sendToIntent, false, uri));
             return uri;
         }
 
@@ -137,15 +137,15 @@ namespace BitChute
         public static bool GetExternalPermissions()
         {
             bool permissionGranted;
-            if (CheckSelfPermission(MainActivity.Main, WriteExternalStorage) != (int)Permission.Granted)
+            if (CheckSelfPermission(MainActivity.Instance, WriteExternalStorage) != (int)Permission.Granted)
             {
-                RequestPermissions(MainActivity.Main, new string[] { WriteExternalStorage }, 0);
+                RequestPermissions(MainActivity.Instance, new string[] { WriteExternalStorage }, 0);
                 permissionGranted = false;
             }
             else { permissionGranted = true; }
-            if (CheckSelfPermission(MainActivity.Main, ReadExternalStorage) != (int)Permission.Granted)
+            if (CheckSelfPermission(MainActivity.Instance, ReadExternalStorage) != (int)Permission.Granted)
             {
-                RequestPermissions(MainActivity.Main, new string[] { ReadExternalStorage }, 0);
+                RequestPermissions(MainActivity.Instance, new string[] { ReadExternalStorage }, 0);
                 permissionGranted = false;
             }
             else { permissionGranted = true; }
